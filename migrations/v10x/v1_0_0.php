@@ -138,14 +138,16 @@ class v1_0_0 extends \phpbb\db\migration\migration
 					'module_display'	=> 1,
 					'module_langname'   => 'ACP_DONATION_MOD',
 					'module_auth'		=> 'acl_a_ppde_manage',
+				)
 			)),
+
 			array('module.add', array(
 				'acp',
 				'ACP_DONATION_MOD',
 				array(
 					'module_basename'	=> '\skouat\ppde\acp\ppde_module',
 					'modes'				=> array('overview', 'configuration', 'donation_pages', 'currency'),
-				),
+				)
 			)),
 
 			array('config.add', array('ppde_version', '1.0.0-dev')),
