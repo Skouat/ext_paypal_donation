@@ -1,0 +1,11 @@
+{
+    "unstable": {
+        "1.0": {
+        "download": "https://github.com/Skouat/ext_paypal_donation/archive/master.zip",
+            "current": "1.0.0-dev",
+            "announcement": "http://skouat.github.io/ext_paypal_donation/",
+            "eol": null,
+            "security": false
+        }
+    }
+}
