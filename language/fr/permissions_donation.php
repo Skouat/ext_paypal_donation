@@ -36,13 +36,13 @@ if (empty($lang) || !is_array($lang))
 //
 
 // Adding new category
-$lang['permission_cat']['donation']   = 'PayPal Donation MOD';
+$lang['permission_cat']['donation']   = 'PayPal Donation';
 
 // Adding the permissions
 $lang = array_merge($lang, array(
 	// User Permissions
-	'acl_u_pdm_use'		=> array('lang' => 'Peut faire un don', 'cat' => 'donation'),
+	'acl_u_ppde_use'		=> array('lang' => 'Peut faire un don', 'cat' => 'donation'),
 
 	// Admin Permissions
-	'acl_a_pdm_manage'	=> array('lang' => 'Peut gérer PayPal Donation MOD', 'cat' => 'misc'),
+	'acl_a_ppde_manage'	=> array('lang' => 'Peut gérer l’extension PayPal Donation', 'cat' => 'misc'),
 ));

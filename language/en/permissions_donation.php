@@ -1,11 +1,10 @@
 <?php
 /**
 *
-* permissions_donation.php [English]
+* PayPal Donation extension for the phpBB Forum Software package.
 *
-* @package PayPal Donation MOD
 * @copyright (c) 2014 Skouat
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license GNU General Public License, version 2 (GPL-2.0)
 *
 */
 
@@ -37,13 +36,13 @@ if (empty($lang) || !is_array($lang))
 //
 
 // Adding new category
-$lang['permission_cat']['donation']   = 'PayPal Donation MOD';
+$lang['permission_cat']['donation'] = 'PayPal Donation';
 
 // Adding the permissions
 $lang = array_merge($lang, array(
 	// User Permissions
-	'acl_u_pdm_use'		=> array('lang' => 'Can make a donation', 'cat' => 'donation'),
+	'acl_u_ppde_use'	=> array('lang' => 'Can make a donation', 'cat' => 'donation'),
 
 	// Admin Permissions
-	'acl_a_pdm_manage'	=> array('lang' => 'Can manage PayPal Donation MOD', 'cat' => 'misc'),
+	'acl_a_ppde_manage'	=> array('lang' => 'Can manage PayPal Donation extension', 'cat' => 'misc'),
 ));

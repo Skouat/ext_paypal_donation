@@ -20,19 +20,19 @@ class ppde_info
 			'modes'		=> array(
 				'overview'	=> array(
 					'title'	=> 'DONATION_OVERVIEW',
-					'auth'	=> 'acl_a_pdm_manage',
+					'auth'	=> 'acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'configuration' => array(
 					'title'	=> 'DONATION_CONFIG',
-					'auth'	=> 'acl_a_pdm_manage',
+					'auth'	=> 'acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'donation_pages'	=> array(
 					'title'	=> 'DONATION_DP_CONFIG',
-					'auth'	=> 'acl_a_pdm_manage',
+					'auth'	=> 'acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'currency'			=> array(
 					'title'	=> 'DONATION_DC_CONFIG',
-					'auth'	=> 'acl_a_pdm_manage',
+					'auth'	=> 'acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 			),
 		);
