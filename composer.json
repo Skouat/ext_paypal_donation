@@ -1,24 +1,32 @@
 {
-    "name": "skouat/ppde",
-    "type": "phpbb-extension",
-    "description": "",
-    "homepage": "",
-    "version": "0.1.0-dev",
-    "time": "2014-08-21",
-    "license": "GPL-2.0",
-    "authors": [
-        {
-            "name": "Skouat",
-            "role": "Lead Developer"
-        }
-    ],
-    "require": {
-        "php": ">=5.3",
-    },
-    "extra": {
-        "display-name": "PayPal Donation Extension"
-        "soft-require": {
-            "phpbb/phpbb": "3.1-RC4"
-        }
-    }
+	"name": "skouat/ppde",
+	"type": "phpbb-extension",
+	"description": "An extension which allows you to add a PayPal donation page on your phpBB board",
+	"homepage": "",
+	"version": "0.1.0-dev",
+	"keywords": ["phpbb", "extension", "paypal"],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Skouat",
+			"role": "Lead Developer"
+		},
+	],
+	"require": {
+		"php": ">=5.3.3",
+	},
+	"require-dev": {
+		"phpbb/epv": "dev-master"
+	},
+	"extra": {
+		"display-name": "PayPal Donation Extension",
+		"soft-require": {
+			"phpbb/phpbb": ">=3.1.0-RC2,<3.2.*@dev"
+		},
+		"version-check": {
+			"host": "skouat31.free.fr",
+			"directory": "/phpbb/skouat/ppde",
+			"filename": "version_check"
+		}
+	}
 }

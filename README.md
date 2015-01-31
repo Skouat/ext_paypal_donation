@@ -1,8 +1,10 @@
-###PayPal Donation for phpBB
+# PayPal Donation for phpBB
 
-This extension add a PayPal Donation page on your site. 
+This extension add a PayPal Donation page on your site.
 
-####*Features :*
+[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.png)](https://travis-ci.org/Skouat/ext_paypal_donation)
+
+## Features
 * PayPal IPN
     * Auto group
     * Transaction log
@@ -28,7 +30,10 @@ This extension add a PayPal Donation page on your site.
 * Admin and user permissions can be set through ACP >> Permissions.
 * All options are manageable from ACP.
 
-####_Styles :_
+## Styles
 * Prosilver
 
 [extension Support](https://github.com/Skouat/ext_paypal_donation/issues "Extension support") on GitHub.com
+
+## License
+[GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
