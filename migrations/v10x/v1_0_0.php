@@ -28,7 +28,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 			'add_tables' => array(
 				$this->table_prefix . 'phpbb_donation_item'		=> array(
 					'COLUMNS' => array(
-						'item_id'					=> array('UINT', NULL, 'auto_increment'),
+						'item_id'					=> array('UINT', null, 'auto_increment'),
 						'item_type'					=> array('VCHAR:16', ''),
 						'item_name'					=> array('VCHAR:50', ''),
 						'item_iso_code'				=> array('VCHAR:10', ''),
@@ -47,7 +47,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 
 				$this->table_prefix . 'phpbb_donation_data'		=> array(
 					'COLUMNS' => array(
-						'transaction_id'	=> array('UINT', NULL, 'auto_increment'),
+						'transaction_id'	=> array('UINT', null, 'auto_increment'),
 						'txn_id'			=> array('VCHAR:18', ''),
 						'txn_type'			=> array('VCHAR:32', ''),
 						'confirmed'			=> array('BOOL', 0),
