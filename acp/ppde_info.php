@@ -33,7 +33,7 @@ class ppde_info
 				'currency'			=> array(
 					'title'	=> 'DONATION_DC_CONFIG',
 					'auth'	=> 'acl_a_pdm_manage',
-				 	'cat'	=> array('ACP_DONATION_MOD')),
+					'cat'	=> array('ACP_DONATION_MOD')),
 			),
 		);
 	}

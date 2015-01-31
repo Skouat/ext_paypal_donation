@@ -50,7 +50,6 @@ class ppde_module
 		// Load a template from adm/style for our ACP page
 		$this->tpl_name = 'acp_donation';
 
-
 		// Set the page title for our ACP page
 		$this->page_title = 'ACP_DONATION_MOD';
 
@@ -733,7 +732,7 @@ class ppde_module
 						}
 						else
 						{
-							$sql = 'SELECT MAX(right_id) AS right_id FROM ' . DONATION_ITEM_TABLE; 
+							$sql = 'SELECT MAX(right_id) AS right_id FROM ' . DONATION_ITEM_TABLE;
 							$result = $db->sql_query($sql);
 							$right_id = (string) $db->sql_fetchfield('right_id');
 							$db->sql_freeresult($result);
@@ -817,7 +816,6 @@ class ppde_module
 							$result = $db->sql_query($sql);
 							$default_currency_check = $db->sql_fetchrow($result);
 							$db->sql_freeresult($result);
-
 
 							if (!$default_currency_check)
 							{
