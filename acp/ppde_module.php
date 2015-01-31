@@ -1,35 +1,69 @@
 <?php
 /**
 *
-* @package PayPal Donation MOD
+* PayPal Donation extension for the phpBB Forum Software package.
+*
 * @copyright (c) 2014 Skouat
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license GNU General Public License, version 2 (GPL-2.0)
 *
 */
 
 namespace skouat\ppde\acp;
 
-class main_info
+class ppde_module
 {
-	var $u_action;
+	protected $auth;
+	protected $config;
+	protected $config_text;
+	protected $db;
+	protected $log;
+	protected $request;
+	protected $template;
+	protected $user;
+	protected $phpbb_container;
+	protected $phpbb_root_path;
+	protected $php_ext;
+
+	/** @var string */
+	public $u_action;
+
 	const CHECK_HOST = 'http://skouat31.free.fr';
 
-	function main($id, $mode)
+	public function main($id, $mode)
 	{
-		global $config, $db, $user, $template;
-		global $phpbb_root_path, $phpEx;
+		global $auth, $config, $db, $request, $template, $user, $phpbb_admin_path, $phpbb_root_path, $phpEx, $phpbb_container;
 
+		$this->auth = $auth;
+		$this->config = $config;
+		$this->config_text = $phpbb_container->get('config_text');
+		$this->db = $db;
+		$this->log = $phpbb_container->get('log');
+		$this->request = $request;
+		$this->template = $template;
+		$this->user = $user;
+		$this->phpbb_root_path = $phpbb_root_path;
+		$this->php_ext = $phpEx;
+
+		// Add the posting lang file needed by BBCodes
+		$this->user->add_lang(array('posting'));
+
+		// Load a template from adm/style for our ACP page
+		$this->tpl_name = 'acp_donation';
+
+
+		// Set the page title for our ACP page
+		$this->page_title = 'ACP_DONATION_MOD';
+
+		// Define the name of the form for use as a form key
+		$form_name = 'acp_donation';
+		add_form_key($form_name);
+
+		// Include files needed for PayPal Donation
 		include($phpbb_root_path . 'includes/functions_donation.' . $phpEx);
 
-		$user->add_lang(array('posting','acp/board'));
-		$action	= request_var('action', '');
-
-		$this->tpl_name = 'acp_donation';
-		$this->page_title = $user->lang['ACP_DONATION_MOD'];
-		$form_key = 'acp_donation';
-		add_form_key($form_key);
-
-		$submit = (isset($_POST['submit'])) ? true : false;
+		// If form is submitted
+		$action = $request->variable('action', '');
+		$submit = ($request->is_set_post('submit')) ? true : false;
 
 		// $mode is used in SQL requests, so for extra safety we will use sql_escape()
 		$mode = $db->sql_escape($mode);
@@ -37,9 +71,6 @@ class main_info
 		switch ($mode)
 		{
 			case 'overview':
-
-				global $phpbb_admin_path, $auth;
-
 				$this->page_title = 'DONATION_OVERVIEW';
 
 				if ($action)
@@ -60,7 +91,7 @@ class main_info
 
 						if ($confirm)
 						{
-							confirm_box(false, $user->lang[$confirm_lang], build_hidden_fields(array(
+							confirm_box(false, $this->user->lang[$confirm_lang], build_hidden_fields(array(
 								'i'			=> $id,
 								'mode'		=> $mode,
 								'action'	=> $action,
@@ -75,7 +106,7 @@ class main_info
 							case 'date':
 								if (!$auth->acl_get('a_board'))
 								{
-									trigger_error($user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
+									trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
 								}
 
 								set_config('donation_install_date', time() - 1);
@@ -87,27 +118,27 @@ class main_info
 				}
 
 				// Check if a new version of this MOD is available
-				$latest_version_info = $this->obtain_latest_version_info(request_var('donation_versioncheck_force', false));
+				$latest_version_info = $this->obtain_latest_version_info($request->variable('donation_versioncheck_force', false));
 
 				if ($latest_version_info === false || !function_exists('phpbb_version_compare'))
 				{
-					$template->assign_vars(array(
+					$this->$this->template->assign_vars(array(
 						'S_DONATION_VERSIONCHECK_FAIL'	=> true,
-						'L_VERSIONCHECK_FAIL'			=> sprintf($user->lang['VERSIONCHECK_FAIL'], $latest_version_info),
+						'L_VERSIONCHECK_FAIL'			=> sprintf($this->user->lang['VERSIONCHECK_FAIL'], $latest_version_info),
 					));
 				}
 				else
 				{
 					$latest_version_info = explode("\n", $latest_version_info);
 
-					$template->assign_vars(array(
+					$this->$this->template->assign_vars(array(
 						'S_DONATION_VERSION_UP_TO_DATE'	=> phpbb_version_compare(trim($latest_version_info[0]), $config['donation_mod_version'], '<='),
 						'U_DONATION_VERSIONCHECK'		=> $latest_version_info[1],
 					));
 				}
 
 				// Check if fsockopen and cURL are available and display it in stats
-				$info_curl = $info_fsockopen = $user->lang['INFO_NOT_DETECTED'];
+				$info_curl = $info_fsockopen = $this->user->lang['INFO_NOT_DETECTED'];
 				$s_curl = $s_fsockopen = false;
 
 				if (function_exists('fsockopen'))
@@ -118,7 +149,7 @@ class main_info
 
 					if ($fp)
 					{
-						$info_fsockopen = $user->lang['INFO_DETECTED'];
+						$info_fsockopen = $this->user->lang['INFO_DETECTED'];
 						$s_fsockopen = true;
 					}
 				}
@@ -137,14 +168,14 @@ class main_info
 
 					if ($response !== false || $response_status != '0')
 					{
-						$info_curl = $user->lang['INFO_DETECTED'];
+						$info_curl = $this->user->lang['INFO_DETECTED'];
 						$s_curl = true;
 					}
 				}
 
 				$donation_install_date = $user->format_date($config['donation_install_date']);
 
-				$template->assign_vars(array(
+				$this->template->assign_vars(array(
 					'DONATION_INSTALL_DATE'		=> $donation_install_date,
 					'DONATION_VERSION'			=> $config['donation_mod_version'],
 					'INFO_CURL'					=> $info_curl,
@@ -162,16 +193,13 @@ class main_info
 			break;
 
 			case 'configuration':
-
-				$user->add_lang_ext('skouat/ppde', 'donate');
-
 				$display_vars = array(
 					'title'	=> 'DONATION_CONFIG',
 					'vars'	=> array(
 						'legend1'						=> 'GENERAL_SETTINGS',
 						'donation_enable'				=> array('lang' => 'DONATION_ENABLE',				'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true,),
 						'donation_account_id'			=> array('lang' => 'DONATION_ACCOUNT_ID',			'validate' => 'string',	'type' => 'text:40:255', 'explain' => true,),
-						'donation_default_currency'		=> array('lang' => 'DONATION_DEFAULT_CURRENCY',		'validate' => 'int',	'type' => 'select', 'function' => 'donation_item_list', 'params' => array('{CONFIG_VALUE}', 'currency', 'acp',  $user->lang['CURRENCY_DEFAULT']), 'explain' => true,),
+						'donation_default_currency'		=> array('lang' => 'DONATION_DEFAULT_CURRENCY',		'validate' => 'int',	'type' => 'select', 'function' => 'donation_item_list', 'params' => array('{CONFIG_VALUE}', 'currency', 'acp',  $this->user->lang['CURRENCY_DEFAULT']), 'explain' => true,),
 						'donation_default_value'		=> array('lang' => 'DONATION_DEFAULT_VALUE',		'validate' => 'int:0',	'type' => 'text:10:50', 'explain' => true,),
 						'donation_dropbox_enable'		=> array('lang' => 'DONATION_DROPBOX_ENABLE',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true,),
 						'donation_dropbox_value'		=> array('lang' => 'DONATION_DROPBOX_VALUE',		'validate' => 'string',	'type' => 'text:40:255', 'explain' => true),
@@ -196,19 +224,19 @@ class main_info
 
 				if (isset($display_vars['lang']))
 				{
-					$user->add_lang($display_vars['lang']);
+					$this->user->add_lang($display_vars['lang']);
 				}
 
 				$this->new_config = $config;
-				$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $this->new_config;
+				$cfg_array = (isset($_REQUEST['config'])) ? $request->variable('config', array('' => ''), true) : $this->new_config;
 				$error = array();
 
 				// We validate the complete config if whished
 				validate_config_vars($display_vars['vars'], $cfg_array, $error);
 
-				if ($submit && !check_form_key($form_key))
+				if ($submit && !check_form_key($form_name))
 				{
-					$error[] = $user->lang['FORM_INVALID'];
+					$error[] = $this->user->lang['FORM_INVALID'];
 				}
 				// Do not write values if there is an error
 				if (sizeof($error))
@@ -256,24 +284,24 @@ class main_info
 
 				if ($submit)
 				{
-					add_log('admin', 'LOG_DONATION_UPDATED');
+					$this->log->add('admin', 'LOG_DONATION_UPDATED');
 
-					trigger_error($user->lang['DONATION_SAVED'] . adm_back_link($this->u_action));
+					trigger_error($this->user->lang['DONATION_SAVED'] . adm_back_link($this->u_action));
 				}
 
 				$this->tpl_name = 'acp_board';
 				$this->page_title = $display_vars['title'];
 
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang[$display_vars['title']],
-					'L_TITLE_EXPLAIN'	=> $user->lang[$display_vars['title'] . '_EXPLAIN'],
+				$this->template->assign_vars(array(
+					'L_TITLE'			=> $this->user->lang[$display_vars['title']],
+					'L_TITLE_EXPLAIN'	=> $this->user->lang[$display_vars['title'] . '_EXPLAIN'],
 
 					'U_ACTION'			=> $this->u_action,
 				));
 
 				if (sizeof($error))
 				{
-					$template->assign_vars(array(
+					$this->template->assign_vars(array(
 						'S_ERROR' => true,
 						'ERROR_MSG' => implode('<br />', $error),
 					));
@@ -289,9 +317,9 @@ class main_info
 
 					if (strpos($config_key, 'legend') !== false)
 					{
-						$template->assign_block_vars('options', array(
-							'S_LEGEND'		=> true,
-							'LEGEND'		=> (isset($user->lang[$vars])) ? $user->lang[$vars] : $vars)
+						$this->template->assign_block_vars('options', array(
+							'S_LEGEND'	=> true,
+							'LEGEND'	=> (isset($this->user->lang[$vars])) ? $this->user->lang[$vars] : $vars)
 						);
 
 						continue;
@@ -302,11 +330,11 @@ class main_info
 					$l_explain = '';
 					if ($vars['explain'] && isset($vars['lang_explain']))
 					{
-						$l_explain = (isset($user->lang[$vars['lang_explain']])) ? $user->lang[$vars['lang_explain']] : $vars['lang_explain'];
+						$l_explain = (isset($this->user->lang[$vars['lang_explain']])) ? $this->user->lang[$vars['lang_explain']] : $vars['lang_explain'];
 					}
 					else if ($vars['explain'])
 					{
-						$l_explain = (isset($user->lang[$vars['lang'] . '_EXPLAIN'])) ? $user->lang[$vars['lang'] . '_EXPLAIN'] : '';
+						$l_explain = (isset($this->user->lang[$vars['lang'] . '_EXPLAIN'])) ? $this->user->lang[$vars['lang'] . '_EXPLAIN'] : '';
 					}
 
 					$content = build_cfg_template($type, $config_key, $this->new_config, $config_key, $vars);
@@ -316,9 +344,9 @@ class main_info
 						continue;
 					}
 
-					$template->assign_block_vars('options', array(
+					$this->template->assign_block_vars('options', array(
 						'KEY'			=> $config_key,
-						'TITLE'			=> (isset($user->lang[$vars['lang']])) ? $user->lang[$vars['lang']] : $vars['lang'],
+						'TITLE'			=> (isset($this->user->lang[$vars['lang']])) ? $this->user->lang[$vars['lang']] : $vars['lang'],
 						'S_EXPLAIN'		=> $vars['explain'],
 						'TITLE_EXPLAIN'	=> $l_explain,
 						'CONTENT'		=> $content,
@@ -338,10 +366,10 @@ class main_info
 
 				$this->page_title = 'DONATION_DP_CONFIG';
 
-				$item_id = request_var('id', 0);
-				$preview = request_var('preview', false);
-				$add = request_var('add', false);
-				$donation_name = request_var('donation_name', '');
+				$item_id = $request->variable('id', 0);
+				$preview = ($request->is_set_post('preview')) ? true : false;
+				$add = $request->variable('add', false);
+				$donation_name = $request->variable('donation_name', '');
 				$action = $add ? 'add' : ($preview ? 'preview' : $action);
 
 				// Retrieve available board language
@@ -366,14 +394,14 @@ class main_info
 
 						foreach ($langs as $lang => $entry)
 						{
-							$template->assign_block_vars('langs', array(
+							$this->template->assign_block_vars('langs', array(
 								'ISO' => $lang,
 								'NAME' => $entry['name'],
 							));
 						}
 
-						$input_pages = utf8_normalize_nfc(request_var('input_pages', '', true));
-						$input_lang = request_var('lang_iso', '', true);
+						$input_pages = utf8_normalize_nfc($request->variable('input_pages', '', true));
+						$input_lang = $request->variable('lang_iso', '', true);
 
 						$error = array();
 						$dp_preview = false;
@@ -405,12 +433,12 @@ class main_info
 								$error[] = implode('<br />', $message_parser->warn_msg);
 							}
 
-							if (!check_form_key($form_key))
+							if (!check_form_key($form_name))
 							{
 								$error = 'FORM_INVALID';
 							}
 
-							if (!sizeof($error) && $submit && check_form_key($form_key))
+							if (!sizeof($error) && $submit && check_form_key($form_name))
 							{
 								$dp_data = array_merge($dp_data, array(
 									'item_text'					=> (string) $message_parser->message,
@@ -430,14 +458,14 @@ class main_info
 									}
 
 									$item_action = $item_id ? 'UPDATED' : 'ADDED';
-									add_log('admin', 'LOG_ITEM_' . $item_action, $user->lang['MODE_DONATION_PAGES'], $user->lang[strtoupper($dp_data['item_name'])]);
-									trigger_error($user->lang['DONATION_DP_LANG_' . $item_action] . adm_back_link($this->u_action));
+									add_log('admin', 'LOG_ITEM_' . $item_action, $this->user->lang['MODE_DONATION_PAGES'], $this->user->lang[strtoupper($dp_data['item_name'])]);
+									trigger_error($this->user->lang['DONATION_DP_LANG_' . $item_action] . adm_back_link($this->u_action));
 								}
 
 							}
 
 							// Replace "error" strings with their real, localised form
-							$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", $error);
+							$error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$this->user->lang['\\1'])) ? \$this->user->lang['\\1'] : '\\1'", $error);
 
 							if ($preview)
 							{
@@ -451,7 +479,7 @@ class main_info
 						{
 							if (!$dp_data = $this->acp_get_item_data($item_id, $mode))
 							{
-								trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action));
+								trigger_error($this->user->lang['FORM_INVALID'] . adm_back_link($this->u_action));
 							}
 						}
 
@@ -474,20 +502,20 @@ class main_info
 						// Assigging predefined variables in a template block vars
 						for ($i = 0, $size = sizeof($ppdm->vars); $i < $size; $i++)
 						{
-							$template->assign_block_vars('dp_vars', array(
+							$this->template->assign_block_vars('dp_vars', array(
 								'NAME'		=> $ppdm->vars[$i]['name'],
 								'VARIABLE'	=> $ppdm->vars[$i]['var'],
 								'EXAMPLE'	=> $ppdm->vars[$i]['value'])
 							);
 						}
 
-						$template->assign_vars(array(
+						$this->template->assign_vars(array(
 							'DONATION_DRAFT_PREVIEW'	=> str_replace(array_keys($dp_vars), array_values($dp_vars), $dp_preview),
 							'DONATION_BODY'				=> $dp_data['item_text'],
 							'LANG_ISO'					=> !empty($item_id) ? $dp_data['item_iso_code'] : $input_lang,
 
-							'L_DONATION_PAGES_TITLE'			=> !empty($dp_data['item_name']) ? $user->lang[strtoupper($dp_data['item_name'])] : $user->lang[$this->page_title],
-							'L_DONATION_PAGES_TITLE_EXPLAIN'	=> !empty($dp_data['item_name']) ? $user->lang[strtoupper($dp_data['item_name']) . '_EXPLAIN'] : '',
+							'L_DONATION_PAGES_TITLE'			=> !empty($dp_data['item_name']) ? $this->user->lang[strtoupper($dp_data['item_name'])] : $this->user->lang[$this->page_title],
+							'L_DONATION_PAGES_TITLE_EXPLAIN'	=> !empty($dp_data['item_name']) ? $this->user->lang[strtoupper($dp_data['item_name']) . '_EXPLAIN'] : '',
 
 							'S_EDIT_DP'			=> true,
 							'S_HIDDEN_FIELDS'	=> $s_hidden_fields,
@@ -503,7 +531,7 @@ class main_info
 					case 'delete':
 						if (!$item_id)
 						{
-							trigger_error($user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						$sql = 'SELECT item_name
@@ -517,12 +545,12 @@ class main_info
 							{
 								$db->sql_query('DELETE FROM ' . DONATION_ITEM_TABLE . ' WHERE item_id = '. (int) $item_id);
 								$cache->destroy('sql', DONATION_ITEM_TABLE);
-								add_log('admin', 'LOG_ITEM_REMOVED', $user->lang[strtoupper($row['item_name'])]);
-								trigger_error($user->lang['DONATION_DP_LANG_REMOVED'] . adm_back_link($this->u_action));
+								add_log('admin', 'LOG_ITEM_REMOVED', $this->user->lang[strtoupper($row['item_name'])]);
+								trigger_error($this->user->lang['DONATION_DP_LANG_REMOVED'] . adm_back_link($this->u_action));
 							}
 							else
 							{
-								confirm_box(false, $user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
+								confirm_box(false, $this->user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
 									'item_id'	=> $item_id,
 									'i'			=> $id,
 									'mode'		=> $mode,
@@ -532,9 +560,9 @@ class main_info
 							}
 					break;
 				}
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang[$this->page_title],
-					'L_TITLE_EXPLAIN'	=> $user->lang[$this->page_title . '_EXPLAIN'],
+				$this->template->assign_vars(array(
+					'L_TITLE'			=> $this->user->lang[$this->page_title],
+					'L_TITLE_EXPLAIN'	=> $this->user->lang[$this->page_title . '_EXPLAIN'],
 
 					'S_DONATION_PAGES'	=> $mode,
 
@@ -547,7 +575,7 @@ class main_info
 					// Template available language
 					foreach ($langs as $lang => $entry)
 					{
-						$template->assign_block_vars('langs', array(
+						$this->template->assign_block_vars('langs', array(
 							'ISO' => $lang,
 							'NAME' => $entry['name'],
 						));
@@ -563,8 +591,8 @@ class main_info
 						{
 							$row['item_id'] = (int) $row['item_id'];
 
-							$template->assign_block_vars('langs.dp_list', array(
-								'DP_TITLE'			=> $user->lang[strtoupper($row['donation_title'])],
+							$this->template->assign_block_vars('langs.dp_list', array(
+								'DP_TITLE'			=> $this->user->lang[strtoupper($row['donation_title'])],
 								'DP_LANG'			=> $row['lang_iso'],
 
 								'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;id=' . $row['item_id'],
@@ -578,21 +606,21 @@ class main_info
 			break;
 
 			case 'currency':
-				if ($submit && !check_form_key($form_key))
+				if ($submit && !check_form_key($form_name))
 				{
-					trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action));
+					trigger_error($this->user->lang['FORM_INVALID'] . adm_back_link($this->u_action));
 				}
 
 				$this->page_title = 'DONATION_DC_CONFIG';
 
 				$action = isset($_POST['add']) ? 'add' : (isset($_POST['save']) ? 'save' : $action);
-				$item_id = request_var('id', 0);
+				$item_id = $request->variable('id', 0);
 
-				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang[$this->page_title],
-					'L_TITLE_EXPLAIN'	=> $user->lang[$this->page_title . '_EXPLAIN'],
-					'L_NAME'			=> $user->lang['DONATION_DC_NAME'],
-					'L_CREATE_ITEM'		=> $user->lang['DONATION_DC_CREATE_CURRENCY'],
+				$this->template->assign_vars(array(
+					'L_TITLE'			=> $this->user->lang[$this->page_title],
+					'L_TITLE_EXPLAIN'	=> $this->user->lang[$this->page_title . '_EXPLAIN'],
+					'L_NAME'			=> $this->user->lang['DONATION_DC_NAME'],
+					'L_CREATE_ITEM'		=> $this->user->lang['DONATION_DC_CREATE_CURRENCY'],
 
 					'S_CURRENCY'		=> $mode,
 
@@ -612,7 +640,7 @@ class main_info
 					{
 						$row['item_id'] = (int) $row['item_id'];
 
-						$template->assign_block_vars('items', array(
+						$this->template->assign_block_vars('items', array(
 						'ITEM_NAME'			=> $row['item_name'],
 						'ITEM_ENABLED'		=> ($row['item_enable']) ? true : false,
 
@@ -633,7 +661,7 @@ class main_info
 					case 'edit':
 						if (!$item_id)
 						{
-							trigger_error($user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						$sql = 'SELECT *
@@ -646,7 +674,7 @@ class main_info
 
 						if (!$currency_ary)
 						{
-							trigger_error($user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						$s_hidden_fields = array('id' => $item_id);
@@ -659,16 +687,16 @@ class main_info
 
 						$s_hidden_fields = array_merge($s_hidden_fields, array('action' => 'save',));
 
-						$template->assign_vars(array(
+						$this->template->assign_vars(array(
 							'S_EDIT'			=> true,
 							'S_MODE'			=> $mode,
 
 							'U_ACTION'			=> $this->u_action,
 							'U_BACK'			=> $this->u_action,
 
-							'ITEM_NAME'			=> isset($currency_ary['item_name']) ? $currency_ary['item_name'] : utf8_normalize_nfc(request_var('item_name', '', true)),
-							'ITEM_ISO_CODE'		=> isset($currency_ary['item_iso_code']) ? $currency_ary['item_iso_code'] : utf8_normalize_nfc(request_var('item_iso_code', '', true)),
-							'ITEM_SYMBOL'		=> isset($currency_ary['item_symbol']) ? $currency_ary['item_symbol'] : utf8_normalize_nfc(request_var('item_symbol', '', true)),
+							'ITEM_NAME'			=> isset($currency_ary['item_name']) ? $currency_ary['item_name'] : utf8_normalize_nfc($request->variable('item_name', '', true)),
+							'ITEM_ISO_CODE'		=> isset($currency_ary['item_iso_code']) ? $currency_ary['item_iso_code'] : utf8_normalize_nfc($request->variable('item_iso_code', '', true)),
+							'ITEM_SYMBOL'		=> isset($currency_ary['item_symbol']) ? $currency_ary['item_symbol'] : utf8_normalize_nfc($request->variable('item_symbol', '', true)),
 							'ITEM_ENABLED'		=> isset($currency_ary['item_enable']) ? $currency_ary['item_enable'] : true,
 
 							'S_HIDDEN_FIELDS'	=> build_hidden_fields($s_hidden_fields),
@@ -678,16 +706,16 @@ class main_info
 
 					case 'save':
 
-						$item_name = utf8_normalize_nfc(request_var('item_name', '', true));
-						$item_iso_code = utf8_normalize_nfc(request_var('item_iso_code', '', true));
-						$item_symbol = utf8_normalize_nfc(request_var('item_symbol','',true));
-						$item_enable = request_var('item_enable', 0);
+						$item_name = utf8_normalize_nfc($request->variable('item_name', '', true));
+						$item_iso_code = utf8_normalize_nfc($request->variable('item_iso_code', '', true));
+						$item_symbol = utf8_normalize_nfc($request->variable('item_symbol','',true));
+						$item_enable = $request->variable('item_enable', 0);
 
 						if ( empty($item_name) )
 						{
 							$trigger_url = !$item_id ? '&amp;action=add' : '&amp;action=edit&amp;id=' . (int) $item_id;
 
-							trigger_error($user->lang['DONATION_DC_ENTER_NAME'] . adm_back_link($this->u_action . $trigger_url), E_USER_WARNING);
+							trigger_error($this->user->lang['DONATION_DC_ENTER_NAME'] . adm_back_link($this->u_action . $trigger_url), E_USER_WARNING);
 						}
 
 						$sql_ary = array(
@@ -716,15 +744,15 @@ class main_info
 						}
 
 						$item_action = $item_id ? 'UPDATED' : 'ADDED';
-						add_log('admin', 'LOG_ITEM_' . $item_action, $user->lang['MODE_CURRENCY'], $item_name);
-						trigger_error($user->lang['DONATION_DC_' . $item_action] . adm_back_link($this->u_action));
+						add_log('admin', 'LOG_ITEM_' . $item_action, $this->user->lang['MODE_CURRENCY'], $item_name);
+						trigger_error($this->user->lang['DONATION_DC_' . $item_action] . adm_back_link($this->u_action));
 
 					break;
 
 					case 'delete':
 						if (!$item_id)
 						{
-							trigger_error($user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						if (confirm_box(true))
@@ -733,13 +761,13 @@ class main_info
 							$sql = 'DELETE FROM ' . DONATION_ITEM_TABLE . ' WHERE item_id = ' . (int) $item_id;
 							$db->sql_query($sql);
 
-							add_log('admin', 'LOG_ITEM_REMOVED', $user->lang['MODE_CURRENCY']);
+							add_log('admin', 'LOG_ITEM_REMOVED', $this->user->lang['MODE_CURRENCY']);
 
-							trigger_error($user->lang['DONATION_DC_REMOVED'] . adm_back_link($this->u_action));
+							trigger_error($this->user->lang['DONATION_DC_REMOVED'] . adm_back_link($this->u_action));
 						}
 						else
 						{
-							confirm_box(false, $user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
+							confirm_box(false, $this->user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
 								'mode'		=> $mode,
 								'item_id'	=> (int) $item_id,
 								'action'	=> 'delete',
@@ -751,7 +779,7 @@ class main_info
 					case 'move_down':
 						if (!$item_id)
 						{
-							trigger_error($user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['MUST_SELECT_ITEM'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						$sql = 'SELECT *
@@ -766,7 +794,7 @@ class main_info
 
 						if ($move_item_name !== false )
 						{
-							add_log('admin', 'LOG_ITEM_' . strtoupper($action), $user->lang['MODE_CURRENCY'], $row['item_name'], $move_item_name);
+							add_log('admin', 'LOG_ITEM_' . strtoupper($action), $this->user->lang['MODE_CURRENCY'], $row['item_name'], $move_item_name);
 						}
 
 					break;
@@ -776,7 +804,7 @@ class main_info
 
 						if (!$item_id)
 						{
-							trigger_error($user->lang['NO_CURRENCY'] . adm_back_link($this->u_action), E_USER_WARNING);
+							trigger_error($this->user->lang['NO_CURRENCY'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
 						if ($action == 'enable')
@@ -814,8 +842,8 @@ class main_info
 
 						$item_action = ($action == 'enable') ? 'ENABLED' : 'DISABLED';
 
-						add_log('admin', 'LOG_ITEM_' . $item_action, $user->lang['MODE_CURRENCY'], $row['item_name']);
-						trigger_error($user->lang['DONATION_DC_' . $item_action] . adm_back_link($this->u_action));
+						add_log('admin', 'LOG_ITEM_' . $item_action, $this->user->lang['MODE_CURRENCY'], $row['item_name']);
+						trigger_error($this->user->lang['DONATION_DC_' . $item_action] . adm_back_link($this->u_action));
 					break;
 				}
 
@@ -1047,7 +1075,7 @@ class main_info
 
 		if ($info === false || $force_update)
 		{
-			$errstr = '';
+			$errstr	 = '';
 			$errno = 0;
 
 			$info = get_remote_file('skouat31.free.fr', '/phpbb', 'paypal_donation_10x.txt', $errstr, $errno);

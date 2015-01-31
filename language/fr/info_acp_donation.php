@@ -1,11 +1,10 @@
 <?php
 /**
 *
-* info_acp_donation.php [French]
+* PayPal Donation extension for the phpBB Forum Software package.
 *
-* @package PayPal Donation MOD
 * @copyright (c) 2014 Skouat
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* @license GNU General Public License, version 2 (GPL-2.0)
 *
 */
 
