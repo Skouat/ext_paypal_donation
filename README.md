@@ -33,7 +33,5 @@ This extension add a PayPal Donation page on your site.
 ## Styles
 * Prosilver
 
-[extension Support](https://github.com/Skouat/ext_paypal_donation/issues "Extension support") on GitHub.com
-
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
