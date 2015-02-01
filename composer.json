@@ -23,9 +23,9 @@
 			"phpbb/phpbb": ">=3.1.0-RC2,<3.2.*@dev"
 		},
 		"version-check": {
-			"host": "skouat31.free.fr",
-			"directory": "/phpbb/skouat/ppde",
-			"filename": "version_check"
+			"host": "skouat.github.io",
+			"directory": "/ext_paypal_donation",
+			"filename": "ppde_version_check.json"
 		}
 	}
 }
