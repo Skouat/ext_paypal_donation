@@ -3,7 +3,7 @@
 *
 * PayPal Donation extension for the phpBB Forum Software package.
 *
-* @copyright (c) 2014 Skouat
+* @copyright (c) 2015 Skouat
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
 */
@@ -26,7 +26,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'phpbb_donation_item'		=> array(
+				$this->table_prefix . 'ppde_item'	=> array(
 					'COLUMNS' => array(
 						'item_id'					=> array('UINT', null, 'auto_increment'),
 						'item_type'					=> array('VCHAR:16', ''),
@@ -45,7 +45,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 					'PRIMARY_KEY'	=> array('item_id'),
 				),
 
-				$this->table_prefix . 'phpbb_donation_data'		=> array(
+				$this->table_prefix . 'ppde_data'	=> array(
 					'COLUMNS' => array(
 						'transaction_id'	=> array('UINT', null, 'auto_increment'),
 						'txn_id'			=> array('VCHAR:18', ''),
@@ -76,10 +76,10 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	//					'memo'				=> array('VCHAR', ''),
 					),
 
-					'PRIMARY_KEY'	=> array('transaction_id'),
+					'PRIMARY_KEY'			=> array('transaction_id'),
 					'KEYS' => array(
-						'user_id'			=> array('INDEX', 'user_id'),
-						'txn_id'			=> array('INDEX', 'txn_id'),
+						'user_id'			=> array('INDEX', array('user_id')),
+						'txn_id'			=> array('INDEX', array('txn_id')),
 					),
 				),
 			),
@@ -90,27 +90,27 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('donation_install_date', $current_time)),
-			array('config.add', array('donation_donors_group_id', '')),
-			array('config.add', array('donation_group_as_default', false)),
-			array('config.add', array('donation_send_confirmation', 0)),
-			array('config.add', array('donation_num_known_donors', 0, true)),
-			array('config.add', array('donation_num_anonymous_donors', 0, true)),
-			array('config.add', array('donation_num_transactions', 0, true)),
-			array('config.add', array('donation_default_value', 0)),
-			array('config.add', array('donation_dropbox_enable', false)),
-			array('config.add', array('donation_dropbox_value', '1,2,3,4,5,10,20,25,50,100')),
+			array('config.add', array('ppde_install_date', time())),
+			array('config.add', array('ppde_donors_group_id', '')),
+			array('config.add', array('ppde_group_as_default', false)),
+			array('config.add', array('ppde_send_confirmation', 0)),
+			array('config.add', array('ppde_num_known_donors', 0, true)),
+			array('config.add', array('ppde_num_anonymous_donors', 0, true)),
+			array('config.add', array('ppde_num_transactions', 0, true)),
+			array('config.add', array('ppde_default_value', 0)),
+			array('config.add', array('ppde_dropbox_enable', false)),
+			array('config.add', array('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')),
 			array('config.add', array('paypal_sandbox_founder_enable', true)),
-			array('config.add', array('donation_account_id', '')),
-			array('config.add', array('donation_default_currency', 1)),
-			array('config.add', array('donation_enable', false)),
-			array('config.add', array('donation_goal', 0)),
-			array('config.add', array('donation_goal_enable', false)),
-			array('config.add', array('donation_raised', 0)),
-			array('config.add', array('donation_raised_enable', false)),
-			array('config.add', array('donation_stats_index_enable', false)),
-			array('config.add', array('donation_used', 0)),
-			array('config.add', array('donation_used_enable', false)),
+			array('config.add', array('ppde_account_id', '')),
+			array('config.add', array('ppde_default_currency', 1)),
+			array('config.add', array('ppde_enable', false)),
+			array('config.add', array('ppde_goal', 0)),
+			array('config.add', array('ppde_goal_enable', false)),
+			array('config.add', array('ppde_raised', 0)),
+			array('config.add', array('ppde_raised_enable', false)),
+			array('config.add', array('ppde_stats_index_enable', false)),
+			array('config.add', array('ppde_used', 0)),
+			array('config.add', array('ppde_used_enable', false)),
 			array('config.add', array('paypal_sandbox_enable', false)),
 			array('config.add', array('paypal_sandbox_address', '')),
 
@@ -136,8 +136,8 @@ class v1_0_0 extends \phpbb\db\migration\migration
 				array(
 					'module_enabled'	=> 1,
 					'module_display'	=> 1,
-					'module_langname'   => 'ACP_DONATION_MOD',
-					'module_auth'		=> 'acl_a_ppde_manage',
+					'module_langname'	=> 'ACP_DONATION_MOD',
+					'module_auth'		=> 'ext_skouat/ppde && acl_a_ppde_manage',
 				)
 			)),
 
