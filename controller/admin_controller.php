@@ -128,7 +128,7 @@ class admin_controller
 			{
 				$ext_meta = $md_manager->get_metadata('all');
 			}
-			catch(\phpbb\extension\exception $e)
+			catch (\phpbb\extension\exception $e)
 			{
 				trigger_error($e, E_USER_WARNING);
 			}
@@ -195,7 +195,7 @@ class admin_controller
 			$response = curl_exec($ch);
 			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-			curl_close ($ch);
+			curl_close($ch);
 
 			if ($response !== false || $response_status !== '0')
 			{
@@ -252,6 +252,6 @@ class admin_controller
 	public function retrieve_ext_name($namespace)
 	{
 		$namespace_ary = explode('\\', $namespace);
-		$this->ext_name =  $namespace_ary[0] . '/' . $namespace_ary[1];
+		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
 	}
 }
