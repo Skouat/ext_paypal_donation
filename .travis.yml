@@ -1,3 +1,5 @@
+sudo: required
+
 language: php
 
 matrix:
@@ -28,18 +30,16 @@ matrix:
 
 env:
   global:
-    - EXTNAME="skouat/ppde"  # CHANGE name of the extension HERE
-    - SNIFF="1"            # Should we run code sniffer on your code?
-    - IMAGE_ICC="1"        # Should we run icc profile sniffer on your images?
-    - EPV="1"              # Should we run EPV (Extension Pre Validator) on your code?
-    - PHPBB_BRANCH="develop-ascraeus"
+    - EXTNAME="skouat/ppde" # CHANGE name of the extension HERE
+    - SNIFF="1"        # Should we run code sniffer on your code?
+    - IMAGE_ICC="1"    # Should we run icc profile sniffer on your images?
+    - EPV="1"          # Should we run EPV (Extension Pre Validator) on your code?
+    - PHPBB_BRANCH="3.1.x"
 
 branches:
   only:
     - master
     - develop
-    - /^develop-.*$/
-    - /^release-.*$/
 
 install:
   - travis_retry composer install --dev --no-interaction --prefer-source
