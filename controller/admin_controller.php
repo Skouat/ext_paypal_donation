@@ -181,7 +181,7 @@ class admin_controller
 				$info_fsockopen = $this->user->lang['INFO_DETECTED'];
 				$s_fsockopen = true;
 			}
-			
+
 			unset($fp);
 		}
 
@@ -202,7 +202,7 @@ class admin_controller
 				$info_curl = $this->user->lang['INFO_DETECTED'];
 				$s_curl = true;
 			}
-			
+
 			unset($ch, $response, $response_status);
 		}
 
