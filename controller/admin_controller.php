@@ -30,6 +30,9 @@ class admin_controller
 	protected $ppde_data_table;
 	protected $ppde_item_table;
 
+	var $ext_name;
+	var $u_action;
+
 	/**
 	* Constructor
 	*
@@ -121,6 +124,9 @@ class admin_controller
 		// Retrieve the extension name based on the namespace of this file
 		$this->retrieve_ext_name(__NAMESPACE__);
 
+		// init variables
+		$ext_meta = array();
+
 		// If they've specified an extension, let's load the metadata manager and validate it.
 		if ($this->ext_name)
 		{
@@ -130,7 +136,7 @@ class admin_controller
 			{
 				$ext_meta = $md_manager->get_metadata('all');
 			}
-			catch (\phpbb\extension\exception $e)
+			catch(\phpbb\extension\exception $e)
 			{
 				trigger_error($e, E_USER_WARNING);
 			}
@@ -160,7 +166,7 @@ class admin_controller
 				'UP_TO_DATE_MSG'	=> $this->user->lang('PPDE_NOT_UP_TO_DATE', $ext_meta['extra']['display-name']),
 			));
 		}
-		catch (\RuntimeException $e)
+		catch(\RuntimeException $e)
 		{
 			$this->template->assign_vars(array(
 				'S_VERSIONCHECK_STATUS'			=> $e->getCode(),
@@ -247,7 +253,7 @@ class admin_controller
 	/**
 	* Retrieve the extension name
 	*
-	* @param string $module_basename
+	* @param string $namespace
 	* @return null
 	* @access public
 	*/

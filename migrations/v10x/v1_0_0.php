@@ -26,7 +26,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'ppde_item'	=> array(
+				$this->table_prefix . 'ppde_item' => array(
 					'COLUMNS' => array(
 						'item_id'					=> array('UINT', null, 'auto_increment'),
 						'item_type'					=> array('VCHAR:16', ''),
@@ -45,7 +45,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 					'PRIMARY_KEY'	=> array('item_id'),
 				),
 
-				$this->table_prefix . 'ppde_data'	=> array(
+				$this->table_prefix . 'ppde_data' => array(
 					'COLUMNS' => array(
 						'transaction_id'	=> array('UINT', null, 'auto_increment'),
 						'txn_id'			=> array('VCHAR:18', ''),
@@ -73,7 +73,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 						'payer_status'		=> array('VCHAR:16', ''),
 						'first_name'		=> array('VCHAR:10', ''),
 						'last_name'			=> array('VCHAR:10', ''),
-	//					'memo'				=> array('VCHAR', ''),
+//						'memo'				=> array('VCHAR', ''),
 					),
 
 					'PRIMARY_KEY'			=> array('transaction_id'),
@@ -149,8 +149,6 @@ class v1_0_0 extends \phpbb\db\migration\migration
 					'modes'				=> array('overview', 'configuration', 'donation_pages', 'currency'),
 				)
 			)),
-
-			array('config.add', array('ppde_version', '1.0.0-dev')),
 		);
 	}
 }

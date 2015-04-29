@@ -24,7 +24,6 @@ class ppde_module
 
 		// Requests
 		$action = $request->variable('action', '');
-		$submit = ($request->is_set_post('submit')) ? true : false;
 
 		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
