@@ -8,7 +8,7 @@
 	"authors": [
 		{
 			"name": "Skouat",
-			"role": "Lead Developer"
+			"role": "Developer"
 		}
 	],
 	"require": {
@@ -18,9 +18,9 @@
 		"phpbb/epv": "dev-master"
 	},
 	"extra": {
-		"display-name": "PayPal Donation Extension",
+		"display-name": "PayPal Donation",
 		"soft-require": {
-			"phpbb/phpbb": ">=3.1.0-RC2,<3.2.*@dev"
+			"phpbb/phpbb": ">=3.1.0,<3.2.*@dev"
 		},
 		"version-check": {
 			"host": "skouat.github.io",

@@ -3,7 +3,7 @@
 *
 * PayPal Donation extension for the phpBB Forum Software package.
 *
-* @copyright (c) 2014 Skouat
+* @copyright (c) 2015 Skouat
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
 */
@@ -19,20 +19,20 @@ class ppde_info
 			'title'		=> 'ACP_DONATION_MOD',
 			'modes'		=> array(
 				'overview'	=> array(
-					'title'	=> 'DONATION_OVERVIEW',
-					'auth'	=> 'acl_a_ppde_manage',
+					'title'	=> 'PPDE_OVERVIEW',
+					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'configuration' => array(
-					'title'	=> 'DONATION_CONFIG',
-					'auth'	=> 'acl_a_ppde_manage',
+					'title'	=> 'PPDE_CONFIG',
+					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'donation_pages'	=> array(
-					'title'	=> 'DONATION_DP_CONFIG',
-					'auth'	=> 'acl_a_ppde_manage',
+					'title'	=> 'PPDE_DP_CONFIG',
+					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'currency'			=> array(
-					'title'	=> 'DONATION_DC_CONFIG',
-					'auth'	=> 'acl_a_ppde_manage',
+					'title'	=> 'PPDE_DC_CONFIG',
+					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 			),
 		);

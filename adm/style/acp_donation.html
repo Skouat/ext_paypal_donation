@@ -1,0 +1,64 @@
+<!-- INCLUDE overall_header.html -->
+
+<!-- IF S_OVERVIEW -->
+	<!-- IF S_VERSIONCHECK -->
+		<!-- IF not S_UP_TO_DATE -->
+		<div class="errorbox">
+			<p>{UP_TO_DATE_MSG} - <a href="{U_PPDE_MORE_INFORMATION}">{L_MORE_INFORMATION}</a></p>
+		</div>
+		<!-- ENDIF -->
+	<!-- ELSE IF S_VERSIONCHECK_STATUS == 0 -->
+	<div class="errorbox notice">
+		<p>{L_VERSIONCHECK_FAIL}</p>
+		<p>{VERSIONCHECK_FAIL_REASON}</p>
+		<p><a href="{U_PPDE_VERSIONCHECK_FORCE}">{L_VERSIONCHECK_FORCE_UPDATE}</a></p>
+	</div>
+	<!-- ELSE IF S_VERSIONCHECK_STATUS == 1 -->
+	<div class="errorbox notice">
+		<p>{VERSIONCHECK_FAIL_REASON}</p>
+	</div>
+	<!-- ENDIF -->
+
+	<table cellspacing="1">
+		<caption>{L_PPDE_STATS}</caption>
+		<col class="col1" /><col class="col2" /><col class="col1" /><col class="col2" />
+		<thead>
+			<tr>
+				<th style="width: 30%;">{L_STATISTIC}</th>
+				<th style="width: 20%;">{L_VALUE}</th>
+				<th style="width: 30%;">{L_STATISTIC}</th>
+				<th style="width: 20%;">{L_VALUE}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{L_PPDE_INSTALL_DATE}{L_COLON}</td>
+				<td><strong>{PPDE_INSTALL_DATE}</strong></td>
+				<td>{L_INFO_CURL}{L_COLON}</td>
+				<td><strong <!-- IF S_CURL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{INFO_CURL}</strong></td>
+			</tr>
+			<tr>
+				<td>{L_PPDE_VERSION}{L_COLON}</td>
+				<td>
+					<strong> <a href="{U_PPDE_MORE_INFORMATION}" style="color: <!-- IF S_UP_TO_DATE -->#228822;<!-- ELSE -->#BC2A4D;<!-- ENDIF -->" title="{L_MORE_INFORMATION}">{PPDE_VERSION}</a></strong> [&nbsp;<a href="{U_PPDE_VERSIONCHECK_FORCE}">{L_VERSIONCHECK_FORCE_UPDATE}</a>&nbsp;]
+				</td>
+				<td>{L_INFO_FSOCKOPEN}{L_COLON}</td>
+				<td><strong <!-- IF S_FSOCKOPEN -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{INFO_FSOCKOPEN}</strong></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- IF S_ACTION_OPTIONS -->
+		<fieldset>
+			<legend>{L_STATISTIC_RESYNC_OPTIONS}</legend>
+
+			<form id="action_date_form" method="post" action="{U_ACTION}">
+				<dl>
+					<dt><label for="action_date">{L_STAT_RESET_DATE}</label><br /><span>{L_STAT_RESET_DATE_EXPLAIN}</span></dt>
+					<dd><input type="hidden" name="action" value="date" /><input class="button2" type="submit" id="action_date" name="action_date" value="{L_RUN}" /></dd>
+				</dl>
+			</form>
+		</fieldset>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- INCLUDE overall_footer.html -->

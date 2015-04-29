@@ -1,0 +1,20 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    skouat.ppde.admin.controller:
+        class: skouat\ppde\controller\admin_controller
+        arguments:
+            - @auth
+            - @cache
+            - @config
+            - @service_container
+            - @dbal.conn
+            - @ext.manager
+            - @request
+            - @template
+            - @user
+            - %core.root_path%
+            - %core.php_ext%
+            - %skouat.ppde.tables.ppde_data%
+            - %skouat.ppde.tables.ppde_item%
