@@ -20,6 +20,7 @@ class admin_controller
 	protected $container;
 	protected $db;
 	protected $extension_manager;
+	protected $phpbb_log;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -47,7 +48,7 @@ class admin_controller
 	* @param string                               $ppde_item_table    Table name
 	* @access public
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext, $ppde_data_table, $ppde_item_table)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\log\log $phpbb_log, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext, $ppde_data_table, $ppde_item_table)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;
@@ -55,6 +56,7 @@ class admin_controller
 		$this->container = $container;
 		$this->db = $db;
 		$this->extension_manager = $extension_manager;
+		$this->phpbb_log = $phpbb_log;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -104,13 +106,13 @@ class admin_controller
 				switch ($action)
 				{
 					case 'date':
-						if (!$auth->acl_get('a_board'))
+						if (!$this->auth->acl_get('a_board'))
 						{
 							trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
 						}
 
-						set_config('ppde_install_date', time() - 1);
-						add_log('admin', 'LOG_STAT_RESET_DATE');
+						$this->config->set('ppde_install_date', time() - 1);
+						$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESET_DATE');
 					break;
 				}
 			}

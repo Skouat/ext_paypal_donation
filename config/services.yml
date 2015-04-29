@@ -11,6 +11,7 @@ services:
             - @service_container
             - @dbal.conn
             - @ext.manager
+            - @log
             - @request
             - @template
             - @user
