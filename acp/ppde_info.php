@@ -22,8 +22,8 @@ class ppde_info
 					'title'	=> 'PPDE_OVERVIEW',
 					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
-				'configuration' => array(
-					'title'	=> 'PPDE_CONFIG',
+				'settings' => array(
+					'title'	=> 'PPDE_SETTINGS',
 					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
 				'donation_pages'	=> array(

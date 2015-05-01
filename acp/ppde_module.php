@@ -17,7 +17,7 @@ class ppde_module
 
 	public function main($id, $mode)
 	{
-		global $phpbb_container, $request, $user;
+		global $phpbb_container, $request;
 
 		// Get an instance of the admin controller
 		$admin_controller = $phpbb_container->get('skouat.ppde.admin.controller');
@@ -27,16 +27,6 @@ class ppde_module
 
 		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
-
-		// Load a template from adm/style for our ACP page
-		$this->tpl_name = 'acp_donation';
-
-		// Set the page title for our ACP page
-		$this->page_title = 'ACP_DONATION_MOD';
-
-		// Define the name of the form for use as a form key
-		$form_name = 'acp_donation';
-		add_form_key($form_name);
 
 		switch ($mode)
 		{
@@ -49,6 +39,17 @@ class ppde_module
 
 				// Display pages
 				$admin_controller->display_overview($id, $mode, $action);
+			break;
+
+			case 'settings':
+				// Set the page title for our ACP page
+				$this->page_title = 'PPDE_SETTINGS';
+
+				// Load a template from adm/style for our ACP page
+				$this->tpl_name = 'ppde_settings';
+
+				// Load the display options handle in the admin controller
+				$admin_controller->display_options();
 			break;
 
 			default:
