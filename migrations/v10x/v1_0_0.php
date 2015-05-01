@@ -17,7 +17,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 		return isset($this->config['ppde_version']) && version_compare($this->config['ppde_version'], '1.0.0', '>=');
 	}
 
-	static public function depends_on()
+	public static function depends_on()
 	{
 		return array('\phpbb\db\migration\data\v310\gold');
 	}
@@ -26,7 +26,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'ppde_item'	=> array(
+				$this->table_prefix . 'ppde_item' => array(
 					'COLUMNS' => array(
 						'item_id'					=> array('UINT', null, 'auto_increment'),
 						'item_type'					=> array('VCHAR:16', ''),
@@ -45,7 +45,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 					'PRIMARY_KEY'	=> array('item_id'),
 				),
 
-				$this->table_prefix . 'ppde_data'	=> array(
+				$this->table_prefix . 'ppde_data' => array(
 					'COLUMNS' => array(
 						'transaction_id'	=> array('UINT', null, 'auto_increment'),
 						'txn_id'			=> array('VCHAR:18', ''),
@@ -73,7 +73,7 @@ class v1_0_0 extends \phpbb\db\migration\migration
 						'payer_status'		=> array('VCHAR:16', ''),
 						'first_name'		=> array('VCHAR:10', ''),
 						'last_name'			=> array('VCHAR:10', ''),
-	//					'memo'				=> array('VCHAR', ''),
+//						'memo'				=> array('VCHAR', ''),
 					),
 
 					'PRIMARY_KEY'			=> array('transaction_id'),
@@ -90,29 +90,30 @@ class v1_0_0 extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('ppde_install_date', time())),
-			array('config.add', array('ppde_donors_group_id', '')),
-			array('config.add', array('ppde_group_as_default', false)),
-			array('config.add', array('ppde_send_confirmation', 0)),
-			array('config.add', array('ppde_num_known_donors', 0, true)),
-			array('config.add', array('ppde_num_anonymous_donors', 0, true)),
-			array('config.add', array('ppde_num_transactions', 0, true)),
+			// Global Settings
+			array('config.add', array('ppde_enable', false)),
+			array('config.add', array('ppde_account_id', '')),
+			array('config.add', array('ppde_default_currency', 1)),
 			array('config.add', array('ppde_default_value', 0)),
 			array('config.add', array('ppde_dropbox_enable', false)),
 			array('config.add', array('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')),
-			array('config.add', array('paypal_sandbox_founder_enable', true)),
-			array('config.add', array('ppde_account_id', '')),
-			array('config.add', array('ppde_default_currency', 1)),
-			array('config.add', array('ppde_enable', false)),
+
+			// Sandbox Settings
+			array('config.add', array('ppde_sandbox_enable', false)),
+			array('config.add', array('ppde_sandbox_founder_enable', true)),
+			array('config.add', array('ppde_sandbox_address', '')),
+
+			// Statistics Settings
+			array('config.add', array('ppde_stats_index_enable', false)),
 			array('config.add', array('ppde_goal', 0)),
 			array('config.add', array('ppde_goal_enable', false)),
 			array('config.add', array('ppde_raised', 0)),
 			array('config.add', array('ppde_raised_enable', false)),
-			array('config.add', array('ppde_stats_index_enable', false)),
 			array('config.add', array('ppde_used', 0)),
 			array('config.add', array('ppde_used_enable', false)),
-			array('config.add', array('paypal_sandbox_enable', false)),
-			array('config.add', array('paypal_sandbox_address', '')),
+
+			//Misc Settings
+			array('config.add', array('ppde_install_date', time())),
 
 			array('permission.add', array('u_ppde_use', true)),
 			array('permission.add', array('a_ppde_manage', true)),
@@ -146,11 +147,9 @@ class v1_0_0 extends \phpbb\db\migration\migration
 				'ACP_DONATION_MOD',
 				array(
 					'module_basename'	=> '\skouat\ppde\acp\ppde_module',
-					'modes'				=> array('overview', 'configuration', 'donation_pages', 'currency'),
+					'modes'				=> array('overview', 'settings', 'donation_pages', 'currency'),
 				)
 			)),
-
-			array('config.add', array('ppde_version', '1.0.0-dev')),
 		);
 	}
 }

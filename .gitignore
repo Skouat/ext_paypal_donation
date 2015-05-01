@@ -1,0 +1,14 @@
+### Notepad++ backups / Winmerge ###
+*.bak
+
+### Fichiers d'archivage ###
+*.zip
+
+### Composer ###
+composer.phar
+vendor/
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
