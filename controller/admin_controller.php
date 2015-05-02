@@ -21,17 +21,13 @@ class admin_controller implements admin_interface
 	protected $db;
 	protected $extension_manager;
 	protected $phpbb_log;
+	protected $ppde_operator;
 	protected $request;
 	protected $template;
 	protected $user;
 	protected $phpbb_container;
 	protected $phpbb_root_path;
 	protected $php_ext;
-	protected $ppde_data_table;
-	protected $ppde_item_table;
-
-	var $ext_name;
-	var $u_action;
 
 	/**
 	* Constructor
@@ -42,16 +38,16 @@ class admin_controller implements admin_interface
 	* @param ContainerInterface                   $container          Service container interface
 	* @param \phpbb\db\driver\driver_interface    $db                 Database connection
 	* @param \phpbb\extension\manager             $extension_manager  An instance of the phpBB extension manager
+	* @param \phpbb\log\log                       $phpbb_log          The phpBB log system
+	* @param \skouat\ppde\operators\donation_page $ppde_operator      Operator object
 	* @param \phpbb\request\request               $request            Request object
 	* @param \phpbb\template\template             $template           Template object
 	* @param \phpbb\user                          $user               User object
 	* @param string                               $phpbb_root_path    phpBB root path
 	* @param string                               $php_ext            phpEx
-	* @param string                               $ppde_data_table    Table name
-	* @param string                               $ppde_item_table    Table name
 	* @access public
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\log\log $phpbb_log, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext, $ppde_data_table, $ppde_item_table)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\log\log $phpbb_log, \skouat\ppde\operators\donation_page $ppde_operator, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;
@@ -60,13 +56,12 @@ class admin_controller implements admin_interface
 		$this->db = $db;
 		$this->extension_manager = $extension_manager;
 		$this->phpbb_log = $phpbb_log;
+		$this->ppde_operator = $ppde_operator;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		$this->ppde_data_table = $ppde_data_table;
-		$this->ppde_item_table = $ppde_item_table;
 	}
 
 	/**
@@ -240,12 +235,12 @@ class admin_controller implements admin_interface
 	}
 
 	/**
-	* Display the options a user can configure for this extension
+	* Display the general settings a user can configure for this extension
 	*
 	* @return null
 	* @access public
 	*/
-	public function display_options()
+	public function display_settings()
 	{
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
@@ -265,7 +260,7 @@ class admin_controller implements admin_interface
 			if (empty($errors))
 			{
 				// Set the options the user configured
-				$this->set_options();
+				$this->set_settings();
 
 				// Add option settings change action to the admin log
 				$phpbb_log = $this->container->get('log');
@@ -317,7 +312,7 @@ class admin_controller implements admin_interface
 	* @return null
 	* @access protected
 	*/
-	protected function set_options()
+	protected function set_settings()
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
@@ -340,6 +335,57 @@ class admin_controller implements admin_interface
 		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0));
+	}
+
+	/**
+	* Display the pages
+	*
+	* @return null
+	* @access public
+	*/
+	public function display_donation_pages()
+	{
+		// Get list of available language packs
+		$langs = $this->ppde_operator->get_languages();
+
+		// Set output vars
+		foreach ($langs as $lang => $entry)
+		{
+			$this->template->assign_block_vars('ppde_langs', array(
+				'ISO' => $lang,
+				'NAME' => $entry['name'],
+			));
+
+			// Get language id
+			$lang_id = $entry['id'];
+
+			// Grab all the pages from the db
+			$entities = $this->ppde_operator->get_item_data('donation_pages', $lang_id);
+
+			foreach ($entities as $entity => $item)
+			{
+				if ($item['lang_iso'] != $lang_id)
+				{
+					continue;
+				}
+
+				$this->template->assign_block_vars('ppde_langs.dp_list', array(
+					'DP_TITLE'			=> $this->user->lang[strtoupper($item['donation_title'])],
+					'DP_LANG'			=> (string) $lang,
+
+					'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;id=' . $item['item_id'],
+					'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;id=' . $item['item_id'],
+				));
+			}
+			unset($entities, $entity, $item);
+		}
+		unset($entry, $langs, $lang);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'U_ACTION'		=> $this->u_action,
+			'U_ADD_PAGE'	=> "{$this->u_action}&amp;action=add",
+		));
 	}
 
 	/**

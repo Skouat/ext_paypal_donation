@@ -71,7 +71,7 @@ $lang = array_merge($lang, array(
 $lang = array_merge($lang, array(
 	'PPDE_SETTINGS'			=> 'Configuration',
 	'PPDE_SETTINGS_EXPLAIN'	=> '',
-	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés',
+
 	'MODE_CURRENCY'			=> 'devise',
 	'MODE_DONATION_PAGES'	=> 'pages de dons',
 
@@ -97,24 +97,24 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE'			=> 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'	=> 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
 	'PPDE_SANDBOX_ADDRESS'					=> 'Adresse PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Inscrire votre addresse e-mail de vendeur PayPal Sandbox',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Inscrire votre addresse e-mail de vendeur PayPal Sandbox.',
 
 	// Stats Donation settings
 	'PPDE_LEGEND_STATS_SETTINGS'		=> 'Paramètres des statistiques',
 	'PPDE_STATS_INDEX_ENABLE'			=> 'Statistiques des dons sur l’index',
-	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum',
+	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum.',
 	'PPDE_RAISED_ENABLE'				=> 'Activer dons recueillis',
 	'PPDE_RAISED'						=> 'Dons recueillis',
-	'PPDE_RAISED_EXPLAIN'				=> 'Inscrire le montant total des dons actuellement reçus',
+	'PPDE_RAISED_EXPLAIN'				=> 'Inscrire le montant total des dons actuellement reçus.',
 	'PPDE_GOAL_ENABLE'					=> 'Activer Objectif des dons',
 	'PPDE_GOAL'							=> 'Objectif des dons',
-	'PPDE_GOAL_EXPLAIN'					=> 'Inscrire le montant total des dons à atteindre',
+	'PPDE_GOAL_EXPLAIN'					=> 'Inscrire le montant total des dons à atteindre.',
 	'PPDE_USED_ENABLE'					=> 'Activer dons utilisés',
 	'PPDE_USED'							=> 'Dons Utilisés',
-	'PPDE_USED_EXPLAIN'					=> 'Inscrire le montant des dons déjà utilisés',
+	'PPDE_USED_EXPLAIN'					=> 'Inscrire le montant des dons déjà utilisés.',
 
 	'PPDE_CURRENCY_ENABLE'				=> 'Activer Devise des dons',
-	'PPDE_CURRENCY_ENABLE_EXPLAIN'		=> 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons',
+	'PPDE_CURRENCY_ENABLE_EXPLAIN'		=> 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons.',
 ));
 
 /**
@@ -125,5 +125,8 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
-	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés',
+	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
+
+	// Errors
+	'PPDE_FIELD_MISSING'	=> 'Un champ obligatoire est manquant.',
 ));

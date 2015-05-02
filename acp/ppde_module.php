@@ -49,7 +49,18 @@ class ppde_module
 				$this->tpl_name = 'ppde_settings';
 
 				// Load the display options handle in the admin controller
-				$admin_controller->display_options();
+				$admin_controller->display_settings();
+			break;
+
+			case 'donation_pages':
+				// Load a template from adm/style for our ACP page
+				$this->tpl_name = 'ppde_donation_pages';
+
+				// Set the page title for our ACP page
+				$this->page_title = 'PPDE_ACP_DONATION_PAGE';
+
+				// Display module main page
+				$admin_controller->display_donation_pages();
 			break;
 
 			default:

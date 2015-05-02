@@ -1,0 +1,63 @@
+<!-- INCLUDE overall_header.html -->
+
+<a id="maincontent"></a>
+
+<h1>{L_PPDE_DP_CONFIG}</h1>
+<p>{L_PPDE_DP_CONFIG_EXPLAIN}</p>
+
+<!-- IF S_ADD_DP or S_EDIT_DP -->
+	<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+
+	<!-- IF S_ERROR -->
+		<div class="errorbox">
+			<h3>{L_WARNING}</h3>
+			<p>{ERROR_MSG}</p>
+		</div>
+	<!-- ENDIF -->
+
+<!-- ELSE -->
+	<form id="acp_donation" method="post" action="{U_ACTION}">
+		<table cellspacing="1">
+			<col class="row1" /><!-- IF .langs --><col class="row1" /><!-- ENDIF --><col class="row2" /><col class="row2" />
+			<thead>
+				<tr>
+					<th>{L_PPDE_DP_PAGE}</th>
+					<th style="width: 5%; text-align: center;">{L_PPDE_DP_LANG}</th>
+					<th style="vertical-align: top; width: 50px; text-align: center; white-space: nowrap;">{L_ACTION}</th>
+				</tr>
+			</thead>
+			<tbody>
+			<!-- BEGIN ppde_langs -->
+						<tr>
+							<td class="row3" colspan="3">{ppde_langs.NAME}</td>
+						</tr>
+				<!-- BEGIN dp_list -->
+					<!-- IF langs.dp_list.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+						<td><a href="{ppde_langs.dp_list.U_EDIT}">{ppde_langs.dp_list.DP_TITLE}</a></td>
+						<td style="text-align: center;">{ppde_langs.dp_list.DP_LANG}</td>
+						<td style="text-align: center;"><a href="{ppde_langs.dp_list.U_EDIT}">{ICON_EDIT}</a>&nbsp;<a href="{ppde_langs.dp_list.U_DELETE}">{ICON_DELETE}</a></td>
+					</tr>
+				<!-- BEGINELSE -->
+					<tr class="row2">
+						<td style="text-align: center;" colspan="3">{L_ACP_NO_ITEMS}</td>
+					</tr>
+				<!-- END dp_list -->
+			<!-- END ppde_langs -->
+			</tbody>
+		</table>
+		<fieldset class="quick">
+			<select id="donation_name" name="donation_name">
+				<option value="donation_body" selected="selected">{L_DONATION_BODY}</option>
+				<option value="donation_success">{L_DONATION_SUCCESS}</option>
+				<option value="donation_cancel">{L_DONATION_CANCEL}</option>
+			</select>
+			<input  type="hidden" name="action" value="add" />
+			<input class="button1" type="submit" name="add" value="{L_ADD}" />
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+
+	<div class="clearfix">&nbsp;</div><br style="clear: both;" />
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

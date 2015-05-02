@@ -18,12 +18,12 @@ namespace skouat\ppde\controller;
 interface admin_interface
 {
 	/**
-	* Display the options a user can configure for this extension
+	* Display the general settings a user can configure for this extension
 	*
 	* @return null
 	* @access public
 	*/
-	public function display_options();
+	public function display_settings();
 
 	/**
 	* Set page url
