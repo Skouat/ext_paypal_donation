@@ -21,12 +21,14 @@ class ppde_module
 
 		// Get an instance of the admin controller
 		$admin_controller = $phpbb_container->get('skouat.ppde.admin.controller');
+		$ppde_operator = $phpbb_container->get('skouat.ppde.operator');
 
 		// Requests
 		$action = $request->variable('action', '');
 
-		// Make the $u_action url available in the admin controller
+		// Make the $u_action url available in the admin controller and ppde_operator
 		$admin_controller->set_page_url($this->u_action);
+		$ppde_operator->set_page_url($this->u_action);
 
 		switch ($mode)
 		{
