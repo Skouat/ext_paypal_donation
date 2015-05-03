@@ -21,14 +21,14 @@ class ppde_module
 
 		// Get an instance of the admin controller
 		$admin_controller = $phpbb_container->get('skouat.ppde.admin.controller');
-		$ppde_main_entity = $phpbb_container->get('skouat.ppde.entity');
+		$ppde_dp_entity = $phpbb_container->get('skouat.ppde.entity.pages');
 
 		// Requests
 		$action = $request->variable('action', '');
 
 		// Make the $u_action url available in the admin controller and ppde_operator
 		$admin_controller->set_page_url($this->u_action);
-		$ppde_main_entity->set_page_url($this->u_action);
+		$ppde_dp_entity->set_page_url($this->u_action);
 
 		switch ($mode)
 		{
@@ -69,7 +69,7 @@ class ppde_module
 						$this->page_title = 'PPDE_DP_CONFIG';
 
 						// Load the add rule handle in the admin controller
-						$admin_controller->add_donation_page($mode);
+						$admin_controller->add_donation_page();
 
 					// Return to stop execution of this script
 					return;

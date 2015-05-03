@@ -13,45 +13,40 @@ namespace skouat\ppde\entity;
 /**
 * Entity for a donation page
 */
-class main implements main_interface
+class donation_pages implements donation_pages_interface
 {
 	/**
 	* Data for this entity
 	*
 	* @var array
-	*	item_id
-	*	item_type
-	*	item_name
-	*	item_iso_code
-	*	item_symbol
-	*	item_text
-	*	item_text_bbcode_uid
-	*	item_text_bbcode_bitfield
-	*	item_text_bbcode_options
-	*	item_left_id
-	*	item_right_id
-	*	item_enable
+	*	page_id
+	*	page_title
+	*	page_lang_id
+	*	page_content
+	*	page_content_bbcode_bitfield
+	*	page_content_bbcode_uid
+	*	page_content_bbcode_options
 	* @access protected
 	*/
-	protected $data;
+	protected $dp_data;
 
 	protected $db;
 	protected $user;
-	protected $item_data_table;
+	protected $donation_pages_table;
 
 	/**
 	* Constructor
 	*
 	* @param \phpbb\db\driver\driver_interface    $db                 Database object
 	* @param \phpbb\user                          $user               User object
-	* @param string                               $item_data_table    Name of the table used to store data
+	* @param string                               $donation_pages_table    Name of the table used to store data
 	* @access public
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $item_data_table)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $donation_pages_table)
 	{
 		$this->db = $db;
 		$this->user = $user;
-		$this->item_data_table = $item_data_table;
+		$this->donation_pages_table = $donation_pages_table;
 	}
 
 	/**
@@ -64,17 +59,16 @@ class main implements main_interface
 	public function load($id)
 	{
 		$sql = 'SELECT *
-			FROM ' . $this->item_data_table . '
-			WHERE item_id = ' . (int) $id;
+			FROM ' . $this->donation_pages_table . '
+			WHERE page_id = ' . (int) $id;
 		$result = $this->db->sql_query($sql);
-		$this->data = $this->db->sql_fetchrow($result);
+		$this->dp_data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		if ($this->data === false)
+		if ($this->dp_data === false)
 		{
 			// A item does not exist
-			$message = call_user_func_array(array($this->user, 'lang'), array_merge(array('PPDE_NO_ITEM'))) . adm_back_link($this->u_action);
-			trigger_error($message, E_USER_WARNING);
+			display_error_message('PPDE_NO_PAGE');
 		}
 
 		return $this;
@@ -88,30 +82,24 @@ class main implements main_interface
 	* All data is validated and an exception is thrown if any data is invalid.
 	*
 	* @param array $data Data array, typically from the database
-	* @return page_interface $this->data object
+	* @return main_interface $this->dp_data object
 	* @access public
 	*/
 	public function import($data)
 	{
 		// Clear out any saved data
-		$this->data = array();
+		$this->dp_data = array();
 
 		// All of our fields
 		$fields = array(
-			// column		=> data type (see settype())
-			'item_id'		=> 'integer',
-			'item_type'		=> 'string',
-			'item_name'		=> 'string',
-			'item_iso_code'	=> 'integer',
-			'item_symbol'	=> 'string',
-			'item_left_id'	=> 'integer',
-			'item_right_id'	=> 'integer',
-			'item_enable'	=> 'boolean',
-
-			'item_text'						=> 'string',
-			'item_text_bbcode_uid'			=> 'string',
-			'item_text_bbcode_bitfield'		=> 'string',
-			'item_text_bbcode_options'		=> 'integer',
+			// column						=> data type (see settype())
+			'page_id'						=> 'integer',
+			'page_title'					=> 'string',
+			'page_lang_id'					=> 'integer',
+			'page_content'					=> 'string',
+			'page_content_bbcode_bitfield'	=> 'string',
+			'page_content_bbcode_uid'		=> 'string',
+			'page_content_bbcode_options'	=> 'integer',
 		);
 
 		// Go through the basic fields and set them to our data array
@@ -120,8 +108,7 @@ class main implements main_interface
 			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field]))
 			{
-				$message = call_user_func_array(array($this->user, 'lang'), array_merge(array('PPDE_FIELD_MISSING', $field))) . adm_back_link($this->u_action);
-				trigger_error($message, E_USER_WARNING);
+				display_error_message('PPDE_FIELD_MISSING');
 			}
 
 			// settype passes values by reference
@@ -130,10 +117,10 @@ class main implements main_interface
 			// We're using settype to enforce data types
 			settype($value, $type);
 
-			$this->data[$field] = $value;
+			$this->dp_data[$field] = $value;
 		}
 
-		return $this->data;
+		return $this->dp_data;
 	}
 
 	/**
@@ -146,26 +133,21 @@ class main implements main_interface
 	*/
 	public function insert()
 	{
-		if (!empty($this->data['item_id']))
+		if (!empty($this->dp_data['page_id']))
 		{
-			// The item already exists
-			$message = call_user_func_array(array($this->user, 'lang'), array_merge(array('PPDE_ITEM_EXIST'))) . adm_back_link($this->u_action);
-			trigger_error($message, E_USER_WARNING);
+			// The page already exists
+			display_error_message('PPDE_PAGE_EXIST');
 		}
 
-		// Resets values required for the nested set system
-		$this->data['item_left_id'] = 0;
-		$this->data['item_right_id'] = 0;
+		// Make extra sure there is no page_id set
+		unset($this->dp_data['page_id']);
 
-		// Make extra sure there is no item_id set
-		unset($this->data['item_id']);
-
-		// Insert the rule data to the database
-		$sql = 'INSERT INTO ' . $this->item_data_table . ' ' . $this->db->sql_build_array('INSERT', $this->data);
+		// Insert the page data to the database
+		$sql = 'INSERT INTO ' . $this->donation_pages_table . ' ' . $this->db->sql_build_array('INSERT', $this->dp_data);
 		$this->db->sql_query($sql);
 
-		// Set the rule_id using the id created by the SQL insert
-		$this->data['item_id'] = (int) $this->db->sql_nextid();
+		// Set the page_id using the id created by the SQL insert
+		$this->dp_data['page_id'] = (int) $this->db->sql_nextid();
 
 		return $this;
 	}
@@ -173,12 +155,12 @@ class main implements main_interface
 	/**
 	* Get id
 	*
-	* @return int Item identifier
+	* @return int Page identifier
 	* @access public
 	*/
 	public function get_id()
 	{
-		return (isset($this->data['item_id'])) ? (int) $this->data['item_id'] : 0;
+		return (isset($this->dp_data['page_id'])) ? (int) $this->dp_data['page_id'] : 0;
 	}
 
 	/**
@@ -189,84 +171,46 @@ class main implements main_interface
 	*/
 	public function get_lang_id()
 	{
-		return (isset($this->data['item_iso_code'])) ? (int) $this->data['item_iso_code'] : 0;
+		return (isset($this->dp_data['page_lang_id'])) ? (int) $this->dp_data['page_lang_id'] : 0;
 	}
 
 	/**
-
-	* Set Lang identifier
-	*
-	* @param int $lang
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Set Lang identifier
+	 *
+	 * @param int $lang
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function set_lang_id($lang)
 	{
 		// Set the lang_id on our data array
-		$this->data['item_iso_code'] = (int) $lang;
+		$this->dp_data['page_lang_id'] = (int) $lang;
 
 		return $this;
 	}
 
 	/**
-	* Get ISO code
+	* Get Page title
 	*
-	* @return string Item ISO Code
+	* @return string Title page
 	* @access public
 	*/
-	public function get_iso_code()
+	public function get_title()
 	{
-		return (isset($this->data['item_iso_code'])) ? (int) $this->data['item_iso_code'] : '';
+		return (isset($this->dp_data['page_title'])) ? (string) $this->dp_data['page_title'] : '';
 	}
 
 	/**
-	* Get Item type
-	*
-	* @return string Item type
-	* @access public
-	*/
-	public function get_type()
-	{
-		return (isset($this->data['item_name'])) ? (string) $this->data['item_name'] : '';
-	}
-
-	/**
-	* Set Item type
-	*
-	* @param string $type
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
-	public function set_type($type)
+	 * Set Page title
+	 *
+	 * @param string $title
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_title($title)
 	{
 		// Set the item type on our data array
-		$this->data['item_type'] = (string) $type;
-
-		return $this;
-	}
-
-	/**
-	* Get Item name
-	*
-	* @return string Item name
-	* @access public
-	*/
-	public function get_name()
-	{
-		return (isset($this->data['item_name'])) ? (string) $this->data['item_name'] : '';
-	}
-
-	/**
-	* Set name
-	*
-	* @param string $name
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
-	public function set_name($name)
-	{
-		// Set the item_name on our data array
-		$this->data['item_name'] = (string) $name;
+		$this->dp_data['page_title'] = (string) $title;
 
 		return $this;
 	}
@@ -280,9 +224,9 @@ class main implements main_interface
 	public function get_message_for_edit()
 	{
 		// Use defaults if these haven't been set yet
-		$message = (isset($this->data['item_text'])) ? $this->data['item_text'] : '';
-		$uid = (isset($this->data['item_text_bbcode_uid'])) ? $this->data['item_text_bbcode_uid'] : '';
-		$options = (isset($this->data['item_text_bbcode_options'])) ? (int) $this->data['item_text_bbcode_options'] : 0;
+		$message = (isset($this->dp_data['page_content'])) ? $this->dp_data['page_content'] : '';
+		$uid = (isset($this->dp_data['page_content_bbcode_uid'])) ? $this->dp_data['page_content_bbcode_uid'] : '';
+		$options = (isset($this->dp_data['page_content_bbcode_options'])) ? (int) $this->dp_data['page_content_bbcode_options'] : 0;
 
 		// Generate for edit
 		$message_data = generate_text_for_edit($message, $uid, $options);
@@ -300,10 +244,10 @@ class main implements main_interface
 	public function get_message_for_display($censor_text = true)
 	{
 		// If these haven't been set yet; use defaults
-		$message = (isset($this->data['item_text'])) ? $this->data['item_text'] : '';
-		$uid = (isset($this->data['item_text_bbcode_uid'])) ? $this->data['item_text_bbcode_uid'] : '';
-		$bitfield = (isset($this->data['item_text_bbcode_bitfield'])) ? $this->data['item_text_bbcode_bitfield'] : '';
-		$options = (isset($this->data['item_text_bbcode_options'])) ? (int) $this->data['item_text_bbcode_options'] : 0;
+		$message = (isset($this->dp_data['page_content'])) ? $this->dp_data['page_content'] : '';
+		$uid = (isset($this->dp_data['page_content_bbcode_uid'])) ? $this->dp_data['page_content_bbcode_uid'] : '';
+		$bitfield = (isset($this->dp_data['page_content_bbcode_bitfield'])) ? $this->dp_data['page_content_bbcode_bitfield'] : '';
+		$options = (isset($this->dp_data['page_content_bbcode_options'])) ? (int) $this->dp_data['page_content_bbcode_options'] : 0;
 
 		// Generate for display
 		return generate_text_for_display($message, $uid, $bitfield, $options, $censor_text);
@@ -323,9 +267,9 @@ class main implements main_interface
 		generate_text_for_storage($message, $uid, $bitfield, $flags, $this->message_bbcode_enabled(), $this->message_magic_url_enabled(), $this->message_smilies_enabled());
 
 		// Set the message to our data array
-		$this->data['item_text'] = $message;
-		$this->data['item_text_bbcode_uid'] = $uid;
-		$this->data['item_text_bbcode_bitfield'] = $bitfield;
+		$this->dp_data['page_content'] = $message;
+		$this->dp_data['page_content_bbcode_uid'] = $uid;
+		$this->dp_data['page_content_bbcode_bitfield'] = $bitfield;
 		// Flags are already set
 
 		return $this;
@@ -339,7 +283,7 @@ class main implements main_interface
 	*/
 	public function message_bbcode_enabled()
 	{
-		return ($this->data['item_text_bbcode_options'] & OPTION_FLAG_BBCODE);
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
 	}
 
 	/**
@@ -376,7 +320,7 @@ class main implements main_interface
 	*/
 	public function message_magic_url_enabled()
 	{
-		return ($this->data['item_text_bbcode_options'] & OPTION_FLAG_LINKS);
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
 	}
 
 	/**
@@ -413,7 +357,7 @@ class main implements main_interface
 	*/
 	public function message_smilies_enabled()
 	{
-		return ($this->data['item_text_bbcode_options'] & OPTION_FLAG_SMILIES);
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
 	}
 
 	/**
@@ -454,31 +398,44 @@ class main implements main_interface
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true)
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
-		$this->data['item_text_bbcode_options'] = (isset($this->data['item_text_bbcode_options'])) ? $this->data['item_text_bbcode_options'] : 0;
+		$this->dp_data['page_content_bbcode_options'] = (isset($this->dp_data['page_content_bbcode_options'])) ? $this->dp_data['page_content_bbcode_options'] : 0;
 
 		// If we're setting the option and the option is not already set
-		if (!$negate && !($this->data['item_text_bbcode_options'] & $option_value))
+		if (!$negate && !($this->dp_data['page_content_bbcode_options'] & $option_value))
 		{
 			// Add the option to the options
-			$this->data['item_text_bbcode_options'] += $option_value;
+			$this->dp_data['page_content_bbcode_options'] += $option_value;
 		}
 
 		// If we're unsetting the option and the option is already set
-		if ($negate && $this->data['item_text_bbcode_options'] & $option_value)
+		if ($negate && $this->dp_data['page_content_bbcode_options'] & $option_value)
 		{
 			// Subtract the option from the options
-			$this->data['item_text_bbcode_options'] -= $option_value;
+			$this->dp_data['page_content_bbcode_options'] -= $option_value;
 		}
 
 		// Reparse the message
-		if ($reparse_message && !empty($this->data['item_text']))
+		if ($reparse_message && !empty($this->dp_data['page_content']))
 		{
-			$message = $this->data['item_text'];
+			$message = $this->dp_data['page_content'];
 
-			decode_message($message, $this->data['item_text_bbcode_uid']);
+			decode_message($message, $this->dp_data['page_content_bbcode_uid']);
 
 			$this->set_message($message);
 		}
+	}
+
+	/**
+	 * Display Error message
+	 *
+	 * @param string $lang_key
+	 * @return null
+	 * @access protected
+	 */
+	protected function display_error_message($lang_key)
+	{
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
+		trigger_error($message, E_USER_WARNING);
 	}
 
 	/**

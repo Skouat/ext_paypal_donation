@@ -15,53 +15,51 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
 * Operator for a set of pages
 */
-class donation_page implements donation_page_interface
+class donation_pages implements donation_pages_interface
 {
 	protected $data;
 
 	protected $container;
 	protected $db;
-	protected $ppde_item_table;
+	protected $ppde_donation_pages_table;
 
 	/**
 	* Constructor
 	*
-	* @param ContainerInterface                   $container          Service container interface
-	* @param \phpbb\db\driver\driver_interface    $db                 Database connection
-	* @param string                               $ppde_item_table    Table name
+	* @param ContainerInterface                   $container                    Service container interface
+	* @param \phpbb\db\driver\driver_interface    $db                           Database connection
+	* @param string                               $ppde_donation_pages_table    Table name
 	* @access public
 	*/
-	public function __construct(ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_item_table)
+	public function __construct(ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_donation_pages_table)
 	{
 		$this->container = $container;
 		$this->db = $db;
-		$this->ppde_item_table = $ppde_item_table;
+		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
 	}
 
 	/**
-	* Get data from item_data table
+	* Get data from dp_data table
 	*
-	* @param string $item_type
 	* @param int    $lang_id
 	* @return array Array of page data entities
 	* @access public
 	*/
-	public function get_item_data($item_type, $lang_id = 0)
+	public function get_pages_data($lang_id = 0)
 	{
 		$entities = array();
 
 		// Load all page data from the database
 		// Build sql query with alias field
 		$sql = 'SELECT *
-				FROM ' . $this->ppde_item_table . "
-				WHERE item_type = '" . $this->db->sql_escape($item_type) . "'
-				AND item_iso_code = " . (int) ($lang_id);
+				FROM ' . $this->ppde_donation_pages_table . "
+				WHERE page_lang_id = " . (int) ($lang_id);
 		$result = $this->db->sql_query($sql);
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Import each donatino page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity')->import($row);
+			// Import each donation page row into an entity
+			$entities[] = $this->container->get('skouat.ppde.entity.pages')->import($row);
 		}
 		$this->db->sql_freeresult($result);
 
@@ -102,21 +100,21 @@ class donation_page implements donation_page_interface
 	}
 
 	/**
-	* Add a Item
+	* Add a Page
 	*
-	* @param object $entity Item entity with new data to insert
-	* @return page_interface Added page entity
+	* @param object $entity Page entity with new data to insert
+	* @return donation_pages_interface Added page entity
 	* @access public
 	*/
-	public function add_item_data($entity)
+	public function add_pages_data($entity)
 	{
-		// Insert the page data to the database
+		// Insert the data to the database
 		$entity->insert();
 
-		// Get the newly inserted page's identifier
-		$item_id = $entity->get_id();
+		// Get the newly inserted identifier
+		$page_id = $entity->get_id();
 
 		// Reload the data to return a fresh page entity
-		return $entity->load($item_id);
+		return $entity->load($page_id);
 	}
 }

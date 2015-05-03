@@ -15,17 +15,16 @@ namespace skouat\ppde\operators;
 *
 * This describes all of the methods we'll have for working with a set of pages
 */
-interface donation_page_interface
+interface donation_pages_interface
 {
 	/**
-	* Get data from item_data table
+	* Get data from dp_data table
 	*
-	* @param string $item_type - Can only be "donation_page" or "currency"
 	* @param int    $lang_id
 	* @return array Array of page data entities
 	* @access public
 	*/
-	public function get_item_data($item_type, $lang_id = 0);
+	public function get_pages_data($lang_id = 0);
 
 	/**
 	* Get list language packs
@@ -37,11 +36,11 @@ interface donation_page_interface
 	public function get_languages($lang_id = 0);
 
 	/**
-	* Add a Item
+	* Add a Page
 	*
-	* @param object $entity Item entity with new data to insert
-	* @return page_interface Added page entity
+	* @param object $entity Page entity with new data to insert
+	* @return donation_pages_interface Added page entity
 	* @access public
 	*/
-	public function add_item_data($entity);
+	public function add_pages_data($entity);
 }

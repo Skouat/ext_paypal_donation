@@ -34,22 +34,22 @@ class admin_controller implements admin_interface
 	/**
 	* Constructor
 	*
-	* @param \phpbb\auth\auth                     $auth               Authentication object
-	* @param \phpbb\cache\service                 $cache              Cache object
-	* @param \phpbb\config\config                 $config             Config object
-	* @param ContainerInterface                   $container          Service container interface
-	* @param \phpbb\db\driver\driver_interface    $db                 Database connection
-	* @param \phpbb\extension\manager             $extension_manager  An instance of the phpBB extension manager
-	* @param \phpbb\log\log                       $phpbb_log          The phpBB log system
-	* @param \skouat\ppde\operators\donation_page $ppde_operator      Operator object
-	* @param \phpbb\request\request               $request            Request object
-	* @param \phpbb\template\template             $template           Template object
-	* @param \phpbb\user                          $user               User object
-	* @param string                               $phpbb_root_path    phpBB root path
-	* @param string                               $php_ext            phpEx
+	* @param \phpbb\auth\auth                       $auth               Authentication object
+	* @param \phpbb\cache\service                   $cache              Cache object
+	* @param \phpbb\config\config                   $config             Config object
+	* @param ContainerInterface                     $container          Service container interface
+	* @param \phpbb\db\driver\driver_interface      $db                 Database connection
+	* @param \phpbb\extension\manager               $extension_manager  An instance of the phpBB extension manager
+	* @param \phpbb\log\log                         $phpbb_log          The phpBB log system
+	* @param \skouat\ppde\operators\donation_pages  $ppde_operator      Operator object
+	* @param \phpbb\request\request                 $request            Request object
+	* @param \phpbb\template\template               $template           Template object
+	* @param \phpbb\user                            $user               User object
+	* @param string                                 $phpbb_root_path    phpBB root path
+	* @param string                                 $php_ext            phpEx
 	* @access public
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\log\log $phpbb_log, \skouat\ppde\operators\donation_page $ppde_operator, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, \phpbb\extension\manager $extension_manager, \phpbb\log\log $phpbb_log, \skouat\ppde\operators\donation_pages $ppde_operator, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;
@@ -67,7 +67,7 @@ class admin_controller implements admin_interface
 	}
 
 	/**
-	* Display the overwiew page
+	* Display the overview page
 	*
 	* @param string $id        Module id
 	* @param string $mode      Module categorie
@@ -361,25 +361,25 @@ class admin_controller implements admin_interface
 			$lang_id = $entry['id'];
 
 			// Grab all the pages from the db
-			$entities = $this->ppde_operator->get_item_data('donation_pages', $lang_id);
+			$entities = $this->ppde_operator->get_pages_data($lang_id);
 
-			foreach ($entities as $item)
+			foreach ($entities as $page)
 			{
 				// Do not treat the item whether language identifier does not match
-				if ($item['item_iso_code'] != $lang_id)
+				if ($page['page_lang_id'] != $lang_id)
 				{
 					continue;
 				}
 
 				$this->template->assign_block_vars('ppde_langs.dp_list', array(
-					'DONATION_PAGE_TITLE'	=> $this->user->lang[strtoupper($item['item_name'])],
+					'DONATION_PAGE_TITLE'	=> $this->user->lang[strtoupper($page['page_title'])],
 					'DONATION_PAGE_LANG'	=> (string) $lang,
 
-					'U_DELETE'				=> $this->u_action . '&amp;action=delete&amp;item_id=' . $item['item_id'],
-					'U_EDIT'				=> $this->u_action . '&amp;action=edit&amp;item_id=' . $item['item_id'],
+					'U_DELETE'				=> $this->u_action . '&amp;action=delete&amp;page_id=' . $page['page_id'],
+					'U_EDIT'				=> $this->u_action . '&amp;action=edit&amp;page_id=' . $page['page_id'],
 				));
 			}
-			unset($entities, $item);
+			unset($entities, $page);
 		}
 		unset($entry, $langs, $lang);
 
@@ -401,24 +401,23 @@ class admin_controller implements admin_interface
 		add_form_key('add_edit_donation_page');
 
 		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity');
+		$entity = $this->container->get('skouat.ppde.entity.pages');
 
 		// Collect the form data
 		$data = array(
-			'item_type'		=> 'donation_pages',
-			'item_name'		=> $this->request->variable('item_name', ''),
-			'item_iso_code'	=> $this->request->variable('lang_id', '', true),
-			'item_text'		=> $this->request->variable('item_text', '', true),
+			'page_title'	=> $this->request->variable('page_title', ''),
+			'page_lang_id'	=> $this->request->variable('lang_id', '', true),
+			'page_content'	=> $this->request->variable('page_content', '', true),
 			'bbcode'		=> !$this->request->variable('disable_bbcode', false),
 			'magic_url'		=> !$this->request->variable('disable_magic_url', false),
 			'smilies'		=> !$this->request->variable('disable_smilies', false),
 		);
 
 		// Set template vars for language select menu
-		$this->create_language_options($data['item_iso_code']);
+		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_item_data($entity, $data);
+		$this->add_edit_donation_pages_data($entity, $data);
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
@@ -430,14 +429,14 @@ class admin_controller implements admin_interface
 	}
 
 	/**
-	* Process item data to be added or edited
+	* Process donation pages data to be added or edited
 	*
-	* @param object $entity The rule entity object
+	* @param object $entity The donation pages entity object
 	* @param array $data The form data to be processed
 	* @return null
 	* @access protected
 	*/
-	protected function add_edit_item_data($entity, $data)
+	protected function add_edit_donation_pages_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$submit = $this->request->is_set_post('submit');
@@ -466,23 +465,22 @@ class admin_controller implements admin_interface
 
 		// Grab the form's data fields
 		$item_fields = array(
-			'lang_id'	=> $data['item_iso_code'],
-			'name'		=> $data['item_name'],
-			'type'		=> $data['item_type'],
-			'message'	=> $data['item_text'],
+			'lang_id'	=> $data['page_lang_id'],
+			'title'		=> $data['page_title'],
+			'message'	=> $data['page_content'],
 		);
 
 		// Set the donation page's data in the entity
-		foreach ($item_fields as $entity_function => $item_data)
+		foreach ($item_fields as $entity_function => $page_data)
 		{
 				// Calling the set_$entity_function on the entity and passing it $rule_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($item_data));
+				call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
 		}
-		unset($item_fields, $entity_function, $item_data);
+		unset($item_fields, $entity_function, $page_data);
 
 		// Set hidden fields
 		$s_hidden_fields = build_hidden_fields(array(
-			'item_name'	=> $entity->get_name(),
+			'page_title'	=> $entity->get_title(),
 		));
 
 		// If the form has been submitted or previewed
@@ -495,9 +493,9 @@ class admin_controller implements admin_interface
 			}
 
 			// Do not allow an empty item name
-			if ($entity->get_name() == '')
+			if ($entity->get_title() == '')
 			{
-				$errors[] = $this->user->lang('PPDE_MUST_SELECT_ITEM');
+				$errors[] = $this->user->lang('PPDE_MUST_SELECT_PAGE');
 			}
 
 			// Do not allow an unselected language name
@@ -532,7 +530,7 @@ class admin_controller implements admin_interface
 			else
 			{
 				// Add a new item entity to the database
-				$this->ppde_operator->add_item_data($entity);
+				$this->ppde_operator->add_pages_data($entity);
 
 				// Grab the local language name
 				$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
@@ -547,10 +545,9 @@ class admin_controller implements admin_interface
 			'S_ERROR'			=> (sizeof($errors)) ? true : false,
 			'ERROR_MSG'			=> (sizeof($errors)) ? implode('<br />', $errors) : '',
 
-			'L_DONATION_PAGES_TITLE'		=> $this->user->lang(strtoupper($entity->get_name())),
-			'L_DONATION_PAGES_TITLE_EXPLAIN'=> $this->user->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
+			'L_DONATION_PAGES_TITLE'		=> $this->user->lang(strtoupper($entity->get_title())),
+			'L_DONATION_PAGES_TITLE_EXPLAIN'=> $this->user->lang(strtoupper($entity->get_title()) . '_EXPLAIN'),
 			'DONATION_BODY'					=> $entity->get_message_for_edit(),
-			'LANG_ISO'						=> $data['item_iso_code'],
 
 			'S_BBCODE_DISABLE_CHECKED'		=> !$entity->message_bbcode_enabled(),
 			'S_SMILIES_DISABLE_CHECKED'		=> !$entity->message_smilies_enabled(),

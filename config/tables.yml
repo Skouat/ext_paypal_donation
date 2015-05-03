@@ -1,3 +1,2 @@
 parameters:
-    skouat.ppde.tables.ppde_data: %core.table_prefix%ppde_data
-    skouat.ppde.tables.ppde_item: %core.table_prefix%ppde_item
+    skouat.ppde.tables.ppde_donation_pages: %core.table_prefix%ppde_donation_pages

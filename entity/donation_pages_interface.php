@@ -15,7 +15,7 @@ namespace skouat\ppde\entity;
 *
 * This describes all of the methods we'll have for a single donation page
 */
-interface main_interface
+interface donation_pages_interface
 {
 	/**
 	* Load the data from the database for this rule
@@ -66,55 +66,30 @@ interface main_interface
 	public function get_lang_id();
 
 	/**
-	* Set Lang identifier
-	*
-	* @param int $lang
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Get Page title
+	 *
+	 * @return string Title type
+	 * @access public
+	 */
+	public function get_title();
+
+	/**
+	 * Set Lang identifier
+	 *
+	 * @param int $lang
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function set_lang_id($lang);
 
 	/**
-	* Get ISO code
-	*
-	* @return string Item ISO Code
-	* @access public
-	*/
-	public function get_iso_code();
-
-	/**
-	* Get Item type
-	*
-	* @return string Item type
-	* @access public
-	*/
-	public function get_type();
-
-	/**
-	* Set Item type
-	*
-	* @param string $type
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
-	public function set_type($type);
-
-	/**
-	* Get Item name
-	*
-	* @return string Item name
-	* @access public
-	*/
-	public function get_name();
-
-	/**
-	* Set name
-	*
-	* @param string $name
-	* @return main_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
-	public function set_name($name);
+	 * Set Page title
+	 *
+	 * @param string $title
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_title($title);
 
 	/**
 	* Get message for edit

@@ -77,11 +77,11 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'ACP_DONATION_MOD',
 				array(
 					'module_basename'	=> '\skouat\ppde\acp\ppde_module',
-					'modes'				=> array('overview', 'settings', 'donation_pages', 'currency'),
+					'modes'				=> array('overview', 'settings', 'donation_pages'),
 				)
 			)),
 
-			array('custom', array(array(&$this, 'add_ppde_item_data'))),
+			array('custom', array(array(&$this, 'add_ppde_donation_pages_data'))),
 
 			array('config.add', array('ppde_version', '1.0.0-dev')),
 		);
@@ -93,43 +93,28 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 	* @return null
 	* @access public
 	*/
-	public function add_ppde_item_data()
+	public function add_ppde_donation_pages_data()
 	{
 		// Define data
-		$item_data = array(
+		$dp_data = array(
 			array(
-				'item_type'			=> 'donation_pages',
-				'item_name'			=> 'donation_body',
-				'item_iso_code'		=> 1,
-				'item_symbol'		=> '',
-				'item_text'			=> '',
-				'item_enable'		=> true,
-				'item_left_id'		=> 0,
-				'item_right_id'		=> 0,
+				'page_title'	=> 'donation_body',
+				'page_lang_id'	=> 1,
+				'page_content'	=> '',
 			),
 			array(
-				'item_type'			=> 'donation_pages',
-				'item_name'			=> 'donation_success',
-				'item_iso_code'		=> 1,
-				'item_symbol'		=> '',
-				'item_text'			=> '',
-				'item_enable'		=> true,
-				'item_left_id'		=> 0,
-				'item_right_id'		=> 0,
+				'page_title'	=> 'donation_success',
+				'page_lang_id'	=> 1,
+				'page_content'	=> '',
 			),
 			array(
-				'item_type'			=> 'donation_pages',
-				'item_name'			=> 'donation_cancel',
-				'item_iso_code'		=> 1,
-				'item_symbol'		=> '',
-				'item_text'			=> '',
-				'item_enable'		=> true,
-				'item_left_id'		=> 0,
-				'item_right_id'		=> 0,
+				'page_title'	=> 'donation_cancel',
+				'page_lang_id'	=> 1,
+				'page_content'	=> '',
 			),
 		);
 
 		// Insert data
-		$this->db->sql_multi_insert($this->table_prefix . 'ppde_item', $item_data);
+		$this->db->sql_multi_insert($this->table_prefix . 'ppde_donation_pages', $dp_data);
 	}
 }

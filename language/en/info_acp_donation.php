@@ -159,8 +159,8 @@ $lang = array_merge($lang, array(
 
 	// Errors
 	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
-	'PPDE_ITEM_EXIST'		=> 'The selected item already exists.',
-	'PPDE_NO_ITEM'			=> 'No item found.',
-	'PPDE_MUST_SELECT_ITEM'	=> 'The selected item does not exist.',
+	'PPDE_NO_PAGE'			=> 'No donation page found.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'The selected donation page does not exist.',
 	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',
+	'PPDE_PAGE_EXIST'		=> 'This donation page already exists.',
 ));

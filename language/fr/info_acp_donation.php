@@ -159,8 +159,8 @@ $lang = array_merge($lang, array(
 
 	// Errors
 	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
-	'PPDE_ITEM_EXIST'		=> 'L’élément sélectionné existe déjà.',
-	'PPDE_NO_ITEM'			=> 'Aucun élément n’a été trouvé.',
-	'PPDE_MUST_SELECT_ITEM'	=> 'L’élément sélectionné n’existe pas.',
+	'PPDE_NO_PAGE'			=> 'Aucune page de dons n’a été trouvée.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
+	'PPDE_PAGE_EXIST'		=> 'La page de dons sélectionnée existe déjà.',
 ));
