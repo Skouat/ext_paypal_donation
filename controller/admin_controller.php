@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class admin_controller implements admin_interface
 {
-	protected $local_lang_name;
+	protected $lang_local_name;
 
 	protected $auth;
 	protected $cache;
