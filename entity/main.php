@@ -45,7 +45,6 @@ class main implements main_interface
 	* @param \phpbb\db\driver\driver_interface    $db                 Database object
 	* @param \phpbb\user                          $user               User object
 	* @param string                               $item_data_table    Name of the table used to store data
-	* @return \skouat\ppde\entity\main
 	* @access public
 	*/
 	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $item_data_table)
