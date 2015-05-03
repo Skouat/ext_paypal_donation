@@ -40,7 +40,10 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'ACP_DONATION_MOD' => 'PayPal Donation',
+	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'				=> 'Vue d’ensemble',
+	'PPDE_ACP_SETTINGS'				=> 'Paramètres généraux',
+	'PPDE_ACP_DONATION_PAGES'		=> 'Pages des dons',
 ));
 
 /**
@@ -69,7 +72,7 @@ $lang = array_merge($lang, array(
 * mode: settings
 */
 $lang = array_merge($lang, array(
-	'PPDE_SETTINGS'			=> 'Configuration',
+	'PPDE_SETTINGS'			=> 'Paramètres généraux',
 	'PPDE_SETTINGS_EXPLAIN'	=> '',
 
 	'MODE_CURRENCY'			=> 'devise',
@@ -118,6 +121,32 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+* mode: donation pages
+* Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
+*/
+$lang = array_merge($lang, array(
+	// Donation Page settings
+	'PPDE_DP_CONFIG'			=> 'Pages des dons',
+	'PPDE_DP_CONFIG_EXPLAIN'	=> 'Permet d’améliorer le rendu des pages personalisables de l’extension.',
+
+	'PPDE_DP_PAGE'				=> 'Type de page',
+	'PPDE_DP_LANG'				=> 'Langue',
+	'PPDE_DP_LANG_SELECT'		=> 'Sélectionnez une langue',
+
+	// Donation Page Body settings
+	'DONATION_BODY'				=> 'Page principale',
+	'DONATION_BODY_EXPLAIN'		=> 'Saisir le texte que vous souhaitez afficher sur la page principale.',
+
+	// Donation Success settings
+	'DONATION_SUCCESS'			=> 'Page des dons validés',
+	'DONATION_SUCCESS_EXPLAIN'	=> 'Saisir le texte que vous souhaitez afficher sur la page des dons validés.',
+
+	// Donation Cancel settings
+	'DONATION_CANCEL'			=> 'Page des dons annulés',
+	'DONATION_CANCEL_EXPLAIN'	=> 'Saisir le texte que vous souhaitez afficher sur la page des dons annulés.',
+));
+
+/**
 * logs
 */
 $lang = array_merge($lang, array(
@@ -125,8 +154,13 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
+	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
 	// Errors
-	'PPDE_FIELD_MISSING'	=> 'Un champ obligatoire est manquant.',
+	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
+	'PPDE_ITEM_EXIST'		=> 'L’élément sélectionné existe déjà.',
+	'PPDE_NO_ITEM'			=> 'Aucun élément n’a été trouvé.',
+	'PPDE_MUST_SELECT_ITEM'	=> 'L’élément sélectionné n’existe pas.',
+	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
 ));

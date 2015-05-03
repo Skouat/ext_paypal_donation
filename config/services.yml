@@ -19,9 +19,16 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
-    skouat.ppde.operator:
-        class: skouat\ppde\operators\donation_page
+    skouat.ppde.entity:
+        class: skouat\ppde\entity\main
         arguments:
             - @dbal.conn
             - @user
+            - %skouat.ppde.tables.ppde_item%
+
+    skouat.ppde.operator:
+        class: skouat\ppde\operators\donation_page
+        arguments:
+            - @service_container
+            - @dbal.conn
             - %skouat.ppde.tables.ppde_item%

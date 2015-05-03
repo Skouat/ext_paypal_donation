@@ -21,20 +21,20 @@ class ppde_module
 
 		// Get an instance of the admin controller
 		$admin_controller = $phpbb_container->get('skouat.ppde.admin.controller');
-		$ppde_operator = $phpbb_container->get('skouat.ppde.operator');
+		$ppde_main_entity = $phpbb_container->get('skouat.ppde.entity');
 
 		// Requests
 		$action = $request->variable('action', '');
 
 		// Make the $u_action url available in the admin controller and ppde_operator
 		$admin_controller->set_page_url($this->u_action);
-		$ppde_operator->set_page_url($this->u_action);
+		$ppde_main_entity->set_page_url($this->u_action);
 
 		switch ($mode)
 		{
 			case 'overview':
 				// Set the page title for our ACP page
-				$this->page_title = 'PPDE_OVERVIEW';
+				$this->page_title = 'PPDE_ACP_OVERVIEW';
 
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'acp_donation';
@@ -45,7 +45,7 @@ class ppde_module
 
 			case 'settings':
 				// Set the page title for our ACP page
-				$this->page_title = 'PPDE_SETTINGS';
+				$this->page_title = 'PPDE_ACP_SETTINGS';
 
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_settings';
@@ -59,7 +59,21 @@ class ppde_module
 				$this->tpl_name = 'ppde_donation_pages';
 
 				// Set the page title for our ACP page
-				$this->page_title = 'PPDE_ACP_DONATION_PAGE';
+				$this->page_title = 'PPDE_ACP_DONATION_PAGES';
+
+				// Perform any actions submitted by the user
+				switch ($action)
+				{
+					case 'add':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DP_CONFIG';
+
+						// Load the add rule handle in the admin controller
+						$admin_controller->add_donation_page($mode);
+
+					// Return to stop execution of this script
+					return;
+				}
 
 				// Display module main page
 				$admin_controller->display_donation_pages();

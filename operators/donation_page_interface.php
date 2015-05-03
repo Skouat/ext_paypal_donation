@@ -28,33 +28,20 @@ interface donation_page_interface
 	public function get_item_data($item_type, $lang_id = 0);
 
 	/**
-	* Import and validate data for donation page
+	* Get list language packs
 	*
-	* Used when the data is already loaded externally.
-	* Any existing data on this page is over-written.
-	* All data is validated and an exception is thrown if any data is invalid.
-	*
-	* @param array $data Data array, typically from the database
-	* @return page_interface $this->data object
-	* @access public
-	* @throws trigger_error()
-	*/
-	public function import($data);
-
-	/**
-	* Get list of all installed language packs
-	*
+	* @param int    $lang_id
 	* @return array Array of page data entities
 	* @access public
 	*/
-	public function get_languages();
+	public function get_languages($lang_id = 0);
 
 	/**
-	* Set page url
+	* Add a Item
 	*
-	* @param string $u_action Custom form action
-	* @return null
+	* @param object $entity Item entity with new data to insert
+	* @return page_interface Added page entity
 	* @access public
 	*/
-	public function set_page_url($u_action);
+	public function add_item_data($entity);
 }

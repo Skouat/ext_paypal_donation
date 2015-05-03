@@ -5,7 +5,16 @@
 <h1>{L_PPDE_DP_CONFIG}</h1>
 <p>{L_PPDE_DP_CONFIG_EXPLAIN}</p>
 
-<!-- IF S_ADD_DP or S_EDIT_DP -->
+<!-- IF S_ADD_DONATION_PAGE or S_EDIT_DONATION_PAGE -->
+
+	<script>
+		var form_name = 'add_edit_donation_page';
+		var text_name = 'item_text';
+		var load_draft = false;
+		var upload = false;
+		var imageTag = false;
+	</script>
+
 	<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
 
 	<!-- IF S_ERROR -->
@@ -15,30 +24,85 @@
 		</div>
 	<!-- ENDIF -->
 
+	<!-- IF S_PPDE_DP_PREVIEW -->
+		<fieldset>
+			<legend>{L_PREVIEW}</legend>
+			{PPDE_DP_PREVIEW}
+		</fieldset>
+	<!-- ENDIF -->
+
+	<form id="add_edit_donation_page" method="post" action="<!-- IF S_ADD_DONATION_PAGE -->{U_ADD_ACTION}<!-- ELSE -->{U_EDIT_ACTION}<!-- ENDIF -->">
+		<fieldset>
+			<legend>{L_DONATION_PAGES_TITLE}</legend>
+			<p>{L_DONATION_PAGES_TITLE_EXPLAIN}</p>
+			<dl class="responsive-columns">
+				<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;"><!-- INCLUDE acp_posting_buttons.html --></dd>
+			</dl>
+			<dl class="responsive-columns">
+				<dt style="width: 90px;"><label for="lang_id">{L_PPDE_DP_LANG}</label></dt>
+				<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;">
+					<select id="lang_id" name="lang_id">
+					<option value="">{L_PPDE_DP_LANG_SELECT}</option>
+					<!-- BEGIN ppde_langs -->
+						<option value="{ppde_langs.VALUE}"<!-- IF ppde_langs.S_SELECTED --> selected="selected" <!-- ENDIF -->>{ppde_langs.LANG_LOCAL_NAME}</option>
+					<!-- END ppde_langs -->
+					</select>
+				</dd>
+			</dl>
+			<dl class="responsive-columns">
+				<dt style="width: 90px;" id="color_palette_placeholder" data-orientation="v" data-height="12" data-width="15" data-bbcode="true"></dt>
+				<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;">
+						<textarea name="item_text" rows="10" cols="60" style="width: 95%;" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" data-bbcode="true">{DONATION_BODY}</textarea>
+				</dd>
+				<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 5px;">
+					<!-- IF S_BBCODE_ALLOWED -->
+						<label><input type="checkbox" class="radio" name="disable_bbcode"<!-- IF S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF --> /> {L_DISABLE_BBCODE}</label>
+					<!-- ENDIF -->
+					<!-- IF S_SMILIES_ALLOWED -->
+						<label><input type="checkbox" class="radio" name="disable_smilies"<!-- IF S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF --> /> {L_DISABLE_SMILIES}</label>
+					<!-- ENDIF -->
+					<!-- IF S_LINKS_ALLOWED -->
+						<label><input type="checkbox" class="radio" name="disable_magic_url"<!-- IF S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF --> /> {L_DISABLE_MAGIC_URL}</label>
+					<!-- ENDIF -->
+				</dd>
+				<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 10px;"><strong>{L_OPTIONS}{L_COLON} </strong>{BBCODE_STATUS} :: {IMG_STATUS} :: {FLASH_STATUS} :: {URL_STATUS} :: {SMILIES_STATUS}</dd>
+			</dl>
+		</fieldset>
+
+		<fieldset class="submit-buttons">
+			{S_HIDDEN_FIELDS}
+			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+			<input class="button2" type="submit" id="preview" name="preview" value="{L_PREVIEW}" />
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
 <!-- ELSE -->
 	<form id="acp_donation" method="post" action="{U_ACTION}">
-		<table cellspacing="1">
-			<col class="row1" /><!-- IF .ppde_langs --><col class="row1" /><!-- ENDIF --><col class="row2" /><col class="row2" />
+		<table class="table1 zebra-table fixed-width-table">
+			<col class="row1" /><col class="row1" /><col class="row2" /><col class="row2" />
 			<thead>
 				<tr>
-					<th>{L_PPDE_DP_PAGE}</th>
-					<th style="width: 5%; text-align: center;">{L_PPDE_DP_LANG}</th>
-					<th style="vertical-align: top; width: 50px; text-align: center; white-space: nowrap;">{L_ACTION}</th>
+					<th style="width: 85%;">{L_PPDE_DP_PAGE}</th>
+					<th style="width: 5%;">{L_PPDE_DP_LANG}</th>
+					<th style="width: 10%;">{L_ACTION}</th>
 				</tr>
 			</thead>
 			<tbody>
 			<!-- BEGIN ppde_langs -->
 						<tr>
-							<td class="row3" colspan="3">{ppde_langs.NAME}</td>
+							<td class="row3" colspan="3">{ppde_langs.LANG_LOCAL_NAME}</td>
 						</tr>
 				<!-- BEGIN dp_list -->
 					<!-- IF langs.dp_list.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
-						<td><a href="{ppde_langs.dp_list.U_EDIT}">{ppde_langs.dp_list.DP_TITLE}</a></td>
-						<td style="text-align: center;">{ppde_langs.dp_list.DP_LANG}</td>
-						<td style="text-align: center;"><a href="{ppde_langs.dp_list.U_EDIT}">{ICON_EDIT}</a>&nbsp;<a href="{ppde_langs.dp_list.U_DELETE}">{ICON_DELETE}</a></td>
+						<td><a href="{ppde_langs.dp_list.U_EDIT}">{ppde_langs.dp_list.DONATION_PAGE_TITLE}</a></td>
+						<td>{ppde_langs.dp_list.DONATION_PAGE_LANG}</td>
+						<td>
+							<a href="{ppde_langs.dp_list.U_EDIT}">{ICON_EDIT}</a>
+							<a href="{ppde_langs.dp_list.U_DELETE}">{ICON_DELETE}</a>
+						</td>
 					</tr>
 				<!-- BEGINELSE -->
-					<tr class="row2">
+					<tr>
 						<td style="text-align: center;" colspan="3">{L_ACP_NO_ITEMS}</td>
 					</tr>
 				<!-- END dp_list -->
@@ -46,7 +110,7 @@
 			</tbody>
 		</table>
 		<fieldset class="quick">
-			<select id="donation_name" name="donation_name">
+			<select id="item_name" name="item_name">
 				<option value="donation_body" selected="selected">{L_DONATION_BODY}</option>
 				<option value="donation_success">{L_DONATION_SUCCESS}</option>
 				<option value="donation_cancel">{L_DONATION_CANCEL}</option>

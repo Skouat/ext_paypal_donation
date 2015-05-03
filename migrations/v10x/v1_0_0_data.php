@@ -67,7 +67,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				array(
 					'module_enabled'	=> 1,
 					'module_display'	=> 1,
-					'module_langname'	=> 'ACP_DONATION_MOD',
+					'module_langname'	=> 'PPDE_ACP_DONATION_MOD',
 					'module_auth'		=> 'ext_skouat/ppde && acl_a_ppde_manage',
 				)
 			)),
@@ -100,36 +100,36 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'item_type'			=> 'donation_pages',
 				'item_name'			=> 'donation_body',
-				'item_iso_code'		=> '',
+				'item_iso_code'		=> 1,
 				'item_symbol'		=> '',
 				'item_text'			=> '',
 				'item_enable'		=> true,
-				'left_id'			=> 0,
-				'right_id'			=> 0,
+				'item_left_id'		=> 0,
+				'item_right_id'		=> 0,
 			),
 			array(
 				'item_type'			=> 'donation_pages',
 				'item_name'			=> 'donation_success',
-				'item_iso_code'		=> '',
+				'item_iso_code'		=> 1,
 				'item_symbol'		=> '',
 				'item_text'			=> '',
 				'item_enable'		=> true,
-				'left_id'			=> 0,
-				'right_id'			=> 0,
+				'item_left_id'		=> 0,
+				'item_right_id'		=> 0,
 			),
 			array(
 				'item_type'			=> 'donation_pages',
 				'item_name'			=> 'donation_cancel',
-				'item_iso_code'		=> '',
+				'item_iso_code'		=> 1,
 				'item_symbol'		=> '',
 				'item_text'			=> '',
 				'item_enable'		=> true,
-				'left_id'			=> 0,
-				'right_id'			=> 0,
+				'item_left_id'		=> 0,
+				'item_right_id'		=> 0,
 			),
 		);
 
-		// Insert sample rule data
+		// Insert data
 		$this->db->sql_multi_insert($this->table_prefix . 'ppde_item', $item_data);
 	}
 }

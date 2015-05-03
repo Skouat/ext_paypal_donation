@@ -23,7 +23,24 @@ interface admin_interface
 	* @return null
 	* @access public
 	*/
+	public function display_overview($id, $mode, $action);
+
+	/**
+	* Display the general settings a user can configure for this extension
+	*
+	* @return null
+	* @access public
+	*/
+
 	public function display_settings();
+
+	/**
+	* Add a donation page
+	*
+	* @return null
+	* @access public
+	*/
+	public function add_donation_page();
 
 	/**
 	* Set page url

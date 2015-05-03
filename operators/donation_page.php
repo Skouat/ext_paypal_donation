@@ -10,6 +10,8 @@
 
 namespace skouat\ppde\operators;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
 * Operator for a set of pages
 */
@@ -17,29 +19,29 @@ class donation_page implements donation_page_interface
 {
 	protected $data;
 
+	protected $container;
 	protected $db;
-	protected $user;
 	protected $ppde_item_table;
 
 	/**
 	* Constructor
 	*
+	* @param ContainerInterface                   $container          Service container interface
 	* @param \phpbb\db\driver\driver_interface    $db                 Database connection
-	* @param \phpbb\user                          $user               User object
 	* @param string                               $ppde_item_table    Table name
 	* @access public
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $ppde_item_table)
+	public function __construct(ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_item_table)
 	{
+		$this->container = $container;
 		$this->db = $db;
-		$this->user = $user;
 		$this->ppde_item_table = $ppde_item_table;
 	}
 
 	/**
 	* Get data from item_data table
 	*
-	* @param string $item_type - Can only be "donation_page" or "currency"
+	* @param string $item_type
 	* @param int    $lang_id
 	* @return array Array of page data entities
 	* @access public
@@ -50,7 +52,7 @@ class donation_page implements donation_page_interface
 
 		// Load all page data from the database
 		// Build sql query with alias field
-		$sql = 'SELECT item_id, item_name AS donation_title, item_iso_code AS lang_iso
+		$sql = 'SELECT *
 				FROM ' . $this->ppde_item_table . "
 				WHERE item_type = '" . $this->db->sql_escape($item_type) . "'
 				AND item_iso_code = " . (int) ($lang_id);
@@ -59,7 +61,7 @@ class donation_page implements donation_page_interface
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			// Import each donatino page row into an entity
-			$entities[] = $this->import($row);
+			$entities[] = $this->container->get('skouat.ppde.entity')->import($row);
 		}
 		$this->db->sql_freeresult($result);
 
@@ -68,63 +70,23 @@ class donation_page implements donation_page_interface
 	}
 
 	/**
-	* Import and validate data for donation page
+	* Get language packs data
 	*
-	* Used when the data is already loaded externally.
-	* Any existing data on this page is over-written.
-	* All data is validated and an exception is thrown if any data is invalid.
+	* Used to return all data for a specific language.
+	* If not defined, all available language are returned.
 	*
-	* @param array $data Data array, typically from the database
-	* @return page_interface $this->data object
-	* @access public
-	* @throws trigger_error()
-	*/
-	public function import($data)
-	{
-		// Clear out any saved data
-		$this->data = array();
-
-		// All of our fields
-		$fields = array(
-			// column			=> data type (see settype())
-			'item_id'			=> 'integer',
-			'donation_title'	=> 'string',
-			'lang_iso'			=> 'integer',
-		);
-
-		// Go through the basic fields and set them to our data array
-		foreach ($fields as $field => $type)
-		{
-			// If the data wasn't sent to us, throw an exception
-			if (!isset($data[$field]))
-			{
-				trigger_error($this->user->lang('PPDE_FIELD_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
-			}
-
-			// settype passes values by reference
-			$value = $data[$field];
-
-			// We're using settype to enforce data types
-			settype($value, $type);
-
-			$this->data[$field] = $value;
-		}
-
-		return $this->data;
-	}
-
-	/**
-	* Get list of all installed language packs
-	*
-	* @return array Array of page data entities
+	* @param int $lang_id 
+	* @return array $langs
 	* @access public
 	*/
-	public function get_languages()
+	public function get_languages($lang_id = 0)
 	{
+		// Request by id if provided, otherwise default to request all
+		$sql_where = ($lang_id <> 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
+
 		$langs = array();
 
-		$sql = 'SELECT *
-			FROM ' . LANG_TABLE;
+		$sql = 'SELECT * FROM ' . LANG_TABLE . ' ' . $sql_where;
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -140,14 +102,21 @@ class donation_page implements donation_page_interface
 	}
 
 	/**
-	* Set page url
+	* Add a Item
 	*
-	* @param string $u_action Custom form action
-	* @return null
+	* @param object $entity Item entity with new data to insert
+	* @return page_interface Added page entity
 	* @access public
 	*/
-	public function set_page_url($u_action)
+	public function add_item_data($entity)
 	{
-		$this->u_action = $u_action;
+		// Insert the page data to the database
+		$entity->insert();
+
+		// Get the newly inserted page's identifier
+		$item_id = $entity->get_id();
+
+		// Reload the data to return a fresh page entity
+		return $entity->load($item_id);
 	}
 }

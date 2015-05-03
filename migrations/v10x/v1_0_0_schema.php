@@ -21,12 +21,12 @@ class v1_0_0_schema extends \phpbb\db\migration\migration
 	*		item_iso_code
 	*		item_symbol
 	*		item_text
-	*		item_enable
-	*		left_id
-	*		right_id
 	*		item_text_bbcode_bitfield
 	*		item_text_bbcode_uid
 	*		item_text_bbcode_options
+	*		item_enable
+	*		item_left_id
+	*		item_right_id
 	*
 	* @return array Array of table schema
 	* @access public
@@ -43,12 +43,12 @@ class v1_0_0_schema extends \phpbb\db\migration\migration
 						'item_iso_code'				=> array('VCHAR:10', ''),
 						'item_symbol'				=> array('VCHAR:10', ''),
 						'item_text'					=> array('TEXT', ''),
-						'item_enable'				=> array('BOOL', 1),
-						'left_id'					=> array('UINT', 0),
-						'right_id'					=> array('UINT', 0),
 						'item_text_bbcode_bitfield'	=> array('VCHAR:255', ''),
 						'item_text_bbcode_uid'		=> array('VCHAR:8', ''),
 						'item_text_bbcode_options'	=> array('UINT:4', 7),
+						'item_enable'				=> array('BOOL', 1),
+						'item_left_id'				=> array('UINT', 0),
+						'item_right_id'				=> array('UINT', 0),
 					),
 
 					'PRIMARY_KEY'	=> array('item_id'),

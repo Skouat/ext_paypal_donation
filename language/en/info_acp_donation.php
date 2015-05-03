@@ -40,7 +40,10 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'ACP_DONATION_MOD' => 'PayPal Donation',
+	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'				=> 'Overview',
+	'PPDE_ACP_SETTINGS'				=> 'General Settings',
+	'PPDE_ACP_DONATION_PAGES'		=> 'Donation Pages',
 ));
 
 /**
@@ -118,6 +121,32 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+* mode: donation pages
+* Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
+*/
+$lang = array_merge($lang, array(
+	// Donation Page settings
+	'PPDE_DP_CONFIG'			=> 'Donation pages',
+	'PPDE_DP_CONFIG_EXPLAIN'	=> 'Permit to improve the rendering of customizable pages of the extension.',
+
+	'PPDE_DP_PAGE'				=> 'Page type',
+	'PPDE_DP_LANG'				=> 'Language',
+	'PPDE_DP_LANG_SELECT'		=> 'Select a language',
+
+	// Donation Page Body settings
+	'DONATION_BODY'				=> 'Donation main page',
+	'DONATION_BODY_EXPLAIN'		=> 'Enter the text you want displayed on the main donation page.',
+
+	// Donation Success settings
+	'DONATION_SUCCESS'			=> 'Donation success',
+	'DONATION_SUCCESS_EXPLAIN'	=> 'Enter the text you want displayed on the success page.',
+
+	// Donation Cancel settings
+	'DONATION_CANCEL'			=> 'Donation cancel',
+	'DONATION_CANCEL_EXPLAIN'	=> 'Enter the text you want displayed on the cancel page.',
+));
+
+/**
 * logs
 */
 $lang = array_merge($lang, array(
@@ -125,8 +154,13 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
 
 	// Confirm box
+	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',
 	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
 
 	// Errors
-	'PPDE_FIELD_MISSING'	=> 'Required field missing.',
+	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
+	'PPDE_ITEM_EXIST'		=> 'The selected item already exists.',
+	'PPDE_NO_ITEM'			=> 'No item found.',
+	'PPDE_MUST_SELECT_ITEM'	=> 'The selected item does not exist.',
+	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',
 ));
