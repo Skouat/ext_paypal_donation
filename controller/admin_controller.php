@@ -478,11 +478,6 @@ class admin_controller implements admin_interface
 		}
 		unset($item_fields, $entity_function, $page_data);
 
-		// Set hidden fields
-		$s_hidden_fields = build_hidden_fields(array(
-			'page_title'	=> $entity->get_title(),
-		));
-
 		// If the form has been submitted or previewed
 		if ($submit || $preview)
 		{
@@ -564,7 +559,7 @@ class admin_controller implements admin_interface
 			'S_BBCODE_IMG'			=> true,
 			'S_BBCODE_FLASH'		=> true,
 			'S_LINKS_ALLOWED'		=> true,
-			'S_HIDDEN_FIELDS'		=> $s_hidden_fields,
+			'S_HIDDEN_FIELDS'		=> '<input type="hidden" name="page_title" value="' . $entity->get_title() . '" />',
 		));
 
 		// Assigning custom bbcodes
