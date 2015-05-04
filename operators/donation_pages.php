@@ -52,8 +52,8 @@ class donation_pages implements donation_pages_interface
 		// Load all page data from the database
 		// Build sql query with alias field
 		$sql = 'SELECT *
-				FROM ' . $this->ppde_donation_pages_table . "
-				WHERE page_lang_id = " . (int) ($lang_id);
+				FROM ' . $this->ppde_donation_pages_table . '
+				WHERE page_lang_id = ' . (int) ($lang_id);
 		$result = $this->db->sql_query($sql);
 
 		while ($row = $this->db->sql_fetchrow($result))
