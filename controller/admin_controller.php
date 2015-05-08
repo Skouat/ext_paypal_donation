@@ -418,13 +418,55 @@ class admin_controller implements admin_interface
 		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_donation_pages_data($entity, $data);
+		$this->add_edit_donation_page_data($entity, $data);
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_ADD_DONATION_PAGE'	=> true,
 
 			'U_ADD_ACTION'			=> "{$this->u_action}&amp;action=add",
+			'U_BACK'				=> "{$this->u_action}",
+		));
+	}
+
+	/**
+	* Edit a donation page
+	*
+	* @param int $page_id Donation page identifier
+	* @return null
+	* @access public
+	*/
+	public function edit_donation_page($page_id)
+	{
+		// Add form key
+		add_form_key('add_edit_donation_page');
+
+		// Initiate a page donation entity
+		$entity = $this->container->get('skouat.ppde.entity.pages');
+		$entity->load($page_id);
+
+		// Collect the form data
+		$data = array(
+			'page_id'		=> (int) $page_id,
+			'page_title'	=> $entity->get_title(),
+			'page_lang_id'	=> $entity->get_lang_id(),
+			'page_content'	=> $entity->get_message_for_edit(),
+			'bbcode'		=> !$this->request->variable('disable_bbcode', false),
+			'magic_url'		=> !$this->request->variable('disable_magic_url', false),
+			'smilies'		=> !$this->request->variable('disable_smilies', false),
+		);
+
+		// Set template vars for language select menu
+		$this->create_language_options($data['page_lang_id']);
+
+		// Process the new page
+		$this->add_edit_donation_page_data($entity, $data);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_EDIT_DONATION_PAGE'	=> true,
+
+			'U_EDIT_ACTION'			=> "{$this->u_action}&amp;action=edit&amp;page_id={$page_id}",
 			'U_BACK'				=> "{$this->u_action}",
 		));
 	}
@@ -437,7 +479,7 @@ class admin_controller implements admin_interface
 	* @return null
 	* @access protected
 	*/
-	protected function add_edit_donation_pages_data($entity, $data)
+	protected function add_edit_donation_page_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$submit = $this->request->is_set_post('submit');

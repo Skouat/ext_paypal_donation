@@ -74,6 +74,15 @@ class ppde_module
 
 					// Return to stop execution of this script
 					return;
+					case 'edit':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DP_CONFIG';
+
+						// Load the edit donation pages handle in the admin controller
+						$admin_controller->edit_donation_page($page_id);
+
+					// Return to stop execution of this script
+					return;
 					case 'delete':
 						// Delete a donation page
 						$admin_controller->delete_donation_page($page_id);
