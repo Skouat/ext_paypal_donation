@@ -424,8 +424,8 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'S_ADD_DONATION_PAGE'	=> true,
 
-			'U_ADD_ACTION'			=> "{$this->u_action}&amp;action=add",
-			'U_BACK'				=> "{$this->u_action}",
+			'U_ADD_ACTION'			=> $this->u_action . '&amp;action=add',
+			'U_BACK'				=> $this->u_action,
 		));
 	}
 
@@ -466,8 +466,8 @@ class admin_controller implements admin_interface
 		$this->template->assign_vars(array(
 			'S_EDIT_DONATION_PAGE'	=> true,
 
-			'U_EDIT_ACTION'			=> "{$this->u_action}&amp;action=edit&amp;page_id={$page_id}",
-			'U_BACK'				=> "{$this->u_action}",
+			'U_EDIT_ACTION'			=> $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
+			'U_BACK'				=> $this->u_action,
 		));
 	}
 
