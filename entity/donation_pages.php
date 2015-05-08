@@ -50,10 +50,10 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Load the data from the database for this rule
+	* Load the data from the database for this donation page
 	*
 	* @param int $id Item identifier
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function load($id)
@@ -68,7 +68,7 @@ class donation_pages implements donation_pages_interface
 		if ($this->dp_data === false)
 		{
 			// A item does not exist
-			display_error_message('PPDE_NO_PAGE');
+			$this->display_error_message('PPDE_NO_PAGE');
 		}
 
 		return $this;
@@ -82,7 +82,7 @@ class donation_pages implements donation_pages_interface
 	* All data is validated and an exception is thrown if any data is invalid.
 	*
 	* @param array $data Data array, typically from the database
-	* @return main_interface $this->dp_data object
+	* @return donation_pages_interface $this->dp_data object
 	* @access public
 	*/
 	public function import($data)
@@ -108,7 +108,7 @@ class donation_pages implements donation_pages_interface
 			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field]))
 			{
-				display_error_message('PPDE_FIELD_MISSING');
+				$this->display_error_message('PPDE_FIELD_MISSING');
 			}
 
 			// settype passes values by reference
@@ -128,7 +128,7 @@ class donation_pages implements donation_pages_interface
 	*
 	* Will throw an exception if the item was already inserted (call save() instead)
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function insert()
@@ -136,7 +136,7 @@ class donation_pages implements donation_pages_interface
 		if (!empty($this->dp_data['page_id']))
 		{
 			// The page already exists
-			display_error_message('PPDE_PAGE_EXIST');
+			$this->display_error_message('PPDE_PAGE_EXIST');
 		}
 
 		// Make extra sure there is no page_id set
@@ -148,6 +148,32 @@ class donation_pages implements donation_pages_interface
 
 		// Set the page_id using the id created by the SQL insert
 		$this->dp_data['page_id'] = (int) $this->db->sql_nextid();
+
+		return $this;
+	}
+
+	/**
+	* Save the current settings to the database
+	*
+	* This must be called before closing or any changes will not be saved!
+	* If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	*
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	* @access public
+	*/
+	public function save()
+	{
+		if (empty($this->dp_data['page_title']) || empty($this->dp_data['page_lang_id']))
+		{
+			// The page already exists
+			$this->display_error_message('PPDE_NO_PAGE');
+		}
+
+		$sql = 'UPDATE ' . $this->donation_pages_table . '
+			SET ' . $this->db->sql_build_array('UPDATE', $this->dp_data) . "
+			WHERE page_title = '" . $this->get_title() . "'
+				AND page_lang_id = " . $this->get_lang_id();
+		$this->db->sql_query($sql);
 
 		return $this;
 	}
@@ -178,7 +204,7 @@ class donation_pages implements donation_pages_interface
 	 * Set Lang identifier
 	 *
 	 * @param int $lang
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_lang_id($lang)
@@ -204,7 +230,7 @@ class donation_pages implements donation_pages_interface
 	 * Set Page title
 	 *
 	 * @param string $title
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_title($title)
@@ -257,7 +283,7 @@ class donation_pages implements donation_pages_interface
 	* Set message
 	*
 	* @param string $message
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function set_message($message)
@@ -289,7 +315,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Enable bbcode on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_enable_bbcode()
@@ -302,7 +328,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Disable bbcode on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_disable_bbcode()
@@ -326,7 +352,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Enable magic url on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_enable_magic_url()
@@ -339,7 +365,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Disable magic url on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_disable_magic_url()
@@ -363,7 +389,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Enable smilies on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_enable_smilies()
@@ -376,7 +402,7 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Disable smilies on the message
 	*
-	* @return main_interface $this object for chaining calls; load()->set()->save()
+	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
 	public function message_disable_smilies()

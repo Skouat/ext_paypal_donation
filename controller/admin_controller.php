@@ -473,7 +473,7 @@ class admin_controller implements admin_interface
 		// Set the donation page's data in the entity
 		foreach ($item_fields as $entity_function => $page_data)
 		{
-				// Calling the set_$entity_function on the entity and passing it $rule_data
+				// Calling the set_$entity_function on the entity and passing it $dp_data
 				call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
 		}
 		unset($item_fields, $entity_function, $page_data);
@@ -514,13 +514,13 @@ class admin_controller implements admin_interface
 		// Insert or update rule
 		if ($submit && empty($errors) && !$preview)
 		{
-			if ($entity->get_id())
+			if ($entity->get_title() || $entity->get_lang_id())
 			{
 				// Save the edited item entity to the database
 				$entity->save();
 
 				// Show user confirmation of the saved item and provide link back to the previous page
-				trigger_error($this->user->lang('ACP_RULE_EDITED') . adm_back_link("{$this->u_action}&amp;language={$entity->get_language()}&amp;parent_id={$entity->get_parent_id()}"));
+				trigger_error($this->user->lang('PPDE_DP_LANG_UPDATED') . adm_back_link($this->u_action));
 			}
 			else
 			{
@@ -531,7 +531,7 @@ class admin_controller implements admin_interface
 				$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
 				// Show user confirmation of the added item and provide link back to the previous page
-				trigger_error($this->user->lang('PPDE_DP_LANG_ADDED', $this->lang_local_name) . adm_back_link("{$this->u_action}"));
+				trigger_error($this->user->lang('PPDE_DP_LANG_ADDED', $this->lang_local_name) . adm_back_link($this->u_action));
 			}
 		}
 

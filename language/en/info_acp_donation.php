@@ -155,6 +155,7 @@ $lang = array_merge($lang, array(
 
 	// Confirm box
 	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',
+	'PPDE_DP_LANG_UPDATED'	=> 'A donation page for the language “%s” has been updated.',
 	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
 
 	// Errors

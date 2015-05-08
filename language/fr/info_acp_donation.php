@@ -155,6 +155,7 @@ $lang = array_merge($lang, array(
 
 	// Confirm box
 	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_LANG_UPDATED'	=> 'Une page de dons pour la langue « %s » a été mise à jour.',
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
 	// Errors
