@@ -52,37 +52,45 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Load the data from the database for this donation page
 	*
-	* @param bool  $check_page_id
+	* @param int  $page_id Donation page identifier
 	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
-	public function load($check_page_id = false)
+	public function load($page_id)
 	{
 		$sql = 'SELECT *
-			FROM ' . $this->donation_pages_table . "
-			WHERE page_title = '" . (string) $this->dp_data['page_title'] . "'
-				AND page_lang_id = " . (int) $this->dp_data['page_lang_id'];
+			FROM ' . $this->donation_pages_table . '
+			WHERE page_id = ' . $page_id;
 		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		if($check_page_id)
-		{
-			$this->dp_data['page_id'] = $row['page_id'] ;
-		}
-		else
-		{
-			$this->dp_data = $row;
-		}
+		$this->dp_data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
 		if ($this->dp_data === false)
 		{
-			// A page does not exist
+			// A item does not exist
 			$this->display_error_message('PPDE_NO_PAGE');
 		}
 
-		$page_id = isset($this->dp_data['page_id']) ? $this->dp_data['page_id'] : 0;
+		return $this;
+	}
 
-		return !$check_page_id ? $this : $page_id;
+	/**
+	* Check the page_id exist from the database for this donation page
+	*
+	* @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	* @access public
+	*/
+	public function donation_page_exists()
+	{
+		$sql = 'SELECT page_id
+			FROM ' . $this->donation_pages_table . "
+			WHERE page_title = '" . (string) $this->dp_data['page_title'] . "'
+			AND page_lang_id = " . (int) $this->dp_data['page_lang_id'];
+		$result = $this->db->sql_query($sql);
+		$this->dp_data['page_id'] = (int) $this->db->sql_fetchfield('page_id');
+		$this->db->sql_freeresult($result);
+
+		return $this->dp_data['page_id'];
 	}
 
 	/**

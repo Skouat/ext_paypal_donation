@@ -154,6 +154,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
+	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
 	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
 	'PPDE_DP_LANG_UPDATED'	=> 'Une page de dons pour la langue « %s » a été mise à jour.',
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
@@ -161,7 +162,7 @@ $lang = array_merge($lang, array(
 	// Errors
 	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
 	'PPDE_NO_PAGE'			=> 'Aucune page de dons n’a été trouvée.',
-	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
-	'PPDE_PAGE_EXIST'		=> 'La page de dons sélectionnée existe déjà.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',
+	'PPDE_PAGE_EXISTS'		=> 'La page de dons sélectionnée existe déjà.',
 ));

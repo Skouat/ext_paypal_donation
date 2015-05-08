@@ -154,6 +154,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
 
 	// Confirm box
+	'PPDE_DP_GO_TO_PAGE'	=> '%sEdit existing donation page%s',
 	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',
 	'PPDE_DP_LANG_UPDATED'	=> 'A donation page for the language “%s” has been updated.',
 	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
@@ -161,7 +162,7 @@ $lang = array_merge($lang, array(
 	// Errors
 	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
 	'PPDE_NO_PAGE'			=> 'No donation page found.',
-	'PPDE_MUST_SELECT_PAGE'	=> 'The selected donation page does not exist.',
 	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',
-	'PPDE_PAGE_EXIST'		=> 'This donation page already exists.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'The selected donation page does not exist.',
+	'PPDE_PAGE_EXISTS'		=> 'This donation page already exists.',
 ));

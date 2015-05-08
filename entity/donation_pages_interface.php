@@ -27,6 +27,14 @@ interface donation_pages_interface
 	public function load($id);
 
 	/**
+	 * Check the page_id exist from the database for this donation page
+	 *
+	 * @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	 * @access public
+	 */
+	public function donation_page_exists();
+
+	/**
 	* Import and validate data for donation page
 	*
 	* Used when the data is already loaded externally.

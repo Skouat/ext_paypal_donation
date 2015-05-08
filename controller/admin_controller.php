@@ -511,13 +511,16 @@ class admin_controller implements admin_interface
 			));
 		}
 
-		// Insert or update rule
+		// Insert or update donation page
 		if ($submit && empty($errors) && !$preview)
 		{
-			if($entity->load(true))
+			if ($entity->donation_page_exists())
 			{
 				// Show user warning for an already exist page and provide link back to the edit page
-				trigger_error($this->user->lang('PPDE_PAGE_EXIST') . adm_back_link("{$this->u_action}&amp;action=edit&amp;page_id=" . $entity->get_id(), E_USER_WARNING));
+				$message = $this->user->lang('PPDE_PAGE_EXISTS');
+				$message .= '<br /><br />';
+				$message .= $this->user->lang('PPDE_DP_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;page_id=' . $entity->get_id() . '">&raquo; ', '</a>');
+				trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 
 			// Grab the local language name
