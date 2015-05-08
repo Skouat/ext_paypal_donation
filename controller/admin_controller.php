@@ -442,15 +442,14 @@ class admin_controller implements admin_interface
 		add_form_key('add_edit_donation_page');
 
 		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity.pages');
-		$entity->load($page_id);
+		$entity = $this->container->get('skouat.ppde.entity.pages')->load($page_id);
 
 		// Collect the form data
 		$data = array(
 			'page_id'		=> (int) $page_id,
-			'page_title'	=> $entity->get_title(),
-			'page_lang_id'	=> $entity->get_lang_id(),
-			'page_content'	=> $entity->get_message_for_edit(),
+			'page_title'	=> $this->request->variable('page_title', $entity->get_title(), false),
+			'page_lang_id'	=> $this->request->variable('page_lang_id', $entity->get_lang_id()),
+			'page_content'	=> $this->request->variable('page_content', $entity->get_message_for_edit(), true),
 			'bbcode'		=> !$this->request->variable('disable_bbcode', false),
 			'magic_url'		=> !$this->request->variable('disable_magic_url', false),
 			'smilies'		=> !$this->request->variable('disable_smilies', false),
@@ -557,7 +556,7 @@ class admin_controller implements admin_interface
 		// Insert or update donation page
 		if ($submit && empty($errors) && !$preview)
 		{
-			if ($entity->donation_page_exists())
+			if ($entity->donation_page_exists() && $this->request->variable('action', '') === 'add')
 			{
 				// Show user warning for an already exist page and provide link back to the edit page
 				$message = $this->user->lang('PPDE_PAGE_EXISTS');
