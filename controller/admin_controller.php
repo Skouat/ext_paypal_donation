@@ -514,21 +514,27 @@ class admin_controller implements admin_interface
 		// Insert or update rule
 		if ($submit && empty($errors) && !$preview)
 		{
-			if ($entity->get_title() || $entity->get_lang_id())
+			if($entity->load(true))
+			{
+				// Show user warning for an already exist page and provide link back to the edit page
+				trigger_error($this->user->lang('PPDE_PAGE_EXIST') . adm_back_link("{$this->u_action}&amp;action=edit&amp;page_id=" . $entity->get_id(), E_USER_WARNING));
+			}
+
+			// Grab the local language name
+			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
+
+			if ($entity->get_id())
 			{
 				// Save the edited item entity to the database
 				$entity->save();
 
 				// Show user confirmation of the saved item and provide link back to the previous page
-				trigger_error($this->user->lang('PPDE_DP_LANG_UPDATED') . adm_back_link($this->u_action));
+				trigger_error($this->user->lang('PPDE_DP_LANG_UPDATED', $this->lang_local_name) . adm_back_link($this->u_action));
 			}
 			else
 			{
 				// Add a new item entity to the database
 				$this->ppde_operator->add_pages_data($entity);
-
-				// Grab the local language name
-				$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
 				// Show user confirmation of the added item and provide link back to the previous page
 				trigger_error($this->user->lang('PPDE_DP_LANG_ADDED', $this->lang_local_name) . adm_back_link($this->u_action));

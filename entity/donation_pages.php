@@ -52,26 +52,37 @@ class donation_pages implements donation_pages_interface
 	/**
 	* Load the data from the database for this donation page
 	*
-	* @param int $id Item identifier
+	* @param bool  $check_page_id
 	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	* @access public
 	*/
-	public function load($id)
+	public function load($check_page_id = false)
 	{
 		$sql = 'SELECT *
-			FROM ' . $this->donation_pages_table . '
-			WHERE page_id = ' . (int) $id;
+			FROM ' . $this->donation_pages_table . "
+			WHERE page_title = '" . (string) $this->dp_data['page_title'] . "'
+				AND page_lang_id = " . (int) $this->dp_data['page_lang_id'];
 		$result = $this->db->sql_query($sql);
-		$this->dp_data = $this->db->sql_fetchrow($result);
+		$row = $this->db->sql_fetchrow($result);
+		if($check_page_id)
+		{
+			$this->dp_data['page_id'] = $row['page_id'] ;
+		}
+		else
+		{
+			$this->dp_data = $row;
+		}
 		$this->db->sql_freeresult($result);
 
 		if ($this->dp_data === false)
 		{
-			// A item does not exist
+			// A page does not exist
 			$this->display_error_message('PPDE_NO_PAGE');
 		}
 
-		return $this;
+		$page_id = isset($this->dp_data['page_id']) ? $this->dp_data['page_id'] : 0;
+
+		return !$check_page_id ? $this : $page_id;
 	}
 
 	/**
@@ -170,9 +181,8 @@ class donation_pages implements donation_pages_interface
 		}
 
 		$sql = 'UPDATE ' . $this->donation_pages_table . '
-			SET ' . $this->db->sql_build_array('UPDATE', $this->dp_data) . "
-			WHERE page_title = '" . $this->get_title() . "'
-				AND page_lang_id = " . $this->get_lang_id();
+			SET ' . $this->db->sql_build_array('UPDATE', $this->dp_data) . '
+			WHERE page_id = ' . $this->get_id();
 		$this->db->sql_query($sql);
 
 		return $this;
