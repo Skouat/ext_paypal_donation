@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class admin_controller implements admin_interface
 {
 	protected $lang_local_name;
+	protected $u_action;
 
 	protected $auth;
 	protected $cache;
@@ -575,6 +576,45 @@ class admin_controller implements admin_interface
 		include_once($this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
 
 		display_custom_bbcodes();
+	}
+
+	/**
+	 * Delete a donation page
+	 *
+	 * @param int $page_id The donation page identifier to delete
+	 * @return null
+	 * @access public
+	 */
+	public function delete_donation_page($page_id)
+	{
+		// Use a confirmation box routine when deleting a donation page
+		if (confirm_box(true))
+		{
+			// Initiate a page donation entity
+			$entity = $this->container->get('skouat.ppde.entity.pages');
+
+			// Before deletion, grab the local language name
+			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
+
+			// Delete the donation page on confirmation
+			$this->ppde_operator->delete_page($page_id);
+
+			// Show user confirmation of the deleted donation page and provide link back to the previous page
+			trigger_error($this->user->lang('PPDE_DP_LANG_DELETED', $this->lang_local_name) . adm_back_link($this->u_action));
+		}
+		else
+		{
+			// Request confirmation from the user to delete the rule
+			confirm_box(false, $this->user->lang('PPDE_DP_CONFIRM_DELETE'), build_hidden_fields(array(
+				'mode' => 'donation_pages',
+				'action' => 'delete',
+				'page_id' => $page_id,
+			)));
+
+			// Use a redirect to take the user back to the previous page
+			// if the user chose not delete the donation page from the confirmation page.
+			redirect($this->u_action);
+		}
 	}
 
 	/**

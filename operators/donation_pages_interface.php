@@ -43,4 +43,14 @@ interface donation_pages_interface
 	* @access public
 	*/
 	public function add_pages_data($entity);
+
+	/**
+	* Delete a page
+	*
+	* @param int $page_id The page identifier to delete
+	* @return bool True if row was deleted, false otherwise
+	* @access public
+	*/
+	public function delete_page($page_id);
+
 }

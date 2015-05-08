@@ -25,6 +25,7 @@ class ppde_module
 
 		// Requests
 		$action = $request->variable('action', '');
+		$page_id = $request->variable('page_id', 0);
 
 		// Make the $u_action url available in the admin controller and ppde_operator
 		$admin_controller->set_page_url($this->u_action);
@@ -73,6 +74,10 @@ class ppde_module
 
 					// Return to stop execution of this script
 					return;
+					case 'delete':
+						// Delete a donation page
+						$admin_controller->delete_donation_page($page_id);
+					break;
 				}
 
 				// Display module main page

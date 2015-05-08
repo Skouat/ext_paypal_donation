@@ -117,4 +117,22 @@ class donation_pages implements donation_pages_interface
 		// Reload the data to return a fresh page entity
 		return $entity->load($page_id);
 	}
+
+	/**
+	* Delete a page
+	*
+	* @param int $page_id The page identifier to delete
+	* @return bool True if row was deleted, false otherwise
+	* @access public
+	*/
+	public function delete_page($page_id)
+	{
+		// Delete the donation page from the database
+		$sql = 'DELETE FROM ' . $this->ppde_donation_pages_table . '
+			WHERE page_id = ' . (int) $page_id;
+		$this->db->sql_query($sql);
+
+		// Return true/false if a donation page was deleted
+		return (bool) $this->db->sql_affectedrows();
+	}
 }

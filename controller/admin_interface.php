@@ -43,6 +43,15 @@ interface admin_interface
 	public function add_donation_page();
 
 	/**
+	 * Delete a donation page
+	 *
+	 * @param int $page_id The donation page identifier to delete
+	 * @return null
+	 * @access public
+	 */
+	public function delete_donation_page($page_id);
+
+	/**
 	* Set page url
 	*
 	* @param string $u_action Custom form action

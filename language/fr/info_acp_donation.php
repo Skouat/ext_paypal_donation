@@ -154,8 +154,10 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
+	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
 	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_LANG_DELETED'	=> 'Une page de dons pour la langue « %s » a été supprimée.',
 	'PPDE_DP_LANG_UPDATED'	=> 'Une page de dons pour la langue « %s » a été mise à jour.',
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
