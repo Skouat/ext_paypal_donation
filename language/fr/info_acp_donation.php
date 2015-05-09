@@ -40,7 +40,10 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'ACP_DONATION_MOD' => 'PayPal Donation',
+	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'				=> 'Vue d’ensemble',
+	'PPDE_ACP_SETTINGS'				=> 'Paramètres généraux',
+	'PPDE_ACP_DONATION_PAGES'		=> 'Pages des dons',
 ));
 
 /**
@@ -69,9 +72,9 @@ $lang = array_merge($lang, array(
 * mode: settings
 */
 $lang = array_merge($lang, array(
-	'PPDE_SETTINGS'			=> 'Configuration',
+	'PPDE_SETTINGS'			=> 'Paramètres généraux',
 	'PPDE_SETTINGS_EXPLAIN'	=> '',
-	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés',
+
 	'MODE_CURRENCY'			=> 'devise',
 	'MODE_DONATION_PAGES'	=> 'pages de dons',
 
@@ -97,24 +100,50 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE'			=> 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'	=> 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
 	'PPDE_SANDBOX_ADDRESS'					=> 'Adresse PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Inscrire votre addresse e-mail de vendeur PayPal Sandbox',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Inscrire votre addresse e-mail de vendeur PayPal Sandbox.',
 
 	// Stats Donation settings
 	'PPDE_LEGEND_STATS_SETTINGS'		=> 'Paramètres des statistiques',
 	'PPDE_STATS_INDEX_ENABLE'			=> 'Statistiques des dons sur l’index',
-	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum',
+	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum.',
 	'PPDE_RAISED_ENABLE'				=> 'Activer dons recueillis',
 	'PPDE_RAISED'						=> 'Dons recueillis',
-	'PPDE_RAISED_EXPLAIN'				=> 'Inscrire le montant total des dons actuellement reçus',
+	'PPDE_RAISED_EXPLAIN'				=> 'Inscrire le montant total des dons actuellement reçus.',
 	'PPDE_GOAL_ENABLE'					=> 'Activer Objectif des dons',
 	'PPDE_GOAL'							=> 'Objectif des dons',
-	'PPDE_GOAL_EXPLAIN'					=> 'Inscrire le montant total des dons à atteindre',
+	'PPDE_GOAL_EXPLAIN'					=> 'Inscrire le montant total des dons à atteindre.',
 	'PPDE_USED_ENABLE'					=> 'Activer dons utilisés',
 	'PPDE_USED'							=> 'Dons Utilisés',
-	'PPDE_USED_EXPLAIN'					=> 'Inscrire le montant des dons déjà utilisés',
+	'PPDE_USED_EXPLAIN'					=> 'Inscrire le montant des dons déjà utilisés.',
 
 	'PPDE_CURRENCY_ENABLE'				=> 'Activer Devise des dons',
-	'PPDE_CURRENCY_ENABLE_EXPLAIN'		=> 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons',
+	'PPDE_CURRENCY_ENABLE_EXPLAIN'		=> 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons.',
+));
+
+/**
+* mode: donation pages
+* Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
+*/
+$lang = array_merge($lang, array(
+	// Donation Page settings
+	'PPDE_DP_CONFIG'			=> 'Pages des dons',
+	'PPDE_DP_CONFIG_EXPLAIN'	=> 'Permet d’améliorer le rendu des pages personalisables de l’extension.',
+
+	'PPDE_DP_PAGE'				=> 'Type de page',
+	'PPDE_DP_LANG'				=> 'Langue',
+	'PPDE_DP_LANG_SELECT'		=> 'Sélectionnez une langue',
+
+	// Donation Page Body settings
+	'DONATION_BODY'				=> 'Page principale',
+	'DONATION_BODY_EXPLAIN'		=> 'Saisir le texte que vous souhaitez afficher sur la page principale.',
+
+	// Donation Success settings
+	'DONATION_SUCCESS'			=> 'Page des dons validés',
+	'DONATION_SUCCESS_EXPLAIN'	=> 'Saisir le texte que vous souhaitez afficher sur la page des dons validés.',
+
+	// Donation Cancel settings
+	'DONATION_CANCEL'			=> 'Page des dons annulés',
+	'DONATION_CANCEL_EXPLAIN'	=> 'Saisir le texte que vous souhaitez afficher sur la page des dons annulés.',
 ));
 
 /**
@@ -125,5 +154,17 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
-	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés',
+	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
+	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
+	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_LANG_DELETED'	=> 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_LANG_UPDATED'	=> 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
+
+	// Errors
+	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
+	'PPDE_NO_PAGE'			=> 'Aucune page de dons n’a été trouvée.',
+	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',
+	'PPDE_PAGE_EXISTS'		=> 'La page de dons sélectionnée existe déjà.',
 ));

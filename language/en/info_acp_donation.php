@@ -40,7 +40,10 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'ACP_DONATION_MOD' => 'PayPal Donation',
+	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'				=> 'Overview',
+	'PPDE_ACP_SETTINGS'				=> 'General Settings',
+	'PPDE_ACP_DONATION_PAGES'		=> 'Donation Pages',
 ));
 
 /**
@@ -71,20 +74,20 @@ $lang = array_merge($lang, array(
 $lang = array_merge($lang, array(
 	'PPDE_SETTINGS'			=> 'General Settings',
 	'PPDE_SETTINGS_EXPLAIN'	=> 'Here you can configure the main settings for PayPal Donation.',
-	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved',
+
 	'MODE_CURRENCY'			=> 'currency',
 	'MODE_DONATION_PAGES'	=> 'donation pages',
 
 	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'	=> 'General Settings',
 	'PPDE_ENABLE'					=> 'Enable PayPal Donation',
-	'PPDE_ENABLE_EXPLAIN'			=> 'Enable or disable the PayPal Donation MOD',
+	'PPDE_ENABLE_EXPLAIN'			=> 'Enable or disable the PayPal Donation MOD.',
 	'PPDE_ACCOUNT_ID'				=> 'PayPal account ID',
-	'PPDE_ACCOUNT_ID_EXPLAIN'		=> 'Enter your PayPal email address or Marchant account ID',
+	'PPDE_ACCOUNT_ID_EXPLAIN'		=> 'Enter your PayPal email address or Marchant account ID.',
 	'PPDE_DEFAULT_CURRENCY'			=> 'Default currency',
-	'PPDE_DEFAULT_CURRENCY_EXPLAIN'	=> 'Define which currency will be selected by default',
+	'PPDE_DEFAULT_CURRENCY_EXPLAIN'	=> 'Define which currency will be selected by default.',
 	'PPDE_DEFAULT_VALUE'			=> 'Default donation value',
-	'PPDE_DEFAULT_VALUE_EXPLAIN'	=> 'Define which donation value will be suggested by default',
+	'PPDE_DEFAULT_VALUE_EXPLAIN'	=> 'Define which donation value will be suggested by default.',
 	'PPDE_DROPBOX_ENABLE'			=> 'Enable drop-down list',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'	=> 'If enabled, it will replace the Textbox by a drop-down list.',
 	'PPDE_DROPBOX_VALUE'			=> 'Drop-down value',
@@ -97,24 +100,50 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE'			=> 'Sandbox only for founder',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'	=> 'If enabled, PayPal Sandbox will be displayed only by the board founders.',
 	'PPDE_SANDBOX_ADDRESS'					=> 'PayPal sandbox address',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Define here your PayPal Sandbox Sellers e-mail address',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'			=> 'Define here your PayPal Sandbox Sellers e-mail address.',
 
 	// Stats Donation settings
 	'PPDE_LEGEND_STATS_SETTINGS'		=> 'Stats donation config',
 	'PPDE_STATS_INDEX_ENABLE'			=> 'Display donation stats on index',
-	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Enable this if you want to display the donation stats on index',
+	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'	=> 'Enable this if you want to display the donation stats on index.',
 	'PPDE_RAISED_ENABLE'				=> 'Enable donation raised',
 	'PPDE_RAISED'						=> 'Donation raised',
-	'PPDE_RAISED_EXPLAIN'				=> 'The current amount raised through donations',
+	'PPDE_RAISED_EXPLAIN'				=> 'The current amount raised through donations.',
 	'PPDE_GOAL_ENABLE'					=> 'Enable donation goal',
 	'PPDE_GOAL'							=> 'Donation goal',
-	'PPDE_GOAL_EXPLAIN'					=> 'The total amount that you want to raise',
+	'PPDE_GOAL_EXPLAIN'					=> 'The total amount that you want to raise.',
 	'PPDE_USED_ENABLE'					=> 'Enable donation used',
 	'PPDE_USED'							=> 'Donation used',
-	'PPDE_USED_EXPLAIN'					=> 'The amount of donation that you have already used',
+	'PPDE_USED_EXPLAIN'					=> 'The amount of donation that you have already used.',
 
 	'PPDE_CURRENCY_ENABLE'				=> 'Enable donation currency',
 	'PPDE_CURRENCY_ENABLE_EXPLAIN'		=> 'Enable this option if you want to display the ISO 4217 code of default currency in Stats.',
+));
+
+/**
+* mode: donation pages
+* Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
+*/
+$lang = array_merge($lang, array(
+	// Donation Page settings
+	'PPDE_DP_CONFIG'			=> 'Donation pages',
+	'PPDE_DP_CONFIG_EXPLAIN'	=> 'Permit to improve the rendering of customizable pages of the extension.',
+
+	'PPDE_DP_PAGE'				=> 'Page type',
+	'PPDE_DP_LANG'				=> 'Language',
+	'PPDE_DP_LANG_SELECT'		=> 'Select a language',
+
+	// Donation Page Body settings
+	'DONATION_BODY'				=> 'Donation main page',
+	'DONATION_BODY_EXPLAIN'		=> 'Enter the text you want displayed on the main donation page.',
+
+	// Donation Success settings
+	'DONATION_SUCCESS'			=> 'Donation success',
+	'DONATION_SUCCESS_EXPLAIN'	=> 'Enter the text you want displayed on the success page.',
+
+	// Donation Cancel settings
+	'DONATION_CANCEL'			=> 'Donation cancel',
+	'DONATION_CANCEL_EXPLAIN'	=> 'Enter the text you want displayed on the cancel page.',
 ));
 
 /**
@@ -123,4 +152,19 @@ $lang = array_merge($lang, array(
 $lang = array_merge($lang, array(
 	//logs
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
+
+	// Confirm box
+	'PPDE_DP_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected donation page?',
+	'PPDE_DP_GO_TO_PAGE'	=> '%sEdit existing donation page%s',
+	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',
+	'PPDE_DP_LANG_DELETED'	=> 'A donation page for the language “%s” has been removed.',
+	'PPDE_DP_LANG_UPDATED'	=> 'A donation page for the language “%s” has been updated.',
+	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
+
+	// Errors
+	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
+	'PPDE_NO_PAGE'			=> 'No donation page found.',
+	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',
+	'PPDE_MUST_SELECT_PAGE'	=> 'The selected donation page does not exist.',
+	'PPDE_PAGE_EXISTS'		=> 'This donation page already exists.',
 ));

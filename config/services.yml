@@ -12,10 +12,23 @@ services:
             - @dbal.conn
             - @ext.manager
             - @log
+            - @skouat.ppde.operator
             - @request
             - @template
             - @user
             - %core.root_path%
             - %core.php_ext%
-            - %skouat.ppde.tables.ppde_data%
-            - %skouat.ppde.tables.ppde_item%
+
+    skouat.ppde.entity.pages:
+        class: skouat\ppde\entity\donation_pages
+        arguments:
+            - @dbal.conn
+            - @user
+            - %skouat.ppde.tables.ppde_donation_pages%
+
+    skouat.ppde.operator:
+        class: skouat\ppde\operators\donation_pages
+        arguments:
+            - @service_container
+            - @dbal.conn
+            - %skouat.ppde.tables.ppde_donation_pages%

@@ -18,12 +18,47 @@ namespace skouat\ppde\controller;
 interface admin_interface
 {
 	/**
-	* Display the options a user can configure for this extension
+	* Display the general settings a user can configure for this extension
 	*
 	* @return null
 	* @access public
 	*/
-	public function display_options();
+	public function display_overview($id, $mode, $action);
+
+	/**
+	* Display the general settings a user can configure for this extension
+	*
+	* @return null
+	* @access public
+	*/
+
+	public function display_settings();
+
+	/**
+	* Add a donation page
+	*
+	* @return null
+	* @access public
+	*/
+	public function add_donation_page();
+
+	/**
+	* Edit a donation page
+	*
+	* @param int $page_id Donation page identifier to edit
+	* @return null
+	* @access public
+	*/
+	public function edit_donation_page($page_id);
+
+	/**
+	* Delete a donation page
+	*
+	* @param int $page_id The donation page identifier to delete
+	* @return null
+	* @access public
+	*/
+	public function delete_donation_page($page_id);
 
 	/**
 	* Set page url
