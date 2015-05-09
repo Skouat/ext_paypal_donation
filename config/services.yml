@@ -2,6 +2,17 @@ imports:
     - { resource: tables.yml }
 
 services:
+    skouat.ppde.controller.admin.donation_pages:
+        class: skouat\ppde\controller\admin_donation_pages_controller
+        arguments:
+            - @service_container
+            - @skouat.ppde.operator
+            - @request
+            - @template
+            - @user
+            - %core.root_path%
+            - %core.php_ext%
+
     skouat.ppde.admin.controller:
         class: skouat\ppde\controller\admin_controller
         arguments:
@@ -19,7 +30,7 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
-    skouat.ppde.entity.pages:
+    skouat.ppde.entity.donation_pages:
         class: skouat\ppde\entity\donation_pages
         arguments:
             - @dbal.conn

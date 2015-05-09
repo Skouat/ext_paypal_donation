@@ -35,32 +35,6 @@ interface admin_interface
 	public function display_settings();
 
 	/**
-	* Add a donation page
-	*
-	* @return null
-	* @access public
-	*/
-	public function add_donation_page();
-
-	/**
-	* Edit a donation page
-	*
-	* @param int $page_id Donation page identifier to edit
-	* @return null
-	* @access public
-	*/
-	public function edit_donation_page($page_id);
-
-	/**
-	* Delete a donation page
-	*
-	* @param int $page_id The donation page identifier to delete
-	* @return null
-	* @access public
-	*/
-	public function delete_donation_page($page_id);
-
-	/**
 	* Set page url
 	*
 	* @param string $u_action Custom form action
