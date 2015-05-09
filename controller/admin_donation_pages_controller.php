@@ -91,27 +91,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			unset($entities, $page);
 		}
 		unset($entry, $langs, $lang);
-		// Process each page entity for display
-		/* @var $entity \phpbb\pages\entity\page */
-/*		foreach ($entities as $entity)
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('pages', array(
-				'PAGES_TITLE'		=> $entity->get_title(),
-				'PAGES_DESCRIPTION'	=> $entity->get_description(),
-				'PAGES_ROUTE'		=> $entity->get_route(),
-				'PAGES_TEMPLATE'	=> $entity->get_template(),
-				'PAGES_ORDER'		=> $entity->get_order(),
 
-				'S_PAGES_DISPLAY'		=> $entity->get_page_display(),
-				'S_PAGES_GUEST_DISPLAY'	=> $entity->get_page_display_to_guests(),
-
-				'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;page_id=' . $entity->get_id(),
-				'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;page_id=' . $entity->get_id(),
-				'U_PAGES_ROUTE'		=> $this->helper->route('phpbb_pages_main_controller', array('route' => $entity->get_route())),
-			));
-		}
-*/
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'U_ACTION'		=> $this->u_action,
@@ -243,16 +223,8 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Set the donation page's data in the entity
 		foreach ($item_fields as $entity_function => $page_data)
 		{
-			try
-			{
-				// Calling the set_$entity_function on the entity and passing it $dp_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
-			}
-			catch (\phpbb\boardrules\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
+			// Calling the set_$entity_function on the entity and passing it $dp_data
+			call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
 		}
 		unset($item_fields, $entity_function, $page_data);
 
