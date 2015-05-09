@@ -178,7 +178,7 @@ class admin_controller implements admin_interface
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
-			'INFO_CURL'				=> $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED') ,
+			'INFO_CURL'				=> $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
 			'INFO_FSOCKOPEN'		=> $this->check_fsockopen() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
 
 			'L_PPDE_INSTALL_DATE'		=> $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
@@ -698,6 +698,8 @@ class admin_controller implements admin_interface
 
 			return ($fp !== false) ? true : false;
 		}
+
+		return false;
 	}
 
 	/**
@@ -721,5 +723,7 @@ class admin_controller implements admin_interface
 
 			return ($response !== false || $response_status !== '0') ? true : false;
 		}
+
+		return false;
 	}
 }
