@@ -38,7 +38,7 @@ class ppde_module
 				$this->page_title = 'PPDE_ACP_OVERVIEW';
 
 				// Load a template from adm/style for our ACP page
-				$this->tpl_name = 'acp_donation';
+				$this->tpl_name = 'ppde_overview';
 
 				// Display pages
 				$admin_controller->display_overview($id, $mode, $action);
