@@ -11,15 +11,18 @@
 namespace skouat\ppde\controller;
 
 /**
-* Interface for our admin controller
+* Interface for our admin overview controller
 *
 * This describes all of the methods we'll use for the admin front-end of this extension
 */
-interface admin_interface
+interface admin_overview_interface
 {
 	/**
-	* Display the general settings a user can configure for this extension
+	* Display the overview page for this extension
 	*
+	* @param string $id        Module id
+	* @param string $mode      Module categorie
+	* @param string $action    Action name
 	* @return null
 	* @access public
 	*/

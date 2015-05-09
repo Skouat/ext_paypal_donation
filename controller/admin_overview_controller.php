@@ -10,7 +10,7 @@
 
 namespace skouat\ppde\controller;
 
-class admin_controller implements admin_interface
+class admin_overview_controller implements admin_overview_interface
 {
 	protected $u_action;
 	protected $ext_meta = array();

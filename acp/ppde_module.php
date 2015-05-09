@@ -19,19 +19,19 @@ class ppde_module
 	{
 		global $phpbb_container, $request;
 
-		// Get an instance of the admin controller
-		$admin_controller = $phpbb_container->get('skouat.ppde.admin.controller');
-
 		// Requests
 		$action = $request->variable('action', '');
 		$page_id = $request->variable('page_id', 0);
 
-		// Make the $u_action url available in the admin controller and ppde_operator
-		$admin_controller->set_page_url($this->u_action);
-
 		switch ($mode)
 		{
 			case 'overview':
+				// Get an instance of the admin controller
+				$admin_overview_controller = $phpbb_container->get('skouat.ppde.controller.admin.overview');
+
+				// Make the $u_action url available in the admin overview controller
+				$admin_overview_controller->set_page_url($this->u_action);
+
 				// Set the page title for our ACP page
 				$this->page_title = 'PPDE_ACP_OVERVIEW';
 
@@ -39,7 +39,7 @@ class ppde_module
 				$this->tpl_name = 'ppde_overview';
 
 				// Display pages
-				$admin_controller->display_overview($id, $mode, $action);
+				$admin_overview_controller->display_overview($id, $mode, $action);
 			break;
 
 			case 'settings':
