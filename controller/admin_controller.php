@@ -16,6 +16,7 @@ class admin_controller implements admin_interface
 {
 	protected $lang_local_name;
 	protected $u_action;
+	protected $ext_meta = array();
 
 	protected $auth;
 	protected $cache;
@@ -124,7 +125,7 @@ class admin_controller implements admin_interface
 		$this->retrieve_ext_name(__NAMESPACE__);
 
 		// init variables
-		$ext_meta = array();
+		$this->ext_meta = array();
 
 		// If they've specified an extension, let's load the metadata manager and validate it.
 		if ($this->ext_name)
@@ -133,7 +134,7 @@ class admin_controller implements admin_interface
 
 			try
 			{
-				$ext_meta = $md_manager->get_metadata('all');
+				$this->ext_meta = $md_manager->get_metadata('all');
 			}
 			catch(\phpbb\extension\exception $e)
 			{
@@ -144,15 +145,15 @@ class admin_controller implements admin_interface
 		// Check if a new version is available
 		try
 		{
-			if (!isset($ext_meta['extra']['version-check']))
+			if (!isset($this->ext_meta['extra']['version-check']))
 			{
 				throw new \RuntimeException($this->user->lang('PPDE_NO_VERSIONCHECK'), 1);
 			}
 
-			$version_check = $ext_meta['extra']['version-check'];
+			$version_check = $this->ext_meta['extra']['version-check'];
 
 			$version_helper = new \phpbb\version_helper($this->cache, $this->config, new \phpbb\file_downloader(), $this->user);
-			$version_helper->set_current_version($ext_meta['version']);
+			$version_helper->set_current_version($this->ext_meta['version']);
 			$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
 			$version_helper->force_stability($this->config['extension_force_unstable'] ? 'unstable' : null);
 
@@ -162,7 +163,7 @@ class admin_controller implements admin_interface
 			$this->template->assign_vars(array(
 				'S_UP_TO_DATE'		=> empty($s_up_to_date),
 				'S_VERSIONCHECK'	=> true,
-				'UP_TO_DATE_MSG'	=> $this->user->lang('PPDE_NOT_UP_TO_DATE', $ext_meta['extra']['display-name']),
+				'UP_TO_DATE_MSG'	=> $this->user->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
 			));
 		}
 		catch(\RuntimeException $e)
@@ -173,65 +174,25 @@ class admin_controller implements admin_interface
 			));
 		}
 
-		// Check if fsockopen and cURL are available and display it in overview
-		$info_curl = $info_fsockopen = $this->user->lang['INFO_NOT_DETECTED'];
-		$s_curl = $s_fsockopen = false;
-
-		if (function_exists('fsockopen'))
-		{
-			$url = parse_url($ext_meta['extra']['version-check']['host']);
-
-			$fp = @fsockopen($url['path'], 80);
-
-			if ($fp !== false)
-			{
-				$info_fsockopen = $this->user->lang['INFO_DETECTED'];
-				$s_fsockopen = true;
-			}
-
-			unset($fp);
-		}
-
-		if (function_exists('curl_init') && function_exists('curl_exec'))
-		{
-
-			$ch = curl_init($ext_meta['extra']['version-check']['host']);
-
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			$response = curl_exec($ch);
-			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-
-			curl_close($ch);
-
-			if ($response !== false || $response_status !== '0')
-			{
-				$info_curl = $this->user->lang['INFO_DETECTED'];
-				$s_curl = true;
-			}
-
-			unset($ch, $response, $response_status);
-		}
-
 		$ppde_install_date = $this->user->format_date($this->config['ppde_install_date']);
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
-			'INFO_CURL'				=> $info_curl,
-			'INFO_FSOCKOPEN'		=> $info_fsockopen,
+			'INFO_CURL'				=> $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
+			'INFO_FSOCKOPEN'		=> $this->check_fsockopen() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
 
-			'L_PPDE_INSTALL_DATE'		=> $this->user->lang('PPDE_INSTALL_DATE', $ext_meta['extra']['display-name']),
-			'L_PPDE_VERSION'			=> $this->user->lang('PPDE_VERSION', $ext_meta['extra']['display-name']),
+			'L_PPDE_INSTALL_DATE'		=> $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_VERSION'			=> $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
 
 			'PPDE_INSTALL_DATE'		=> $ppde_install_date,
-			'PPDE_VERSION'			=> $ext_meta['version'],
+			'PPDE_VERSION'			=> $this->ext_meta['version'],
 
 			'S_ACTION_OPTIONS'		=> ($this->auth->acl_get('a_board')) ? true : false,
-			'S_FSOCKOPEN'			=> $s_fsockopen,
-			'S_CURL'				=> $s_curl,
+			'S_FSOCKOPEN'			=> $this->check_fsockopen(),
+			'S_CURL'				=> $this->check_curl(),
 			'S_OVERVIEW'			=> $mode,
 
-			'U_PPDE_MORE_INFORMATION'	=> append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
+			'U_PPDE_MORE_INFORMATION'	=> append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
 			'U_PPDE_VERSIONCHECK_FORCE'	=> $this->u_action . '&amp;versioncheck_force=1',
 			'U_ACTION'					=> $this->u_action,
 		));
@@ -719,5 +680,50 @@ class admin_controller implements admin_interface
 	{
 		$namespace_ary = explode('\\', $namespace);
 		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
+	}
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	private function check_fsockopen()
+	{
+		if (function_exists('fsockopen'))
+		{
+			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
+
+			$fp = @fsockopen($url['path'], 80);
+
+			return ($fp !== false) ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	* Check if cURL is available
+	*
+	* @return bool
+	* @access protected
+	*/
+	private function check_curl()
+	{
+		if (function_exists('curl_init') && function_exists('curl_exec'))
+		{
+			$ch = curl_init($this->ext_meta['extra']['version-check']['host']);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$response = curl_exec($ch);
+			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+
+			curl_close($ch);
+
+			return ($response !== false || $response_status !== '0') ? true : false;
+		}
+
+		return false;
 	}
 }
