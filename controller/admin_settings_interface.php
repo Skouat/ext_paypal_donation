@@ -11,11 +11,11 @@
 namespace skouat\ppde\controller;
 
 /**
-* Interface for our admin controller
+* Interface for our admin settings controller
 *
 * This describes all of the methods we'll use for the admin front-end of this extension
 */
-interface admin_interface
+interface admin_settings_interface
 {
 	/**
 	* Display the general settings a user can configure for this extension
@@ -23,7 +23,7 @@ interface admin_interface
 	* @return null
 	* @access public
 	*/
-	public function display_overview($id, $mode, $action);
+	public function display_settings();
 
 	/**
 	* Set page url

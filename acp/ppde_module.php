@@ -43,6 +43,12 @@ class ppde_module
 			break;
 
 			case 'settings':
+				// Get an instance of the admin controller
+				$admin_settings_controller = $phpbb_container->get('skouat.ppde.controller.admin.settings');
+
+				// Make the $u_action url available in the admin settings controller
+				$admin_settings_controller->set_page_url($this->u_action);
+
 				// Set the page title for our ACP page
 				$this->page_title = 'PPDE_ACP_SETTINGS';
 
@@ -50,7 +56,7 @@ class ppde_module
 				$this->tpl_name = 'ppde_settings';
 
 				// Load the display options handle in the admin controller
-				$admin_controller->display_settings();
+				$admin_settings_controller->display_settings();
 			break;
 
 			case 'donation_pages':
