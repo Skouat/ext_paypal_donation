@@ -13,8 +13,8 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
-    skouat.ppde.controller.admin.overwiew:
-        class: skouat\ppde\controller\admin_overwiew_controller
+    skouat.ppde.controller.admin.overview:
+        class: skouat\ppde\controller\admin_overview_controller
         arguments:
             - @auth
             - @cache
