@@ -18,7 +18,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	protected $u_action;
 
 	protected $container;
-	protected $ppde_operator;
+	protected $ppde_operator_donation_pages;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -28,19 +28,19 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	/**
 	* Constructor
 	*
-	* @param ContainerInterface                     $container          Service container interface
-	* @param \skouat\ppde\operators\donation_pages  $ppde_operator      Operator object
-	* @param \phpbb\request\request                 $request            Request object
-	* @param \phpbb\template\template               $template           Template object
-	* @param \phpbb\user                            $user               User object
-	* @param string                                 $phpbb_root_path    phpBB root path
-	* @param string                                 $php_ext            phpEx
+	* @param ContainerInterface                     $container                     Service container interface
+	* @param \skouat\ppde\operators\donation_pages  $ppde_operator_donation_pages  Operator object
+	* @param \phpbb\request\request                 $request                       Request object
+	* @param \phpbb\template\template               $template                      Template object
+	* @param \phpbb\user                            $user                          User object
+	* @param string                                 $phpbb_root_path               phpBB root path
+	* @param string                                 $php_ext                       phpEx
 	* @access public
 	*/
-	public function __construct(ContainerInterface $container, \skouat\ppde\operators\donation_pages $ppde_operator, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
+	public function __construct(ContainerInterface $container, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->container = $container;
-		$this->ppde_operator = $ppde_operator;
+		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -57,7 +57,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	public function display_donation_pages()
 	{
 		// Get list of available language packs
-		$langs = $this->ppde_operator->get_languages();
+		$langs = $this->ppde_operator_donation_pages->get_languages();
 
 		// Set output vars
 		foreach ($langs as $lang => $entry)
@@ -70,7 +70,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			$lang_id = $entry['id'];
 
 			// Grab all the pages from the db
-			$entities = $this->ppde_operator->get_pages_data($lang_id);
+			$entities = $this->ppde_operator_donation_pages->get_pages_data($lang_id);
 
 			foreach ($entities as $page)
 			{
@@ -274,7 +274,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			}
 
 			// Grab the local language name
-			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
+			$this->get_lang_local_name($this->ppde_operator_donation_pages->get_languages($entity->get_lang_id()));
 
 			if ($entity->get_id())
 			{
@@ -287,7 +287,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			else
 			{
 				// Add a new item entity to the database
-				$this->ppde_operator->add_pages_data($entity);
+				$this->ppde_operator_donation_pages->add_pages_data($entity);
 
 				// Show user confirmation of the added item and provide link back to the previous page
 				trigger_error($this->user->lang('PPDE_DP_LANG_ADDED', $this->lang_local_name) . adm_back_link($this->u_action));
@@ -343,10 +343,10 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			$entity = $this->container->get('skouat.ppde.entity.donation_pages');
 
 			// Before deletion, grab the local language name
-			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
+			$this->get_lang_local_name($this->ppde_operator_donation_pages->get_languages($entity->get_lang_id()));
 
 			// Delete the donation page on confirmation
-			$this->ppde_operator->delete_page($page_id);
+			$this->ppde_operator_donation_pages->delete_page($page_id);
 
 			// Show user confirmation of the deleted donation page and provide link back to the previous page
 			trigger_error($this->user->lang('PPDE_DP_LANG_DELETED', $this->lang_local_name) . adm_back_link($this->u_action));
@@ -388,7 +388,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	protected function create_language_options($current)
 	{
 		// Grab all available language packs
-		$langs = $this->ppde_operator->get_languages();
+		$langs = $this->ppde_operator_donation_pages->get_languages();
 
 		// Set the options list template vars
 		foreach ($langs as $lang)

@@ -6,7 +6,7 @@ services:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
             - @service_container
-            - @skouat.ppde.operator
+            - @skouat.ppde.operator.donation_pages
             - @request
             - @template
             - @user
@@ -21,7 +21,6 @@ services:
             - @config
             - @ext.manager
             - @log
-            - @skouat.ppde.operator
             - @request
             - @template
             - @user
@@ -44,7 +43,7 @@ services:
             - @user
             - %skouat.ppde.tables.ppde_donation_pages%
 
-    skouat.ppde.operator:
+    skouat.ppde.operator.donation_pages:
         class: skouat\ppde\operators\donation_pages
         arguments:
             - @service_container

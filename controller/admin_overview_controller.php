@@ -13,6 +13,7 @@ namespace skouat\ppde\controller;
 class admin_overview_controller implements admin_overview_interface
 {
 	protected $u_action;
+	protected $ext_name;
 	protected $ext_meta = array();
 
 	protected $auth;
@@ -162,8 +163,6 @@ class admin_overview_controller implements admin_overview_interface
 			));
 		}
 
-		$ppde_install_date = $this->user->format_date($this->config['ppde_install_date']);
-
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
 			'INFO_CURL'				=> $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
@@ -172,13 +171,12 @@ class admin_overview_controller implements admin_overview_interface
 			'L_PPDE_INSTALL_DATE'		=> $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
 			'L_PPDE_VERSION'			=> $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
 
-			'PPDE_INSTALL_DATE'		=> $ppde_install_date,
+			'PPDE_INSTALL_DATE'		=> $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_VERSION'			=> $this->ext_meta['version'],
 
 			'S_ACTION_OPTIONS'		=> ($this->auth->acl_get('a_board')) ? true : false,
 			'S_FSOCKOPEN'			=> $this->check_fsockopen(),
 			'S_CURL'				=> $this->check_curl(),
-			'S_OVERVIEW'			=> $mode,
 
 			'U_PPDE_MORE_INFORMATION'	=> append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
 			'U_PPDE_VERSIONCHECK_FORCE'	=> $this->u_action . '&amp;versioncheck_force=1',
