@@ -26,37 +26,29 @@ class ppde_module
 		switch ($mode)
 		{
 			case 'overview':
-				// Get an instance of the admin controller
-				$admin_overview_controller = $phpbb_container->get('skouat.ppde.controller.admin.overview');
-
-				// Make the $u_action url available in the admin overview controller
-				$admin_overview_controller->set_page_url($this->u_action);
-
-				// Set the page title for our ACP page
-				$this->page_title = 'PPDE_ACP_OVERVIEW';
-
-				// Load a template from adm/style for our ACP page
-				$this->tpl_name = 'ppde_overview';
-
-				// Display pages
-				$admin_overview_controller->display_overview($id, $mode, $action);
-			break;
-
 			case 'settings':
 				// Get an instance of the admin controller
-				$admin_settings_controller = $phpbb_container->get('skouat.ppde.controller.admin.settings');
+				$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
 
-				// Make the $u_action url available in the admin settings controller
-				$admin_settings_controller->set_page_url($this->u_action);
+				// Make the $u_action url available in the admin overview controller
+				$admin_controller->set_page_url($this->u_action);
 
 				// Set the page title for our ACP page
-				$this->page_title = 'PPDE_ACP_SETTINGS';
+				$this->page_title = 'PPDE_ACP_' . strtoupper($mode);
 
 				// Load a template from adm/style for our ACP page
-				$this->tpl_name = 'ppde_settings';
+				$this->tpl_name = 'ppde_' . strtolower($mode);
 
-				// Load the display options handle in the admin controller
-				$admin_settings_controller->display_settings();
+				if ($mode == 'overview')
+				{
+					// Load the display overview handle in the admin controller
+					$admin_controller->display_overview($id, $mode, $action);
+				}
+				elseif ($mode == 'settings')
+				{
+					// Load the display options handle in the admin controller
+					$admin_controller->display_settings();
+				}
 			break;
 
 			case 'donation_pages':
