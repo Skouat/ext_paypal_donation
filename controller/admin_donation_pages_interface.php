@@ -11,28 +11,19 @@
 namespace skouat\ppde\controller;
 
 /**
-* Interface for our admin controller
+* Interface for our admin donation_pages_controller
 *
 * This describes all of the methods we'll use for the admin front-end of this extension
 */
-interface admin_interface
+interface admin_donation_pages_interface
 {
 	/**
-	* Display the general settings a user can configure for this extension
-	*
-	* @return null
-	* @access public
-	*/
-	public function display_overview($id, $mode, $action);
-
-	/**
-	* Display the general settings a user can configure for this extension
-	*
-	* @return null
-	* @access public
-	*/
-
-	public function display_settings();
+	 * Display the pages
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function display_donation_pages();
 
 	/**
 	* Add a donation page

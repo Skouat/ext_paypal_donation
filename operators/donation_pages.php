@@ -59,7 +59,7 @@ class donation_pages implements donation_pages_interface
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			// Import each donation page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.pages')->import($row);
+			$entities[] = $this->container->get('skouat.ppde.entity.donation_pages')->import($row);
 		}
 		$this->db->sql_freeresult($result);
 
