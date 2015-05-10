@@ -44,7 +44,7 @@ class ppde_module
 					// Load the display overview handle in the admin controller
 					$admin_controller->display_overview($id, $mode, $action);
 				}
-				elseif ($mode == 'settings')
+				else if ($mode == 'settings')
 				{
 					// Load the display options handle in the admin controller
 					$admin_controller->display_settings();
