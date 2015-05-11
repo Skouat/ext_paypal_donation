@@ -33,8 +33,23 @@ class v1_0_0_schema extends \phpbb\db\migration\migration
 						'page_content_bbcode_options'	=> array('UINT:4', 7),
 					),
 
-					'PRIMARY_KEY'	=> array('page_id'),
+					'PRIMARY_KEY' => array('page_id'),
 				),
+			),
+		);
+	}
+
+	/**
+	 * Drop the PayPal Donation tables schema from the database
+	 *
+	 * @return array Array of table schema
+	 * @access public
+	 */
+	public function revert_schema()
+	{
+		return array(
+			'drop_tables'	=> array(
+				$this->table_prefix . 'ppde_donation_pages',
 			),
 		);
 	}

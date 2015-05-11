@@ -54,7 +54,7 @@ class ppde_module
 			case 'donation_pages':
 				// Get an instance of the admin controller
 				$admin_donation_pages_controller = $phpbb_container->get('skouat.ppde.controller.admin.donation_pages');
-				$entity_donations_pages = $phpbb_container->get('skouat.ppde.entity.pages');
+				$entity_donations_pages = $phpbb_container->get('skouat.ppde.entity.donation_pages');
 
 				// Make the $u_action url available in the admin donation pages controller
 				$admin_donation_pages_controller->set_page_url($this->u_action);
