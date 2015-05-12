@@ -22,6 +22,19 @@ class v1_0_0_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
+				$this->table_prefix . 'ppde_currency' => array(
+					'COLUMNS' => array(
+						'currency_id'		=> array('UINT', null, 'auto_increment'),
+						'currency_name'		=> array('VCHAR:50', ''),
+						'currency_iso_code'	=> array('VCHAR:10', ''),
+						'currency_symbol'	=> array('VCHAR:10', ''),
+						'currency_enable'	=> array('BOOL', 1),
+						'currency_left_id'	=> array('UINT', 0),
+						'currency_right_id'	=> array('UINT', 0),
+					),
+					'PRIMARY_KEY' => array('currency_id'),
+				),
+
 				$this->table_prefix . 'ppde_donation_pages' => array(
 					'COLUMNS'     => array(
 						'page_id'                      => array('UINT', null, 'auto_increment'),

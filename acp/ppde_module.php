@@ -97,6 +97,22 @@ class ppde_module
 				$admin_donation_pages_controller->display_donation_pages();
 				break;
 
+			case 'currency':
+				// Get an instance of the admin controller
+				$admin_currency_controller = $phpbb_container->get('skouat.ppde.controller.admin.currency');
+
+				// Make the $u_action url available in the admin donation pages controller
+				$admin_currency_controller->set_page_url($this->u_action);
+				// Load a template from adm/style for our ACP page
+				$this->tpl_name = 'ppde_currency';
+
+				// Set the page title for our ACP page
+				$this->page_title = 'PPDE_ACP_CURRENCY';
+
+				// Display module main page
+				$admin_currency_controller->display_currency();
+			break;
+
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);
 				break;
