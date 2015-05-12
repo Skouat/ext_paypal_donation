@@ -40,10 +40,11 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
-	'PPDE_ACP_OVERVIEW'				=> 'Vue d’ensemble',
-	'PPDE_ACP_SETTINGS'				=> 'Paramètres généraux',
-	'PPDE_ACP_DONATION_PAGES'		=> 'Pages des dons',
+	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'			=> 'Vue d’ensemble',
+	'PPDE_ACP_SETTINGS'			=> 'Paramètres généraux',
+	'PPDE_ACP_DONATION_PAGES'	=> 'Pages des dons',
+	'PPDE_ACP_CURRENCY'			=> 'Gestion des devises',
 ));
 
 /**
@@ -144,6 +145,18 @@ $lang = array_merge($lang, array(
 	// Donation Cancel settings
 	'DONATION_CANCEL'			=> 'Page des dons annulés',
 	'DONATION_CANCEL_EXPLAIN'	=> 'Saisir le texte que vous souhaitez afficher sur la page des dons annulés.',
+));
+
+/**
+* mode: currency
+* Info: language keys are prefixed with 'PPDE_DC_' for 'PPDE_DONATION_CURRENCY_'
+*/
+$lang = array_merge($lang, array(
+	// Currency Management
+	'PPDE_DC_CONFIG'			=> 'Gestion des devises',
+	'PPDE_DC_CONFIG_EXPLAIN'	=> 'Permet de gérer les devises pour faire un don.',
+	'PPDE_DC_NAME'				=> 'Nom de la devise',
+	'PPDE_DC_CREATE_CURRENCY'	=> 'Ajouter une nouvelle devise',
 ));
 
 /**
