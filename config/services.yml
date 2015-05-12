@@ -6,22 +6,21 @@ services:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
             - @service_container
-            - @skouat.ppde.operator
+            - @skouat.ppde.operator.donation_pages
             - @request
             - @template
             - @user
             - %core.root_path%
             - %core.php_ext%
 
-    skouat.ppde.controller.admin.overwiew:
-        class: skouat\ppde\controller\admin_overwiew_controller
+    skouat.ppde.controller.admin.overview:
+        class: skouat\ppde\controller\admin_overview_controller
         arguments:
             - @auth
             - @cache
             - @config
             - @ext.manager
             - @log
-            - @skouat.ppde.operator
             - @request
             - @template
             - @user
@@ -44,7 +43,7 @@ services:
             - @user
             - %skouat.ppde.tables.ppde_donation_pages%
 
-    skouat.ppde.operator:
+    skouat.ppde.operator.donation_pages:
         class: skouat\ppde\operators\donation_pages
         arguments:
             - @service_container

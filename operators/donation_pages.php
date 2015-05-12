@@ -53,7 +53,8 @@ class donation_pages implements donation_pages_interface
 		// Build sql query with alias field
 		$sql = 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
-				WHERE page_lang_id = ' . (int) ($lang_id);
+				WHERE page_lang_id = ' . (int) ($lang_id) . '
+				ORDER BY page_title';
 		$result = $this->db->sql_query($sql);
 
 		while ($row = $this->db->sql_fetchrow($result))
