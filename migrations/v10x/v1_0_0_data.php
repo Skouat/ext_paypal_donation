@@ -77,11 +77,12 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'ACP_DONATION_MOD',
 				array(
 					'module_basename'	=> '\skouat\ppde\acp\ppde_module',
-					'modes'				=> array('overview', 'settings', 'donation_pages'),
+					'modes'				=> array('overview', 'settings', 'donation_pages', 'currency'),
 				)
 			)),
 
 			array('custom', array(array(&$this, 'add_ppde_donation_pages_data'))),
+			array('custom', array(array(&$this, 'add_ppde_currency_data'))),
 
 			array('config.add', array('ppde_version', '1.0.0-dev')),
 		);
@@ -116,5 +117,77 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 
 		// Insert data
 		$this->db->sql_multi_insert($this->table_prefix . 'ppde_donation_pages', $dp_data);
+	}
+
+	/**
+	* Add initial currency data to the database
+	*
+	* @return null
+	* @access public
+	*/
+	public function add_ppde_currency_data()
+	{
+		// Define data
+		$currency_data = array(
+			array(
+				'currency_name'			=> 'U.S. Dollar',
+				'currency_iso_code'		=> 'USD',
+				'currency_symbol'		=> '&#36;', // symbol dollar
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 1,
+				'currency_right_id'		=> 2,
+			),
+			array(
+				'currency_name'			=> 'Euro',
+				'currency_iso_code'		=> 'EUR',
+				'currency_symbol'		=> '&#8364;', // symbol euro
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 3,
+				'currency_right_id'		=> 4,
+			),
+			array(
+				'currency_name'			=> 'Australian Dollar',
+				'currency_iso_code'		=> 'AUD',
+				'currency_symbol'		=> '&#36;', // symbol $
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 5,
+				'currency_right_id'		=> 6,
+			),
+			array(
+				'currency_name'			=> 'Canadian Dollar',
+				'currency_iso_code'		=> 'CAD',
+				'currency_symbol'		=> '&#36;', // symbol $
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 7,
+				'currency_right_id'		=> 8,
+			),
+			array(
+				'currency_name'			=> 'Hong Kong Dollar',
+				'currency_iso_code'		=> 'HKD',
+				'currency_symbol'		=> '&#36;', // symbol $
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 9,
+				'currency_right_id'		=> 10,
+			),
+			array(
+				'currency_name'			=> 'Pound Sterling',
+				'currency_iso_code'		=> 'GBP',
+				'currency_symbol'		=> '&#163;', // symbol livre sterling
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 11,
+				'currency_right_id'		=> 12,
+			),
+			array(
+				'currency_name'			=> 'Yen',
+				'currency_iso_code'		=> 'JPY',
+				'currency_symbol'		=> '&#165;', // symbol yen
+				'currency_enable'		=> true,
+				'currency_left_id'		=> 13,
+				'currency_right_id'		=> 14,
+			),
+		);
+
+		// Insert data
+		$this->db->sql_multi_insert($this->table_prefix . 'ppde_currency', $currency_data);
 	}
 }

@@ -30,6 +30,10 @@ class ppde_info
 					'title'	=> 'PPDE_ACP_DONATION_PAGES',
 					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'	=> array('ACP_DONATION_MOD')),
+				'currency' => array(
+					'title'	=> 'PPDE_ACP_CURRENCY',
+					'auth'	=> 'ext_skouat/ppde && acl_a_ppde_manage',
+					'cat'	=> array('ACP_DONATION_MOD')),
 			),
 		);
 	}

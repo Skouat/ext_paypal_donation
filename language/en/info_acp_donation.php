@@ -40,10 +40,11 @@ if (empty($lang) || !is_array($lang))
 * mode: main
 */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
-	'PPDE_ACP_OVERVIEW'				=> 'Overview',
-	'PPDE_ACP_SETTINGS'				=> 'General Settings',
-	'PPDE_ACP_DONATION_PAGES'		=> 'Donation Pages',
+	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'			=> 'Overview',
+	'PPDE_ACP_SETTINGS'			=> 'General Settings',
+	'PPDE_ACP_DONATION_PAGES'	=> 'Donation Pages',
+	'PPDE_ACP_CURRENCY'			=> 'Currency management',
 ));
 
 /**
@@ -144,6 +145,18 @@ $lang = array_merge($lang, array(
 	// Donation Cancel settings
 	'DONATION_CANCEL'			=> 'Donation cancel',
 	'DONATION_CANCEL_EXPLAIN'	=> 'Enter the text you want displayed on the cancel page.',
+));
+
+/**
+* mode: currency
+* Info: language keys are prefixed with 'PPDE_DC_' for 'PPDE_DONATION_CURRENCY_'
+*/
+$lang = array_merge($lang, array(
+	// Currency Management
+	'PPDE_DC_CONFIG'			=> 'Currency management',
+	'PPDE_DC_CONFIG_EXPLAIN'	=> 'Here you can manage currency.',
+	'PPDE_DC_NAME'				=> 'Currency name',
+	'PPDE_DC_CREATE_CURRENCY'	=> 'Add new currency',
 ));
 
 /**
