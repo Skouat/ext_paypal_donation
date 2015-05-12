@@ -65,7 +65,7 @@ $lang = array_merge($lang, array(
 
 	'STAT_RESET_DATE'			=> 'Réinitialiser la date d’installation du MOD',
 	'STAT_RESET_DATE_EXPLAIN'	=> 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
-	'STAT_RESET_DATE_CONFIRM'	=> 'Etes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESET_DATE_CONFIRM'	=> 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
 ));
 
 /**
@@ -154,6 +154,8 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
+	'PPDE_DC_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_DELETED'		=> 'Une devise a été supprimée.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
 	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',

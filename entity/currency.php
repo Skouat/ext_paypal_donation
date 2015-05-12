@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\entity;
 
@@ -16,32 +16,32 @@ namespace skouat\ppde\entity;
 class currency implements currency_interface
 {
 	/**
-	* Data for this entity
-	*
-	* @var array
-	*	currency_id
-	*	currency_name
-	*	currency_iso_code
-	*	currency_symbol
-	*	currency_enable
-	*	currency_left_id
-	*	currency_right_id
-	* @access protected
-	*/
+	 * Data for this entity
+	 *
+	 * @var array
+	 *	currency_id
+	 *	currency_name
+	 *	currency_iso_code
+	 *	currency_symbol
+	 *	currency_enable
+	 *	currency_left_id
+	 *	currency_right_id
+	 * @access protected
+	 */
 	protected $currency_data;
 	protected $u_action;
 
 	protected $user;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\db\driver\driver_interface    $db                Database object
-	* @param \phpbb\user                          $user              User object
-	* @param string                               $currency_table    Name of the table used to store data
-	* @access public
-	*/
-	public function __construct(\phpbb\user $user)
+	 * Constructor
+	 *
+	 * @param \phpbb\db\driver\driver_interface    $db                Database object
+	 * @param \phpbb\user                          $user              User object
+	 * @param string                               $currency_table    Name of the table used to store data
+	 * @access public
+	 */
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $currency_table)
 	{
 		$this->user = $user;
 	}
@@ -110,12 +110,12 @@ class currency implements currency_interface
 	}
 
 	/**
-	* Set page url
-	*
-	* @param string $u_action Custom form action
-	* @return null
-	* @access public
-	*/
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 * @return null
+	 * @access public
+	 */
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;

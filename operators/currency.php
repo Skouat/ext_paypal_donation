@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\operators;
 
@@ -24,13 +24,13 @@ class currency implements currency_interface
 	protected $ppde_currency_table;
 
 	/**
-	* Constructor
-	*
-	* @param ContainerInterface                   $container              Service container interface
-	* @param \phpbb\db\driver\driver_interface    $db                     Database connection
-	* @param string                               $ppde_currency_table    Table name
-	* @access public
-	*/
+	 * Constructor
+	 *
+	 * @param ContainerInterface                   $container              Service container interface
+	 * @param \phpbb\db\driver\driver_interface    $db                     Database connection
+	 * @param string                               $ppde_currency_table    Table name
+	 * @access public
+	 */
 	public function __construct(ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_currency_table)
 	{
 		$this->container = $container;
@@ -68,5 +68,23 @@ class currency implements currency_interface
 
 		// Return all page entities
 		return $entities;
+	}
+
+	/**
+	 * Delete a currency
+	 *
+	 * @param int $currency_id The currency identifier to delete
+	 * @return bool True if row was deleted, false otherwise
+	 * @access public
+	 */
+	public function delete_currency_data($currency_id)
+	{
+		// Delete the donation page from the database
+		$sql = 'DELETE FROM ' . $this->ppde_currency_table . '
+			WHERE currency_id = ' . (int) $currency_id;
+		$this->db->sql_query($sql);
+
+		// Return true/false if a donation page was deleted
+		return (bool) $this->db->sql_affectedrows();
 	}
 }

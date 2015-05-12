@@ -22,6 +22,7 @@ class ppde_module
 		// Requests
 		$action = $request->variable('action', '');
 		$page_id = $request->variable('page_id', 0);
+		$currency_id = $request->variable('currency_id', 0);
 
 		switch ($mode)
 		{
@@ -109,6 +110,14 @@ class ppde_module
 				// Set the page title for our ACP page
 				$this->page_title = 'PPDE_ACP_CURRENCY';
 
+				// Perform any actions submitted by the user
+				switch ($action)
+				{
+					case 'delete':
+						// Delete a donation page
+						$admin_currency_controller->delete_currency($currency_id);
+					break;
+				}
 				// Display module main page
 				$admin_currency_controller->display_currency();
 			break;

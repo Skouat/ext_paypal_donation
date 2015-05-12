@@ -11,7 +11,7 @@
 namespace skouat\ppde\controller;
 
 /**
-* Interface for our admin donation_pages_controller
+* Interface for our admin currency controller
 *
 * This describes all of the methods we'll use for the admin front-end of this extension
 */
@@ -24,6 +24,15 @@ interface admin_currency_interface
 	* @access public
 	*/
 	public function display_currency();
+
+	/**
+	 * Delete a currency
+	 *
+	 * @param int $currency_id
+	 * @return null
+	 * @access   public
+	 */
+	public function delete_currency($currency_id);
 
 	/**
 	* Set page url

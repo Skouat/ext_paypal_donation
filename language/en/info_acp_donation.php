@@ -154,6 +154,8 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
 
 	// Confirm box
+	'PPDE_DC_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected currency?',
+	'PPDE_DC_DELETED'		=> 'A currency has been deleted.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected donation page?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sEdit existing donation page%s',
 	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',

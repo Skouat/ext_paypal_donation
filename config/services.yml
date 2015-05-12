@@ -7,6 +7,7 @@ services:
         arguments:
             - @skouat.ppde.operator.currency
             - @template
+            - @user
 
     skouat.ppde.controller.admin.donation_pages:
         class: skouat\ppde\controller\admin_donation_pages_controller

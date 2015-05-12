@@ -16,18 +16,21 @@ class admin_currency_controller implements admin_currency_interface
 
 	protected $ppde_operator_currency;
 	protected $template;
+	protected $user;
 
 	/**
 	* Constructor
 	*
 	* @param \skouat\ppde\operators\currency  $ppde_operator_currency    Operator object
-	* @param \phpbb\template\template               $template           Template object
+	* @param \phpbb\template\template         $template           Template object
+	* @param \phpbb\user                      $user               User object
 	* @access public
 	*/
-	public function __construct(\skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\template\template $template)
+	public function __construct(\skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->template = $template;
+		$this->user = $user;
 	}
 
 	/**
@@ -66,6 +69,39 @@ class admin_currency_controller implements admin_currency_interface
 	}
 
 	/**
+	 * Delete a currency
+	 *
+	 * @param int $currency_id
+	 * @return null
+	 * @access   public
+	 */
+	public function delete_currency($currency_id)
+	{
+		// Use a confirmation box routine when deleting a currency
+		if (confirm_box(true))
+		{
+			// Delete the currency on confirmation
+			$this->ppde_operator_currency->delete_currency_data($currency_id);
+
+			// Show user confirmation of the deleted currency and provide link back to the previous page
+			trigger_error($this->user->lang('PPDE_DC_DELETED') . adm_back_link($this->u_action));
+		}
+		else
+		{
+			// Request confirmation from the user to delete the currency
+			confirm_box(false, $this->user->lang('PPDE_DC_CONFIRM_DELETE'), build_hidden_fields(array(
+				'mode'			=> 'currency',
+				'action'		=> 'delete',
+				'currency_id'	=> $currency_id,
+			)));
+
+			// Use a redirect to take the user back to the previous page
+			// if the user chose not delete the currency from the confirmation page.
+			redirect($this->u_action);
+		}
+	}
+
+	/**
 	* Set page url
 	*
 	* @param string $u_action Custom form action
@@ -76,5 +112,4 @@ class admin_currency_controller implements admin_currency_interface
 	{
 		$this->u_action = $u_action;
 	}
-
 }
