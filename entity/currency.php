@@ -31,7 +31,9 @@ class currency implements currency_interface
 	protected $currency_data;
 	protected $u_action;
 
+	protected $db;
 	protected $user;
+	protected $currency_table;
 
 	/**
 	 * Constructor
@@ -43,7 +45,51 @@ class currency implements currency_interface
 	 */
 	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $currency_table)
 	{
+		$this->db = $db;
 		$this->user = $user;
+		$this->currency_table = $currency_table;
+	}
+
+	/**
+	 * Load the data from the database for this currency
+	 *
+	 * @param int $id Currency identifier
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access   public
+	 */
+	public function load($id)
+	{
+		$sql = 'SELECT *
+			FROM ' . $this->currency_table . '
+			WHERE currency_id = ' . (int) $id;
+		$result = $this->db->sql_query($sql);
+		$this->currency_data = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		if ($this->currency_data === false)
+		{
+			// A item does not exist
+			$this->display_error_message('PPDE_NO_CURRENCY');
+		}
+
+		return $this;
+	}
+
+	/**
+	* Check the currency_id exist from the database for this currency
+	*
+	* @return int $this->currency_data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	* @access public
+	*/
+	public function currency_exists()
+	{
+		$sql = 'SELECT currency_id
+			FROM ' . $this->currency_table . "
+			WHERE currency_iso_code = '" . $this->db->sql_escape($this->currency_data['currency_iso_code']) . "'
+			AND currency_symbol = '" . $this->db->sql_escape($this->currency_data['currency_symbol']) . "'";
+		$result = $this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('currency_id');
 	}
 
 	/**
@@ -94,6 +140,146 @@ class currency implements currency_interface
 		}
 
 		return $this->currency_data;
+	}
+
+	/**
+	* Save the current settings to the database
+	*
+	* This must be called before closing or any changes will not be saved!
+	* If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	*
+	* @return currency_interface $this object for chaining calls; load()->set()->save()
+	* @access public
+	*/
+	public function save()
+	{
+		if (empty($this->currency_data['currency_name']) || empty($this->currency_data['currency_iso_code']) || empty($this->currency_data['currency_symbol']))
+		{
+			// The currency field missing
+			$this->display_error_message('PPDE_NO_CURRENCY');
+		}
+
+		$sql = 'UPDATE ' . $this->currency_table . '
+			SET ' . $this->db->sql_build_array('UPDATE', $this->currency_data) . '
+			WHERE currency_id = ' . $this->get_id();
+		$this->db->sql_query($sql);
+
+		return $this;
+	}
+
+	/**
+	* Get id
+	*
+	* @return int Currency identifier
+	* @access public
+	*/
+	public function get_id()
+	{
+		return (isset($this->currency_data['currency_id'])) ? (int) $this->currency_data['currency_id'] : 0;
+	}
+
+	/**
+	* Get Currency ISO code
+	*
+	* @return string ISO code name
+	* @access public
+	*/
+	public function get_iso_code()
+	{
+		return (isset($this->currency_data['currency_iso_code'])) ? (string) $this->currency_data['currency_iso_code'] : '';
+	}
+
+	/**
+	 * Set Currency symbol
+	 *
+	 * @param string $symbol
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_symbol($symbol)
+	{
+		// Set the lang_id on our data array
+		$this->currency_data['currency_symbol'] = (string) $symbol;
+
+		return $this;
+	}
+
+	/**
+	 * Get Currency Symbol
+	 *
+	 * @return string Currency symbol
+	 * @access public
+	 */
+	public function get_symbol()
+	{
+		return (isset($this->currency_data['currency_symbol'])) ? (string) $this->currency_data['currency_symbol'] : '';
+	}
+
+	/**
+	 * Set Currency ISO code name
+	 *
+	 * @param string $iso_code
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_iso_code($iso_code)
+	{
+		// Set the lang_id on our data array
+		$this->currency_data['currency_iso_code'] = (string) $iso_code;
+
+		return $this;
+	}
+
+	/**
+	 * Get Currency name
+	 *
+	 * @return string Currency name
+	 * @access public
+	 */
+	public function get_name()
+	{
+		return (isset($this->currency_data['currency_name'])) ? (string) $this->currency_data['currency_name'] : '';
+	}
+
+	/**
+	 * Set Currency name
+	 *
+	 * @param string $name
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_name($name)
+	{
+		// Set the item type on our data array
+		$this->currency_data['currency_name'] = (string) $name;
+
+		return $this;
+	}
+
+	/**
+	* Get Currency status
+	*
+	* @return boolean
+	* @access public
+	*/
+	public function get_currency_enable()
+	{
+		return (isset($this->currency_data['currency_enable'])) ? (bool) $this->currency_data['currency_enable'] : false;
+	}
+
+	/**
+	 * Set Currency status
+	 *
+	 * @param bool $enable
+	 * @return bool
+	 * @access public
+	 */
+	public function set_currency_enable($enable)
+	{
+		// Set the item type on our data array
+		$this->currency_data['currency_enable'] = (bool) $enable;
+
+		return $this;
 	}
 
 	/**

@@ -27,6 +27,15 @@ interface currency_interface
 	public function get_currency_data($currency_id = 0);
 
 	/**
+	 * Add a currency
+	 *
+	 * @param object $entity Currency entity with new data to insert
+	 * @return currency_interface Added currency entity
+	 * @access public
+	 */
+	public function add_currency_data($entity);
+
+	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id The currency identifier to delete

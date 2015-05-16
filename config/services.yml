@@ -6,6 +6,7 @@ services:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
             - @skouat.ppde.operator.currency
+            - @request
             - @template
             - @user
 
@@ -46,7 +47,9 @@ services:
     skouat.ppde.entity.currency:
         class: skouat\ppde\entity\currency
         arguments:
+            - @dbal.conn
             - @user
+            - %skouat.ppde.tables.ppde_currency%
 
     skouat.ppde.entity.donation_pages:
         class: skouat\ppde\entity\donation_pages

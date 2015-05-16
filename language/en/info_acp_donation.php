@@ -155,6 +155,8 @@ $lang = array_merge($lang, array(
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected currency?',
+	'PPDE_DC_ADDED'			=> 'A new currency has been added.',
+	'PPDE_DC_UPDATED'		=> 'A currency has been updated.',
 	'PPDE_DC_DELETED'		=> 'A currency has been deleted.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected donation page?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sEdit existing donation page%s',
@@ -164,6 +166,9 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
 
 	// Errors
+	'PPDE_DC_EMTPY_NAME'	=> 'Enter a currency name.',
+	'PPDE_DC_EMPTY_ISO_CODE'=> 'Enter an ISO code.',
+	'PPDE_DC_EMPTY_SYMBOL'	=> 'Enter a symbol.',
 	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
 	'PPDE_NO_PAGE'			=> 'No donation page found.',
 	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',

@@ -71,6 +71,25 @@ class currency implements currency_interface
 	}
 
 	/**
+	 * Add a currency
+	 *
+	 * @param object $entity Currency entity with new data to insert
+	 * @return currency_interface Add currency entity
+	 * @access public
+	 */
+	public function add_currency_data($entity)
+	{
+		// Insert the data to the database
+		$entity->insert();
+
+		// Get the newly inserted identifier
+		$currency_id = $entity->get_id();
+
+		// Reload the data to return a fresh currency entity
+		return $entity->load($currency_id);
+	}
+
+	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id The currency identifier to delete

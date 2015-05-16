@@ -113,6 +113,15 @@ class ppde_module
 				// Perform any actions submitted by the user
 				switch ($action)
 				{
+					case 'edit':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DC_CONFIG';
+
+						// Load the edit donation pages handle in the admin controller
+						$admin_currency_controller->edit_currency($currency_id);
+
+						// Return to stop execution of this script
+					return;
 					case 'delete':
 						// Delete a donation page
 						$admin_currency_controller->delete_currency($currency_id);

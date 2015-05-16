@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\controller;
 
@@ -15,30 +15,33 @@ class admin_currency_controller implements admin_currency_interface
 	protected $u_action;
 
 	protected $ppde_operator_currency;
+	protected $request;
 	protected $template;
 	protected $user;
 
 	/**
-	* Constructor
-	*
-	* @param \skouat\ppde\operators\currency  $ppde_operator_currency    Operator object
-	* @param \phpbb\template\template         $template           Template object
-	* @param \phpbb\user                      $user               User object
-	* @access public
-	*/
-	public function __construct(\skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\template\template $template, \phpbb\user $user)
+	 * Constructor
+	 *
+	 * @param \skouat\ppde\operators\currency  $ppde_operator_currency    Operator object
+	 * @param \phpbb\request\request                 $request            Request object
+	 * @param \phpbb\template\template         $template           Template object
+	 * @param \phpbb\user                      $user               User object
+	 * @access public
+	 */
+	public function __construct(\skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->ppde_operator_currency = $ppde_operator_currency;
+		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 	}
 
 	/**
-	* Display the currency list
-	*
-	* @return null
-	* @access public
-	*/
+	 * Display the currency list
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function display_currency()
 	{
 		// Grab all the pages from the db
@@ -65,6 +68,149 @@ class admin_currency_controller implements admin_currency_interface
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'U_ACTION'		=> $this->u_action,
+		));
+	}
+
+	/**
+	 * Edit a Currency
+	 *
+	 * @param int $currency_id Currency Identifier
+	 * @return null
+	 * @access   public
+	 */
+	public function edit_currency($currency_id)
+	{
+		// Add form key
+		add_form_key('add_edit_currency');
+
+		// Initiate an entity
+		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+
+		// Collect the form data
+		$data = array(
+			'currency_id'		=> $entity->get_id(),
+			'currency_name'		=> $this->request->variable('currency_name', $entity->get_name(), true),
+			'currency_iso_code'	=> $this->request->variable('currency_iso_code', $entity->get_iso_code()),
+			'currency_symbol'	=> $this->request->variable('currency_symbol', $entity->get_symbol(), true),
+			'currency_enable'	=> $this->request->variable('currency_enable', $entity->get_currency_enable()),
+		);
+
+		// Process the new page
+		$this->add_edit_currency_data($entity, $data);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_EDIT'		=> true,
+
+			'U_EDIT_ACTION'	=> $this->u_action . '&amp;action=edit&amp;currency_id=' . $currency_id,
+			'U_BACK'		=> $this->u_action,
+		));
+	}
+
+	/**
+	* Process currency data to be added or edited
+	*
+	* @param object $entity The currency entity object
+	* @param array $data The form data to be processed
+	* @return null
+	* @access protected
+	*/
+	protected function add_edit_currency_data($entity, $data)
+	{
+		// Get form's POST actions (submit or preview)
+		$submit = $this->request->is_set_post('submit');
+
+		// Load posting language file for the BBCode editor
+		$this->user->add_lang('posting');
+
+		// Create an array to collect errors that will be output to the user
+		$errors = array();
+
+		// Grab the form's data fields
+		$item_fields = array(
+			'iso_code'			=> $data['currency_iso_code'],
+			'name'				=> $data['currency_name'],
+			'symbol'			=> $data['currency_symbol'],
+			'currency_enable'	=> $data['currency_enable'],
+		);
+
+		// Set the currency's data in the entity
+		foreach ($item_fields as $entity_function => $currency_data)
+		{
+			// Calling the set_$entity_function on the entity and passing it $currency_data
+			call_user_func_array(array($entity, 'set_' . $entity_function), array($currency_data));
+		}
+		unset($item_fields, $entity_function, $currency_data);
+
+		// If the form has been submitted or previewed
+		if ($submit)
+		{
+			// Test if the form is valid
+			if (!check_form_key('add_edit_currency'))
+			{
+				$errors[] = $this->user->lang('FORM_INVALID');
+			}
+
+			// Do not allow an empty currency name
+			if ($entity->get_name() == '')
+			{
+				$errors[] = $this->user->lang('PPDE_DC_EMPTY_NAME');
+			}
+
+			// Do not allow an empty ISO code
+			if ($entity->get_iso_code() == '')
+			{
+				$errors[] = $this->user->lang('PPDE_DC_EMPTY_ISO_CODE');
+			}
+
+			// Do not allow an empty symbol
+			if ($entity->get_symbol() == '')
+			{
+				$errors[] = $this->user->lang('PPDE_DC_EMPTY_SYMBOL');
+			}
+		}
+
+		// Insert or update currency
+		if ($submit && empty($errors))
+		{
+			if ($entity->currency_exists() && $this->request->variable('action', '') === 'add')
+			{
+				// Show user warning for an already exist page and provide link back to the edit page
+				$message = $this->user->lang('PPDE_PAGE_EXISTS');
+				$message .= '<br /><br />';
+				$message .= $this->user->lang('PPDE_DP_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;page_id=' . $entity->get_id() . '">&raquo; ', '</a>');
+				trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
+			}
+
+			if ($entity->get_id())
+			{
+				// Save the edited item entity to the database
+				$entity->save();
+
+				// Show user confirmation of the saved item and provide link back to the previous page
+				trigger_error($this->user->lang('PPDE_DC_UPDATED') . adm_back_link($this->u_action));
+			}
+			else
+			{
+				// Add a new item entity to the database
+				$this->ppde_operator_currency->add_currency_data($entity);
+
+				// Show user confirmation of the added item and provide link back to the previous page
+				trigger_error($this->user->lang('PPDE_DC_ADDED') . adm_back_link($this->u_action));
+			}
+		}
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_ERROR'			=> (sizeof($errors)) ? true : false,
+			'ERROR_MSG'			=> (sizeof($errors)) ? implode('<br />', $errors) : '',
+
+			'CURRENCY_NAME'		=> $entity->get_name(),
+			'CURRENCY_ISO_CODE'	=> $entity->get_iso_code(),
+			'CURRENCY_SYMBOL'	=> $entity->get_symbol(),
+			'CURRENCY_ENABLE'	=> $entity->get_currency_enable(),
+
+			'S_HIDDEN_FIELDS'		=> '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
 		));
 	}
 

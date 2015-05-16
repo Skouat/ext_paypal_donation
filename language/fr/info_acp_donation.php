@@ -155,6 +155,8 @@ $lang = array_merge($lang, array(
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_ADDED'			=> 'Une nouvelle devise a été ajoutée.',
+	'PPDE_DC_UPDATED'		=> 'Une devise a été mise à jour.',
 	'PPDE_DC_DELETED'		=> 'Une devise a été supprimée.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
@@ -164,7 +166,11 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
 	// Errors
+	'PPDE_DC_EMPTY_NAME'	=> 'Saisissez un nom de devise.',
+	'PPDE_DC_EMPTY_ISO_CODE'=> 'Saisissez un code ISO.',
+	'PPDE_DC_EMPTY_SYMBOL'	=> 'Saisissez un symbole.',
 	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
+	'PPDE_NO_CURRENCY'		=> 'Aucune devise n’a été trouvée.',
 	'PPDE_NO_PAGE'			=> 'Aucune page de dons n’a été trouvée.',
 	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
 	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',
