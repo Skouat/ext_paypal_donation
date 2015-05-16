@@ -11,21 +11,21 @@
 namespace skouat\ppde\entity;
 
 /**
-* Entity for a donation page
-*/
+ * Entity for a currency
+ */
 class currency implements currency_interface
 {
 	/**
 	 * Data for this entity
 	 *
 	 * @var array
-	 *	currency_id
-	 *	currency_name
-	 *	currency_iso_code
-	 *	currency_symbol
-	 *	currency_enable
-	 *	currency_left_id
-	 *	currency_right_id
+	 *    currency_id
+	 *    currency_name
+	 *    currency_iso_code
+	 *    currency_symbol
+	 *    currency_enable
+	 *    currency_left_id
+	 *    currency_right_id
 	 * @access protected
 	 */
 	protected $currency_data;
@@ -38,9 +38,10 @@ class currency implements currency_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\db\driver\driver_interface    $db                Database object
-	 * @param \phpbb\user                          $user              User object
-	 * @param string                               $currency_table    Name of the table used to store data
+	 * @param \phpbb\db\driver\driver_interface $db             Database object
+	 * @param \phpbb\user                       $user           User object
+	 * @param string                            $currency_table Name of the table used to store data
+	 *
 	 * @access public
 	 */
 	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $currency_table)
@@ -54,6 +55,7 @@ class currency implements currency_interface
 	 * Load the data from the database for this currency
 	 *
 	 * @param int $id Currency identifier
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access   public
 	 */
@@ -76,33 +78,34 @@ class currency implements currency_interface
 	}
 
 	/**
-	* Check the currency_id exist from the database for this currency
-	*
-	* @return int $this->currency_data['currency_id'] Currency identifier; 0 if the currency doesn't exist
-	* @access public
-	*/
+	 * Check the currency_id exist from the database for this currency
+	 *
+	 * @return int $this->currency_data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @access public
+	 */
 	public function currency_exists()
 	{
 		$sql = 'SELECT currency_id
 			FROM ' . $this->currency_table . "
 			WHERE currency_iso_code = '" . $this->db->sql_escape($this->currency_data['currency_iso_code']) . "'
 			AND currency_symbol = '" . $this->db->sql_escape($this->currency_data['currency_symbol']) . "'";
-		$result = $this->db->sql_query($sql);
+		$this->db->sql_query($sql);
 
 		return $this->db->sql_fetchfield('currency_id');
 	}
 
 	/**
-	* Import and validate data for currency
-	*
-	* Used when the data is already loaded externally.
-	* Any existing data on this page is over-written.
-	* All data is validated and an exception is thrown if any data is invalid.
-	*
-	* @param  array $data Data array, typically from the database
-	* @return currency_interface $this->currency_data object
-	* @access public
-	*/
+	 * Import and validate data for currency
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param  array $data Data array, typically from the database
+	 *
+	 * @return currency_interface $this->currency_data object
+	 * @access public
+	 */
 	public function import($data)
 	{
 		// Clear out any saved data
@@ -111,13 +114,13 @@ class currency implements currency_interface
 		// All of our fields
 		$fields = array(
 			// column			=> data type (see settype())
-			'currency_id'		=> 'integer',
-			'currency_name'		=> 'string',
-			'currency_iso_code'	=> 'string',
-			'currency_symbol'	=> 'string',
-			'currency_enable'	=> 'boolean',
-			'currency_left_id'	=> 'string',
-			'currency_right_id'	=> 'integer',
+			'currency_id'       => 'integer',
+			'currency_name'     => 'string',
+			'currency_iso_code' => 'string',
+			'currency_symbol'   => 'string',
+			'currency_enable'   => 'boolean',
+			'currency_left_id'  => 'string',
+			'currency_right_id' => 'integer',
 		);
 
 		// Go through the basic fields and set them to our data array
@@ -143,14 +146,43 @@ class currency implements currency_interface
 	}
 
 	/**
-	* Save the current settings to the database
-	*
-	* This must be called before closing or any changes will not be saved!
-	* If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	*
-	* @return currency_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Insert the item for the first time
+	 *
+	 * Will throw an exception if the item was already inserted (call save() instead)
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function insert()
+	{
+		if (!empty($this->currency_data['currency_id']))
+		{
+			// The page already exists
+			$this->display_error_message('PPDE_CURRENCY_EXIST');
+		}
+
+		// Make extra sure there is no page_id set
+		unset($this->currency_data['currency_id']);
+
+		// Insert the page data to the database
+		$sql = 'INSERT INTO ' . $this->currency_table . ' ' . $this->db->sql_build_array('INSERT', $this->currency_data);
+		$this->db->sql_query($sql);
+
+		// Set the page_id using the id created by the SQL insert
+		$this->currency_data['currency_id'] = (int) $this->db->sql_nextid();
+
+		return $this;
+	}
+
+	/**
+	 * Save the current settings to the database
+	 *
+	 * This must be called before closing or any changes will not be saved!
+	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function save()
 	{
 		if (empty($this->currency_data['currency_name']) || empty($this->currency_data['currency_iso_code']) || empty($this->currency_data['currency_symbol']))
@@ -168,22 +200,22 @@ class currency implements currency_interface
 	}
 
 	/**
-	* Get id
-	*
-	* @return int Currency identifier
-	* @access public
-	*/
+	 * Get id
+	 *
+	 * @return int Currency identifier
+	 * @access public
+	 */
 	public function get_id()
 	{
 		return (isset($this->currency_data['currency_id'])) ? (int) $this->currency_data['currency_id'] : 0;
 	}
 
 	/**
-	* Get Currency ISO code
-	*
-	* @return string ISO code name
-	* @access public
-	*/
+	 * Get Currency ISO code
+	 *
+	 * @return string ISO code name
+	 * @access public
+	 */
 	public function get_iso_code()
 	{
 		return (isset($this->currency_data['currency_iso_code'])) ? (string) $this->currency_data['currency_iso_code'] : '';
@@ -193,6 +225,7 @@ class currency implements currency_interface
 	 * Set Currency symbol
 	 *
 	 * @param string $symbol
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -219,6 +252,7 @@ class currency implements currency_interface
 	 * Set Currency ISO code name
 	 *
 	 * @param string $iso_code
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -245,6 +279,7 @@ class currency implements currency_interface
 	 * Set Currency name
 	 *
 	 * @param string $name
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -257,11 +292,11 @@ class currency implements currency_interface
 	}
 
 	/**
-	* Get Currency status
-	*
-	* @return boolean
-	* @access public
-	*/
+	 * Get Currency status
+	 *
+	 * @return boolean
+	 * @access public
+	 */
 	public function get_currency_enable()
 	{
 		return (isset($this->currency_data['currency_enable'])) ? (bool) $this->currency_data['currency_enable'] : false;
@@ -271,6 +306,7 @@ class currency implements currency_interface
 	 * Set Currency status
 	 *
 	 * @param bool $enable
+	 *
 	 * @return bool
 	 * @access public
 	 */
@@ -286,6 +322,7 @@ class currency implements currency_interface
 	 * Display Error message
 	 *
 	 * @param string $lang_key
+	 *
 	 * @return null
 	 * @access protected
 	 */
@@ -299,6 +336,7 @@ class currency implements currency_interface
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
+	 *
 	 * @return null
 	 * @access public
 	 */

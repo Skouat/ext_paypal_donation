@@ -113,6 +113,15 @@ class ppde_module
 				// Perform any actions submitted by the user
 				switch ($action)
 				{
+					case 'add':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DC_CONFIG';
+
+						// Load the add currency handle in the admin controller
+						$admin_currency_controller->add_currency();
+
+						// Return to stop execution of this script
+						return;
 					case 'edit':
 						// Set the page title for our ACP page
 						$this->page_title = 'PPDE_DC_CONFIG';
@@ -121,15 +130,15 @@ class ppde_module
 						$admin_currency_controller->edit_currency($currency_id);
 
 						// Return to stop execution of this script
-					return;
+						return;
 					case 'delete':
 						// Delete a donation page
 						$admin_currency_controller->delete_currency($currency_id);
-					break;
+						break;
 				}
 				// Display module main page
 				$admin_currency_controller->display_currency();
-			break;
+				break;
 
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);

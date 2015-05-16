@@ -26,9 +26,18 @@ interface admin_currency_interface
 	public function display_currency();
 
 	/**
+	 * Add a currency
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function add_currency();
+
+	/**
 	 * Edit a currency
 	 *
 	 * @param int $currency_id Currency identifier to edit
+	 *
 	 * @return null
 	 * @access public
 	 */
@@ -38,6 +47,7 @@ interface admin_currency_interface
 	 * Delete a currency
 	 *
 	 * @param int $currency_id
+	 *
 	 * @return null
 	 * @access   public
 	 */
@@ -47,6 +57,7 @@ interface admin_currency_interface
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
+	 *
 	 * @return null
 	 * @access public
 	 */

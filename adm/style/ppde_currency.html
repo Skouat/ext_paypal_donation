@@ -3,7 +3,7 @@
 <h1>{L_PPDE_DC_CONFIG}</h1>
 <p>{L_PPDE_DC_CONFIG_EXPLAIN}</p>
 
-<!-- IF S_EDIT -->
+<!-- IF S_ADD or S_EDIT -->
 	<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
 
 	<!-- IF S_ERROR -->
@@ -13,7 +13,7 @@
 	</div>
 	<!-- ENDIF -->
 
-	<form id="add_edit_currency" method="post" action="{U_ACTION}">
+	<form id="add_edit_currency" method="post" action="<!-- IF S_ADD -->{U_ADD_ACTION}<!-- ELSE -->{U_EDIT_ACTION}<!-- ENDIF -->">
 		<fieldset>
 			<legend>{L_GENERAL_OPTIONS}</legend>
 			<dl>
@@ -90,7 +90,7 @@
 		<div class="clearfix">&nbsp;</div>
 
 		<fieldset class="quick" style="float: {S_CONTENT_FLOW_END};">
-			{S_HIDDEN_FIELDS}
+			<input  type="hidden" name="action" value="add" />
 			<input class="button2" name="add" type="submit" value="{L_PPDE_DC_CREATE_CURRENCY}" />
 			{S_FORM_TOKEN}
 		</fieldset>

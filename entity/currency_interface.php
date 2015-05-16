@@ -21,6 +21,7 @@ interface currency_interface
 	 * Load the data from the database for this currency
 	 *
 	 * @param int $id Item identifier
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -42,10 +43,21 @@ interface currency_interface
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
 	 * @param array $data Data array, typically from the database
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function import($data);
+
+	/**
+	 * Insert the item for the first time
+	 *
+	 * Will throw an exception if the item was already inserted (call save() instead)
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function insert();
 
 	/**
 	 * Save the current settings to the database
@@ -78,6 +90,7 @@ interface currency_interface
 	 * Set Currency status
 	 *
 	 * @param bool $enable
+	 *
 	 * @return bool
 	 * @access public
 	 */
@@ -95,6 +108,7 @@ interface currency_interface
 	 * Set Currency ISO code name
 	 *
 	 * @param string $iso_code
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -112,6 +126,7 @@ interface currency_interface
 	 * Set Currency name
 	 *
 	 * @param string $name
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -129,6 +144,7 @@ interface currency_interface
 	 * Set Currency symbol
 	 *
 	 * @param string $symbol
+	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -138,6 +154,7 @@ interface currency_interface
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
+	 *
 	 * @return null
 	 * @access public
 	 */

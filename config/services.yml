@@ -5,6 +5,7 @@ services:
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
+            - @service_container
             - @skouat.ppde.operator.currency
             - @request
             - @template
