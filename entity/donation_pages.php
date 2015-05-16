@@ -1,33 +1,33 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\entity;
 
 /**
-* Entity for a donation page
-*/
+ * Entity for a donation page
+ */
 class donation_pages implements donation_pages_interface
 {
 	/**
-	* Data for this entity
-	*
-	* @var array
-	*	page_id
-	*	page_title
-	*	page_lang_id
-	*	page_content
-	*	page_content_bbcode_bitfield
-	*	page_content_bbcode_uid
-	*	page_content_bbcode_options
-	* @access protected
-	*/
+	 * Data for this entity
+	 *
+	 * @var array
+	 *	page_id
+	 *	page_title
+	 *	page_lang_id
+	 *	page_content
+	 *	page_content_bbcode_bitfield
+	 *	page_content_bbcode_uid
+	 *	page_content_bbcode_options
+	 * @access protected
+	 */
 	protected $dp_data;
 
 	protected $db;
@@ -35,13 +35,13 @@ class donation_pages implements donation_pages_interface
 	protected $donation_pages_table;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\db\driver\driver_interface    $db                 Database object
-	* @param \phpbb\user                          $user               User object
-	* @param string                               $donation_pages_table    Name of the table used to store data
-	* @access public
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\db\driver\driver_interface    $db                 Database object
+	 * @param \phpbb\user                          $user               User object
+	 * @param string                               $donation_pages_table    Name of the table used to store data
+	 * @access public
+	 */
 	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $donation_pages_table)
 	{
 		$this->db = $db;
@@ -50,17 +50,17 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Load the data from the database for this donation page
-	*
-	* @param int  $page_id Donation page identifier
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Load the data from the database for this donation page
+	 *
+	 * @param int  $page_id Donation page identifier
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function load($page_id)
 	{
 		$sql = 'SELECT *
 			FROM ' . $this->donation_pages_table . '
-			WHERE page_id = ' . $page_id;
+			WHERE page_id = ' . (int) $page_id;
 		$result = $this->db->sql_query($sql);
 		$this->dp_data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -75,16 +75,16 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Check the page_id exist from the database for this donation page
-	*
-	* @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
-	* @access public
-	*/
+	 * Check the page_id exist from the database for this donation page
+	 *
+	 * @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	 * @access public
+	 */
 	public function donation_page_exists()
 	{
 		$sql = 'SELECT page_id
 			FROM ' . $this->donation_pages_table . "
-			WHERE page_title = '" . (string) $this->dp_data['page_title'] . "'
+			WHERE page_title = '" . $this->db->sql_escape($this->dp_data['page_title']) . "'
 			AND page_lang_id = " . (int) $this->dp_data['page_lang_id'];
 		$result = $this->db->sql_query($sql);
 		$this->dp_data['page_id'] = (int) $this->db->sql_fetchfield('page_id');
@@ -94,16 +94,16 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Import and validate data for donation page
-	*
-	* Used when the data is already loaded externally.
-	* Any existing data on this page is over-written.
-	* All data is validated and an exception is thrown if any data is invalid.
-	*
-	* @param array $data Data array, typically from the database
-	* @return donation_pages_interface $this->dp_data object
-	* @access public
-	*/
+	 * Import and validate data for donation page
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param array $data Data array, typically from the database
+	 * @return donation_pages_interface $this->dp_data object
+	 * @access public
+	 */
 	public function import($data)
 	{
 		// Clear out any saved data
@@ -143,13 +143,13 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Insert the item for the first time
-	*
-	* Will throw an exception if the item was already inserted (call save() instead)
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Insert the item for the first time
+	 *
+	 * Will throw an exception if the item was already inserted (call save() instead)
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function insert()
 	{
 		if (!empty($this->dp_data['page_id']))
@@ -172,14 +172,14 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Save the current settings to the database
-	*
-	* This must be called before closing or any changes will not be saved!
-	* If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Save the current settings to the database
+	 *
+	 * This must be called before closing or any changes will not be saved!
+	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function save()
 	{
 		if (empty($this->dp_data['page_title']) || empty($this->dp_data['page_lang_id']))
@@ -197,22 +197,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Get id
-	*
-	* @return int Page identifier
-	* @access public
-	*/
+	 * Get id
+	 *
+	 * @return int Page identifier
+	 * @access public
+	 */
 	public function get_id()
 	{
 		return (isset($this->dp_data['page_id'])) ? (int) $this->dp_data['page_id'] : 0;
 	}
 
 	/**
-	* Get language id
-	*
-	* @return int Lang identifier
-	* @access public
-	*/
+	 * Get language id
+	 *
+	 * @return int Lang identifier
+	 * @access public
+	 */
 	public function get_lang_id()
 	{
 		return (isset($this->dp_data['page_lang_id'])) ? (int) $this->dp_data['page_lang_id'] : 0;
@@ -234,11 +234,11 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Get Page title
-	*
-	* @return string Title page
-	* @access public
-	*/
+	 * Get Page title
+	 *
+	 * @return string Title page
+	 * @access public
+	 */
 	public function get_title()
 	{
 		return (isset($this->dp_data['page_title'])) ? (string) $this->dp_data['page_title'] : '';
@@ -260,11 +260,11 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Get message for edit
-	*
-	* @return string
-	* @access public
-	*/
+	 * Get message for edit
+	 *
+	 * @return string
+	 * @access public
+	 */
 	public function get_message_for_edit()
 	{
 		// Use defaults if these haven't been set yet
@@ -279,12 +279,12 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Get message for display
-	*
-	* @param bool $censor_text True to censor the text (Default: true)
-	* @return string
-	* @access public
-	*/
+	 * Get message for display
+	 *
+	 * @param bool $censor_text True to censor the text (Default: true)
+	 * @return string
+	 * @access public
+	 */
 	public function get_message_for_display($censor_text = true)
 	{
 		// If these haven't been set yet; use defaults
@@ -298,12 +298,12 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Set message
-	*
-	* @param string $message
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Set message
+	 *
+	 * @param string $message
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function set_message($message)
 	{
 		// Prepare the text for storage
@@ -320,22 +320,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Check if bbcode is enabled on the message
-	*
-	* @return bool
-	* @access public
-	*/
+	 * Check if bbcode is enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
 	public function message_bbcode_enabled()
 	{
 		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
 	}
 
 	/**
-	* Enable bbcode on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Enable bbcode on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_enable_bbcode()
 	{
 		$this->set_message_option(OPTION_FLAG_BBCODE);
@@ -344,11 +344,11 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Disable bbcode on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Disable bbcode on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_disable_bbcode()
 	{
 		$this->set_message_option(OPTION_FLAG_BBCODE, true);
@@ -357,22 +357,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Check if magic_url is enabled on the message
-	*
-	* @return bool
-	* @access public
-	*/
+	 * Check if magic_url is enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
 	public function message_magic_url_enabled()
 	{
 		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
 	}
 
 	/**
-	* Enable magic url on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Enable magic url on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_enable_magic_url()
 	{
 		$this->set_message_option(OPTION_FLAG_LINKS);
@@ -381,11 +381,11 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Disable magic url on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Disable magic url on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_disable_magic_url()
 	{
 		$this->set_message_option(OPTION_FLAG_LINKS, true);
@@ -394,22 +394,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Check if smilies are enabled on the message
-	*
-	* @return bool
-	* @access public
-	*/
+	 * Check if smilies are enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
 	public function message_smilies_enabled()
 	{
 		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
 	}
 
 	/**
-	* Enable smilies on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Enable smilies on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_enable_smilies()
 	{
 		$this->set_message_option(OPTION_FLAG_SMILIES);
@@ -418,11 +418,11 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Disable smilies on the message
-	*
-	* @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	* @access public
-	*/
+	 * Disable smilies on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
 	public function message_disable_smilies()
 	{
 		$this->set_message_option(OPTION_FLAG_SMILIES, true);
@@ -431,14 +431,14 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Set option helper
-	*
-	* @param int $option_value Value of the option
-	* @param bool $negate Negate (unset) option (Default: False)
-	* @param bool $reparse_message Reparse the message after setting option (Default: True)
-	* @return null
-	* @access protected
-	*/
+	 * Set option helper
+	 *
+	 * @param int $option_value Value of the option
+	 * @param bool $negate Negate (unset) option (Default: False)
+	 * @param bool $reparse_message Reparse the message after setting option (Default: True)
+	 * @return null
+	 * @access protected
+	 */
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true)
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
@@ -483,12 +483,12 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	* Set page url
-	*
-	* @param string $u_action Custom form action
-	* @return null
-	* @access public
-	*/
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 * @return null
+	 * @access public
+	 */
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
