@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\controller;
 
@@ -26,17 +26,18 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	protected $php_ext;
 
 	/**
-	* Constructor
-	*
-	* @param ContainerInterface                     $container                     Service container interface
-	* @param \skouat\ppde\operators\donation_pages  $ppde_operator_donation_pages  Operator object
-	* @param \phpbb\request\request                 $request                       Request object
-	* @param \phpbb\template\template               $template                      Template object
-	* @param \phpbb\user                            $user                          User object
-	* @param string                                 $phpbb_root_path               phpBB root path
-	* @param string                                 $php_ext                       phpEx
-	* @access public
-	*/
+	 * Constructor
+	 *
+	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Operator object
+	 * @param \phpbb\request\request                $request                      Request object
+	 * @param \phpbb\template\template              $template                     Template object
+	 * @param \phpbb\user                           $user                         User object
+	 * @param string                                $phpbb_root_path              phpBB root path
+	 * @param string                                $php_ext                      phpEx
+	 *
+	 * @access public
+	 */
 	public function __construct(ContainerInterface $container, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->container = $container;
@@ -49,11 +50,11 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
-	* Display the pages
-	*
-	* @return null
-	* @access public
-	*/
+	 * Display the pages
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function display_donation_pages()
 	{
 		// Get list of available language packs
@@ -81,11 +82,11 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 				}
 
 				$this->template->assign_block_vars('ppde_langs.dp_list', array(
-					'DONATION_PAGE_TITLE'	=> $this->user->lang[strtoupper($page['page_title'])],
-					'DONATION_PAGE_LANG'	=> (string) $lang,
+					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($page['page_title'])],
+					'DONATION_PAGE_LANG'  => (string) $lang,
 
-					'U_DELETE'				=> $this->u_action . '&amp;action=delete&amp;page_id=' . $page['page_id'],
-					'U_EDIT'				=> $this->u_action . '&amp;action=edit&amp;page_id=' . $page['page_id'],
+					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;page_id=' . $page['page_id'],
+					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;page_id=' . $page['page_id'],
 				));
 			}
 			unset($entities, $page);
@@ -94,16 +95,16 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'U_ACTION'		=> $this->u_action,
+			'U_ACTION' => $this->u_action,
 		));
 	}
 
 	/**
-	* Add a donation page
-	*
-	* @return null
-	* @access public
-	*/
+	 * Add a donation page
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function add_donation_page()
 	{
 		// Add form key
@@ -114,12 +115,12 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Collect the form data
 		$data = array(
-			'page_title'	=> $this->request->variable('page_title', ''),
-			'page_lang_id'	=> $this->request->variable('lang_id', '', true),
-			'page_content'	=> $this->request->variable('page_content', '', true),
-			'bbcode'		=> !$this->request->variable('disable_bbcode', false),
-			'magic_url'		=> !$this->request->variable('disable_magic_url', false),
-			'smilies'		=> !$this->request->variable('disable_smilies', false),
+			'page_title'   => $this->request->variable('page_title', ''),
+			'page_lang_id' => $this->request->variable('lang_id', '', true),
+			'page_content' => $this->request->variable('page_content', '', true),
+			'bbcode'       => !$this->request->variable('disable_bbcode', false),
+			'magic_url'    => !$this->request->variable('disable_magic_url', false),
+			'smilies'      => !$this->request->variable('disable_smilies', false),
 		);
 
 		// Set template vars for language select menu
@@ -130,20 +131,21 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ADD_DONATION_PAGE'	=> true,
+			'S_ADD_DONATION_PAGE' => true,
 
-			'U_ADD_ACTION'			=> $this->u_action . '&amp;action=add',
-			'U_BACK'				=> $this->u_action,
+			'U_ADD_ACTION'        => $this->u_action . '&amp;action=add',
+			'U_BACK'              => $this->u_action,
 		));
 	}
 
 	/**
-	* Edit a donation page
-	*
-	* @param int $page_id Donation page identifier
-	* @return null
-	* @access public
-	*/
+	 * Edit a donation page
+	 *
+	 * @param int $page_id Donation page identifier
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function edit_donation_page($page_id)
 	{
 		// Add form key
@@ -154,13 +156,13 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Collect the form data
 		$data = array(
-			'page_id'		=> (int) $page_id,
-			'page_title'	=> $this->request->variable('page_title', $entity->get_title(), false),
-			'page_lang_id'	=> $this->request->variable('page_lang_id', $entity->get_lang_id()),
-			'page_content'	=> $this->request->variable('page_content', $entity->get_message_for_edit(), true),
-			'bbcode'		=> !$this->request->variable('disable_bbcode', false),
-			'magic_url'		=> !$this->request->variable('disable_magic_url', false),
-			'smilies'		=> !$this->request->variable('disable_smilies', false),
+			'page_id'      => (int) $page_id,
+			'page_title'   => $this->request->variable('page_title', $entity->get_title(), false),
+			'page_lang_id' => $this->request->variable('page_lang_id', $entity->get_lang_id()),
+			'page_content' => $this->request->variable('page_content', $entity->get_message_for_edit(), true),
+			'bbcode'       => !$this->request->variable('disable_bbcode', false),
+			'magic_url'    => !$this->request->variable('disable_magic_url', false),
+			'smilies'      => !$this->request->variable('disable_smilies', false),
 		);
 
 		// Set template vars for language select menu
@@ -171,21 +173,22 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_EDIT_DONATION_PAGE'	=> true,
+			'S_EDIT_DONATION_PAGE' => true,
 
-			'U_EDIT_ACTION'			=> $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
-			'U_BACK'				=> $this->u_action,
+			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
+			'U_BACK'               => $this->u_action,
 		));
 	}
 
 	/**
-	* Process donation pages data to be added or edited
-	*
-	* @param object $entity The donation pages entity object
-	* @param array $data The form data to be processed
-	* @return null
-	* @access protected
-	*/
+	 * Process donation pages data to be added or edited
+	 *
+	 * @param object $entity The donation pages entity object
+	 * @param array  $data   The form data to be processed
+	 *
+	 * @return null
+	 * @access protected
+	 */
 	protected function add_edit_donation_page_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
@@ -200,9 +203,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Grab the form data's message parsing options (possible values: 1 or 0)
 		$message_parse_options = array(
-			'bbcode'	=> ($submit || $preview) ? $data['bbcode'] : $entity->message_bbcode_enabled(),
-			'magic_url'	=> ($submit || $preview) ? $data['magic_url'] : $entity->message_magic_url_enabled(),
-			'smilies'	=> ($submit || $preview) ? $data['smilies'] : $entity->message_smilies_enabled(),
+			'bbcode'    => ($submit || $preview) ? $data['bbcode'] : $entity->message_bbcode_enabled(),
+			'magic_url' => ($submit || $preview) ? $data['magic_url'] : $entity->message_magic_url_enabled(),
+			'smilies'   => ($submit || $preview) ? $data['smilies'] : $entity->message_smilies_enabled(),
 		);
 
 		// Set the message parse options in the entity
@@ -215,9 +218,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Grab the form's data fields
 		$item_fields = array(
-			'lang_id'	=> $data['page_lang_id'],
-			'title'		=> $data['page_title'],
-			'message'	=> $data['page_content'],
+			'lang_id' => $data['page_lang_id'],
+			'title'   => $data['page_title'],
+			'message' => $data['page_content'],
 		);
 
 		// Set the donation page's data in the entity
@@ -255,9 +258,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		{
 			// Set output vars for display in the template
 			$this->template->assign_vars(array(
-				'S_PPDE_DP_PREVIEW'	=> $preview,
+				'S_PPDE_DP_PREVIEW' => $preview,
 
-				'PPDE_DP_PREVIEW'	=> $entity->get_message_for_display(),
+				'PPDE_DP_PREVIEW'   => $entity->get_message_for_display(),
 			));
 		}
 
@@ -296,29 +299,29 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ERROR'			=> (sizeof($errors)) ? true : false,
-			'ERROR_MSG'			=> (sizeof($errors)) ? implode('<br />', $errors) : '',
+			'S_ERROR'                        => (sizeof($errors)) ? true : false,
+			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
 
-			'L_DONATION_PAGES_TITLE'		=> $this->user->lang(strtoupper($entity->get_title())),
-			'L_DONATION_PAGES_TITLE_EXPLAIN'=> $this->user->lang(strtoupper($entity->get_title()) . '_EXPLAIN'),
-			'DONATION_BODY'					=> $entity->get_message_for_edit(),
+			'L_DONATION_PAGES_TITLE'         => $this->user->lang(strtoupper($entity->get_title())),
+			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang(strtoupper($entity->get_title()) . '_EXPLAIN'),
+			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 
-			'S_BBCODE_DISABLE_CHECKED'		=> !$entity->message_bbcode_enabled(),
-			'S_SMILIES_DISABLE_CHECKED'		=> !$entity->message_smilies_enabled(),
-			'S_MAGIC_URL_DISABLE_CHECKED'	=> !$entity->message_magic_url_enabled(),
+			'S_BBCODE_DISABLE_CHECKED'       => !$entity->message_bbcode_enabled(),
+			'S_SMILIES_DISABLE_CHECKED'      => !$entity->message_smilies_enabled(),
+			'S_MAGIC_URL_DISABLE_CHECKED'    => !$entity->message_magic_url_enabled(),
 
-			'BBCODE_STATUS'			=> $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
-			'SMILIES_STATUS'		=> $this->user->lang('SMILIES_ARE_ON'),
-			'IMG_STATUS'			=> $this->user->lang('IMAGES_ARE_ON'),
-			'FLASH_STATUS'			=> $this->user->lang('FLASH_IS_ON'),
-			'URL_STATUS'			=> $this->user->lang('URL_IS_ON'),
+			'BBCODE_STATUS'                  => $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
+			'SMILIES_STATUS'                 => $this->user->lang('SMILIES_ARE_ON'),
+			'IMG_STATUS'                     => $this->user->lang('IMAGES_ARE_ON'),
+			'FLASH_STATUS'                   => $this->user->lang('FLASH_IS_ON'),
+			'URL_STATUS'                     => $this->user->lang('URL_IS_ON'),
 
-			'S_BBCODE_ALLOWED'		=> true,
-			'S_SMILIES_ALLOWED'		=> true,
-			'S_BBCODE_IMG'			=> true,
-			'S_BBCODE_FLASH'		=> true,
-			'S_LINKS_ALLOWED'		=> true,
-			'S_HIDDEN_FIELDS'		=> '<input type="hidden" name="page_title" value="' . $entity->get_title() . '" />',
+			'S_BBCODE_ALLOWED'               => true,
+			'S_SMILIES_ALLOWED'              => true,
+			'S_BBCODE_IMG'                   => true,
+			'S_BBCODE_FLASH'                 => true,
+			'S_LINKS_ALLOWED'                => true,
+			'S_HIDDEN_FIELDS'                => '<input type="hidden" name="page_title" value="' . $entity->get_title() . '" />',
 		));
 
 		// Assigning custom bbcodes
@@ -331,6 +334,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	 * Delete a donation page
 	 *
 	 * @param int $page_id The donation page identifier to delete
+	 *
 	 * @return null
 	 * @access public
 	 */
@@ -355,8 +359,8 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		{
 			// Request confirmation from the user to delete the rule
 			confirm_box(false, $this->user->lang('PPDE_DP_CONFIRM_DELETE'), build_hidden_fields(array(
-				'mode' => 'donation_pages',
-				'action' => 'delete',
+				'mode'    => 'donation_pages',
+				'action'  => 'delete',
 				'page_id' => $page_id,
 			)));
 
@@ -367,24 +371,26 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
-	* Set page url
-	*
-	* @param string $u_action Custom form action
-	* @return null
-	* @access public
-	*/
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
 	}
 
 	/**
-	* Set template var options for language select menus
-	*
-	* @param string $current ID of the language assigned to the donation page
-	* @return null
-	* @access protected
-	*/
+	 * Set template var options for language select menus
+	 *
+	 * @param string $current ID of the language assigned to the donation page
+	 *
+	 * @return null
+	 * @access protected
+	 */
 	protected function create_language_options($current)
 	{
 		// Grab all available language packs
@@ -394,20 +400,21 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		foreach ($langs as $lang)
 		{
 			$this->template->assign_block_vars('ppde_langs', array(
-				'LANG_LOCAL_NAME'	=> $lang['name'],
-				'VALUE'				=> $lang['id'],
-				'S_SELECTED'		=> ($lang['id'] == $current) ? true : false,
+				'LANG_LOCAL_NAME' => $lang['name'],
+				'VALUE'           => $lang['id'],
+				'S_SELECTED'      => ($lang['id'] == $current) ? true : false,
 			));
 		}
 	}
 
 	/**
-	* Get Local lang name
-	*
-	* @param array $langs
-	* @return null
-	* @access protected
-	*/
+	 * Get Local lang name
+	 *
+	 * @param array $langs
+	 *
+	 * @return null
+	 * @access protected
+	 */
 	protected function get_lang_local_name($langs)
 	{
 		foreach ($langs as $lang)

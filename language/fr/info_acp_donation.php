@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 if (!defined('IN_PHPBB'))
 {
@@ -37,18 +37,18 @@ if (empty($lang) || !is_array($lang))
 
 
 /**
-* mode: main
-*/
+ * mode: main
+ */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'			=> 'PayPal Donation',
-	'PPDE_ACP_OVERVIEW'				=> 'Vue d’ensemble',
-	'PPDE_ACP_SETTINGS'				=> 'Paramètres généraux',
-	'PPDE_ACP_DONATION_PAGES'		=> 'Pages des dons',
+	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'			=> 'Vue d’ensemble',
+	'PPDE_ACP_SETTINGS'			=> 'Paramètres généraux',
+	'PPDE_ACP_DONATION_PAGES'	=> 'Pages des dons',
 ));
 
 /**
-* mode: overview
-*/
+ * mode: overview
+ */
 $lang = array_merge($lang, array(
 	'PPDE_OVERVIEW'			=> 'Vue d’ensemble',
 
@@ -69,8 +69,8 @@ $lang = array_merge($lang, array(
 ));
 
 /**
-* mode: settings
-*/
+ * mode: settings
+ */
 $lang = array_merge($lang, array(
 	'PPDE_SETTINGS'			=> 'Paramètres généraux',
 	'PPDE_SETTINGS_EXPLAIN'	=> '',
@@ -78,7 +78,7 @@ $lang = array_merge($lang, array(
 	'MODE_CURRENCY'			=> 'devise',
 	'MODE_DONATION_PAGES'	=> 'pages de dons',
 
-	// Global Donation settings
+	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'	=> 'Paramètres généraux',
 	'PPDE_ENABLE'					=> 'Activer PayPal Donation',
 	'PPDE_ENABLE_EXPLAIN'			=> 'Active ou désactive le MOD PayPal Donation.',
@@ -121,9 +121,9 @@ $lang = array_merge($lang, array(
 ));
 
 /**
-* mode: donation pages
-* Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
-*/
+ * mode: donation pages
+ * Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
+ */
 $lang = array_merge($lang, array(
 	// Donation Page settings
 	'PPDE_DP_CONFIG'			=> 'Pages des dons',
@@ -147,8 +147,8 @@ $lang = array_merge($lang, array(
 ));
 
 /**
-* logs
-*/
+ * logs
+ */
 $lang = array_merge($lang, array(
 	//logs
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',

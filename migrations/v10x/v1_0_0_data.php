@@ -1,12 +1,12 @@
 <?php
 /**
-*
-* PayPal Donation extension for the phpBB Forum Software package.
-*
-* @copyright (c) 2015 Skouat
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-*/
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
 
 namespace skouat\ppde\migrations\v10x;
 
@@ -65,10 +65,10 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'ACP_CAT_DOT_MODS',
 				'ACP_DONATION_MOD',
 				array(
-					'module_enabled'	=> 1,
-					'module_display'	=> 1,
-					'module_langname'	=> 'PPDE_ACP_DONATION_MOD',
-					'module_auth'		=> 'ext_skouat/ppde && acl_a_ppde_manage',
+					'module_enabled'  => 1,
+					'module_display'  => 1,
+					'module_langname' => 'PPDE_ACP_DONATION_MOD',
+					'module_auth'     => 'ext_skouat/ppde && acl_a_ppde_manage',
 				)
 			)),
 
@@ -76,8 +76,8 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'acp',
 				'ACP_DONATION_MOD',
 				array(
-					'module_basename'	=> '\skouat\ppde\acp\ppde_module',
-					'modes'				=> array('overview', 'settings', 'donation_pages'),
+					'module_basename' => '\skouat\ppde\acp\ppde_module',
+					'modes'           => array('overview', 'settings', 'donation_pages'),
 				)
 			)),
 
@@ -88,29 +88,29 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 	}
 
 	/**
-	* Add initial data to the database
-	*
-	* @return null
-	* @access public
-	*/
+	 * Add initial data to the database
+	 *
+	 * @return null
+	 * @access public
+	 */
 	public function add_ppde_donation_pages_data()
 	{
 		// Define data
 		$dp_data = array(
 			array(
-				'page_title'	=> 'donation_body',
-				'page_lang_id'	=> 1,
-				'page_content'	=> '',
+				'page_title'   => 'donation_body',
+				'page_lang_id' => 1,
+				'page_content' => '',
 			),
 			array(
-				'page_title'	=> 'donation_success',
-				'page_lang_id'	=> 1,
-				'page_content'	=> '',
+				'page_title'   => 'donation_success',
+				'page_lang_id' => 1,
+				'page_content' => '',
 			),
 			array(
-				'page_title'	=> 'donation_cancel',
-				'page_lang_id'	=> 1,
-				'page_content'	=> '',
+				'page_title'   => 'donation_cancel',
+				'page_lang_id' => 1,
+				'page_content' => '',
 			),
 		);
 
