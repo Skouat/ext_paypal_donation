@@ -131,6 +131,11 @@ class ppde_module
 
 						// Return to stop execution of this script
 						return;
+					case 'move_down':
+					case 'move_up':
+						// Move a currency
+						$admin_currency_controller->move_currency($currency_id, $action);
+						break;
 					case 'delete':
 						// Delete a donation page
 						$admin_currency_controller->delete_currency($currency_id);

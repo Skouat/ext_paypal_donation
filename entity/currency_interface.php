@@ -159,4 +159,12 @@ interface currency_interface
 	 * @access public
 	 */
 	public function set_page_url($u_action);
+
+	/**
+	 * Get the order number of the currency
+	 *
+	 * @return int Order identifier
+	 * @access public
+	 */
+	public function get_currency_order();
 }

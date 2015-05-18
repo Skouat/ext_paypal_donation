@@ -40,10 +40,11 @@ if (empty($lang) || !is_array($lang))
  * mode: main
  */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_DONATION'			=> 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'			=> 'Vue d’ensemble',
 	'PPDE_ACP_SETTINGS'			=> 'Paramètres généraux',
 	'PPDE_ACP_DONATION_PAGES'	=> 'Pages des dons',
+	'PPDE_ACP_CURRENCY'			=> 'Gestion des devises',
 ));
 
 /**
@@ -147,6 +148,25 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+ * mode: currency
+ * Info: language keys are prefixed with 'PPDE_DC_' for 'PPDE_DONATION_CURRENCY_'
+ */
+$lang = array_merge($lang, array(
+	// Currency Management
+	'PPDE_DC_CONFIG'			=> 'Gestion des devises',
+	'PPDE_DC_CONFIG_EXPLAIN'	=> 'Permet de gérer les devises pour faire un don.',
+	'PPDE_DC_NAME'				=> 'Nom de la devise',
+	'PPDE_DC_NAME_EXPLAIN'		=> 'Exemple : Euro.',
+	'PPDE_DC_ISO_CODE'			=> 'Code ISO 4217',
+	'PPDE_DC_ISO_CODE_EXPLAIN'	=> 'Code alphabétique de la devise.<br />En savoir plus sur la norme ISO 4217… Consultez la <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
+	'PPDE_DC_SYMBOL'			=> 'Symbole de la devise',
+	'PPDE_DC_SYMBOL_EXPLAIN'	=> 'Inscire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
+	'PPDE_DC_ENABLE'			=> 'Activer la devise',
+	'PPDE_DC_ENABLE_EXPLAIN'	=> 'Si activée, la devise sera disponible dans la liste de sélection.',
+	'PPDE_DC_CREATE_CURRENCY'	=> 'Ajouter une devise',
+));
+
+/**
  * logs
  */
 $lang = array_merge($lang, array(
@@ -155,7 +175,8 @@ $lang = array_merge($lang, array(
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette devise ?',
-	'PPDE_DC_ADDED'			=> 'Une nouvelle devise a été ajoutée.',
+	'PPDE_DC_GO_TO_PAGE'	=> '%sModifier la devise existante%s',
+	'PPDE_DC_ADDED'			=> 'Une devise a été ajoutée.',
 	'PPDE_DC_UPDATED'		=> 'Une devise a été mise à jour.',
 	'PPDE_DC_DELETED'		=> 'Une devise a été supprimée.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',

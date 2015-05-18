@@ -44,12 +44,23 @@ interface admin_currency_interface
 	public function edit_currency($currency_id);
 
 	/**
+	 * Move a currency up/down
+	 *
+	 * @param int    $currency_id The currency identifier to move
+	 * @param string $direction   The direction (up|down)
+	 *
+	 * @return null
+	 * @access   public
+	 */
+	public function move_currency($currency_id, $direction);
+
+	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id
 	 *
 	 * @return null
-	 * @access   public
+	 * @access public
 	 */
 	public function delete_currency($currency_id);
 

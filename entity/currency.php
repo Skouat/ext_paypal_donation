@@ -24,8 +24,7 @@ class currency implements currency_interface
 	 *    currency_iso_code
 	 *    currency_symbol
 	 *    currency_enable
-	 *    currency_left_id
-	 *    currency_right_id
+	 *    currency_order
 	 * @access protected
 	 */
 	protected $currency_data;
@@ -78,6 +77,20 @@ class currency implements currency_interface
 	}
 
 	/**
+	 * Display Error message
+	 *
+	 * @param string $lang_key
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function display_error_message($lang_key)
+	{
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
+		trigger_error($message, E_USER_WARNING);
+	}
+
+	/**
 	 * Check the currency_id exist from the database for this currency
 	 *
 	 * @return int $this->currency_data['currency_id'] Currency identifier; 0 if the currency doesn't exist
@@ -119,8 +132,7 @@ class currency implements currency_interface
 			'currency_iso_code' => 'string',
 			'currency_symbol'   => 'string',
 			'currency_enable'   => 'boolean',
-			'currency_left_id'  => 'string',
-			'currency_right_id' => 'integer',
+			'currency_order'    => 'integer',
 		);
 
 		// Go through the basic fields and set them to our data array
@@ -319,20 +331,6 @@ class currency implements currency_interface
 	}
 
 	/**
-	 * Display Error message
-	 *
-	 * @param string $lang_key
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function display_error_message($lang_key)
-	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
-		trigger_error($message, E_USER_WARNING);
-	}
-
-	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
@@ -343,5 +341,16 @@ class currency implements currency_interface
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
+	}
+
+	/**
+	 * Get the order number of the currency
+	 *
+	 * @return int Order identifier
+	 * @access public
+	 */
+	public function get_currency_order()
+	{
+		return (isset($this->currency_data['currency_order'])) ? (int) $this->currency_data['currency_order'] : 0;
 	}
 }

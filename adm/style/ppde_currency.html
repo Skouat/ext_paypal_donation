@@ -49,7 +49,7 @@
 	</form>
 <!-- ELSE -->
 	<form id="acp_currency" method="post" action="{U_ACTION}">
-		<table cellspacing="1">
+		<table class="table1 zebra-table">
 			<thead>
 				<tr>
 					<th colspan="1">{L_PPDE_DC_NAME}</th>
@@ -58,25 +58,16 @@
 			</thead>
 			<tbody>
 			<!-- BEGIN currency -->
-				<!-- IF currency.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+				<tr>
 					<td><a href="{currency.U_EDIT}">{currency.CURRENCY_NAME}</a></td>
 					<td style="width: 15%; white-space: nowrap; text-align: center; vertical-align: middle;">&nbsp;<!-- IF currency.CURRENCY_ENABLED --><a href="{currency.U_DISABLE}">{L_DISABLE}</a><!-- ELSE --><a href="{currency.U_ENABLE}">{L_ENABLE}</a><!-- ENDIF -->&nbsp;</td>
-					<td style="width:90px; white-space: nowrap; text-align: right; vertical-align: middle;">
-						<!-- IF currency.S_FIRST_ROW && not currency.S_LAST_ROW && not S_MODE -->
-							{ICON_MOVE_UP_DISABLED}
-							<a href="{currency.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>
-						<!-- ELSEIF not currency.S_FIRST_ROW && not currency.S_LAST_ROW && not S_MODE -->
-							<a href="{currency.U_MOVE_UP}">{ICON_MOVE_UP}</a>
-							<a href="{currency.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>
-						<!-- ELSEIF currency.S_LAST_ROW && not currency.S_FIRST_ROW && not S_MODE -->
-							<a href="{currency.U_MOVE_UP}">{ICON_MOVE_UP}</a>
-							{ICON_MOVE_DOWN_DISABLED}
-						<!-- ELSE -->
-							{ICON_MOVE_UP_DISABLED}
-							{ICON_MOVE_DOWN_DISABLED}
-						<!-- ENDIF -->
+					<td class="actions">
+						<span class="up-disabled" style="display:none;">{ICON_MOVE_UP_DISABLED}</span>
+						<span class="up"><a href="{currency.U_MOVE_UP}" data-ajax="row_up">{ICON_MOVE_UP}</a></span>
+						<span class="down-disabled" style="display:none;">{ICON_MOVE_DOWN_DISABLED}</span>
+						<span class="down"><a href="{currency.U_MOVE_DOWN}" data-ajax="row_down">{ICON_MOVE_DOWN}</a></span>
 						<a href="{currency.U_EDIT}">{ICON_EDIT}</a>
-						<a href="{currency.U_DELETE}">{ICON_DELETE}</a>
+						<a href="{currency.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
 					</td>
 				</tr>
 			<!-- BEGINELSE -->
@@ -89,13 +80,11 @@
 
 		<div class="clearfix">&nbsp;</div>
 
-		<fieldset class="quick" style="float: {S_CONTENT_FLOW_END};">
+		<fieldset class="quick">
 			<input  type="hidden" name="action" value="add" />
 			<input class="button2" name="add" type="submit" value="{L_PPDE_DC_CREATE_CURRENCY}" />
 			{S_FORM_TOKEN}
 		</fieldset>
 	</form>
-
-	<div class="clearfix">&nbsp;</div><br style="clear: both;" />
 <!-- ENDIF -->
 <!-- INCLUDE overall_footer.html -->

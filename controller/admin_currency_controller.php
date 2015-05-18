@@ -30,6 +30,7 @@ class admin_currency_controller implements admin_currency_interface
 	 * @param \phpbb\request\request          $request                Request object
 	 * @param \phpbb\template\template        $template               Template object
 	 * @param \phpbb\user                     $user                   User object
+	 *
 	 * @access public
 	 */
 	public function __construct(ContainerInterface $container, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
@@ -49,22 +50,25 @@ class admin_currency_controller implements admin_currency_interface
 	 */
 	public function display_currency()
 	{
+		// Check that currency_order is valid and fix it if necessary
+		$this->ppde_operator_currency->fix_currency_order();
+
 		// Grab all the pages from the db
 		$entities = $this->ppde_operator_currency->get_currency_data();
 
-		foreach ($entities as $row)
+		foreach ($entities as $entity)
 		{
 			// Do not treat the item whether language identifier does not match
 			$this->template->assign_block_vars('currency', array(
-				'CURRENCY_NAME'    => $row['currency_name'],
-				'CURRENCY_ENABLED' => $row['currency_enable'] ? true : false,
+				'CURRENCY_NAME'    => $entity['currency_name'],
+				'CURRENCY_ENABLED' => $entity['currency_enable'] ? true : false,
 
-				'U_ENABLE'         => $this->u_action . '&amp;action=enable&amp;currency_id=' . $row['currency_id'],
-				'U_DISABLE'        => $this->u_action . '&amp;action=disable&amp;currency_id=' . $row['currency_id'],
-				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;currency_id=' . $row['currency_id'],
-				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;currency_id=' . $row['currency_id'],
-				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;currency_id=' . $row['currency_id'],
-				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;currency_id=' . $row['currency_id'],
+				'U_ENABLE'         => $this->u_action . '&amp;action=enable&amp;currency_id=' . $entity['currency_id'],
+				'U_DISABLE'        => $this->u_action . '&amp;action=disable&amp;currency_id=' . $entity['currency_id'],
+				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;currency_id=' . $entity['currency_id'],
+				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;currency_id=' . $entity['currency_id'],
+				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;currency_id=' . $entity['currency_id'],
+				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;currency_id=' . $entity['currency_id'],
 			));
 		}
 
@@ -107,43 +111,6 @@ class admin_currency_controller implements admin_currency_interface
 
 			'U_ADD_ACTION' => $this->u_action . '&amp;action=add',
 			'U_BACK'       => $this->u_action,
-		));
-	}
-
-	/**
-	 * Edit a Currency
-	 *
-	 * @param int $currency_id Currency Identifier
-	 *
-	 * @return null
-	 * @access   public
-	 */
-	public function edit_currency($currency_id)
-	{
-		// Add form key
-		add_form_key('add_edit_currency');
-
-		// Initiate an entity
-		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
-
-		// Collect the form data
-		$data = array(
-			'currency_id'       => $entity->get_id(),
-			'currency_name'     => $this->request->variable('currency_name', $entity->get_name(), true),
-			'currency_iso_code' => $this->request->variable('currency_iso_code', $entity->get_iso_code(), true),
-			'currency_symbol'   => $this->request->variable('currency_symbol', $entity->get_symbol(), true),
-			'currency_enable'   => $this->request->variable('currency_enable', $entity->get_currency_enable()),
-		);
-
-		// Process the new page
-		$this->add_edit_currency_data($entity, $data);
-
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_EDIT'        => true,
-
-			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;currency_id=' . $currency_id,
-			'U_BACK'        => $this->u_action,
 		));
 	}
 
@@ -250,6 +217,78 @@ class admin_currency_controller implements admin_currency_interface
 
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
 		));
+	}
+
+	/**
+	 * Edit a Currency
+	 *
+	 * @param int $currency_id Currency Identifier
+	 *
+	 * @return null
+	 * @access   public
+	 */
+	public function edit_currency($currency_id)
+	{
+		// Add form key
+		add_form_key('add_edit_currency');
+
+		// Initiate an entity
+		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+
+		// Collect the form data
+		$data = array(
+			'currency_id'       => $entity->get_id(),
+			'currency_name'     => $this->request->variable('currency_name', $entity->get_name(), true),
+			'currency_iso_code' => $this->request->variable('currency_iso_code', $entity->get_iso_code(), true),
+			'currency_symbol'   => $this->request->variable('currency_symbol', $entity->get_symbol(), true),
+			'currency_enable'   => $this->request->variable('currency_enable', $entity->get_currency_enable()),
+		);
+
+		// Process the new page
+		$this->add_edit_currency_data($entity, $data);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_EDIT'        => true,
+
+			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;currency_id=' . $currency_id,
+			'U_BACK'        => $this->u_action,
+		));
+	}
+
+	/**
+	 * Move a currency up/down
+	 *
+	 * @param int    $currency_id The currency identifier to move
+	 * @param string $direction   The direction (up|down)
+	 *
+	 * @return null
+	 * @access   public
+	 */
+	public function move_currency($currency_id, $direction)
+	{
+		// Initiate an entity
+		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+		$current_order = $entity->get_currency_order();
+
+		if ($current_order == 0 && $direction == 'move_up')
+		{
+			return;
+		}
+
+		// on move_down, switch position with next order_id...
+		// on move_up, switch position with previous order_id...
+		$switch_order_id = ($direction == 'move_down') ? $current_order + 1 : $current_order - 1;
+
+		$move_executed = $this->ppde_operator_currency->move($switch_order_id, $current_order, $entity->get_id());
+
+		if ($this->request->is_ajax())
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'success' => $move_executed,
+			));
+		}
 	}
 
 	/**
