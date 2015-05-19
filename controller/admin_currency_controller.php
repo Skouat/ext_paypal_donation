@@ -133,8 +133,8 @@ class admin_currency_controller implements admin_currency_interface
 
 		// Grab the form's data fields
 		$item_fields = array(
-			'iso_code'        => $data['currency_iso_code'],
 			'name'            => $data['currency_name'],
+			'iso_code'        => $data['currency_iso_code'],
 			'symbol'          => $data['currency_symbol'],
 			'currency_enable' => $data['currency_enable'],
 		);
@@ -297,7 +297,7 @@ class admin_currency_controller implements admin_currency_interface
 	 * @param int $currency_id
 	 *
 	 * @return null
-	 * @access   public
+	 * @access public
 	 */
 	public function delete_currency($currency_id)
 	{

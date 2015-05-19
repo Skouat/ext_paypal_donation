@@ -173,14 +173,17 @@ class currency implements currency_interface
 			$this->display_error_message('PPDE_CURRENCY_EXIST');
 		}
 
-		// Make extra sure there is no page_id set
+		// Make extra sure there is no currency_id set
 		unset($this->currency_data['currency_id']);
 
-		// Insert the page data to the database
+		// Set the Order value before insert new data
+		$this->set_order();
+
+		// Insert data to the database
 		$sql = 'INSERT INTO ' . $this->currency_table . ' ' . $this->db->sql_build_array('INSERT', $this->currency_data);
 		$this->db->sql_query($sql);
 
-		// Set the page_id using the id created by the SQL insert
+		// Set the currency_id using the id created by the SQL insert
 		$this->currency_data['currency_id'] = (int) $this->db->sql_nextid();
 
 		return $this;
@@ -352,5 +355,33 @@ class currency implements currency_interface
 	public function get_currency_order()
 	{
 		return (isset($this->currency_data['currency_order'])) ? (int) $this->currency_data['currency_order'] : 0;
+	}
+
+	/**
+	 * Get max currency order value
+	 *
+	 * @return int Order identifier
+	 * @access private
+	 */
+	private function get_max_order()
+	{
+		$sql = 'SELECT MAX(currency_order) AS max_order
+			FROM ' . $this->currency_table;
+		$this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('max_order');
+	}
+
+	/**
+	 * Set Currency order number
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access private
+	 */
+	private function set_order()
+	{
+		$this->currency_data['currency_order'] = (int) $this->get_max_order() + 1;
+
+		return $this;
 	}
 }
