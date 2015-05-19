@@ -139,45 +139,27 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
-	 * Edit a donation page
+	 * Set template var options for language select menus
 	 *
-	 * @param int $page_id Donation page identifier
+	 * @param string $current ID of the language assigned to the donation page
 	 *
 	 * @return null
-	 * @access public
+	 * @access protected
 	 */
-	public function edit_donation_page($page_id)
+	protected function create_language_options($current)
 	{
-		// Add form key
-		add_form_key('add_edit_donation_page');
+		// Grab all available language packs
+		$langs = $this->ppde_operator_donation_pages->get_languages();
 
-		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages')->load($page_id);
-
-		// Collect the form data
-		$data = array(
-			'page_id'      => (int) $page_id,
-			'page_title'   => $this->request->variable('page_title', $entity->get_title(), false),
-			'page_lang_id' => $this->request->variable('page_lang_id', $entity->get_lang_id()),
-			'page_content' => $this->request->variable('page_content', $entity->get_message_for_edit(), true),
-			'bbcode'       => !$this->request->variable('disable_bbcode', false),
-			'magic_url'    => !$this->request->variable('disable_magic_url', false),
-			'smilies'      => !$this->request->variable('disable_smilies', false),
-		);
-
-		// Set template vars for language select menu
-		$this->create_language_options($data['page_lang_id']);
-
-		// Process the new page
-		$this->add_edit_donation_page_data($entity, $data);
-
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_EDIT_DONATION_PAGE' => true,
-
-			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
-			'U_BACK'               => $this->u_action,
-		));
+		// Set the options list template vars
+		foreach ($langs as $lang)
+		{
+			$this->template->assign_block_vars('ppde_langs', array(
+				'LANG_LOCAL_NAME' => $lang['name'],
+				'VALUE'           => $lang['id'],
+				'S_SELECTED'      => ($lang['id'] == $current) ? true : false,
+			));
+		}
 	}
 
 	/**
@@ -331,6 +313,64 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
+	 * Get Local lang name
+	 *
+	 * @param array $langs
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function get_lang_local_name($langs)
+	{
+		foreach ($langs as $lang)
+		{
+			$this->lang_local_name = $lang['name'];
+		}
+	}
+
+	/**
+	 * Edit a donation page
+	 *
+	 * @param int $page_id Donation page identifier
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function edit_donation_page($page_id)
+	{
+		// Add form key
+		add_form_key('add_edit_donation_page');
+
+		// Initiate a page donation entity
+		$entity = $this->container->get('skouat.ppde.entity.donation_pages')->load($page_id);
+
+		// Collect the form data
+		$data = array(
+			'page_id'      => (int) $page_id,
+			'page_title'   => $this->request->variable('page_title', $entity->get_title(), false),
+			'page_lang_id' => $this->request->variable('page_lang_id', $entity->get_lang_id()),
+			'page_content' => $this->request->variable('page_content', $entity->get_message_for_edit(), true),
+			'bbcode'       => !$this->request->variable('disable_bbcode', false),
+			'magic_url'    => !$this->request->variable('disable_magic_url', false),
+			'smilies'      => !$this->request->variable('disable_smilies', false),
+		);
+
+		// Set template vars for language select menu
+		$this->create_language_options($data['page_lang_id']);
+
+		// Process the new page
+		$this->add_edit_donation_page_data($entity, $data);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_EDIT_DONATION_PAGE' => true,
+
+			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
+			'U_BACK'               => $this->u_action,
+		));
+	}
+
+	/**
 	 * Delete a donation page
 	 *
 	 * @param int $page_id The donation page identifier to delete
@@ -381,45 +421,5 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
-	}
-
-	/**
-	 * Set template var options for language select menus
-	 *
-	 * @param string $current ID of the language assigned to the donation page
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function create_language_options($current)
-	{
-		// Grab all available language packs
-		$langs = $this->ppde_operator_donation_pages->get_languages();
-
-		// Set the options list template vars
-		foreach ($langs as $lang)
-		{
-			$this->template->assign_block_vars('ppde_langs', array(
-				'LANG_LOCAL_NAME' => $lang['name'],
-				'VALUE'           => $lang['id'],
-				'S_SELECTED'      => ($lang['id'] == $current) ? true : false,
-			));
-		}
-	}
-
-	/**
-	 * Get Local lang name
-	 *
-	 * @param array $langs
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function get_lang_local_name($langs)
-	{
-		foreach ($langs as $lang)
-		{
-			$this->lang_local_name = $lang['name'];
-		}
 	}
 }

@@ -187,19 +187,6 @@ class admin_overview_controller implements admin_overview_interface
 	}
 
 	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
-	}
-
-	/**
 	 * Retrieve the extension name
 	 *
 	 * @param string $namespace
@@ -211,26 +198,6 @@ class admin_overview_controller implements admin_overview_interface
 	{
 		$namespace_ary = explode('\\', $namespace);
 		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
-	}
-
-	/**
-	 * Check if fsockopen is available
-	 *
-	 * @return bool
-	 * @access protected
-	 */
-	private function check_fsockopen()
-	{
-		if (function_exists('fsockopen'))
-		{
-			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
-
-			$fp = @fsockopen($url['path'], 80);
-
-			return ($fp !== false) ? true : false;
-		}
-
-		return false;
 	}
 
 	/**
@@ -256,5 +223,38 @@ class admin_overview_controller implements admin_overview_interface
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	private function check_fsockopen()
+	{
+		if (function_exists('fsockopen'))
+		{
+			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
+
+			$fp = @fsockopen($url['path'], 80);
+
+			return ($fp !== false) ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_page_url($u_action)
+	{
+		$this->u_action = $u_action;
 	}
 }
