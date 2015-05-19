@@ -1,2 +1,3 @@
 parameters:
+    skouat.ppde.tables.ppde_currency: %core.table_prefix%ppde_currency
     skouat.ppde.tables.ppde_donation_pages: %core.table_prefix%ppde_donation_pages

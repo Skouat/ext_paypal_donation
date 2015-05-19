@@ -2,6 +2,15 @@ imports:
     - { resource: tables.yml }
 
 services:
+    skouat.ppde.controller.admin.currency:
+        class: skouat\ppde\controller\admin_currency_controller
+        arguments:
+            - @service_container
+            - @skouat.ppde.operator.currency
+            - @request
+            - @template
+            - @user
+
     skouat.ppde.controller.admin.donation_pages:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
@@ -36,12 +45,27 @@ services:
             - @template
             - @user
 
+    skouat.ppde.entity.currency:
+        class: skouat\ppde\entity\currency
+        arguments:
+            - @dbal.conn
+            - @user
+            - %skouat.ppde.tables.ppde_currency%
+
     skouat.ppde.entity.donation_pages:
         class: skouat\ppde\entity\donation_pages
         arguments:
             - @dbal.conn
             - @user
             - %skouat.ppde.tables.ppde_donation_pages%
+
+    skouat.ppde.operator.currency:
+        class: skouat\ppde\operators\currency
+        arguments:
+            - @cache
+            - @service_container
+            - @dbal.conn
+            - %skouat.ppde.tables.ppde_currency%
 
     skouat.ppde.operator.donation_pages:
         class: skouat\ppde\operators\donation_pages

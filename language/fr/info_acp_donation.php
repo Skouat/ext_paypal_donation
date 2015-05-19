@@ -40,10 +40,11 @@ if (empty($lang) || !is_array($lang))
  * mode: main
  */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_DONATION'			=> 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'			=> 'Vue d’ensemble',
 	'PPDE_ACP_SETTINGS'			=> 'Paramètres généraux',
 	'PPDE_ACP_DONATION_PAGES'	=> 'Pages des dons',
+	'PPDE_ACP_CURRENCY'			=> 'Gestion des devises',
 ));
 
 /**
@@ -65,7 +66,7 @@ $lang = array_merge($lang, array(
 
 	'STAT_RESET_DATE'			=> 'Réinitialiser la date d’installation du MOD',
 	'STAT_RESET_DATE_EXPLAIN'	=> 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
-	'STAT_RESET_DATE_CONFIRM'	=> 'Etes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESET_DATE_CONFIRM'	=> 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
 ));
 
 /**
@@ -147,6 +148,25 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+ * mode: currency
+ * Info: language keys are prefixed with 'PPDE_DC_' for 'PPDE_DONATION_CURRENCY_'
+ */
+$lang = array_merge($lang, array(
+	// Currency Management
+	'PPDE_DC_CONFIG'			=> 'Gestion des devises',
+	'PPDE_DC_CONFIG_EXPLAIN'	=> 'Permet de gérer les devises pour faire un don.',
+	'PPDE_DC_NAME'				=> 'Nom de la devise',
+	'PPDE_DC_NAME_EXPLAIN'		=> 'Exemple : Euro.',
+	'PPDE_DC_ISO_CODE'			=> 'Code ISO 4217',
+	'PPDE_DC_ISO_CODE_EXPLAIN'	=> 'Code alphabétique de la devise.<br />En savoir plus sur la norme ISO 4217… Consultez la <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
+	'PPDE_DC_SYMBOL'			=> 'Symbole de la devise',
+	'PPDE_DC_SYMBOL_EXPLAIN'	=> 'Inscire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
+	'PPDE_DC_ENABLE'			=> 'Activer la devise',
+	'PPDE_DC_ENABLE_EXPLAIN'	=> 'Si activée, la devise sera disponible dans la liste de sélection.',
+	'PPDE_DC_CREATE_CURRENCY'	=> 'Ajouter une devise',
+));
+
+/**
  * logs
  */
 $lang = array_merge($lang, array(
@@ -154,6 +174,11 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation : Configuration mise à jour.</strong>',
 
 	// Confirm box
+	'PPDE_DC_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_GO_TO_PAGE'	=> '%sModifier la devise existante%s',
+	'PPDE_DC_ADDED'			=> 'Une devise a été ajoutée.',
+	'PPDE_DC_UPDATED'		=> 'Une devise a été mise à jour.',
+	'PPDE_DC_DELETED'		=> 'Une devise a été supprimée.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sModifier la page de dons existante%s',
 	'PPDE_DP_LANG_ADDED'	=> 'Une page de dons pour la langue « %s » a été ajoutée.',
@@ -162,7 +187,11 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS_SAVED'	=> 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
 	// Errors
+	'PPDE_DC_EMPTY_NAME'	=> 'Saisissez un nom de devise.',
+	'PPDE_DC_EMPTY_ISO_CODE'=> 'Saisissez un code ISO.',
+	'PPDE_DC_EMPTY_SYMBOL'	=> 'Saisissez un symbole.',
 	'PPDE_FIELD_MISSING'	=> 'Le champ « %s » est manquant.',
+	'PPDE_NO_CURRENCY'		=> 'Aucune devise n’a été trouvée.',
 	'PPDE_NO_PAGE'			=> 'Aucune page de dons n’a été trouvée.',
 	'PPDE_MUST_SELECT_LANG'	=> 'Aucune langue n’a été sélectionnée.',
 	'PPDE_MUST_SELECT_PAGE'	=> 'La page de dons sélectionnée n’existe pas.',

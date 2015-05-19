@@ -22,6 +22,7 @@ class ppde_module
 		// Requests
 		$action = $request->variable('action', '');
 		$page_id = $request->variable('page_id', 0);
+		$currency_id = $request->variable('currency_id', 0);
 
 		switch ($mode)
 		{
@@ -95,6 +96,58 @@ class ppde_module
 
 				// Display module main page
 				$admin_donation_pages_controller->display_donation_pages();
+				break;
+
+			case 'currency':
+				// Get an instance of the admin controller
+				$admin_currency_controller = $phpbb_container->get('skouat.ppde.controller.admin.currency');
+
+				// Make the $u_action url available in the admin donation pages controller
+				$admin_currency_controller->set_page_url($this->u_action);
+				// Load a template from adm/style for our ACP page
+				$this->tpl_name = 'ppde_currency';
+
+				// Set the page title for our ACP page
+				$this->page_title = 'PPDE_ACP_CURRENCY';
+
+				// Perform any actions submitted by the user
+				switch ($action)
+				{
+					case 'add':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DC_CONFIG';
+
+						// Load the add currency handle in the admin controller
+						$admin_currency_controller->add_currency();
+
+						// Return to stop execution of this script
+						return;
+					case 'edit':
+						// Set the page title for our ACP page
+						$this->page_title = 'PPDE_DC_CONFIG';
+
+						// Load the edit donation pages handle in the admin controller
+						$admin_currency_controller->edit_currency($currency_id);
+
+						// Return to stop execution of this script
+						return;
+					case 'move_down':
+					case 'move_up':
+						// Move a currency
+						$admin_currency_controller->move_currency($currency_id, $action);
+						break;
+					case 'enable':
+					case 'disable':
+						// Enable/disable a currency
+						$admin_currency_controller->enable_currency($currency_id, $action);
+						break;
+					case 'delete':
+						// Delete a donation page
+						$admin_currency_controller->delete_currency($currency_id);
+						break;
+				}
+				// Display module main page
+				$admin_currency_controller->display_currency();
 				break;
 
 			default:

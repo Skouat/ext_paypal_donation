@@ -40,10 +40,11 @@ if (empty($lang) || !is_array($lang))
  * mode: main
  */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION_MOD'		=> 'PayPal Donation',
+	'PPDE_ACP_DONATION'			=> 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'			=> 'Overview',
 	'PPDE_ACP_SETTINGS'			=> 'General Settings',
 	'PPDE_ACP_DONATION_PAGES'	=> 'Donation Pages',
+	'PPDE_ACP_CURRENCY'			=> 'Currency management',
 ));
 
 /**
@@ -147,6 +148,25 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+ * mode: currency
+ * Info: language keys are prefixed with 'PPDE_DC_' for 'PPDE_DONATION_CURRENCY_'
+ */
+$lang = array_merge($lang, array(
+	// Currency Management
+	'PPDE_DC_CONFIG'			=> 'Currency management',
+	'PPDE_DC_CONFIG_EXPLAIN'	=> 'Here you can manage currency.',
+	'PPDE_DC_NAME'				=> 'Currency name',
+	'PPDE_DC_NAME_EXPLAIN'		=> 'Name of the currency.<br />(i.e. Euro).',
+	'PPDE_DC_ISO_CODE'			=> 'ISO 4217 code',
+	'PPDE_DC_ISO_CODE_EXPLAIN'	=> 'Alpabetic code of the currency.<br />More about ISO 4217… refer to the <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="PayPal Donation MOD FAQ">PayPal Donation MOD FAQ</a> (external link).',
+	'PPDE_DC_SYMBOL'			=> 'Currency symbol',
+	'PPDE_DC_SYMBOL_EXPLAIN'	=> 'Define the currency symbol.<br />(i.e. € for Euro, $ for U.S. Dollar).',
+	'PPDE_DC_ENABLE'			=> 'Enable currency',
+	'PPDE_DC_ENABLE_EXPLAIN'	=> 'If enabled, currency will be displayed in the dropbox.',
+	'PPDE_DC_CREATE_CURRENCY'	=> 'Add currency',
+));
+
+/**
  * logs
  */
 $lang = array_merge($lang, array(
@@ -154,6 +174,11 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
 
 	// Confirm box
+	'PPDE_DC_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected currency?',
+	'PPDE_DC_GO_TO_PAGE'	=> '%sEdit existing currency%s',
+	'PPDE_DC_ADDED'			=> 'A currency has been added.',
+	'PPDE_DC_UPDATED'		=> 'A currency has been updated.',
+	'PPDE_DC_DELETED'		=> 'A currency has been deleted.',
 	'PPDE_DP_CONFIRM_DELETE'=> 'Are you sure you want to delete the selected donation page?',
 	'PPDE_DP_GO_TO_PAGE'	=> '%sEdit existing donation page%s',
 	'PPDE_DP_LANG_ADDED'	=> 'A donation page for the language “%s” has been added.',
@@ -162,6 +187,9 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS_SAVED'	=> 'Donation settings saved.',
 
 	// Errors
+	'PPDE_DC_EMPTY_NAME'	=> 'Enter a currency name.',
+	'PPDE_DC_EMPTY_ISO_CODE'=> 'Enter an ISO code.',
+	'PPDE_DC_EMPTY_SYMBOL'	=> 'Enter a symbol.',
 	'PPDE_FIELD_MISSING'	=> 'Required field “%s” is missing.',
 	'PPDE_NO_PAGE'			=> 'No donation page found.',
 	'PPDE_MUST_SELECT_LANG'	=> 'No language selected.',
