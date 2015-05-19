@@ -55,6 +55,17 @@ interface admin_currency_interface
 	public function move_currency($currency_id, $direction);
 
 	/**
+	 * Enable/disable a currency
+	 *
+	 * @param int    $currency_id
+	 * @param string $action
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function enable_currency($currency_id, $action);
+
+	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id

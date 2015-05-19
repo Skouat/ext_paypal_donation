@@ -292,6 +292,33 @@ class admin_currency_controller implements admin_currency_interface
 	}
 
 	/**
+	 * Enable/disable a currency
+	 *
+	 * @param int    $currency_id
+	 * @param string $action
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function enable_currency($currency_id, $action)
+	{
+		// Return error if no currency
+		if (!$currency_id)
+		{
+			trigger_error($this->user->lang('PPDE_NO_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		// Load selected currency
+		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+
+		// Set the new status for this currency
+		$entity->set_currency_enable(($action == 'enable') ? 1 : 0);
+
+		// Save data to the database
+		$entity->save();
+	}
+
+	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id

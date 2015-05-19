@@ -136,6 +136,11 @@ class ppde_module
 						// Move a currency
 						$admin_currency_controller->move_currency($currency_id, $action);
 						break;
+					case 'enable':
+					case 'disable':
+						// Enable/disable a currency
+						$admin_currency_controller->enable_currency($currency_id, $action);
+						break;
 					case 'delete':
 						// Delete a donation page
 						$admin_currency_controller->delete_currency($currency_id);
