@@ -82,35 +82,35 @@ class admin_settings_controller implements admin_settings_interface
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ERROR'                       => (sizeof($errors)) ? true : false,
+			'S_ERROR'                       => $this->check_config((sizeof($errors))),
 			'ERROR_MSG'                     => (sizeof($errors)) ? implode('<br />', $errors) : '',
 
 			'U_ACTION'                      => $this->u_action,
 
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'               => $this->config['ppde_account_id'] ? $this->config['ppde_account_id'] : '',
+			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'str', ''),
 			'PPDE_DEFAULT_CURRENCY'         => 'select',
-			'PPDE_DEFAULT_VALUE'            => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
-			'PPDE_DROPBOX_VALUE'            => $this->config['ppde_dropbox_value'] ? $this->config['ppde_dropbox_value'] : '1,2,3,4,5,10,20,25,50,100',
+			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'int', 0),
+			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'str', '1,2,3,4,5,10,20,25,50,100'),
 
-			'S_PPDE_DROPBOX_ENABLE'         => $this->config['ppde_dropbox_enable'] ? true : false,
-			'S_PPDE_ENABLE'                 => $this->config['ppde_enable'] ? true : false,
+			'S_PPDE_DROPBOX_ENABLE'         => $this->check_config($this->config['ppde_dropbox_enable']),
+			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'          => $this->config['ppde_sandbox_address'] ? $this->config['ppde_sandbox_address'] : '',
+			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'str', ''),
 
-			'S_PPDE_SANDBOX_ENABLE'         => $this->config['ppde_sandbox_enable'] ? true : false,
-			'S_PPDE_SANDBOX_FOUNDER_ENABLE' => $this->config['ppde_sandbox_founder_enable'] ? true : false,
+			'S_PPDE_SANDBOX_ENABLE'         => $this->check_config($this->config['ppde_sandbox_enable']),
+			'S_PPDE_SANDBOX_FOUNDER_ENABLE' => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 
 			// Statistics Settings vars
-			'PPDE_RAISED'                   => $this->config['ppde_raised'] ? $this->config['ppde_raised'] : 0,
-			'PPDE_GOAL'                     => $this->config['ppde_goal'] ? $this->config['ppde_goal'] : 0,
-			'PPDE_USED'                     => $this->config['ppde_used'] ? $this->config['ppde_used'] : 0,
+			'PPDE_RAISED'                   => $this->check_config($this->config['ppde_raised'], 'int', 0),
+			'PPDE_GOAL'                     => $this->check_config($this->config['ppde_goal'], 'int', 0),
+			'PPDE_USED'                     => $this->check_config($this->config['ppde_used'], 'int', 0),
 
-			'S_PPDE_STATS_INDEX_ENABLE'     => $this->config['ppde_stats_index_enable'] ? true : false,
-			'S_PPDE_RAISED_ENABLE'          => $this->config['ppde_raised_enable'] ? true : false,
-			'S_PPDE_GOAL_ENABLE'            => $this->config['ppde_goal_enable'] ? true : false,
-			'S_PPDE_USED_ENABLE'            => $this->config['ppde_used_enable'] ? true : false,
+			'S_PPDE_STATS_INDEX_ENABLE'     => $this->check_config($this->config['ppde_stats_index_enable']),
+			'S_PPDE_RAISED_ENABLE'          => $this->check_config($this->config['ppde_raised_enable']),
+			'S_PPDE_GOAL_ENABLE'            => $this->check_config($this->config['ppde_goal_enable']),
+			'S_PPDE_USED_ENABLE'            => $this->check_config($this->config['ppde_used_enable']),
 		));
 	}
 
@@ -143,6 +143,29 @@ class admin_settings_controller implements admin_settings_interface
 		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0));
+	}
+
+	/**
+	 * Check if a config value is true
+	 *
+	 * @param string $config Config value
+	 * @param mixed  $type
+	 * @param mixed  $default
+	 *
+	 * @return mixed
+	 * @access private
+	 */
+	private function check_config($config, $type = '', $default = '')
+	{
+		switch ($type)
+		{
+			case 'int':
+				return $config ? (int) $config : $default;
+			case 'str':
+				return $config ? (string) $config : $default;
+		}
+
+		return $config ? true : false;
 	}
 
 	/**
