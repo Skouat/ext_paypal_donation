@@ -88,24 +88,24 @@ class admin_settings_controller implements admin_settings_interface
 			'U_ACTION'                      => $this->u_action,
 
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'str', ''),
+			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'string', ''),
 			'PPDE_DEFAULT_CURRENCY'         => 'select',
-			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'int', 0),
-			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'str', '1,2,3,4,5,10,20,25,50,100'),
+			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
+			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 
 			'S_PPDE_DROPBOX_ENABLE'         => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'str', ''),
+			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
 
 			'S_PPDE_SANDBOX_ENABLE'         => $this->check_config($this->config['ppde_sandbox_enable']),
 			'S_PPDE_SANDBOX_FOUNDER_ENABLE' => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 
 			// Statistics Settings vars
-			'PPDE_RAISED'                   => $this->check_config($this->config['ppde_raised'], 'int', 0),
-			'PPDE_GOAL'                     => $this->check_config($this->config['ppde_goal'], 'int', 0),
-			'PPDE_USED'                     => $this->check_config($this->config['ppde_used'], 'int', 0),
+			'PPDE_RAISED'                   => $this->check_config($this->config['ppde_raised'], 'float', 0),
+			'PPDE_GOAL'                     => $this->check_config($this->config['ppde_goal'], 'float', 0),
+			'PPDE_USED'                     => $this->check_config($this->config['ppde_used'], 'float', 0),
 
 			'S_PPDE_STATS_INDEX_ENABLE'     => $this->check_config($this->config['ppde_stats_index_enable']),
 			'S_PPDE_RAISED_ENABLE'          => $this->check_config($this->config['ppde_raised_enable']),
@@ -148,24 +148,20 @@ class admin_settings_controller implements admin_settings_interface
 	/**
 	 * Check if a config value is true
 	 *
-	 * @param string $config Config value
-	 * @param mixed  $type
+	 * @param mixed  $config Config value
+	 * @param string $type   (see settype())
 	 * @param mixed  $default
 	 *
 	 * @return mixed
 	 * @access private
 	 */
-	private function check_config($config, $type = '', $default = '')
+	private function check_config($config, $type = 'boolean', $default = '')
 	{
-		switch ($type)
-		{
-			case 'int':
-				return $config ? (int) $config : $default;
-			case 'str':
-				return $config ? (string) $config : $default;
-		}
+		// We're using settype to enforce data types
+		settype($config, $type);
+		settype($default, $type);
 
-		return $config ? true : false;
+		return $config ? $config : $default;
 	}
 
 	/**
