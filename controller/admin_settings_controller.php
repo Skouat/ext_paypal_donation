@@ -18,6 +18,7 @@ class admin_settings_controller implements admin_settings_interface
 
 	protected $config;
 	protected $container;
+	protected $ppde_operator_currency;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -25,18 +26,20 @@ class admin_settings_controller implements admin_settings_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config     $config    Config object
-	 * @param ContainerInterface       $container Service container interface
-	 * @param \phpbb\request\request   $request   Request object
-	 * @param \phpbb\template\template $template  Template object
-	 * @param \phpbb\user              $user      User object
+	 * @param \phpbb\config\config            $config                 Config object
+	 * @param ContainerInterface              $container              Service container interface
+	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Operator object
+	 * @param \phpbb\request\request          $request                Request object
+	 * @param \phpbb\template\template        $template               Template object
+	 * @param \phpbb\user                     $user                   User object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -89,7 +92,7 @@ class admin_settings_controller implements admin_settings_interface
 
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'string', ''),
-			'PPDE_DEFAULT_CURRENCY'         => 'select',
+			'PPDE_DEFAULT_CURRENCY'         => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 
@@ -162,6 +165,33 @@ class admin_settings_controller implements admin_settings_interface
 		settype($default, $type);
 
 		return $config ? $config : $default;
+	}
+
+	/**
+	 * Build pull down menu options of available currency
+	 *
+	 * @param int $config_value Currency identifier; default: 0
+	 *
+	 * @return null
+	 * @access   protected
+	 */
+	protected function build_currency_select_menu($config_value = 0)
+	{
+		// Grab the list of currency data
+		$currency_items = $this->ppde_operator_currency->get_currency_data();
+
+		// Process each rule menu item for pull-down
+		foreach ($currency_items as $currency_item)
+		{
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('options', array(
+				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
+				'CURRENCY_NAME'      => $currency_item['currency_name'],
+
+				'S_CURRENCY_DEFAULT' => $this->check_config(($currency_item['currency_id'] == $config_value)),
+			));
+		}
+		unset ($currency_items, $currency_item);
 	}
 
 	/**

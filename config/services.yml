@@ -41,6 +41,7 @@ services:
         arguments:
             - @config
             - @service_container
+            - @skouat.ppde.operator.currency
             - @request
             - @template
             - @user

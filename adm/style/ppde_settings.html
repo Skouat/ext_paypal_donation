@@ -26,8 +26,12 @@
 	</dl>
 	<dl>
 		<dt><label for="ppde_default_currency">{L_PPDE_DEFAULT_CURRENCY}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_CURRENCY_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_default_currency" name="ppde_default_currency" value="1"<!-- IF S_BOARDRULES_REQUIRE_AT_REGISTRATION --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_default_currency" value="0"<!-- IF not S_BOARDRULES_REQUIRE_AT_REGISTRATION --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		<dd><select name="ppde_default_currency" id="ppde_default_currency">
+				<!-- BEGIN options -->
+				<option value="{options.CURRENCY_ID}"<!-- IF options.S_CURRENCY_DEFAULT --> selected="selected"<!-- ENDIF -->>{options.CURRENCY_NAME}</option>
+				<!-- END options -->
+			</select>
+		</dd>
 	</dl>
 	<dl>
 		<dt><label for="ppde_default_value">{L_PPDE_DEFAULT_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_VALUE_EXPLAIN}</span></dt>
