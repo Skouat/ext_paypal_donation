@@ -128,10 +128,10 @@ class admin_settings_controller implements admin_settings_interface
 		// Set options for Global settings
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_account_id', $this->request->variable('ppde_account_id', ''));
-		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 'USD'));
+		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
-		$this->config->set('ppde_dropbox_value', $this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'));
+		$this->config->set('ppde_dropbox_value', $this->clean_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')));
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
@@ -146,6 +146,33 @@ class admin_settings_controller implements admin_settings_interface
 		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0));
+	}
+
+	/**
+	 * Clean items list to conserve only numeric values
+	 *
+	 * @param string $config_value
+	 *
+	 * @return string
+	 * @access protected
+	 */
+	protected function clean_items_list($config_value)
+	{
+		$items_list = explode(',', $config_value);
+		$merge_items = array();
+
+		foreach ($items_list as $item)
+		{
+			if (settype($item, 'integer') && $item != 0)
+			{
+				$merge_value[] = $item;
+			}
+		}
+		unset($items_list, $item);
+
+		natsort($merge_items);
+
+		return $this->check_config(implode(',', $merge_items), 'string','');
 	}
 
 	/**
@@ -173,7 +200,7 @@ class admin_settings_controller implements admin_settings_interface
 	 * @param int $config_value Currency identifier; default: 0
 	 *
 	 * @return null
-	 * @access   protected
+	 * @access protected
 	 */
 	protected function build_currency_select_menu($config_value = 0)
 	{
