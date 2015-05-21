@@ -75,4 +75,3 @@ $lang = array_merge($lang, array(
 
 	'DONATION_INDEX'           => 'Donations',
 ));
-
