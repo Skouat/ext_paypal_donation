@@ -10,6 +10,10 @@
 
 namespace skouat\ppde\acp;
 
+/**
+ * @property string tpl_name
+ * @property string page_title
+ */
 class ppde_module
 {
 	/** @var string */
@@ -55,11 +59,9 @@ class ppde_module
 			case 'donation_pages':
 				// Get an instance of the admin controller
 				$admin_donation_pages_controller = $phpbb_container->get('skouat.ppde.controller.admin.donation_pages');
-				$entity_donations_pages = $phpbb_container->get('skouat.ppde.entity.donation_pages');
 
 				// Make the $u_action url available in the admin donation pages controller
 				$admin_donation_pages_controller->set_page_url($this->u_action);
-				$entity_donations_pages->set_page_url($this->u_action);
 
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_donation_pages';
@@ -102,8 +104,9 @@ class ppde_module
 				// Get an instance of the admin controller
 				$admin_currency_controller = $phpbb_container->get('skouat.ppde.controller.admin.currency');
 
-				// Make the $u_action url available in the admin donation pages controller
+				// Make the $u_action url available in the admin controller
 				$admin_currency_controller->set_page_url($this->u_action);
+
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_currency';
 

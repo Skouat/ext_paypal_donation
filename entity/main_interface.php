@@ -21,4 +21,14 @@ interface main_interface
 	 * @access public
 	 */
 	public function load($id);
+
+	/**
+	 * Set page url
+	 *
+	 * @param string $u_action Custom form action
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_page_url($u_action);
 }

@@ -53,6 +53,8 @@ class donation_pages extends main implements donation_pages_interface
 		$this->user = $user;
 		$this->donation_pages_table = $table_name;
 		parent::__construct(
+			$db,
+			$user,
 			$table_name,
 			'DONATION_PAGES',
 			array(
@@ -528,18 +530,5 @@ class donation_pages extends main implements donation_pages_interface
 		$this->set_message_option(OPTION_FLAG_SMILIES, true);
 
 		return $this;
-	}
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 }

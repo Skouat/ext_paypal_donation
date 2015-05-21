@@ -91,7 +91,7 @@ class admin_currency_controller implements admin_currency_interface
 		// Add form key
 		add_form_key('add_edit_currency');
 
-		// Initiate a page donation entity
+		// Initiate an entity
 		$entity = $this->container->get('skouat.ppde.entity.currency');
 
 		// Collect the form data
@@ -233,7 +233,9 @@ class admin_currency_controller implements admin_currency_interface
 		add_form_key('add_edit_currency');
 
 		// Initiate an entity
-		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+		$entity = $this->container->get('skouat.ppde.entity.currency');
+		$entity->set_page_url($this->u_action);
+		$entity->load($currency_id);
 
 		// Collect the form data
 		$data = array(

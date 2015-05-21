@@ -28,7 +28,6 @@ class currency extends main implements currency_interface
 	 * @access protected
 	 */
 	protected $data;
-	protected $u_action;
 
 	protected $db;
 	protected $user;
@@ -49,6 +48,8 @@ class currency extends main implements currency_interface
 		$this->user = $user;
 		$this->currency_table = $table_name;
 		parent::__construct(
+			$db,
+			$user,
 			$table_name,
 			'CURRENCY',
 			array(
@@ -326,19 +327,6 @@ class currency extends main implements currency_interface
 		$this->data['currency_enable'] = (bool) $enable;
 
 		return $this;
-	}
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 
 	/**
