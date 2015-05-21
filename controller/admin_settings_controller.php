@@ -165,7 +165,7 @@ class admin_settings_controller implements admin_settings_interface
 		{
 			if (settype($item, 'integer') && $item != 0)
 			{
-				$merge_value[] = $item;
+				$merge_items[] = $item;
 			}
 		}
 		unset($items_list, $item);
