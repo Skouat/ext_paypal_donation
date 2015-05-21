@@ -141,11 +141,11 @@ class admin_settings_controller implements admin_settings_interface
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
 		$this->config->set('ppde_raised_enable', $this->request->variable('ppde_raised_enable', false));
-		$this->config->set('ppde_raised', $this->request->variable('ppde_raised', 0));
+		$this->config->set('ppde_raised', $this->request->variable('ppde_raised', 0.0));
 		$this->config->set('ppde_goal_enable', $this->request->variable('ppde_goal_enable', false));
-		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0));
+		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0.0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
-		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0));
+		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 	}
 
 	/**
