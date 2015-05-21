@@ -15,22 +15,12 @@ namespace skouat\ppde\entity;
  *
  * This describes all of the methods we'll have for a single donation page
  */
-interface currency_interface
+interface currency_interface extends main_interface
 {
-	/**
-	 * Load the data from the database for this currency
-	 *
-	 * @param int $id Item identifier
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function load($id);
-
 	/**
 	 * Check the currency_id exist from the database for this currency
 	 *
-	 * @return int $this->currency_data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
 	 * @access public
 	 */
 	public function currency_exists();

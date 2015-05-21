@@ -15,22 +15,12 @@ namespace skouat\ppde\entity;
  *
  * This describes all of the methods we'll have for a single donation page
  */
-interface donation_pages_interface
+interface donation_pages_interface extends main_interface
 {
-	/**
-	 * Load the data from the database for this donation page
-	 *
-	 * @param int $id Item identifier
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function load($id);
-
 	/**
 	 * Check the page_id exist from the database for this donation page
 	 *
-	 * @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
 	 * @access public
 	 */
 	public function donation_page_exists();
@@ -97,7 +87,7 @@ interface donation_pages_interface
 	/**
 	 * Get template vars
 	 *
-	 * @return $this->dp_vars
+	 * @return array $this->dp_vars
 	 * @access public
 	 */
 	public function get_vars();

@@ -18,7 +18,7 @@ namespace skouat\ppde\operators;
 interface donation_pages_interface
 {
 	/**
-	 * Get data from dp_data table
+	 * Get data from donation pages table
 	 *
 	 * @param int $lang_id
 	 *

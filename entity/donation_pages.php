@@ -13,7 +13,7 @@ namespace skouat\ppde\entity;
 /**
  * Entity for a donation page
  */
-class donation_pages implements donation_pages_interface
+class donation_pages extends main implements donation_pages_interface
 {
 	/**
 	 * Data for this entity
@@ -28,7 +28,7 @@ class donation_pages implements donation_pages_interface
 	 *    page_content_bbcode_options
 	 * @access protected
 	 */
-	protected $dp_data;
+	protected $data;
 	protected $dp_vars;
 
 	protected $config;
@@ -39,78 +39,45 @@ class donation_pages implements donation_pages_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config              $config               Config object
-	 * @param \phpbb\db\driver\driver_interface $db                   Database object
-	 * @param \phpbb\user                       $user                 User object
-	 * @param string                            $donation_pages_table Name of the table used to store data
+	 * @param \phpbb\config\config              $config     Config object
+	 * @param \phpbb\db\driver\driver_interface $db         Database object
+	 * @param \phpbb\user                       $user       User object
+	 * @param string                            $table_name Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, $donation_pages_table)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, $table_name)
 	{
 		$this->config = $config;
 		$this->db = $db;
 		$this->user = $user;
-		$this->donation_pages_table = $donation_pages_table;
-	}
-
-	/**
-	 * Load the data from the database for this donation page
-	 *
-	 * @param int $page_id Donation page identifier
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function load($page_id)
-	{
-		$sql = 'SELECT *
-			FROM ' . $this->donation_pages_table . '
-			WHERE page_id = ' . (int) $page_id;
-		$result = $this->db->sql_query($sql);
-		$this->dp_data = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		if ($this->dp_data === false)
-		{
-			// A item does not exist
-			$this->display_error_message('PPDE_NO_PAGE');
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Display Error message
-	 *
-	 * @param string $lang_key
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function display_error_message($lang_key)
-	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
-		trigger_error($message, E_USER_WARNING);
+		$this->donation_pages_table = $table_name;
+		parent::__construct(
+			$table_name,
+			'DONATION_PAGES',
+			array(
+				'item_id' => 'page_id',
+			)
+		);
 	}
 
 	/**
 	 * Check the page_id exist from the database for this donation page
 	 *
-	 * @return int $this->dp_data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
 	 * @access public
 	 */
 	public function donation_page_exists()
 	{
 		$sql = 'SELECT page_id
 			FROM ' . $this->donation_pages_table . "
-			WHERE page_title = '" . $this->db->sql_escape($this->dp_data['page_title']) . "'
-			AND page_lang_id = " . (int) $this->dp_data['page_lang_id'];
+			WHERE page_title = '" . $this->db->sql_escape($this->data['page_title']) . "'
+			AND page_lang_id = " . (int) $this->data['page_lang_id'];
 		$result = $this->db->sql_query($sql);
-		$this->dp_data['page_id'] = (int) $this->db->sql_fetchfield('page_id');
+		$this->data['page_id'] = (int) $this->db->sql_fetchfield('page_id');
 		$this->db->sql_freeresult($result);
 
-		return $this->dp_data['page_id'];
+		return $this->data['page_id'];
 	}
 
 	/**
@@ -122,13 +89,13 @@ class donation_pages implements donation_pages_interface
 	 *
 	 * @param array $data Data array, typically from the database
 	 *
-	 * @return donation_pages_interface $this->dp_data object
+	 * @return donation_pages_interface $this->data object
 	 * @access public
 	 */
 	public function import($data)
 	{
 		// Clear out any saved data
-		$this->dp_data = array();
+		$this->data = array();
 
 		// All of our fields
 		$fields = array(
@@ -157,10 +124,10 @@ class donation_pages implements donation_pages_interface
 			// We're using settype to enforce data types
 			settype($value, $type);
 
-			$this->dp_data[$field] = $value;
+			$this->data[$field] = $value;
 		}
 
-		return $this->dp_data;
+		return $this->data;
 	}
 
 	/**
@@ -173,21 +140,21 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function insert()
 	{
-		if (!empty($this->dp_data['page_id']))
+		if (!empty($this->data['page_id']))
 		{
 			// The page already exists
 			$this->display_error_message('PPDE_PAGE_EXIST');
 		}
 
 		// Make extra sure there is no page_id set
-		unset($this->dp_data['page_id']);
+		unset($this->data['page_id']);
 
 		// Insert the page data to the database
-		$sql = 'INSERT INTO ' . $this->donation_pages_table . ' ' . $this->db->sql_build_array('INSERT', $this->dp_data);
+		$sql = 'INSERT INTO ' . $this->donation_pages_table . ' ' . $this->db->sql_build_array('INSERT', $this->data);
 		$this->db->sql_query($sql);
 
 		// Set the page_id using the id created by the SQL insert
-		$this->dp_data['page_id'] = (int) $this->db->sql_nextid();
+		$this->data['page_id'] = (int) $this->db->sql_nextid();
 
 		return $this;
 	}
@@ -203,14 +170,14 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function save()
 	{
-		if (empty($this->dp_data['page_title']) || empty($this->dp_data['page_lang_id']))
+		if (empty($this->data['page_title']) || empty($this->data['page_lang_id']))
 		{
 			// The page already exists
-			$this->display_error_message('PPDE_NO_PAGE');
+			$this->display_error_message('PPDE_NO_DONATION_PAGES');
 		}
 
 		$sql = 'UPDATE ' . $this->donation_pages_table . '
-			SET ' . $this->db->sql_build_array('UPDATE', $this->dp_data) . '
+			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
 			WHERE page_id = ' . $this->get_id();
 		$this->db->sql_query($sql);
 
@@ -225,13 +192,13 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function get_id()
 	{
-		return (isset($this->dp_data['page_id'])) ? (int) $this->dp_data['page_id'] : 0;
+		return (isset($this->data['page_id'])) ? (int) $this->data['page_id'] : 0;
 	}
 
 	/**
 	 * Get template vars
 	 *
-	 * @return $this->dp_vars
+	 * @return array $this->dp_vars
 	 * @access public
 	 */
 	public function get_vars()
@@ -284,7 +251,7 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function get_lang_id()
 	{
-		return (isset($this->dp_data['page_lang_id'])) ? (int) $this->dp_data['page_lang_id'] : 0;
+		return (isset($this->data['page_lang_id'])) ? (int) $this->data['page_lang_id'] : 0;
 	}
 
 	/**
@@ -298,7 +265,7 @@ class donation_pages implements donation_pages_interface
 	public function set_lang_id($lang)
 	{
 		// Set the lang_id on our data array
-		$this->dp_data['page_lang_id'] = (int) $lang;
+		$this->data['page_lang_id'] = (int) $lang;
 
 		return $this;
 	}
@@ -311,7 +278,7 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function get_title()
 	{
-		return (isset($this->dp_data['page_title'])) ? (string) $this->dp_data['page_title'] : '';
+		return (isset($this->data['page_title'])) ? (string) $this->data['page_title'] : '';
 	}
 
 	/**
@@ -325,7 +292,7 @@ class donation_pages implements donation_pages_interface
 	public function set_title($title)
 	{
 		// Set the item type on our data array
-		$this->dp_data['page_title'] = (string) $title;
+		$this->data['page_title'] = (string) $title;
 
 		return $this;
 	}
@@ -339,9 +306,9 @@ class donation_pages implements donation_pages_interface
 	public function get_message_for_edit()
 	{
 		// Use defaults if these haven't been set yet
-		$message = (isset($this->dp_data['page_content'])) ? $this->dp_data['page_content'] : '';
-		$uid = (isset($this->dp_data['page_content_bbcode_uid'])) ? $this->dp_data['page_content_bbcode_uid'] : '';
-		$options = (isset($this->dp_data['page_content_bbcode_options'])) ? (int) $this->dp_data['page_content_bbcode_options'] : 0;
+		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
+		$uid = (isset($this->data['page_content_bbcode_uid'])) ? $this->data['page_content_bbcode_uid'] : '';
+		$options = (isset($this->data['page_content_bbcode_options'])) ? (int) $this->data['page_content_bbcode_options'] : 0;
 
 		// Generate for edit
 		$message_data = generate_text_for_edit($message, $uid, $options);
@@ -360,10 +327,10 @@ class donation_pages implements donation_pages_interface
 	public function get_message_for_display($censor_text = true)
 	{
 		// If these haven't been set yet; use defaults
-		$message = (isset($this->dp_data['page_content'])) ? $this->dp_data['page_content'] : '';
-		$uid = (isset($this->dp_data['page_content_bbcode_uid'])) ? $this->dp_data['page_content_bbcode_uid'] : '';
-		$bitfield = (isset($this->dp_data['page_content_bbcode_bitfield'])) ? $this->dp_data['page_content_bbcode_bitfield'] : '';
-		$options = (isset($this->dp_data['page_content_bbcode_options'])) ? (int) $this->dp_data['page_content_bbcode_options'] : 0;
+		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
+		$uid = (isset($this->data['page_content_bbcode_uid'])) ? $this->data['page_content_bbcode_uid'] : '';
+		$bitfield = (isset($this->data['page_content_bbcode_bitfield'])) ? $this->data['page_content_bbcode_bitfield'] : '';
+		$options = (isset($this->data['page_content_bbcode_options'])) ? (int) $this->data['page_content_bbcode_options'] : 0;
 
 		// Generate for display
 		return generate_text_for_display($message, $uid, $bitfield, $options, $censor_text);
@@ -414,28 +381,28 @@ class donation_pages implements donation_pages_interface
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true)
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
-		$this->dp_data['page_content_bbcode_options'] = (isset($this->dp_data['page_content_bbcode_options'])) ? $this->dp_data['page_content_bbcode_options'] : 0;
+		$this->data['page_content_bbcode_options'] = (isset($this->data['page_content_bbcode_options'])) ? $this->data['page_content_bbcode_options'] : 0;
 
 		// If we're setting the option and the option is not already set
-		if (!$negate && !($this->dp_data['page_content_bbcode_options'] & $option_value))
+		if (!$negate && !($this->data['page_content_bbcode_options'] & $option_value))
 		{
 			// Add the option to the options
-			$this->dp_data['page_content_bbcode_options'] += $option_value;
+			$this->data['page_content_bbcode_options'] += $option_value;
 		}
 
 		// If we're unsetting the option and the option is already set
-		if ($negate && $this->dp_data['page_content_bbcode_options'] & $option_value)
+		if ($negate && $this->data['page_content_bbcode_options'] & $option_value)
 		{
 			// Subtract the option from the options
-			$this->dp_data['page_content_bbcode_options'] -= $option_value;
+			$this->data['page_content_bbcode_options'] -= $option_value;
 		}
 
 		// Reparse the message
-		if ($reparse_message && !empty($this->dp_data['page_content']))
+		if ($reparse_message && !empty($this->data['page_content']))
 		{
-			$message = $this->dp_data['page_content'];
+			$message = $this->data['page_content'];
 
-			decode_message($message, $this->dp_data['page_content_bbcode_uid']);
+			decode_message($message, $this->data['page_content_bbcode_uid']);
 
 			$this->set_message($message);
 		}
@@ -456,9 +423,9 @@ class donation_pages implements donation_pages_interface
 		generate_text_for_storage($message, $uid, $bitfield, $flags, $this->message_bbcode_enabled(), $this->message_magic_url_enabled(), $this->message_smilies_enabled());
 
 		// Set the message to our data array
-		$this->dp_data['page_content'] = $message;
-		$this->dp_data['page_content_bbcode_uid'] = $uid;
-		$this->dp_data['page_content_bbcode_bitfield'] = $bitfield;
+		$this->data['page_content'] = $message;
+		$this->data['page_content_bbcode_uid'] = $uid;
+		$this->data['page_content_bbcode_bitfield'] = $bitfield;
 
 		// Flags are already set
 
@@ -473,7 +440,7 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function message_bbcode_enabled()
 	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
+		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
 	}
 
 	/**
@@ -484,7 +451,7 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function message_magic_url_enabled()
 	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
+		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
 	}
 
 	/**
@@ -495,7 +462,7 @@ class donation_pages implements donation_pages_interface
 	 */
 	public function message_smilies_enabled()
 	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
+		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
 	}
 
 	/**

@@ -211,7 +211,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Set the donation page's data in the entity
 		foreach ($item_fields as $entity_function => $page_data)
 		{
-			// Calling the set_$entity_function on the entity and passing it $dp_data
+			// Calling the set_$entity_function on the entity and passing it $page_data
 			call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
 		}
 		unset($item_fields, $entity_function, $page_data);
