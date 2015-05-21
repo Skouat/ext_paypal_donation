@@ -183,6 +183,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
 
+		// Grab Template vars
+		$dp_vars = $entity->get_vars();
+
 		// Grab the form data's message parsing options (possible values: 1 or 0)
 		$message_parse_options = array(
 			'bbcode'    => ($submit || $preview) ? $data['bbcode'] : $entity->message_bbcode_enabled(),
@@ -242,7 +245,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			$this->template->assign_vars(array(
 				'S_PPDE_DP_PREVIEW' => $preview,
 
-				'PPDE_DP_PREVIEW'   => $entity->get_message_for_display(),
+				'PPDE_DP_PREVIEW'   => $entity->replace_template_vars($entity->get_message_for_display()),
 			));
 		}
 
@@ -277,6 +280,16 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 				// Show user confirmation of the added item and provide link back to the previous page
 				trigger_error($this->user->lang('PPDE_DP_LANG_ADDED', $this->lang_local_name) . adm_back_link($this->u_action));
 			}
+		}
+
+		// Assigning predefined variables in a template block vars
+		for ($i = 0, $size = sizeof($dp_vars); $i < $size; $i++)
+		{
+			$this->template->assign_block_vars('dp_vars', array(
+					'NAME'		=> $dp_vars[$i]['name'],
+					'VARIABLE'	=> $dp_vars[$i]['var'],
+					'EXAMPLE'	=> $dp_vars[$i]['value'])
+			);
 		}
 
 		// Set output vars for display in the template

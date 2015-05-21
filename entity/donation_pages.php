@@ -19,17 +19,19 @@ class donation_pages implements donation_pages_interface
 	 * Data for this entity
 	 *
 	 * @var array
-	 *	page_id
-	 *	page_title
-	 *	page_lang_id
-	 *	page_content
-	 *	page_content_bbcode_bitfield
-	 *	page_content_bbcode_uid
-	 *	page_content_bbcode_options
+	 *    page_id
+	 *    page_title
+	 *    page_lang_id
+	 *    page_content
+	 *    page_content_bbcode_bitfield
+	 *    page_content_bbcode_uid
+	 *    page_content_bbcode_options
 	 * @access protected
 	 */
 	protected $dp_data;
+	protected $dp_vars;
 
+	protected $config;
 	protected $db;
 	protected $user;
 	protected $donation_pages_table;
@@ -37,13 +39,16 @@ class donation_pages implements donation_pages_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\db\driver\driver_interface    $db                 Database object
-	 * @param \phpbb\user                          $user               User object
-	 * @param string                               $donation_pages_table    Name of the table used to store data
+	 * @param \phpbb\config\config              $config               Config object
+	 * @param \phpbb\db\driver\driver_interface $db                   Database object
+	 * @param \phpbb\user                       $user                 User object
+	 * @param string                            $donation_pages_table Name of the table used to store data
+	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $donation_pages_table)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, $donation_pages_table)
 	{
+		$this->config = $config;
 		$this->db = $db;
 		$this->user = $user;
 		$this->donation_pages_table = $donation_pages_table;
@@ -52,7 +57,8 @@ class donation_pages implements donation_pages_interface
 	/**
 	 * Load the data from the database for this donation page
 	 *
-	 * @param int  $page_id Donation page identifier
+	 * @param int $page_id Donation page identifier
+	 *
 	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -72,6 +78,20 @@ class donation_pages implements donation_pages_interface
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Display Error message
+	 *
+	 * @param string $lang_key
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function display_error_message($lang_key)
+	{
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
+		trigger_error($message, E_USER_WARNING);
 	}
 
 	/**
@@ -101,6 +121,7 @@ class donation_pages implements donation_pages_interface
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
 	 * @param array $data Data array, typically from the database
+	 *
 	 * @return donation_pages_interface $this->dp_data object
 	 * @access public
 	 */
@@ -112,13 +133,13 @@ class donation_pages implements donation_pages_interface
 		// All of our fields
 		$fields = array(
 			// column						=> data type (see settype())
-			'page_id'						=> 'integer',
-			'page_title'					=> 'string',
-			'page_lang_id'					=> 'integer',
-			'page_content'					=> 'string',
-			'page_content_bbcode_bitfield'	=> 'string',
-			'page_content_bbcode_uid'		=> 'string',
-			'page_content_bbcode_options'	=> 'integer',
+			'page_id'                      => 'integer',
+			'page_title'                   => 'string',
+			'page_lang_id'                 => 'integer',
+			'page_content'                 => 'string',
+			'page_content_bbcode_bitfield' => 'string',
+			'page_content_bbcode_uid'      => 'string',
+			'page_content_bbcode_options'  => 'integer',
 		);
 
 		// Go through the basic fields and set them to our data array
@@ -208,6 +229,54 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
+	 * Get template vars
+	 *
+	 * @return $this->dp_vars
+	 * @access public
+	 */
+	public function get_vars()
+	{
+		$this->dp_vars = array(
+			0 => array(
+				'var'   => '{USER_ID}',
+				'value' => $this->user->data['user_id'],
+			),
+			1 => array(
+				'var'   => '{USERNAME}',
+				'value' => $this->user->data['username'],
+			),
+			2 => array(
+				'var'   => '{SITE_NAME}',
+				'value' => $this->config['sitename'],
+			),
+			3 => array(
+				'var'   => '{SITE_DESC}',
+				'value' => $this->config['site_desc'],
+			),
+			4 => array(
+				'var'   => '{BOARD_CONTACT}',
+				'value' => $this->config['board_contact'],
+			),
+			5 => array(
+				'var'   => '{BOARD_EMAIL}',
+				'value' => $this->config['board_email'],
+			),
+			6 => array(
+				'var'   => '{BOARD_SIG}',
+				'value' => $this->config['board_email_sig'],
+			),
+		);
+
+		//Add language entries for displaying the vars
+		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		{
+			$this->dp_vars[$i]['name'] = $this->user->lang['PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
+		}
+
+		return $this->dp_vars;
+	}
+
+	/**
 	 * Get language id
 	 *
 	 * @return int Lang identifier
@@ -222,6 +291,7 @@ class donation_pages implements donation_pages_interface
 	 * Set Lang identifier
 	 *
 	 * @param int $lang
+	 *
 	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -248,6 +318,7 @@ class donation_pages implements donation_pages_interface
 	 * Set Page title
 	 *
 	 * @param string $title
+	 *
 	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
@@ -282,6 +353,7 @@ class donation_pages implements donation_pages_interface
 	 * Get message for display
 	 *
 	 * @param bool $censor_text True to censor the text (Default: true)
+	 *
 	 * @return string
 	 * @access public
 	 */
@@ -298,36 +370,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	 * Set message
+	 * Replace template vars in the message
 	 *
 	 * @param string $message
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_message($message)
-	{
-		// Prepare the text for storage
-		$uid = $bitfield = $flags = '';
-		generate_text_for_storage($message, $uid, $bitfield, $flags, $this->message_bbcode_enabled(), $this->message_magic_url_enabled(), $this->message_smilies_enabled());
-
-		// Set the message to our data array
-		$this->dp_data['page_content'] = $message;
-		$this->dp_data['page_content_bbcode_uid'] = $uid;
-		$this->dp_data['page_content_bbcode_bitfield'] = $bitfield;
-		// Flags are already set
-
-		return $this;
-	}
-
-	/**
-	 * Check if bbcode is enabled on the message
 	 *
-	 * @return bool
+	 * @return string
 	 * @access public
 	 */
-	public function message_bbcode_enabled()
+	public function replace_template_vars($message)
 	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
+		$tpl_ary = array();
+		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		{
+			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];
+		}
+
+		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);
 	}
 
 	/**
@@ -344,98 +402,12 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	 * Disable bbcode on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_disable_bbcode()
-	{
-		$this->set_message_option(OPTION_FLAG_BBCODE, true);
-
-		return $this;
-	}
-
-	/**
-	 * Check if magic_url is enabled on the message
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function message_magic_url_enabled()
-	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
-	}
-
-	/**
-	 * Enable magic url on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_enable_magic_url()
-	{
-		$this->set_message_option(OPTION_FLAG_LINKS);
-
-		return $this;
-	}
-
-	/**
-	 * Disable magic url on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_disable_magic_url()
-	{
-		$this->set_message_option(OPTION_FLAG_LINKS, true);
-
-		return $this;
-	}
-
-	/**
-	 * Check if smilies are enabled on the message
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function message_smilies_enabled()
-	{
-		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
-	}
-
-	/**
-	 * Enable smilies on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_enable_smilies()
-	{
-		$this->set_message_option(OPTION_FLAG_SMILIES);
-
-		return $this;
-	}
-
-	/**
-	 * Disable smilies on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_disable_smilies()
-	{
-		$this->set_message_option(OPTION_FLAG_SMILIES, true);
-
-		return $this;
-	}
-
-	/**
 	 * Set option helper
 	 *
-	 * @param int $option_value Value of the option
-	 * @param bool $negate Negate (unset) option (Default: False)
+	 * @param int  $option_value    Value of the option
+	 * @param bool $negate          Negate (unset) option (Default: False)
 	 * @param bool $reparse_message Reparse the message after setting option (Default: True)
+	 *
 	 * @return null
 	 * @access protected
 	 */
@@ -470,22 +442,132 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	 * Display Error message
+	 * Set message
 	 *
-	 * @param string $lang_key
-	 * @return null
-	 * @access protected
+	 * @param string $message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
 	 */
-	protected function display_error_message($lang_key)
+	public function set_message($message)
 	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
-		trigger_error($message, E_USER_WARNING);
+		// Prepare the text for storage
+		$uid = $bitfield = $flags = '';
+		generate_text_for_storage($message, $uid, $bitfield, $flags, $this->message_bbcode_enabled(), $this->message_magic_url_enabled(), $this->message_smilies_enabled());
+
+		// Set the message to our data array
+		$this->dp_data['page_content'] = $message;
+		$this->dp_data['page_content_bbcode_uid'] = $uid;
+		$this->dp_data['page_content_bbcode_bitfield'] = $bitfield;
+
+		// Flags are already set
+
+		return $this;
+	}
+
+	/**
+	 * Check if bbcode is enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function message_bbcode_enabled()
+	{
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
+	}
+
+	/**
+	 * Check if magic_url is enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function message_magic_url_enabled()
+	{
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
+	}
+
+	/**
+	 * Check if smilies are enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function message_smilies_enabled()
+	{
+		return ($this->dp_data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
+	}
+
+	/**
+	 * Disable bbcode on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_disable_bbcode()
+	{
+		$this->set_message_option(OPTION_FLAG_BBCODE, true);
+
+		return $this;
+	}
+
+	/**
+	 * Enable magic url on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_enable_magic_url()
+	{
+		$this->set_message_option(OPTION_FLAG_LINKS);
+
+		return $this;
+	}
+
+	/**
+	 * Disable magic url on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_disable_magic_url()
+	{
+		$this->set_message_option(OPTION_FLAG_LINKS, true);
+
+		return $this;
+	}
+
+	/**
+	 * Enable smilies on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_enable_smilies()
+	{
+		$this->set_message_option(OPTION_FLAG_SMILIES);
+
+		return $this;
+	}
+
+	/**
+	 * Disable smilies on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_disable_smilies()
+	{
+		$this->set_message_option(OPTION_FLAG_SMILIES, true);
+
+		return $this;
 	}
 
 	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
+	 *
 	 * @return null
 	 * @access public
 	 */

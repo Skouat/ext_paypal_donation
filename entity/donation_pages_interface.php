@@ -95,6 +95,14 @@ interface donation_pages_interface
 	public function get_title();
 
 	/**
+	 * Get template vars
+	 *
+	 * @return $this->dp_vars
+	 * @access public
+	 */
+	public function get_vars();
+
+	/**
 	 * Set Lang identifier
 	 *
 	 * @param int $lang
@@ -131,6 +139,16 @@ interface donation_pages_interface
 	 * @access public
 	 */
 	public function get_message_for_display($censor_text = true);
+
+	/**
+	 * Replace template vars in the message
+	 *
+	 * @param string $message
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function replace_template_vars($message);
 
 	/**
 	 * Set message

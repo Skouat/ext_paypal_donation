@@ -128,6 +128,10 @@ $lang = array_merge($lang, array(
  * Info: language keys are prefixed with 'PPDE_DP_' for 'PPDE_DONATION_PAGES_'
  */
 $lang = array_merge($lang, array(
+	// Donation Page: Title
+	'PPDE_ACP_CREATE_DONATION_PAGE' => 'Create Donation Page',
+	'PPDE_ACP_EDIT_DONATION_PAGE'   => 'Edit Donation Page',
+
 	// Donation Page settings
 	'PPDE_DP_CONFIG'                => 'Donation pages',
 	'PPDE_DP_CONFIG_EXPLAIN'        => 'Permit to improve the rendering of customizable pages of the extension.',
@@ -147,6 +151,20 @@ $lang = array_merge($lang, array(
 	// Donation Cancel settings
 	'DONATION_CANCEL'               => 'Donation cancel',
 	'DONATION_CANCEL_EXPLAIN'       => 'Enter the text you want displayed on the cancel page.',
+
+	// Donation Page Template vars
+	'PPDE_DP_PREDEFINED_VARS'       => 'Predefined Variables',
+	'PPDE_DP_VAR_EXAMPLE'           => 'Example',
+	'PPDE_DP_VAR_NAME'              => 'Name',
+	'PPDE_DP_VAR_VAR'               => 'Variable',
+
+	'PPDE_DP_BOARD_CONTACT'         => 'Board contact',
+	'PPDE_DP_BOARD_EMAIL'           => 'Board e-mail',
+	'PPDE_DP_BOARD_SIG'             => 'Board’s Signature',
+	'PPDE_DP_SITE_DESC'             => 'Site description',
+	'PPDE_DP_SITE_NAME'             => 'Sitename',
+	'PPDE_DP_USER_ID'               => 'User ID',
+	'PPDE_DP_USERNAME'              => 'Username',
 ));
 
 /**
@@ -173,7 +191,16 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	//logs
-	'LOG_PPDE_SETTINGS_UPDATED'	=> '<strong>PayPal Donation: Settings updated.</strong>',
+	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation: Settings updated.</strong>',
+	'LOG_PPDE_PAGES_UPDATED'    => '<strong>PayPal Donation: Donation Pages updated.</strong>',
+	'LOG_PPDE_ITEM_ADDED'       => '<strong>PayPal Donation: %1$s added</strong><br />» %2$s',
+	'LOG_PPDE_ITEM_UPDATED'     => '<strong>PayPal Donation: %1$s updated</strong><br />» %2$s',
+	'LOG_PPDE_ITEM_REMOVED'     => '<strong>PayPal Donation: %1$s deleted</strong>',
+	'LOG_PPDE_ITEM_MOVE_DOWN'   => '<strong>PayPal Donation: Moved a %1$s. </strong> %2$s <strong>below</strong> %3$s',
+	'LOG_PPDE_ITEM_MOVE_UP'     => '<strong>PayPal Donation: Moved a %1$s. </strong> %2$s <strong>above</strong> %3$s',
+	'LOG_PPDE_ITEM_ENABLED'     => '<strong>PayPal Donation: %1$s enabled</strong><br />» %2$s',
+	'LOG_PPDE_ITEM_DISABLED'    => '<strong>PayPal Donation: %1$s disabled</strong><br />» %2$s',
+	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation: Installation date reset</strong>',
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'    => 'Are you sure you want to delete the selected currency?',
