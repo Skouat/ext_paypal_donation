@@ -26,20 +26,6 @@ interface donation_pages_interface extends main_interface
 	public function donation_page_exists();
 
 	/**
-	 * Import and validate data for donation page
-	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
-	 *
-	 * @param array $data Data array, typically from the database
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function import($data);
-
-	/**
 	 * Insert the item for the first time
 	 *
 	 * Will throw an exception if the item was already inserted (call save() instead)

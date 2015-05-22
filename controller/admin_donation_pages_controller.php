@@ -286,9 +286,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		for ($i = 0, $size = sizeof($dp_vars); $i < $size; $i++)
 		{
 			$this->template->assign_block_vars('dp_vars', array(
-					'NAME'		=> $dp_vars[$i]['name'],
-					'VARIABLE'	=> $dp_vars[$i]['var'],
-					'EXAMPLE'	=> $dp_vars[$i]['value'])
+					'NAME'     => $dp_vars[$i]['name'],
+					'VARIABLE' => $dp_vars[$i]['var'],
+					'EXAMPLE'  => $dp_vars[$i]['value'])
 			);
 		}
 

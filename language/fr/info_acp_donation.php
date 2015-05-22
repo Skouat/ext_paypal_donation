@@ -129,38 +129,38 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	// Donation Page settings
-	'PPDE_DP_CONFIG'                => 'Pages des dons',
-	'PPDE_DP_CONFIG_EXPLAIN'        => 'Permet d’améliorer le rendu des pages personalisables de l’extension.',
+	'PPDE_DP_CONFIG'           => 'Pages des dons',
+	'PPDE_DP_CONFIG_EXPLAIN'   => 'Permet d’améliorer le rendu des pages personalisables de l’extension.',
 
-	'PPDE_DP_PAGE'                  => 'Type de page',
-	'PPDE_DP_LANG'                  => 'Langue',
-	'PPDE_DP_LANG_SELECT'           => 'Sélectionnez une langue',
+	'PPDE_DP_PAGE'             => 'Type de page',
+	'PPDE_DP_LANG'             => 'Langue',
+	'PPDE_DP_LANG_SELECT'      => 'Sélectionnez une langue',
 
 	// Donation Page Body settings
-	'DONATION_BODY'                 => 'Page principale',
-	'DONATION_BODY_EXPLAIN'         => 'Saisir le texte que vous souhaitez afficher sur la page principale.',
+	'DONATION_BODY'            => 'Page principale',
+	'DONATION_BODY_EXPLAIN'    => 'Saisir le texte que vous souhaitez afficher sur la page principale.',
 
 	// Donation Success settings
-	'DONATION_SUCCESS'              => 'Page des dons validés',
-	'DONATION_SUCCESS_EXPLAIN'      => 'Saisir le texte que vous souhaitez afficher sur la page des dons validés.',
+	'DONATION_SUCCESS'         => 'Page des dons validés',
+	'DONATION_SUCCESS_EXPLAIN' => 'Saisir le texte que vous souhaitez afficher sur la page des dons validés.',
 
 	// Donation Cancel settings
-	'DONATION_CANCEL'               => 'Page des dons annulés',
-	'DONATION_CANCEL_EXPLAIN'       => 'Saisir le texte que vous souhaitez afficher sur la page des dons annulés.',
+	'DONATION_CANCEL'          => 'Page des dons annulés',
+	'DONATION_CANCEL_EXPLAIN'  => 'Saisir le texte que vous souhaitez afficher sur la page des dons annulés.',
 
 	// Donation Page Template vars
-	'PPDE_DP_PREDEFINED_VARS'       => 'Variables prédéfinies',
-	'PPDE_DP_VAR_EXAMPLE'           => 'Exemple',
-	'PPDE_DP_VAR_NAME'              => 'Nom',
-	'PPDE_DP_VAR_VAR'               => 'Variable',
+	'PPDE_DP_PREDEFINED_VARS'  => 'Variables prédéfinies',
+	'PPDE_DP_VAR_EXAMPLE'      => 'Exemple',
+	'PPDE_DP_VAR_NAME'         => 'Nom',
+	'PPDE_DP_VAR_VAR'          => 'Variable',
 
-	'PPDE_DP_BOARD_CONTACT'         => 'E-mail de contact',
-	'PPDE_DP_BOARD_EMAIL'           => 'E-mail du forum',
-	'PPDE_DP_BOARD_SIG'             => 'Signature du forum',
-	'PPDE_DP_SITE_DESC'             => 'Description du site',
-	'PPDE_DP_SITE_NAME'             => 'Nom du site',
-	'PPDE_DP_USER_ID'               => 'ID de l’utilisateur',
-	'PPDE_DP_USERNAME'              => 'Nom de l’utilisateur',
+	'PPDE_DP_BOARD_CONTACT'    => 'E-mail de contact',
+	'PPDE_DP_BOARD_EMAIL'      => 'E-mail du forum',
+	'PPDE_DP_BOARD_SIG'        => 'Signature du forum',
+	'PPDE_DP_SITE_DESC'        => 'Description du site',
+	'PPDE_DP_SITE_NAME'        => 'Nom du site',
+	'PPDE_DP_USER_ID'          => 'ID de l’utilisateur',
+	'PPDE_DP_USERNAME'         => 'Nom de l’utilisateur',
 ));
 
 /**

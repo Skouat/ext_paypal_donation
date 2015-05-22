@@ -15,9 +15,6 @@ namespace skouat\ppde\entity;
  */
 class main implements main_interface
 {
-	/** @var string */
-	protected $table_name;
-
 	/**
 	 * Suffix for the language keys returned by exceptions
 	 *
@@ -25,13 +22,15 @@ class main implements main_interface
 	 */
 	protected $message_suffix;
 
-	/**
-	 * Column names in the table
-	 *
-	 * @type string
-	 */
-	protected $column_item_id = 'item_id';
+	/** @var string */
+	protected $table_name;
 
+	/**
+	 * Table schema and data type in the table
+	 *
+	 * @type array
+	 */
+	protected $table_schema;
 
 	/**
 	 * Declare overridden properties
@@ -47,39 +46,72 @@ class main implements main_interface
 	 *
 	 * @param \phpbb\db\driver\driver_interface $db             Database object
 	 * @param \phpbb\user                       $user           User object
-	 * @param string                            $table_name     Table name
 	 * @param string                            $message_suffix Prefix for the messages thrown by exceptions
-	 * @param array                             $columns        Array with column names to overwrite
+	 * @param string                            $table_name     Table name
+	 * @param array                             $table_schema   Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $table_name, $message_suffix = '', $columns = array())
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $message_suffix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
 		$this->user = $user;
-		$this->table_name = $table_name;
 		$this->message_suffix = $message_suffix;
-		if (!empty($columns))
+		$this->table_name = $table_name;
+		$this->table_schema = $table_schema;
+	}
+
+	/**
+	 * Import and validate data
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param  array $data Data array, typically from the database
+	 *
+	 * @return main_interface $this->data object
+	 * @access public
+	 */
+	public function import($data)
+	{
+		// Clear out any saved data
+		$this->data = array();
+
+		// Go through the basic fields and set them to our data array
+		foreach ($this->table_schema as $generic_field => $field)
 		{
-			foreach ($columns as $column => $name)
+			// If the data wasn't sent to us, throw an exception
+			if (!isset($data[$field['name']]))
 			{
-				$column_name = 'column_' . $column;
-				$this->$column_name = $name;
+				$this->display_error_message('PPDE_FIELD_MISSING', $field['name']);
 			}
+
+			// settype passes values by reference
+			$value = $data[$field['name']];
+
+			// We're using settype to enforce data types
+			settype($value, $field['type']);
+
+			$this->data[$field['name']] = $value;
 		}
+		unset($field);
+
+		return $this->data;
 	}
 
 	/**
 	 * Display Error message
 	 *
 	 * @param string $lang_key
+	 * @param string $args
 	 *
 	 * @return null
 	 * @access protected
 	 */
-	protected function display_error_message($lang_key)
+	protected function display_error_message($lang_key, $args = '')
 	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key)))) . adm_back_link($this->u_action);
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key),$args))) . adm_back_link($this->u_action);
 		trigger_error($message, E_USER_WARNING);
 	}
 
@@ -95,7 +127,7 @@ class main implements main_interface
 	{
 		$sql = 'SELECT *
 			FROM ' . $this->table_name . '
-			WHERE ' . $this->column_item_id . ' = ' . (int) $id;
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . (int) $id;
 		$result = $this->db->sql_query($sql);
 		$this->data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);

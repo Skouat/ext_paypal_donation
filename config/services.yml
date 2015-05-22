@@ -46,6 +46,12 @@ services:
             - @template
             - @user
 
+    skouat.ppde.entity.main:
+        class: skouat\ppde\entity\main
+        arguments:
+            - @dbal.conn
+            - @user
+
     skouat.ppde.entity.currency:
         class: skouat\ppde\entity\currency
         arguments:

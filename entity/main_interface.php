@@ -13,6 +13,20 @@ namespace skouat\ppde\entity;
 interface main_interface
 {
 	/**
+	 * Import and validate data
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param  array $data Data array, typically from the database
+	 *
+	 * @return main_interface $this->data object
+	 * @access public
+	 */
+	public function import($data);
+
+	/**
 	 * Load the data from the database
 	 *
 	 * @param int $id

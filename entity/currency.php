@@ -50,10 +50,27 @@ class currency extends main implements currency_interface
 		parent::__construct(
 			$db,
 			$user,
-			$table_name,
 			'CURRENCY',
+			$table_name,
 			array(
-				'item_id' => 'currency_id',
+				'item_id'   => array(
+					'name' => 'currency_id',
+					'type' => 'integer'),
+				'item_name' => array(
+					'name' => 'currency_name',
+					'type' => 'string'),
+				'item_iso_code' => array(
+					'name' => 'currency_-iso_code',
+					'type' => 'string'),
+				'item_symbol' => array(
+					'name' => 'currency_symbol',
+					'type' => 'string'),
+				'item_enable' => array(
+					'name' => 'currency_enable',
+					'type' => 'boolean'),
+				'item_order' => array(
+					'name' => 'currency_order',
+					'type' => 'integer'),
 			)
 		);
 	}
@@ -73,56 +90,6 @@ class currency extends main implements currency_interface
 		$this->db->sql_query($sql);
 
 		return $this->db->sql_fetchfield('currency_id');
-	}
-
-	/**
-	 * Import and validate data for currency
-	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
-	 *
-	 * @param  array $data Data array, typically from the database
-	 *
-	 * @return currency_interface $this->data object
-	 * @access public
-	 */
-	public function import($data)
-	{
-		// Clear out any saved data
-		$this->data = array();
-
-		// All of our fields
-		$fields = array(
-			// column			=> data type (see settype())
-			'currency_id'       => 'integer',
-			'currency_name'     => 'string',
-			'currency_iso_code' => 'string',
-			'currency_symbol'   => 'string',
-			'currency_enable'   => 'boolean',
-			'currency_order'    => 'integer',
-		);
-
-		// Go through the basic fields and set them to our data array
-		foreach ($fields as $field => $type)
-		{
-			// If the data wasn't sent to us, throw an exception
-			if (!isset($data[$field]))
-			{
-				$this->display_error_message('PPDE_FIELD_MISSING');
-			}
-
-			// settype passes values by reference
-			$value = $data[$field];
-
-			// We're using settype to enforce data types
-			settype($value, $type);
-
-			$this->data[$field] = $value;
-			$this->data[$field] = $value;
-		}
-
-		return $this->data;
 	}
 
 	/**

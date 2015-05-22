@@ -55,10 +55,30 @@ class donation_pages extends main implements donation_pages_interface
 		parent::__construct(
 			$db,
 			$user,
-			$table_name,
 			'DONATION_PAGES',
+			$table_name,
 			array(
-				'item_id' => 'page_id',
+				'item_id'                      => array(
+					'name' => 'page_id',
+					'type' => 'integer'),
+				'item_name'                    => array(
+					'name' => 'page_dtitle',
+					'type' => 'string'),
+				'item_lang_id'                 => array(
+					'name' => 'page_lang_id',
+					'type' => 'integer'),
+				'item_content'                 => array(
+					'name' => 'page_content',
+					'type' => 'string'),
+				'item_content_bbcode_bitfield' => array(
+					'name' => 'page_content_bbcode_bitfield',
+					'type' => 'string'),
+				'item_content_bbcode_uid'      => array(
+					'name' => 'page_content_bbcode_uid',
+					'type' => 'string'),
+				'item_content_bbcode_options'  => array(
+					'name' => 'page_content_bbcode_options',
+					'type' => 'integer'),
 			)
 		);
 	}
@@ -80,56 +100,6 @@ class donation_pages extends main implements donation_pages_interface
 		$this->db->sql_freeresult($result);
 
 		return $this->data['page_id'];
-	}
-
-	/**
-	 * Import and validate data for donation page
-	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
-	 *
-	 * @param array $data Data array, typically from the database
-	 *
-	 * @return donation_pages_interface $this->data object
-	 * @access public
-	 */
-	public function import($data)
-	{
-		// Clear out any saved data
-		$this->data = array();
-
-		// All of our fields
-		$fields = array(
-			// column						=> data type (see settype())
-			'page_id'                      => 'integer',
-			'page_title'                   => 'string',
-			'page_lang_id'                 => 'integer',
-			'page_content'                 => 'string',
-			'page_content_bbcode_bitfield' => 'string',
-			'page_content_bbcode_uid'      => 'string',
-			'page_content_bbcode_options'  => 'integer',
-		);
-
-		// Go through the basic fields and set them to our data array
-		foreach ($fields as $field => $type)
-		{
-			// If the data wasn't sent to us, throw an exception
-			if (!isset($data[$field]))
-			{
-				$this->display_error_message('PPDE_FIELD_MISSING');
-			}
-
-			// settype passes values by reference
-			$value = $data[$field];
-
-			// We're using settype to enforce data types
-			settype($value, $type);
-
-			$this->data[$field] = $value;
-		}
-
-		return $this->data;
 	}
 
 	/**
