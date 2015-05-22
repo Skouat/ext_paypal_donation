@@ -57,11 +57,13 @@ class ppde_module
 				break;
 
 			case 'donation_pages':
-				// Get an instance of the admin controller
+				// Get an instance of the admin controller and the entity
 				$admin_donation_pages_controller = $phpbb_container->get('skouat.ppde.controller.admin.donation_pages');
+				$donation_pages_entity = $phpbb_container->get('skouat.ppde.entity.donation_pages');
 
-				// Make the $u_action url available in the admin donation pages controller
+				// Make the $u_action url available in controller and entity
 				$admin_donation_pages_controller->set_page_url($this->u_action);
+				$donation_pages_entity->set_page_url($this->u_action);
 
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_donation_pages';
@@ -101,11 +103,13 @@ class ppde_module
 				break;
 
 			case 'currency':
-				// Get an instance of the admin controller
+				// Get an instance of the admin controller and the entity
 				$admin_currency_controller = $phpbb_container->get('skouat.ppde.controller.admin.currency');
+				$currency_entity = $phpbb_container->get('skouat.ppde.entity.currency');
 
-				// Make the $u_action url available in the admin controller
+				// Make the $u_action url available in controller and entity
 				$admin_currency_controller->set_page_url($this->u_action);
+				$currency_entity->set_page_url($this->u_action);
 
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_currency';
