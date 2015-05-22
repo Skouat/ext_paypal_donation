@@ -60,7 +60,7 @@ class currency extends main implements currency_interface
 					'name' => 'currency_name',
 					'type' => 'string'),
 				'item_iso_code' => array(
-					'name' => 'currency_-iso_code',
+					'name' => 'currency_iso_code',
 					'type' => 'string'),
 				'item_symbol' => array(
 					'name' => 'currency_symbol',

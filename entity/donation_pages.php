@@ -62,7 +62,7 @@ class donation_pages extends main implements donation_pages_interface
 					'name' => 'page_id',
 					'type' => 'integer'),
 				'item_name'                    => array(
-					'name' => 'page_dtitle',
+					'name' => 'page_title',
 					'type' => 'string'),
 				'item_lang_id'                 => array(
 					'name' => 'page_lang_id',
