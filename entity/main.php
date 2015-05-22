@@ -111,7 +111,7 @@ class main implements main_interface
 	 */
 	protected function display_error_message($lang_key, $args = '')
 	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key),$args))) . adm_back_link($this->u_action);
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . adm_back_link($this->u_action);
 		trigger_error($message, E_USER_WARNING);
 	}
 
