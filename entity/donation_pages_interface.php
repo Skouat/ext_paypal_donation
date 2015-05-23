@@ -55,14 +55,6 @@ interface donation_pages_interface extends main_interface
 	public function get_lang_id();
 
 	/**
-	 * Get Page title
-	 *
-	 * @return string Title type
-	 * @access public
-	 */
-	public function get_title();
-
-	/**
 	 * Get template vars
 	 *
 	 * @return array $this->dp_vars
@@ -79,16 +71,6 @@ interface donation_pages_interface extends main_interface
 	 * @access public
 	 */
 	public function set_lang_id($lang);
-
-	/**
-	 * Set Page title
-	 *
-	 * @param string $title
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_title($title);
 
 	/**
 	 * Get message for edit

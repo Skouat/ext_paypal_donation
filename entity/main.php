@@ -153,6 +153,33 @@ class main implements main_interface
 	}
 
 	/**
+	 * Get Item name
+	 *
+	 * @return string Item name
+	 * @access public
+	 */
+	public function get_name()
+	{
+		return (isset($this->data[$this->table_schema['item_name']['name']])) ? (string) $this->data[$this->table_schema['item_name']['name']] : '';
+	}
+
+	/**
+	 * Set Item name
+	 *
+	 * @param string $name
+	 *
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_name($name)
+	{
+		// Set the item type on our data array
+		$this->data[$this->table_schema['item_name']['name']] = (string) $name;
+
+		return $this;
+	}
+
+	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action

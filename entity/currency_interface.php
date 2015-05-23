@@ -97,24 +97,6 @@ interface currency_interface extends main_interface
 	public function set_iso_code($iso_code);
 
 	/**
-	 * Get Currency name
-	 *
-	 * @return string Currency name
-	 * @access public
-	 */
-	public function get_name();
-
-	/**
-	 * Set Currency name
-	 *
-	 * @param string $name
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_name($name);
-
-	/**
 	 * Get Currency Symbol
 	 *
 	 * @return string Currency symbol

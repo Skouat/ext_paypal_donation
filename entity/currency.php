@@ -232,33 +232,6 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Get Currency name
-	 *
-	 * @return string Currency name
-	 * @access public
-	 */
-	public function get_name()
-	{
-		return (isset($this->data['currency_name'])) ? (string) $this->data['currency_name'] : '';
-	}
-
-	/**
-	 * Set Currency name
-	 *
-	 * @param string $name
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_name($name)
-	{
-		// Set the item type on our data array
-		$this->data['currency_name'] = (string) $name;
-
-		return $this;
-	}
-
-	/**
 	 * Get Currency status
 	 *
 	 * @return boolean

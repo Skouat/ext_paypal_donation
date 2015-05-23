@@ -45,6 +45,24 @@ interface main_interface
 	public function get_id();
 
 	/**
+	 * Get Item name
+	 *
+	 * @return string Item name
+	 * @access public
+	 */
+	public function get_name();
+
+	/**
+	 * Set Item name
+	 *
+	 * @param string $name
+	 *
+	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_name($name);
+
+	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action

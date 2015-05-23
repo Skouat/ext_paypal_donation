@@ -232,33 +232,6 @@ class donation_pages extends main implements donation_pages_interface
 	}
 
 	/**
-	 * Get Page title
-	 *
-	 * @return string Title page
-	 * @access public
-	 */
-	public function get_title()
-	{
-		return (isset($this->data['page_title'])) ? (string) $this->data['page_title'] : '';
-	}
-
-	/**
-	 * Set Page title
-	 *
-	 * @param string $title
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_title($title)
-	{
-		// Set the item type on our data array
-		$this->data['page_title'] = (string) $title;
-
-		return $this;
-	}
-
-	/**
 	 * Get message for edit
 	 *
 	 * @return string
