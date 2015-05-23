@@ -115,55 +115,11 @@ class admin_overview_controller implements admin_overview_interface
 		// Retrieve the extension name based on the namespace of this file
 		$this->retrieve_ext_name(__NAMESPACE__);
 
-		// init variables
-		$this->ext_meta = array();
-
-		// If they've specified an extension, let's load the metadata manager and validate it.
-		if ($this->ext_name)
-		{
-			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->user, $this->phpbb_root_path);
-
-			try
-			{
-				$this->ext_meta = $md_manager->get_metadata('all');
-			}
-			catch (\phpbb\extension\exception $e)
-			{
-				trigger_error($e, E_USER_WARNING);
-			}
-		}
+		//Load metadata for this extension
+		$this->load_metadata();
 
 		// Check if a new version is available
-		try
-		{
-			if (!isset($this->ext_meta['extra']['version-check']))
-			{
-				throw new \RuntimeException($this->user->lang('PPDE_NO_VERSIONCHECK'), 1);
-			}
-
-			$version_check = $this->ext_meta['extra']['version-check'];
-
-			$version_helper = new \phpbb\version_helper($this->cache, $this->config, new \phpbb\file_downloader(), $this->user);
-			$version_helper->set_current_version($this->ext_meta['version']);
-			$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
-			$version_helper->force_stability($this->config['extension_force_unstable'] ? 'unstable' : null);
-
-			$recheck = $this->request->variable('versioncheck_force', false);
-			$s_up_to_date = $version_helper->get_suggested_updates($recheck);
-
-			$this->template->assign_vars(array(
-				'S_UP_TO_DATE'   => empty($s_up_to_date),
-				'S_VERSIONCHECK' => true,
-				'UP_TO_DATE_MSG' => $this->user->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
-			));
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->template->assign_vars(array(
-				'S_VERSIONCHECK_STATUS'    => $e->getCode(),
-				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->user->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
-			));
-		}
+		$this->obtain_last_version();
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
@@ -198,6 +154,70 @@ class admin_overview_controller implements admin_overview_interface
 	{
 		$namespace_ary = explode('\\', $namespace);
 		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
+	}
+
+	/**
+	 * Load metadata for this extension
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function load_metadata()
+	{
+		// If they've specified an extension, let's load the metadata manager and validate it.
+		if ($this->ext_name)
+		{
+			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->user, $this->phpbb_root_path);
+
+			try
+			{
+				$this->ext_meta = $md_manager->get_metadata('all');
+			}
+			catch (\phpbb\extension\exception $e)
+			{
+				trigger_error($e, E_USER_WARNING);
+			}
+		}
+	}
+
+	/**
+	 * Obtain the last version for this extension
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function obtain_last_version()
+	{
+		try
+		{
+			if (!isset($this->ext_meta['extra']['version-check']))
+			{
+				throw new \RuntimeException($this->user->lang('PPDE_NO_VERSIONCHECK'), 1);
+			}
+
+			$version_check = $this->ext_meta['extra']['version-check'];
+
+			$version_helper = new \phpbb\version_helper($this->cache, $this->config, new \phpbb\file_downloader(), $this->user);
+			$version_helper->set_current_version($this->ext_meta['version']);
+			$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
+			$version_helper->force_stability($this->config['extension_force_unstable'] ? 'unstable' : null);
+
+			$recheck = $this->request->variable('versioncheck_force', false);
+			$s_up_to_date = $version_helper->get_suggested_updates($recheck);
+
+			$this->template->assign_vars(array(
+				'S_UP_TO_DATE'   => empty($s_up_to_date),
+				'S_VERSIONCHECK' => true,
+				'UP_TO_DATE_MSG' => $this->user->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
+			));
+		}
+		catch (\RuntimeException $e)
+		{
+			$this->template->assign_vars(array(
+				'S_VERSIONCHECK_STATUS'    => $e->getCode(),
+				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->user->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
+			));
+		}
 	}
 
 	/**
