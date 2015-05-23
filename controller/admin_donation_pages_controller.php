@@ -204,7 +204,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Grab the form's data fields
 		$item_fields = array(
 			'lang_id' => $data['page_lang_id'],
-			'title'   => $data['page_title'],
+			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		);
 
@@ -226,7 +226,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			}
 
 			// Do not allow an empty item name
-			if ($entity->get_title() == '')
+			if ($entity->get_name() == '')
 			{
 				$errors[] = $this->user->lang('PPDE_MUST_SELECT_PAGE');
 			}
@@ -297,8 +297,8 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			'S_ERROR'                        => (sizeof($errors)) ? true : false,
 			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
 
-			'L_DONATION_PAGES_TITLE'         => $this->user->lang(strtoupper($entity->get_title())),
-			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang(strtoupper($entity->get_title()) . '_EXPLAIN'),
+			'L_DONATION_PAGES_TITLE'         => $this->user->lang(strtoupper($entity->get_name())),
+			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
 			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 
 			'S_BBCODE_DISABLE_CHECKED'       => !$entity->message_bbcode_enabled(),
@@ -316,7 +316,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			'S_BBCODE_IMG'                   => true,
 			'S_BBCODE_FLASH'                 => true,
 			'S_LINKS_ALLOWED'                => true,
-			'S_HIDDEN_FIELDS'                => '<input type="hidden" name="page_title" value="' . $entity->get_title() . '" />',
+			'S_HIDDEN_FIELDS'                => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '" />',
 		));
 
 		// Assigning custom bbcodes
@@ -360,7 +360,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Collect the form data
 		$data = array(
 			'page_id'      => (int) $page_id,
-			'page_title'   => $this->request->variable('page_title', $entity->get_title(), false),
+			'page_title'   => $this->request->variable('page_title', $entity->get_name(), false),
 			'page_lang_id' => $this->request->variable('page_lang_id', $entity->get_lang_id()),
 			'page_content' => $this->request->variable('page_content', $entity->get_message_for_edit(), true),
 			'bbcode'       => !$this->request->variable('disable_bbcode', false),
