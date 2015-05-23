@@ -70,6 +70,40 @@ class admin_overview_controller implements admin_overview_interface
 	 */
 	public function display_overview($id, $mode, $action)
 	{
+		$this->do_action($id, $mode, $action);
+
+		// Retrieve the extension name based on the namespace of this file
+		$this->retrieve_ext_name(__NAMESPACE__);
+
+		//Load metadata for this extension
+		$this->load_metadata();
+
+		// Check if a new version is available
+		$this->obtain_last_version();
+
+		// Set output block vars for display in the template
+		$this->template->assign_vars(array(
+			'INFO_CURL'                 => $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
+			'INFO_FSOCKOPEN'            => $this->check_fsockopen() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
+
+			'L_PPDE_INSTALL_DATE'       => $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_VERSION'            => $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
+
+			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
+			'PPDE_VERSION'              => $this->ext_meta['version'],
+
+			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_board')) ? true : false,
+			'S_FSOCKOPEN'               => $this->check_fsockopen(),
+			'S_CURL'                    => $this->check_curl(),
+
+			'U_PPDE_MORE_INFORMATION'   => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
+			'U_PPDE_VERSIONCHECK_FORCE' => $this->u_action . '&amp;versioncheck_force=1',
+			'U_ACTION'                  => $this->u_action,
+		));
+	}
+
+	private function do_action($id, $mode, $action)
+	{
 		if ($action)
 		{
 			if (!confirm_box(true))
@@ -111,35 +145,6 @@ class admin_overview_controller implements admin_overview_interface
 				}
 			}
 		}
-
-		// Retrieve the extension name based on the namespace of this file
-		$this->retrieve_ext_name(__NAMESPACE__);
-
-		//Load metadata for this extension
-		$this->load_metadata();
-
-		// Check if a new version is available
-		$this->obtain_last_version();
-
-		// Set output block vars for display in the template
-		$this->template->assign_vars(array(
-			'INFO_CURL'                 => $this->check_curl() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
-			'INFO_FSOCKOPEN'            => $this->check_fsockopen() ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
-
-			'L_PPDE_INSTALL_DATE'       => $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
-			'L_PPDE_VERSION'            => $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
-
-			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_VERSION'              => $this->ext_meta['version'],
-
-			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_board')) ? true : false,
-			'S_FSOCKOPEN'               => $this->check_fsockopen(),
-			'S_CURL'                    => $this->check_curl(),
-
-			'U_PPDE_MORE_INFORMATION'   => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
-			'U_PPDE_VERSIONCHECK_FORCE' => $this->u_action . '&amp;versioncheck_force=1',
-			'U_ACTION'                  => $this->u_action,
-		));
 	}
 
 	/**
