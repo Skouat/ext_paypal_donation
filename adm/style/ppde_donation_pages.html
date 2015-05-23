@@ -74,6 +74,29 @@
 			<input class="button2" type="submit" id="preview" name="preview" value="{L_PREVIEW}" />
 			{S_FORM_TOKEN}
 		</fieldset>
+
+		<table class="table1 responsive">
+			<caption>{L_PPDE_DP_PREDEFINED_VARS}</caption>
+			<col class="col1" /><col class="col2" /><col class="col1" />
+
+			<thead>
+				<tr>
+					<th>{L_PPDE_DP_VAR_NAME}</th>
+					<th>{L_PPDE_DP_VAR_VAR}</th>
+					<th>{L_PPDE_DP_VAR_EXAMPLE}</th>
+				</tr>
+			</thead>
+
+			<tbody>
+			<!-- BEGIN dp_vars -->
+				<tr>
+					<td>{dp_vars.NAME}</td>
+					<td><a href="#" onclick="insert_text('{dp_vars.VARIABLE}'); return false;"><strong>{dp_vars.VARIABLE}</strong></a></td>
+					<td><strong><em>{dp_vars.EXAMPLE}</em></strong></td>
+				</tr>
+			<!-- END dp_vars -->
+			</tbody>
+		</table>
 	</form>
 <!-- ELSE -->
 	<form id="acp_donation_pages" method="post" action="{U_ACTION}">

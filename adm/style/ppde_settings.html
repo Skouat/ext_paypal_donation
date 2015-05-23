@@ -26,8 +26,12 @@
 	</dl>
 	<dl>
 		<dt><label for="ppde_default_currency">{L_PPDE_DEFAULT_CURRENCY}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_CURRENCY_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_default_currency" name="ppde_default_currency" value="1"<!-- IF S_BOARDRULES_REQUIRE_AT_REGISTRATION --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_default_currency" value="0"<!-- IF not S_BOARDRULES_REQUIRE_AT_REGISTRATION --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		<dd><select name="ppde_default_currency" id="ppde_default_currency">
+				<!-- BEGIN options -->
+				<option value="{options.CURRENCY_ID}"<!-- IF options.S_CURRENCY_DEFAULT --> selected="selected"<!-- ENDIF -->>{options.CURRENCY_NAME}</option>
+				<!-- END options -->
+			</select>
+		</dd>
 	</dl>
 	<dl>
 		<dt><label for="ppde_default_value">{L_PPDE_DEFAULT_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_VALUE_EXPLAIN}</span></dt>
@@ -75,7 +79,7 @@
 			<label><input type="radio" class="radio" name="ppde_raised_enable" value="0"<!-- IF not S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 	</dl>
 	<dl>
-		<dt><label for="ppde_raised">{L_PPDE_RAISED}{L_COLON}</label><br /><span>{L_PPDE_RAISED_EXPLAIN}</span></dt>
+		<dt><label for="ppde_raised">{L_PPDE_RAISED}{L_COLON}</label><br /><span>{L_PPDE_RAISED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
 		<dd><input type="text" class="text" id="ppde_raised" name="ppde_raised" size="10" maxlength="50" value="{PPDE_RAISED}" /></dd>
 	</dl>
 	<dl>
@@ -84,7 +88,7 @@
 			<label><input type="radio" class="radio" name="ppde_goal_enable" value="0"<!-- IF not S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 	</dl>
 	<dl>
-		<dt><label for="ppde_goal">{L_PPDE_GOAL}{L_COLON}</label><br /><span>{L_PPDE_GOAL_EXPLAIN}</span></dt>
+		<dt><label for="ppde_goal">{L_PPDE_GOAL}{L_COLON}</label><br /><span>{L_PPDE_GOAL_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
 		<dd><input type="text" class="text" id="ppde_goal" name="ppde_goal" size="10" maxlength="50" value="{PPDE_GOAL}" /></dd>
 	</dl>
 	<dl>
@@ -93,7 +97,7 @@
 			<label><input type="radio" class="radio" name="ppde_used_enable" value="0"<!-- IF not S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 	</dl>
 	<dl>
-		<dt><label for="ppde_used">{L_PPDE_USED}{L_COLON}</label><br /><span>{L_PPDE_USED_EXPLAIN}</span></dt>
+		<dt><label for="ppde_used">{L_PPDE_USED}{L_COLON}</label><br /><span>{L_PPDE_USED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
 		<dd><input type="text" class="text" id="ppde_used" name="ppde_used" size="10" maxlength="50" value="{PPDE_USED}" /></dd>
 	</dl>
 </fieldset>
