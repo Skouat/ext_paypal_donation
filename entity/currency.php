@@ -53,22 +53,22 @@ class currency extends main implements currency_interface
 			'CURRENCY',
 			$table_name,
 			array(
-				'item_id'   => array(
+				'item_id'       => array(
 					'name' => 'currency_id',
 					'type' => 'integer'),
-				'item_name' => array(
+				'item_name'     => array(
 					'name' => 'currency_name',
 					'type' => 'string'),
 				'item_iso_code' => array(
 					'name' => 'currency_iso_code',
 					'type' => 'string'),
-				'item_symbol' => array(
+				'item_symbol'   => array(
 					'name' => 'currency_symbol',
 					'type' => 'string'),
-				'item_enable' => array(
+				'item_enable'   => array(
 					'name' => 'currency_enable',
 					'type' => 'boolean'),
-				'item_order' => array(
+				'item_order'    => array(
 					'name' => 'currency_order',
 					'type' => 'integer'),
 			)
@@ -175,17 +175,6 @@ class currency extends main implements currency_interface
 		$this->db->sql_query($sql);
 
 		return $this;
-	}
-
-	/**
-	 * Get id
-	 *
-	 * @return int Currency identifier
-	 * @access public
-	 */
-	public function get_id()
-	{
-		return (isset($this->data['currency_id'])) ? (int) $this->data['currency_id'] : 0;
 	}
 
 	/**

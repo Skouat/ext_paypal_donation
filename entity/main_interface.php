@@ -37,6 +37,14 @@ interface main_interface
 	public function load($id);
 
 	/**
+	 * Get id
+	 *
+	 * @return int Item identifier
+	 * @access public
+	 */
+	public function get_id();
+
+	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action

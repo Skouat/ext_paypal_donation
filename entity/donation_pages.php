@@ -157,17 +157,6 @@ class donation_pages extends main implements donation_pages_interface
 	}
 
 	/**
-	 * Get id
-	 *
-	 * @return int Page identifier
-	 * @access public
-	 */
-	public function get_id()
-	{
-		return (isset($this->data['page_id'])) ? (int) $this->data['page_id'] : 0;
-	}
-
-	/**
 	 * Get template vars
 	 *
 	 * @return array $this->dp_vars

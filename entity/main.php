@@ -142,6 +142,17 @@ class main implements main_interface
 	}
 
 	/**
+	 * Get id
+	 *
+	 * @return int Item identifier
+	 * @access public
+	 */
+	public function get_id()
+	{
+		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
+	}
+
+	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action

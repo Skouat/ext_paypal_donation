@@ -47,14 +47,6 @@ interface donation_pages_interface extends main_interface
 	public function save();
 
 	/**
-	 * Get id
-	 *
-	 * @return int Item identifier
-	 * @access public
-	 */
-	public function get_id();
-
-	/**
 	 * Get language id
 	 *
 	 * @return int Lang identifier
