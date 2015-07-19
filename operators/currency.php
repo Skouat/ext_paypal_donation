@@ -55,7 +55,7 @@ class currency implements currency_interface
 		$entities = array();
 
 		// Use WHERE clause when $currency_id is different from 0
-		$sql_where = $currency_id ? ' WHERE currency = ' . (int) $currency_id : '';
+		$sql_where = $currency_id ? ' WHERE currency_id = ' . (int) $currency_id : '';
 		// Load all page data from the database
 		// Build sql query with alias field
 		$sql = 'SELECT *
