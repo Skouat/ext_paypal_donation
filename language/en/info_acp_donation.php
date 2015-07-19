@@ -108,15 +108,13 @@ $lang = array_merge($lang, array(
 	'PPDE_LEGEND_STATS_SETTINGS'          => 'Stats donation config',
 	'PPDE_STATS_INDEX_ENABLE'             => 'Display donation stats on index',
 	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'     => 'Enable this if you want to display the donation stats on index.',
-	'PPDE_RAISED_ENABLE'                  => 'Enable donation raised',
 	'PPDE_RAISED'                         => 'Donation raised',
 	'PPDE_RAISED_EXPLAIN'                 => 'The current amount raised through donations.',
-	'PPDE_GOAL_ENABLE'                    => 'Enable donation goal',
 	'PPDE_GOAL'                           => 'Donation goal',
 	'PPDE_GOAL_EXPLAIN'                   => 'The total amount that you want to raise.',
-	'PPDE_USED_ENABLE'                    => 'Enable donation used',
 	'PPDE_USED'                           => 'Donation used',
 	'PPDE_USED_EXPLAIN'                   => 'The amount of donation that you have already used.',
+	'PPDE_AMOUNT'                         => 'Amount',
 	// Note for translator: do not translate the decimal symbol
 	'PPDE_DECIMAL_EXPLAIN'                => 'Use “.” as decimal symbol.',
 
