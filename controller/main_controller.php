@@ -95,12 +95,12 @@ class main_controller
 		// Generate statistics percent for display
 		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
 		{
-			$this->generate_stats_percent('GOAL_NUMBER', (int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+			$this->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
 		}
 
 		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
 		{
-			$this->generate_stats_percent('USED_NUMBER', (int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+			$this->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'],'USED_NUMBER');
 		}
 
 		$this->template->assign_vars(array(
@@ -144,7 +144,7 @@ class main_controller
 	 * @param        $multiplicand
 	 * @param        $dividend
 	 */
-	private function generate_stats_percent($type = '', $multiplicand, $dividend)
+	private function generate_stats_percent($multiplicand, $dividend, $type = '')
 	{
 		$percent = ($multiplicand * 100) / $dividend;
 
@@ -155,18 +155,20 @@ class main_controller
 	}
 
 	/**
-	 * @param $currency_symbol
+	 * Retrieve the language key for donation goal
 	 *
-	 * @return mixed
+	 * @param string $currency_symbol Currency symbol
+	 *
+	 * @return string
+	 * @access private
 	 */
 	private function get_ppde_goal_langkey($currency_symbol)
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
 			$l_ppde_goal = $this->user->lang['DONATE_NO_GOAL'];
-
 		}
-		elseif ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
+		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
 		{
 			$l_ppde_goal = $this->user->lang['DONATE_GOAL_REACHED'];
 		}
@@ -177,45 +179,53 @@ class main_controller
 
 		return $l_ppde_goal;
 	}
-	/**
- *
- */
-	private function get_ppde_used_langkey($currency_symbol)
-	{
-		if ((int) $this->config['ppde_used'] <= 0)
-		{
-			$l_ppde_goal = $this->user->lang['DONATE_NOT_USED'];
 
-		}
-		elseif ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
-		{
-			$l_ppde_goal = $this->user->lang('DONATE_USED', (int) $this->config['ppde_used'], $currency_symbol, (int) $this->config['ppde_raised']);
-		}
-	else
-		{
-			$l_ppde_goal = $this->user->lang('DONATE_USED_EXCEEDED', (int) $this->config['ppde_used'], $currency_symbol);
-		}
-
-		return $l_ppde_goal;
-	}
 	/**
-	 * @param $currency_symbol
+	 * Retrieve the language key for donation raised
 	 *
-	 * @return mixed
+	 * @param string $currency_symbol Currency symbol
+	 *
+	 * @return string
+	 * @access private
 	 */
 	private function get_ppde_raised_langkey($currency_symbol)
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
-			$l_ppde_goal = $this->user->lang['DONATE_NOT_RECEIVED'];
-
+			$l_ppde_raised = $this->user->lang['DONATE_NOT_RECEIVED'];
 		}
 		else
 		{
-			$l_ppde_goal = $this->user->lang('DONATE_RECEIVED', (int) $this->config['ppde_raised'], $currency_symbol);
+			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', (int) $this->config['ppde_raised'], $currency_symbol);
 		}
 
-		return $l_ppde_goal;
+		return $l_ppde_raised;
+	}
+
+	/**
+	 * Retrieve the language key for donation used
+	 *
+	 * @param string $currency_symbol Currency symbol
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function get_ppde_used_langkey($currency_symbol)
+	{
+		if ((int) $this->config['ppde_used'] <= 0)
+		{
+			$l_ppde_used = $this->user->lang['DONATE_NOT_USED'];
+		}
+		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
+		{
+			$l_ppde_used = $this->user->lang('DONATE_USED', (int) $this->config['ppde_used'], $currency_symbol, (int) $this->config['ppde_raised']);
+		}
+		else
+		{
+			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', (int) $this->config['ppde_used'], $currency_symbol);
+		}
+
+		return $l_ppde_used;
 	}
 
 	/**
