@@ -21,6 +21,11 @@
 			<label><input type="radio" class="radio" name="ppde_enable" value="0"<!-- IF not S_PPDE_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
 	</dl>
 	<dl>
+		<dt><label for="ppde_header_link">{L_PPDE_HEADER_LINK}{L_COLON}</label></dt>
+		<dd><label><input type="radio" class="radio" id="ppde_header_link" name="ppde_header_link" value="1"<!-- IF S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+			<label><input type="radio" class="radio" name="ppde_header_link" value="0"<!-- IF not S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+	</dl>
+	<dl>
 		<dt><label for="ppde_account_id">{L_PPDE_ACCOUNT_ID}{L_COLON}</label><br /><span>{L_PPDE_ACCOUNT_ID_EXPLAIN}</span></dt>
 		<dd><input type="text" class="text" id="ppde_account_id" name="ppde_account_id" size="40" maxlength="255" value="{PPDE_ACCOUNT_ID}" /></dd>
 	</dl>

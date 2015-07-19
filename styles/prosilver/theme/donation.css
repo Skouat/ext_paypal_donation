@@ -1,0 +1,38 @@
+/* PayPal Donation
+---------------------------------------- */
+
+/* PayPal Button */
+
+#contactpaypal, #contactpaypal input, #contactpaypal div {
+    background: url("images/paypal_button.png") no-repeat;
+    height: 26px;
+    display: inline-block;
+}
+
+#contactpaypal input {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    color: #294669;
+    background-position: 0 -52px;
+    background-repeat: repeat;
+    border: 0;
+    margin-left: 12px;
+    padding: 0 0 2px;
+}
+
+#contactpaypal div {
+    background-position: 0 -26px;
+    float: right;
+    height: 26px;
+    width: 12px;
+}
+
+/* icon */
+.icon-ppde-header {
+    background: url("./images/icon_donate.gif") 0 50% no-repeat;
+}
+
+.rtl .icon-ppde-header {
+    background-position: 100% 50%;
+}

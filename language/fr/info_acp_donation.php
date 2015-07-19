@@ -83,6 +83,7 @@ $lang = array_merge($lang, array(
 	'PPDE_LEGEND_GENERAL_SETTINGS'        => 'Paramètres généraux',
 	'PPDE_ENABLE'                         => 'Activer PayPal Donation',
 	'PPDE_ENABLE_EXPLAIN'                 => 'Active ou désactive le MOD PayPal Donation.',
+	'PPDE_HEADER_LINK'                    => 'Afficher le lien « Faire un don » dans l’entête du forum',
 	'PPDE_ACCOUNT_ID'                     => 'ID du compte PayPal',
 	'PPDE_ACCOUNT_ID_EXPLAIN'             => 'Saisir l’adresse e-mail ou l’ID de compte marchand.',
 	'PPDE_DEFAULT_CURRENCY'               => 'Devise par défaut',

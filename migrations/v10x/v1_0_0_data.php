@@ -22,6 +22,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 		return array(
 			// Global Settings
 			array('config.add', array('ppde_enable', false)),
+			array('config.add', array('ppde_header_link', false)),
 			array('config.add', array('ppde_account_id', '')),
 			array('config.add', array('ppde_default_currency', 1)),
 			array('config.add', array('ppde_default_value', 0)),

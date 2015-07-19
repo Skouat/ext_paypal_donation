@@ -98,6 +98,7 @@ class admin_settings_controller implements admin_settings_interface
 
 			'S_PPDE_DROPBOX_ENABLE'         => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
+			'S_PPDE_HEADER_LINK'            => $this->check_config($this->config['ppde_header_link']),
 
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
@@ -127,6 +128,7 @@ class admin_settings_controller implements admin_settings_interface
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
+		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 		$this->config->set('ppde_account_id', $this->request->variable('ppde_account_id', ''));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
