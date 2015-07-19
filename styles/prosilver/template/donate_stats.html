@@ -1,0 +1,33 @@
+<!-- IF PPDE_STATS_INDEX_ENABLE -->
+<!-- IF U_DONATE --><h3><a href="{U_DONATE}">{L_DONATION_INDEX}</a></h3><!-- ELSE --><h3>
+	{L_DONATION_INDEX}</h3><!-- ENDIF -->
+<!-- ENDIF -->
+
+<!-- IF S_GOAL_NUMBER -->
+<div class="prog_grey">
+	<div class="prog_green" style="width:{DONATION_GOAL_NUMBER}%;"><span class="progress">{PPDE_GOAL_NUMBER}%</span>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<p class="donation_stats">
+	<!-- IF PPDE_RAISED_ENABLE -->
+	{L_PPDE_RAISED}<!-- IF PPDE_USED_ENABLE --><br /><!-- ENDIF -->
+	<!-- ENDIF -->
+	<!-- IF PPDE_GOAL_ENABLE -->
+	{L_PPDE_GOAL}<br />
+	<!-- ENDIF -->
+
+	<!-- IF S_USED_NUMBER -->
+</p>
+<div class="prog_grey">
+	<div class="prog_red" style="width:{DONATION_USED_NUMBER}%;"><span class="progress">{PPDE_USED_NUMBER}%</span>
+	</div>
+</div>
+<p class="donation_stats">
+	<!-- ENDIF -->
+
+	<!-- IF PPDE_USED_ENABLE -->
+	{L_PPDE_USED}
+	<!-- ENDIF -->
+</p>

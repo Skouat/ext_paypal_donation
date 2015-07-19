@@ -80,6 +80,7 @@ class main_controller
 		}
 
 		// Get data from the database
+		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
 		$donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id());
 
 		// Prepare message for display
@@ -91,13 +92,29 @@ class main_controller
 			$donation_content_data[0]['page_content_bbcode_options']
 		));
 
+		// Generate statistics percent for display
+		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+		{
+			$this->generate_stats_percent('GOAL_NUMBER', (int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+		}
+
+		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+		{
+			$this->generate_stats_percent('USED_NUMBER', (int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+		}
+
 		$this->template->assign_vars(array(
 			'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
 			'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
 			'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
 
+			'L_PPDE_GOAL'        => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol']),
+			'L_PPDE_RAISED'      => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
+			'L_PPDE_USED'        => $this->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
+
 			'DONATION_BODY'      => $donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
+			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
@@ -106,6 +123,128 @@ class main_controller
 
 		// Send all data to the template file
 		return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
+	}
+
+	/**
+	 * Get default currency symbol
+	 *
+	 * @param int $id
+	 *
+	 * @return array
+	 */
+	private function get_default_currency_data($id = 0)
+	{
+		return $this->ppde_operator_currency->get_currency_data($id);
+	}
+
+	/**
+	 * Generate statistics percent for display
+	 *
+	 * @param string $type
+	 * @param        $multiplicand
+	 * @param        $dividend
+	 */
+	private function generate_stats_percent($type = '', $multiplicand, $dividend)
+	{
+		$percent = ($multiplicand * 100) / $dividend;
+
+		$this->template->assign_vars(array(
+			'PPDE_' . $type => round($percent, 2),
+			'S_' . $type    => !empty($type) ? true : false,
+		));
+	}
+
+	/**
+	 * @param $currency_symbol
+	 *
+	 * @return mixed
+	 */
+	private function get_ppde_goal_langkey($currency_symbol)
+	{
+		if ((int) $this->config['ppde_goal'] <= 0)
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_NO_GOAL'];
+
+		}
+		elseif ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_GOAL_REACHED'];
+		}
+		else
+		{
+			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', (int) $this->config['ppde_goal'], $currency_symbol);
+		}
+
+		return $l_ppde_goal;
+	}
+	/**
+ *
+ */
+	private function get_ppde_used_langkey($currency_symbol)
+	{
+		if ((int) $this->config['ppde_used'] <= 0)
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_NOT_USED'];
+
+		}
+		elseif ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
+		{
+			$l_ppde_goal = $this->user->lang('DONATE_USED', (int) $this->config['ppde_used'], $currency_symbol, (int) $this->config['ppde_raised']);
+		}
+	else
+		{
+			$l_ppde_goal = $this->user->lang('DONATE_USED_EXCEEDED', (int) $this->config['ppde_used'], $currency_symbol);
+		}
+
+		return $l_ppde_goal;
+	}
+	/**
+	 * @param $currency_symbol
+	 *
+	 * @return mixed
+	 */
+	private function get_ppde_raised_langkey($currency_symbol)
+	{
+		if ((int) $this->config['ppde_raised'] <= 0)
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_NOT_RECEIVED'];
+
+		}
+		else
+		{
+			$l_ppde_goal = $this->user->lang('DONATE_RECEIVED', (int) $this->config['ppde_raised'], $currency_symbol);
+		}
+
+		return $l_ppde_goal;
+	}
+
+	/**
+	 * Build pull down menu options of available currency value
+	 *
+	 * @return string List of currency value set in ACP for dropdown menu
+	 * @access private
+	 */
+	private function build_currency_value_select_menu()
+	{
+		// Retrieve donation value for drop-down list
+		$list_donation_value = '';
+
+		if ($this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'])
+		{
+			$donation_ary_value = explode(',', $this->config['ppde_dropbox_value']);
+
+			foreach ($donation_ary_value as $value)
+			{
+				$int_value = (int) $value;
+				if (!empty($int_value) && ($int_value == $value))
+				{
+					$list_donation_value .= '<option value="' . $int_value . '">' . $int_value . '</option>';
+				}
+			}
+			unset($value);
+		}
+
+		return $list_donation_value;
 	}
 
 	/**
