@@ -100,7 +100,7 @@ class main_controller
 
 		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
 		{
-			$this->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'],'USED_NUMBER');
+			$this->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
 		}
 
 		$this->template->assign_vars(array(
