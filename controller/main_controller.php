@@ -10,19 +10,23 @@
 
 namespace skouat\ppde\controller;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 class main_controller
 {
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	protected $container;
+
+	/** @var \phpbb\controller\helper */
+	protected $helper;
 
 	/** @var \skouat\ppde\operators\donation_pages */
 	protected $ppde_operator_donation_pages;
 
 	/** @var \skouat\ppde\operators\currency */
 	protected $ppde_operator_currency;
-
-	/** @var \phpbb\controller\helper */
-	protected $helper;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -40,9 +44,10 @@ class main_controller
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                  $config                       Config object
+	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
-	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
 	 * @param string                                $root_path                    phpBB root path
@@ -51,9 +56,10 @@ class main_controller
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
+		$this->container = $container;
 		$this->helper = $helper;
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->ppde_operator_currency = $ppde_operator_currency;
@@ -65,6 +71,8 @@ class main_controller
 
 	public function handle()
 	{
+		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+
 		// When this extension is disabled, redirect users back to the forum index
 		if (empty($this->config['ppde_enable']))
 		{
@@ -75,12 +83,13 @@ class main_controller
 		$donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id());
 
 		// Prepare message for display
-		$donation_body = generate_text_for_display(
+		$entity->get_vars();
+		$donation_body = $entity->replace_template_vars($entity->get_message_for_display(
 			$donation_content_data[0]['page_content'],
 			$donation_content_data[0]['page_content_bbcode_uid'],
 			$donation_content_data[0]['page_content_bbcode_bitfield'],
 			$donation_content_data[0]['page_content_bbcode_options']
-		);
+		));
 
 		$this->template->assign_vars(array(
 			'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
@@ -88,6 +97,7 @@ class main_controller
 			'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
 
 			'DONATION_BODY'      => $donation_body,
+			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),

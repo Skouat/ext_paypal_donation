@@ -17,9 +17,10 @@ services:
         class: skouat\ppde\controller\main_controller
         arguments:
             - @config
+            - @service_container
+            - @controller.helper
             - @skouat.ppde.operator.donation_pages
             - @skouat.ppde.operator.currency
-            - @controller.helper
             - @template
             - @user
             - %core.root_path%

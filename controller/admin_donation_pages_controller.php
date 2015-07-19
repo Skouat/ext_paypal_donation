@@ -184,7 +184,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		$errors = array();
 
 		// Grab Template vars
-		$dp_vars = $entity->get_vars();
+		$dp_vars = $entity->get_vars(true);
 
 		// Grab the form data's message parsing options (possible values: 1 or 0)
 		$message_parse_options = array(

@@ -159,10 +159,12 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Get template vars
 	 *
+	 * @param bool $acp
+	 *
 	 * @return array $this->dp_vars
 	 * @access public
 	 */
-	public function get_vars()
+	public function get_vars($acp = false)
 	{
 		$this->dp_vars = array(
 			0 => array(
@@ -195,10 +197,13 @@ class donation_pages extends main implements donation_pages_interface
 			),
 		);
 
-		//Add language entries for displaying the vars
-		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		if ($acp)
 		{
-			$this->dp_vars[$i]['name'] = $this->user->lang['PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
+			//Add language entries for displaying the vars
+			for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+			{
+				$this->dp_vars[$i]['name'] = $this->user->lang['PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
+			}
 		}
 
 		return $this->dp_vars;
