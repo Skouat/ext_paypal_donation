@@ -282,7 +282,7 @@ class main_controller implements main_interface
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
 
-				'S_CURRENCY_DEFAULT' => $config_value ? $config_value : 0,
+				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
 			));
 		}
 		unset ($currency_items, $currency_item);
