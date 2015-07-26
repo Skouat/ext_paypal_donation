@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -48,7 +48,7 @@ class listener implements EventSubscriberInterface
 	 * @return \skouat\ppde\event\listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \skouat\ppde\controller\main_controller $ppde_controller_main,\phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;
