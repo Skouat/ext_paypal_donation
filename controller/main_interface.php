@@ -20,14 +20,14 @@ interface main_interface
 	public function handle();
 
 	/**
-	 * Get default currency symbol
+	 * Build pull down menu options of available currency
 	 *
-	 * @param int $id
+	 * @param int $config_value Currency identifier; default: 0
 	 *
-	 * @return array
+	 * @return null
 	 * @access public
 	 */
-	public function get_default_currency_data($id = 0);
+	public function build_currency_select_menu($config_value = 0);
 
 	/**
 	 * Generate statistics percent for display
@@ -39,6 +39,16 @@ interface main_interface
 	 * @access public
 	 */
 	public function generate_stats_percent($multiplicand, $dividend, $type = '');
+
+	/**
+	 * Get default currency data
+	 *
+	 * @param int $id
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_default_currency_data($id = 0);
 
 	/**
 	 * Retrieve the language key for donation goal

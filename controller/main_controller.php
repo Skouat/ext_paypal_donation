@@ -266,9 +266,9 @@ class main_controller implements main_interface
 	 * @param int $config_value Currency identifier; default: 0
 	 *
 	 * @return null
-	 * @access protected
+	 * @access public
 	 */
-	private function build_currency_select_menu($config_value = 0)
+	public function build_currency_select_menu($config_value = 0)
 	{
 		// Grab the list of currency data
 		$currency_items = $this->ppde_operator_currency->get_currency_data();
@@ -280,6 +280,7 @@ class main_controller implements main_interface
 			$this->template->assign_block_vars('options', array(
 				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
+				'CURRENCY_NAME'      => $currency_item['currency_name'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
 
 				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
