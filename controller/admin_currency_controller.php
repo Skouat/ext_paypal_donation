@@ -304,10 +304,16 @@ class admin_currency_controller implements admin_currency_interface
 	 */
 	public function enable_currency($currency_id, $action)
 	{
-		// Return error if no currency
+		// Return an error if no currency
 		if (!$currency_id)
 		{
 			trigger_error($this->user->lang('PPDE_NO_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		// Return an error if it's the last enabled currency
+		if ($this->ppde_operator_currency->last_currency_enabled($action) && ($action == 'disable'))
+		{
+			trigger_error($this->user->lang('PPDE_CANNOT_DISABLE_ALL_CURRENCIES') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Load selected currency
@@ -333,6 +339,12 @@ class admin_currency_controller implements admin_currency_interface
 		// Use a confirmation box routine when deleting a currency
 		if (confirm_box(true))
 		{
+			// Return an error if it's the currency is enabled
+			if ($this->ppde_operator_currency->get_currency_data($currency_id,true))
+			{
+				trigger_error($this->user->lang('PPDE_DISABLE_BEFORE_DELETION') . adm_back_link($this->u_action), E_USER_WARNING);
+			}
+
 			// Delete the currency on confirmation
 			$this->ppde_operator_currency->delete_currency_data($currency_id);
 

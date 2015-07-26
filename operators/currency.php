@@ -45,7 +45,7 @@ class currency implements currency_interface
 	/**
 	 * Get data from currency table
 	 *
-	 * @param int  $currency_id Identifier of currency; Set to 0 to get all currencies (Default: 0)
+	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
 	 * @param bool $only_enabled Status of currency (Default: false)
 	 *
 	 * @return array Array of currency data entities
@@ -190,5 +190,38 @@ class currency implements currency_interface
 			} while ($row = $this->db->sql_fetchrow($result));
 		}
 		$this->db->sql_freeresult($result);
+	}
+
+	/**
+	 * Checks if the currency is the last enabled.
+	 *
+	 * @param string $action
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function last_currency_enabled($action = '')
+	{
+		return $this->count_currency_enable($action) <= 1;
+	}
+
+	/**
+	 * Count the number of available currencies
+	 *
+	 * @param string $action
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function count_currency_enable($action = '')
+	{
+		// Count the number of available currencies
+		$sql = 'SELECT COUNT(currency_id) AS cnt_currency
+				FROM ' . $this->ppde_currency_table;
+		$sql .= ($action == 'disable') ? ' WHERE currency_enable = 1' : '';
+
+		$this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('cnt_currency');
 	}
 }
