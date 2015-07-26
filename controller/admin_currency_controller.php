@@ -340,7 +340,7 @@ class admin_currency_controller implements admin_currency_interface
 		if (confirm_box(true))
 		{
 			// Return an error if it's the currency is enabled
-			if ($this->ppde_operator_currency->get_currency_data($currency_id,true))
+			if ($this->ppde_operator_currency->get_currency_data($currency_id, true))
 			{
 				trigger_error($this->user->lang('PPDE_DISABLE_BEFORE_DELETION') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
