@@ -135,7 +135,7 @@ class main_controller implements main_interface
 	 */
 	public function get_default_currency_data($id = 0)
 	{
-		return $this->ppde_operator_currency->get_currency_data($id);
+		return $this->ppde_operator_currency->get_currency_data($id, true);
 	}
 
 	/**
@@ -270,8 +270,8 @@ class main_controller implements main_interface
 	 */
 	public function build_currency_select_menu($config_value = 0)
 	{
-		// Grab the list of currency data
-		$currency_items = $this->ppde_operator_currency->get_currency_data();
+		// Grab the list of all enabled currencies; 0 is for all data
+		$currency_items = $this->ppde_operator_currency->get_currency_data(0, true);
 
 		// Process each rule menu item for pull-down
 		foreach ($currency_items as $currency_item)

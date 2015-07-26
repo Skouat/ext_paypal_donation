@@ -20,12 +20,13 @@ interface currency_interface
 	/**
 	 * Get data from currency table
 	 *
-	 * @param int $currency_id
+	 * @param int  $currency_id Identifier of currency; Set to 0 to get all currencies (Default: 0)
+	 * @param bool $only_enabled Currency states (Default: false)
 	 *
 	 * @return array Array of currency data entities
 	 * @access public
 	 */
-	public function get_currency_data($currency_id = 0);
+	public function get_currency_data($currency_id = 0, $only_enabled = false);
 
 	/**
 	 * Add a currency
