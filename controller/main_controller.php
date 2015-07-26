@@ -12,7 +12,7 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class main_controller
+class main_controller implements main_interface
 {
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -131,8 +131,9 @@ class main_controller
 	 * @param int $id
 	 *
 	 * @return array
+	 * @access public
 	 */
-	private function get_default_currency_data($id = 0)
+	public function get_default_currency_data($id = 0)
 	{
 		return $this->ppde_operator_currency->get_currency_data($id);
 	}
@@ -143,8 +144,10 @@ class main_controller
 	 * @param string $type
 	 * @param        $multiplicand
 	 * @param        $dividend
+	 *
+	 * @access public
 	 */
-	private function generate_stats_percent($multiplicand, $dividend, $type = '')
+	public function generate_stats_percent($multiplicand, $dividend, $type = '')
 	{
 		$percent = ($multiplicand * 100) / $dividend;
 
@@ -160,9 +163,9 @@ class main_controller
 	 * @param string $currency_symbol Currency symbol
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function get_ppde_goal_langkey($currency_symbol)
+	public function get_ppde_goal_langkey($currency_symbol)
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
@@ -186,9 +189,9 @@ class main_controller
 	 * @param string $currency_symbol Currency symbol
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function get_ppde_raised_langkey($currency_symbol)
+	public function get_ppde_raised_langkey($currency_symbol)
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
@@ -208,9 +211,9 @@ class main_controller
 	 * @param string $currency_symbol Currency symbol
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function get_ppde_used_langkey($currency_symbol)
+	public function get_ppde_used_langkey($currency_symbol)
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{

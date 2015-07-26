@@ -74,7 +74,7 @@ fieldset.loader {
     display: none;
 }
 
-img.loader {
+#processingpaypal img.loader {
     background: url("images/loader.gif");
     margin-bottom: -5px;
     padding-right: 10px;

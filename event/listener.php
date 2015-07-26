@@ -23,6 +23,9 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\controller\helper */
 	protected $controller_helper;
 
+	/** @var \skouat\ppde\controller\main_controller */
+	protected $ppde_controller_main;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -35,19 +38,21 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config     $config            Config object
-	 * @param \phpbb\controller\helper $controller_helper Controller helper object
-	 * @param \phpbb\template\template $template          Template object
-	 * @param \phpbb\user              $user              User object
-	 * @param string                   $php_ext           phpEx
+	 * @param \phpbb\config\config                    $config               Config object
+	 * @param \phpbb\controller\helper                $controller_helper    Controller helper object
+	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Donation pages main controller object
+	 * @param \phpbb\template\template                $template             Template object
+	 * @param \phpbb\user                             $user                 User object
+	 * @param string                                  $php_ext              phpEx
 	 *
 	 * @return \skouat\ppde\event\listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \skouat\ppde\controller\main_controller $ppde_controller_main,\phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;
+		$this->ppde_controller_main = $ppde_controller_main;
 		$this->template = $template;
 		$this->user = $user;
 		$this->php_ext = $php_ext;
@@ -60,13 +65,52 @@ class listener implements EventSubscriberInterface
 	 * @static
 	 * @access public
 	 */
-	static public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
 		return array(
+			'core.index_modify_page_title'       => 'load_index_data',
 			'core.page_header'                   => 'add_page_header_link',
 			'core.viewonline_overwrite_location' => 'viewonline_page',
 			'core.user_setup'                    => 'load_language_on_setup',
 		);
+	}
+
+	/**
+	 * Load data for donations statistics
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function load_index_data($event)
+	{
+		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
+		{
+			$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
+
+			$this->template->assign_vars(array(
+				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
+				'PPDE_GOAL_ENABLE'        => $this->config['ppde_goal_enable'],
+				'PPDE_RAISED_ENABLE'      => $this->config['ppde_raised_enable'],
+				'PPDE_USED_ENABLE'        => $this->config['ppde_used_enable'],
+
+				'L_PPDE_GOAL'             => $this->ppde_controller_main->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol']),
+				'L_PPDE_RAISED'           => $this->ppde_controller_main->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
+				'L_PPDE_USED'             => $this->ppde_controller_main->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
+			));
+
+			// Generate statistics percent for display
+			if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+			{
+				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
+			}
+
+			if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+			{
+				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
+			}
+		}
 	}
 
 	/**
@@ -80,7 +124,7 @@ class listener implements EventSubscriberInterface
 	public function add_page_header_link($event)
 	{
 		$this->template->assign_vars(array(
-			'S_PPDE_LINK_ENABLED' => (!empty($this->config['ppde_enable']) && !empty($this->config['ppde_header_link'])) ? true : false,
+			'S_PPDE_LINK_ENABLED' => ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
 			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_main_controller'),
 		));
 	}
