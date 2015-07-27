@@ -259,23 +259,6 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Count the number of enabled currencies
-	 *
-	 * @return int
-	 * @access public
-	 */
-	public function count_currency_enable()
-	{
-		// Set the item type on our data array
-		$sql = 'SELECT COUNT(currency_id) AS cnt_currency
-			FROM ' . $this->currency_table . '
-			WHERE currency_enable = 1';
-		$this->db->sql_query($sql);
-
-		return $this->db->sql_fetchfield('cnt_currency');
-	}
-
-	/**
 	 * Get the order number of the currency
 	 *
 	 * @return int Order identifier
