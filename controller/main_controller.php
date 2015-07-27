@@ -40,6 +40,12 @@ class main_controller implements main_interface
 	/** @var string phpEx */
 	protected $php_ext;
 
+	/** @var string donation_body */
+	private $donation_body;
+
+	/** @var array donation_body */
+	private $donation_content_data;
+
 	/**
 	 * Constructor
 	 *
@@ -81,16 +87,18 @@ class main_controller implements main_interface
 
 		// Get data from the database
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
-		$donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id());
 
 		// Prepare message for display
-		$entity->get_vars();
-		$donation_body = $entity->replace_template_vars($entity->get_message_for_display(
-			$donation_content_data[0]['page_content'],
-			$donation_content_data[0]['page_content_bbcode_uid'],
-			$donation_content_data[0]['page_content_bbcode_bitfield'],
-			$donation_content_data[0]['page_content_bbcode_options']
-		));
+		if ($this->get_donation_content_data())
+		{
+			$entity->get_vars();
+			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
+				$this->donation_content_data[0]['page_content'],
+				$this->donation_content_data[0]['page_content_bbcode_uid'],
+				$this->donation_content_data[0]['page_content_bbcode_bitfield'],
+				$this->donation_content_data[0]['page_content_bbcode_options']
+			));
+		}
 
 		// Generate statistics percent for display
 		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
@@ -112,7 +120,7 @@ class main_controller implements main_interface
 			'L_PPDE_RAISED'      => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
 			'L_PPDE_USED'        => $this->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
 
-			'DONATION_BODY'      => $donation_body,
+			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
@@ -136,6 +144,16 @@ class main_controller implements main_interface
 	public function get_default_currency_data($id = 0)
 	{
 		return $this->ppde_operator_currency->get_currency_data($id, true);
+	}
+
+	/**
+	 * Get content of current donation pages
+	 *
+	 * @access private
+	 */
+	private function get_donation_content_data()
+	{
+		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id());
 	}
 
 	/**
