@@ -34,14 +34,10 @@ if (empty($lang) || !is_array($lang))
 // ’ « » “ ” …
 //
 
-// Adding new category
-$lang['permission_cat']['donation'] = 'PayPal Donation';
-
 // Adding the permissions
 $lang = array_merge($lang, array(
-	// User Permissions
-	'acl_u_ppde_use'    => array('lang' => 'Can make a donation', 'cat' => 'donation'),
+	'ACL_CAT_PPDE'      => 'PayPal Donation',
 
-	// Admin Permissions
-	'acl_a_ppde_manage' => array('lang' => 'Can manage PayPal Donation extension', 'cat' => 'misc'),
+	'ACL_A_PPDE_MANAGE' => 'Can manage PayPal Donation extension',
+	'ACL_U_PPDE_USE'    => 'Can make a donation',
 ));

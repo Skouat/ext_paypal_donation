@@ -70,8 +70,9 @@ class listener implements EventSubscriberInterface
 		return array(
 			'core.index_modify_page_title'       => 'load_index_data',
 			'core.page_header'                   => 'add_page_header_link',
-			'core.viewonline_overwrite_location' => 'viewonline_page',
+			'core.permissions'                   => 'add_permissions',
 			'core.user_setup'                    => 'load_language_on_setup',
+			'core.viewonline_overwrite_location' => 'viewonline_page',
 		);
 	}
 
@@ -165,5 +166,27 @@ class listener implements EventSubscriberInterface
 				$event['location_url'] = $this->controller_helper->route('skouat_ppde_main_controller');
 			}
 		}
+	}
+
+	/**
+	 * Add extension permissions
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function add_permissions($event)
+	{
+		$categories = $event['categories'];
+		$categories = array_merge($categories, array('ppde' => 'ACL_CAT_PPDE'));
+		$event['categories'] = $categories;
+
+		$permissions = $event['permissions'];
+		$permissions = array_merge($permissions, array(
+			'a_ppde_manage' => array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'),
+			'u_ppde_use'    => array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'),
+		));
+		$event['permissions'] = $permissions;
 	}
 }
