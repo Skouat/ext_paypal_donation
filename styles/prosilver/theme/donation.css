@@ -28,6 +28,19 @@
     width: 12px;
 }
 
+/* image loader */
+fieldset.loader {
+    display: none;
+}
+
+img.loader {
+    background: url("images/loader.gif");
+    margin-bottom: -5px;
+    padding-right: 10px;
+    height: 16px;
+    width: 16px;
+}
+
 /* Progress bar */
 div.prog_grey {
     background: #CCCCCC url("images/prog_grey.png") repeat-x;
@@ -67,19 +80,6 @@ p.donation_stats {
 /* form displaying */
 div.center {
     text-align: center;
-}
-
-/* image loader */
-fieldset.loader {
-    display: none;
-}
-
-#processingpaypal img.loader {
-    background: url("images/loader.gif");
-    margin-bottom: -5px;
-    padding-right: 10px;
-    height: 16px;
-    width: 16px;
 }
 
 /* icon */

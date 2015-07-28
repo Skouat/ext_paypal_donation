@@ -54,9 +54,10 @@ $lang = array_merge($lang, array(
 	// Pages
 	'PPDE_DONATION_TITLE'         => 'Make a Donation',
 	'PPDE_DONATION_TITLE_HEAD'    => 'Make a Donation to',
+	'PPDE_CONTACT_PAYPAL'         => 'Connecting to PayPal - Please Wait…',
 
 	// Header
-	'PPDE_DONATION_HEADER'        => 'Donations',
+	'PPDE_HEADER_LINK_TITLE'      => 'Donations',
 
 	// Index page
 	'PPDE_INDEX_STATISTICS_TITLE' => 'Donation statistics',
