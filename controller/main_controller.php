@@ -28,6 +28,9 @@ class main_controller implements main_interface
 	/** @var \skouat\ppde\operators\currency */
 	protected $ppde_operator_currency;
 
+	/** @var \phpbb\request\request */
+	protected $request;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
