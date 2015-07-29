@@ -73,19 +73,22 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
+	 * Set sql AND clause for the field 'page_title'
 	 *
 	 * @param string $mode
 	 *
 	 * @return string
+	 * @access private
 	 */
 	private function set_sql_and_page_title($mode)
 	{
+		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
 		switch ($mode)
 		{
+			case 'body':
+			case 'cancel':
 			case 'success':
-			case 'cancel' :
-			case 'body' :
-				return  " AND page_title = 'donation_" . $mode . "'";
+				return " AND page_title = 'donation_" . $mode . "'";
 			default:
 				return '';
 		}
