@@ -152,6 +152,7 @@ class main_controller implements main_interface
 			case 'cancel':
 			case 'success':
 				$this->mode_url = $mode;
+				break;
 			default:
 				$this->mode_url = 'body';
 		}
