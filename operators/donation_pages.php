@@ -42,12 +42,13 @@ class donation_pages implements donation_pages_interface
 	/**
 	 * Get data from donation pages table
 	 *
-	 * @param int $lang_id
+	 * @param int    $lang_id
+	 * @param string $mode
 	 *
 	 * @return array Array of page data entities
 	 * @access public
 	 */
-	public function get_pages_data($lang_id = 0)
+	public function get_pages_data($lang_id = 0, $mode = 'all_pages')
 	{
 		$entities = array();
 
@@ -55,7 +56,8 @@ class donation_pages implements donation_pages_interface
 		// Build sql query with alias field
 		$sql = 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
-				WHERE page_lang_id = ' . (int) ($lang_id) . '
+				WHERE page_lang_id = ' . (int) ($lang_id) .
+					$this->set_sql_and_page_title($mode) . '
 				ORDER BY page_title';
 		$result = $this->db->sql_query($sql);
 
@@ -68,6 +70,28 @@ class donation_pages implements donation_pages_interface
 
 		// Return all page entities
 		return $entities;
+	}
+
+	/**
+	 * Set sql AND clause for the field 'page_title'
+	 *
+	 * @param string $mode
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_sql_and_page_title($mode)
+	{
+		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
+		switch ($mode)
+		{
+			case 'body':
+			case 'cancel':
+			case 'success':
+				return " AND page_title = 'donation_" . $mode . "'";
+			default:
+				return '';
+		}
 	}
 
 	/**

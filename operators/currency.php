@@ -45,23 +45,34 @@ class currency implements currency_interface
 	/**
 	 * Get data from currency table
 	 *
-	 * @param int $currency_id
+	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
+	 * @param bool $only_enabled Status of currency (Default: false)
 	 *
 	 * @return array Array of currency data entities
 	 * @access public
 	 */
-	public function get_currency_data($currency_id = 0)
+	public function get_currency_data($currency_id = 0, $only_enabled = false)
 	{
 		$entities = array();
 
+		// Build main sql request
+		$sql_ary = array(
+			'SELECT'   => '*',
+			'FROM'     => array($this->ppde_currency_table => 'c'),
+			'WHERE'    => '',
+			'ORDER_BY' => 'c.currency_order',
+		);
+
 		// Use WHERE clause when $currency_id is different from 0
-		$sql_where = $currency_id ? ' WHERE currency = ' . (int) $currency_id : '';
-		// Load all page data from the database
-		// Build sql query with alias field
-		$sql = 'SELECT *
-				FROM ' . $this->ppde_currency_table .
-			$sql_where . '
-				ORDER BY currency_order';
+		$sql_ary['WHERE'] .= (int) $currency_id ? 'c.currency_id = ' . (int) $currency_id : '';
+
+		// Use WHERE clause when $only_enabled is true
+		if ($only_enabled)
+		{
+			$sql_ary['WHERE'] .= !empty($sql_ary['WHERE']) ? ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
+		}
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 
 		while ($row = $this->db->sql_fetchrow($result))
@@ -179,5 +190,38 @@ class currency implements currency_interface
 			} while ($row = $this->db->sql_fetchrow($result));
 		}
 		$this->db->sql_freeresult($result);
+	}
+
+	/**
+	 * Checks if the currency is the last enabled.
+	 *
+	 * @param string $action
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function last_currency_enabled($action = '')
+	{
+		return $this->count_currency_enable($action) <= 1;
+	}
+
+	/**
+	 * Count the number of available currencies
+	 *
+	 * @param string $action
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function count_currency_enable($action = '')
+	{
+		// Count the number of available currencies
+		$sql = 'SELECT COUNT(currency_id) AS cnt_currency
+				FROM ' . $this->ppde_currency_table;
+		$sql .= ($action == 'disable') ? ' WHERE currency_enable = 1' : '';
+
+		$this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('cnt_currency');
 	}
 }

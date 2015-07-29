@@ -57,10 +57,12 @@ interface donation_pages_interface extends main_interface
 	/**
 	 * Get template vars
 	 *
+	 * @param bool $acp
+	 *
 	 * @return array $this->dp_vars
 	 * @access public
 	 */
-	public function get_vars();
+	public function get_vars($acp = false);
 
 	/**
 	 * Set Lang identifier

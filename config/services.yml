@@ -2,6 +2,32 @@ imports:
     - { resource: tables.yml }
 
 services:
+    skouat.ppde.listener:
+        class: skouat\ppde\event\listener
+        arguments:
+            - @config
+            - @controller.helper
+            - @skouat.ppde.controller
+            - @template
+            - @user
+            - %core.php_ext%
+        tags:
+            - { name: event.listener }
+
+    skouat.ppde.controller:
+        class: skouat\ppde\controller\main_controller
+        arguments:
+            - @config
+            - @service_container
+            - @controller.helper
+            - @skouat.ppde.operator.donation_pages
+            - @skouat.ppde.operator.currency
+            - @request
+            - @template
+            - @user
+            - %core.root_path%
+            - %core.php_ext%
+
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:

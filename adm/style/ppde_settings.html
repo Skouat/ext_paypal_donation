@@ -5,108 +5,123 @@
 <p>{L_PPDE_SETTINGS_EXPLAIN}</p>
 
 <!-- IF S_ERROR -->
-	<div class="errorbox">
-		<h3>{L_WARNING}</h3>
-		<p>{ERROR_MSG}</p>
-	</div>
+<div class="errorbox">
+	<h3>{L_WARNING}</h3>
+
+	<p>{ERROR_MSG}</p>
+</div>
 <!-- ENDIF -->
 
 <form id="ppde_settings" method="post" action="{U_ACTION}">
 
-<fieldset>
-	<legend>{L_PPDE_LEGEND_GENERAL_SETTINGS}</legend>
-	<dl>
-		<dt><label for="ppde_enable">{L_PPDE_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_ENABLE_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_enable" name="ppde_enable" value="1"<!-- IF S_PPDE_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_enable" value="0"<!-- IF not S_PPDE_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_account_id">{L_PPDE_ACCOUNT_ID}{L_COLON}</label><br /><span>{L_PPDE_ACCOUNT_ID_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_account_id" name="ppde_account_id" size="40" maxlength="255" value="{PPDE_ACCOUNT_ID}" /></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_default_currency">{L_PPDE_DEFAULT_CURRENCY}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_CURRENCY_EXPLAIN}</span></dt>
-		<dd><select name="ppde_default_currency" id="ppde_default_currency">
+	<fieldset>
+		<legend>{L_PPDE_LEGEND_GENERAL_SETTINGS}</legend>
+		<dl>
+			<dt><label for="ppde_enable">{L_PPDE_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_enable" name="ppde_enable" value="1"<!-- IF S_PPDE_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_enable" value="0"<!-- IF not S_PPDE_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_header_link">{L_PPDE_HEADER_LINK}{L_COLON}</label></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_header_link" name="ppde_header_link" value="1"<!-- IF S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_header_link" value="0"<!-- IF not S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_account_id">{L_PPDE_ACCOUNT_ID}{L_COLON}</label><br /><span>{L_PPDE_ACCOUNT_ID_EXPLAIN}</span></dt>
+			<dd><input type="text" class="text" id="ppde_account_id" name="ppde_account_id" size="40" maxlength="255" value="{PPDE_ACCOUNT_ID}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_default_currency">{L_PPDE_DEFAULT_CURRENCY}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_CURRENCY_EXPLAIN}</span></dt>
+			<dd><select name="ppde_default_currency" id="ppde_default_currency">
 				<!-- BEGIN options -->
-				<option value="{options.CURRENCY_ID}"<!-- IF options.S_CURRENCY_DEFAULT --> selected="selected"<!-- ENDIF -->>{options.CURRENCY_NAME}</option>
+				<option value="{options.CURRENCY_ID}"<!-- IF options.S_CURRENCY_DEFAULT --> selected="selected"<!-- ENDIF -->>{options.CURRENCY_SYMBOL} {options.CURRENCY_ISO_CODE} &bull; {options.CURRENCY_NAME}</option>
 				<!-- END options -->
 			</select>
-		</dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_default_value">{L_PPDE_DEFAULT_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_VALUE_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_default_value" name="ppde_default_value" size="10" maxlength="50" value="{PPDE_DEFAULT_VALUE}" /></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_dropbox_enable">{L_PPDE_DROPBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_DROPBOX_ENABLE_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_dropbox_enable" name="ppde_dropbox_enable" value="1"<!-- IF S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_dropbox_enable" value="0"<!-- IF not S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_dropbox_value">{L_PPDE_DROPBOX_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DROPBOX_VALUE_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_dropbox_value" name="ppde_dropbox_value" size="40" maxlength="50" value="{PPDE_DROPBOX_VALUE}" /></dd>
-	</dl>
-</fieldset>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_default_value">{L_PPDE_DEFAULT_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DEFAULT_VALUE_EXPLAIN}</span></dt>
+			<dd><input type="text" class="text" id="ppde_default_value" name="ppde_default_value" size="10" maxlength="50" value="{PPDE_DEFAULT_VALUE}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_dropbox_enable">{L_PPDE_DROPBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_DROPBOX_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_dropbox_enable" name="ppde_dropbox_enable" value="1"<!-- IF S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_dropbox_enable" value="0"<!-- IF not S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_dropbox_value">{L_PPDE_DROPBOX_VALUE}{L_COLON}</label><br /><span>{L_PPDE_DROPBOX_VALUE_EXPLAIN}</span></dt>
+			<dd><input type="text" class="text" id="ppde_dropbox_value" name="ppde_dropbox_value" size="40" maxlength="50" value="{PPDE_DROPBOX_VALUE}" /></dd>
+		</dl>
+	</fieldset>
 
-<fieldset>
-	<legend>{L_PPDE_LEGEND_SANDBOX_SETTINGS}</legend>
-	<dl>
-		<dt><label for="ppde_sandbox_enable">{L_PPDE_SANDBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ENABLE_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_sandbox_enable" name="ppde_sandbox_enable" value="1"<!-- IF S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_sandbox_enable" value="0"<!-- IF not S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_sandbox_founder_enable">{L_PPDE_SANDBOX_FOUNDER_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"<!-- IF S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"<!-- IF not S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_sandbox_address">{L_PPDE_SANDBOX_ADDRESS}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ADDRESS_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="255" value="{PPDE_SANDBOX_ADDRESS}" /></dd>
-	</dl>
-</fieldset>
+	<fieldset>
+		<legend>{L_PPDE_LEGEND_SANDBOX_SETTINGS}</legend>
+		<dl>
+			<dt><label for="ppde_sandbox_enable">{L_PPDE_SANDBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_sandbox_enable" name="ppde_sandbox_enable" value="1"<!-- IF S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_sandbox_enable" value="0"<!-- IF not S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_sandbox_founder_enable">{L_PPDE_SANDBOX_FOUNDER_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"<!-- IF S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"<!-- IF not S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_sandbox_address">{L_PPDE_SANDBOX_ADDRESS}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ADDRESS_EXPLAIN}</span></dt>
+			<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="255" value="{PPDE_SANDBOX_ADDRESS}" /></dd>
+		</dl>
+	</fieldset>
 
-<fieldset>
-	<legend>{L_PPDE_LEGEND_STATS_SETTINGS}</legend>
-	<dl>
-		<dt><label for="ppde_stats_index_enable">{L_PPDE_STATS_INDEX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_STATS_INDEX_ENABLE_EXPLAIN}</span></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"<!-- IF S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"<!-- IF not S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_raised_enable">{L_PPDE_RAISED_ENABLE}{L_COLON}</label></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_raised_enable" name="ppde_raised_enable" value="1"<!-- IF S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_raised_enable" value="0"<!-- IF not S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_raised">{L_PPDE_RAISED}{L_COLON}</label><br /><span>{L_PPDE_RAISED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_raised" name="ppde_raised" size="10" maxlength="50" value="{PPDE_RAISED}" /></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_goal_enable">{L_PPDE_GOAL_ENABLE}{L_COLON}</label></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_goal_enable" name="ppde_goal_enable" value="1"<!-- IF S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_goal_enable" value="0"<!-- IF not S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_goal">{L_PPDE_GOAL}{L_COLON}</label><br /><span>{L_PPDE_GOAL_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_goal" name="ppde_goal" size="10" maxlength="50" value="{PPDE_GOAL}" /></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_used_enable">{L_PPDE_USED_ENABLE}{L_COLON}</label></dt>
-		<dd><label><input type="radio" class="radio" id="ppde_used_enable" name="ppde_used_enable" value="1"<!-- IF S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-			<label><input type="radio" class="radio" name="ppde_used_enable" value="0"<!-- IF not S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
-	</dl>
-	<dl>
-		<dt><label for="ppde_used">{L_PPDE_USED}{L_COLON}</label><br /><span>{L_PPDE_USED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
-		<dd><input type="text" class="text" id="ppde_used" name="ppde_used" size="10" maxlength="50" value="{PPDE_USED}" /></dd>
-	</dl>
-</fieldset>
+	<fieldset>
+		<legend>{L_PPDE_LEGEND_STATS_SETTINGS}</legend>
+		<dl>
+			<dt><label for="ppde_stats_index_enable">{L_PPDE_STATS_INDEX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_STATS_INDEX_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"<!-- IF S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"<!-- IF not S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<fieldset>
+			<legend>{L_PPDE_RAISED}</legend>
+			<dl>
+				<dt><label for="ppde_raised_enable">{L_ENABLE}{L_COLON}</label></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_raised_enable" name="ppde_raised_enable" value="1"<!-- IF S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_raised_enable" value="0"<!-- IF not S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_raised">{L_PPDE_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_RAISED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
+				<dd><input type="text" class="text" id="ppde_raised" name="ppde_raised" size="10" maxlength="50" value="{PPDE_RAISED}" /></dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{L_PPDE_GOAL}</legend>
+			<dl>
+				<dt><label for="ppde_goal_enable">{L_ENABLE}{L_COLON}</label></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_goal_enable" name="ppde_goal_enable" value="1"<!-- IF S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_goal_enable" value="0"<!-- IF not S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_goal">{L_PPDE_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_GOAL_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
+				<dd><input type="text" class="text" id="ppde_goal" name="ppde_goal" size="10" maxlength="50" value="{PPDE_GOAL}" /></dd>
+			</dl>
+		</fieldset>
+		<fieldset>
+			<legend>{L_PPDE_USED}</legend>
+			<dl>
+				<dt><label for="ppde_used_enable">{L_ENABLE}{L_COLON}</label></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_used_enable" name="ppde_used_enable" value="1"<!-- IF S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_used_enable" value="0"<!-- IF not S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_used">{L_PPDE_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_USED_EXPLAIN}<br />{L_PPDE_DECIMAL_EXPLAIN}</span></dt>
+				<dd><input type="text" class="text" id="ppde_used" name="ppde_used" size="10" maxlength="50" value="{PPDE_USED}" /></dd>
+			</dl>
+		</fieldset>
+	</fieldset>
 
-<fieldset class="submit-buttons">
-	<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-	<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
-	{S_FORM_TOKEN}
-</fieldset>
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		{S_FORM_TOKEN}
+	</fieldset>
 </form>
 
 <!-- INCLUDE overall_footer.html -->

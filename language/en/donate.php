@@ -36,42 +36,34 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	// Notice
-	'DONATION_DISABLED'        => 'Sorry, the Donation page is currently unavailable.',
-	'DONATION_NOT_INSTALLED'   => 'PayPal Donation MOD database entries are missing.<br />Please run the %sinstaller%s to make the database changes for the MOD.',
-	'DONATION_INSTALL_MISSING' => 'The installation file seems to be missing. Please check your installation !',
-	'DONATION_ADDRESS_MISSING' => 'Sorry, PayPal Donation is enabled but some settings are missing. Please notify the board founder.',
-	'SANDBOX_ADDRESS_MISSING'  => 'Sorry, PayPal Sandbox is enabled but some settings are missing. Please notify the board founder.',
+	// Statistics
+	// Note for translators----->    %1$d = donation raised; %2$s = currency
+	'DONATE_RECEIVED'             => 'We received <strong>%1$d</strong> %2$s in donations.',
+	'DONATE_NOT_RECEIVED'         => 'We haven’t received any donations.',
 
-	// Image alternative text
-	'IMG_DONATE'               => 'donate',
-	'IMG_LOADER'               => 'loading',
+	// Note for translators----->    %1$d = donation goal; %2$s = currency
+	'DONATE_GOAL_RAISE'           => 'Our goal is to raise <strong>%1$d</strong> %2$s.',
+	'DONATE_GOAL_REACHED'         => 'Our goal donation was reached.',
+	'DONATE_NO_GOAL'              => 'We haven’t defined a donation goal.',
 
-	// Default Currency
-	'CURRENCY_DEFAULT'         => 'USD', // Note : If you remove from ACP ALL currencies, this value will be defined as the default currency.
-
-	// Stats
-	//--------------------------->	%1$d = donation raised; %2$s = currency
-	'DONATE_RECEIVED'          => 'We received <strong>%1$d</strong> %2$s in donations.',
-	'DONATE_NOT_RECEIVED'      => 'We haven’t received any donations.',
-
-	//--------------------------->	%1$d = donation goal; %2$s = currency
-	'DONATE_GOAL_RAISE'        => 'Our goal is to raise <strong>%1$d</strong> %2$s.',
-	'DONATE_GOAL_REACHED'      => 'Our goal donation was reached.',
-	'DONATE_NO_GOAL'           => 'We haven’t defined a donation goal.',
-
-	//--------------------------->	%1$d = donation used; %2$s = currency; %3$d = donation raised;
-	'DONATE_USED'              => 'We used <strong>%1$d</strong> %2$s of your donations on <strong>%3$d</strong> %2$s already received.',
-	'DONATE_USED_EXCEEDED'     => 'We used <strong>%1$d</strong> %2$s. All your donations have been used.',
-	'DONATE_NOT_USED'          => 'We haven’t used any donations.',
+	// Note for translators----->    %1$d = donation used; %2$s = currency; %3$d = donation raised;
+	'DONATE_USED'                 => 'We used <strong>%1$d</strong> %2$s of your donations on <strong>%3$d</strong> %2$s already received.',
+	'DONATE_USED_EXCEEDED'        => 'We used <strong>%1$d</strong> %2$s. All your donations have been used.',
+	'DONATE_NOT_USED'             => 'We haven’t used any donations.',
 
 	// Pages
-	'DONATION_TITLE'           => 'Make a Donation',
-	'DONATION_TITLE_HEAD'      => 'Make a Donation to',
-	'DONATION_CANCEL_TITLE'    => 'Donation Canceled',
-	'DONATION_SUCCESS_TITLE'   => 'Donation Successful',
-	'DONATION_CONTACT_PAYPAL'  => 'Connecting to PayPal - Please Wait…',
-	'SANDBOX_TITLE'            => 'Test PayPal Donation with PayPal Sandbox',
+	'PPDE_DONATION_TITLE'         => 'Make a Donation',
+	'PPDE_DONATION_TITLE_HEAD'    => 'Make a Donation to',
+	'PPDE_CANCEL_TITLE'           => 'Donation Canceled',
+	'PPDE_SUCCESS_TITLE'          => 'Donation Successful',
+	'PPDE_CONTACT_PAYPAL'         => 'Connecting to PayPal - Please Wait…',
 
-	'DONATION_INDEX'           => 'Donations',
+	// Header
+	'PPDE_HEADER_LINK_TITLE'      => 'Donations',
+
+	// Index page
+	'PPDE_INDEX_STATISTICS_TITLE' => 'Donation statistics',
+
+	// Viewonline
+	'PPDE_VIEWONLINE'             => 'Viewing Donation page',
 ));

@@ -20,12 +20,13 @@ interface donation_pages_interface
 	/**
 	 * Get data from donation pages table
 	 *
-	 * @param int $lang_id
+	 * @param int    $lang_id
+	 * @param string $mode
 	 *
 	 * @return array Array of page data entities
 	 * @access public
 	 */
-	public function get_pages_data($lang_id = 0);
+	public function get_pages_data($lang_id = 0, $mode = 'all_pages');
 
 	/**
 	 * Get list language packs

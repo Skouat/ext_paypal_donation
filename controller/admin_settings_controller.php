@@ -92,12 +92,13 @@ class admin_settings_controller implements admin_settings_interface
 
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'string', ''),
-			'PPDE_DEFAULT_CURRENCY'         => $this->build_currency_select_menu($this->config['ppde_default_currency']),
+			'PPDE_DEFAULT_CURRENCY'         => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
 			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 
 			'S_PPDE_DROPBOX_ENABLE'         => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
+			'S_PPDE_HEADER_LINK'            => $this->check_config($this->config['ppde_header_link']),
 
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
@@ -127,6 +128,7 @@ class admin_settings_controller implements admin_settings_interface
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
+		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 		$this->config->set('ppde_account_id', $this->request->variable('ppde_account_id', ''));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
@@ -192,33 +194,6 @@ class admin_settings_controller implements admin_settings_interface
 		settype($default, $type);
 
 		return $config ? $config : $default;
-	}
-
-	/**
-	 * Build pull down menu options of available currency
-	 *
-	 * @param int $config_value Currency identifier; default: 0
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function build_currency_select_menu($config_value = 0)
-	{
-		// Grab the list of currency data
-		$currency_items = $this->ppde_operator_currency->get_currency_data();
-
-		// Process each rule menu item for pull-down
-		foreach ($currency_items as $currency_item)
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', array(
-				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
-				'CURRENCY_NAME'      => $currency_item['currency_name'],
-
-				'S_CURRENCY_DEFAULT' => $this->check_config(($currency_item['currency_id'] == $config_value)),
-			));
-		}
-		unset ($currency_items, $currency_item);
 	}
 
 	/**

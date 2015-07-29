@@ -2,7 +2,11 @@
 
 This extension add a PayPal Donation page on your site.
 
-[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.png)](https://travis-ci.org/Skouat/ext_paypal_donation)
+Master branch  
+[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.svg?branch=master)](https://travis-ci.org/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=master)
+
+Develop branch  
+[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.svg?branch=develop)](https://travis-ci.org/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop)
 
 ## Features
 * PayPal IPN

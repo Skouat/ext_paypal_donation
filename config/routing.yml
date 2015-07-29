@@ -1,0 +1,3 @@
+skouat_ppde_main_controller:
+    path: /donate
+    defaults: { _controller: skouat.ppde.controller:handle }
