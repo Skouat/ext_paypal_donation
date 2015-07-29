@@ -423,7 +423,7 @@ class main_controller implements main_interface
 			case 'cancel':
 			case 'success':
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->mode_url) . '_TITLE'));
-			default;
+			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
 	}
