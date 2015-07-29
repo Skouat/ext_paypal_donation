@@ -46,6 +46,9 @@ class main_controller implements main_interface
 	/** @var array donation_body */
 	private $donation_content_data;
 
+	/** @var string mode_url */
+	private $mode_url;
+
 	/**
 	 * Constructor
 	 *
@@ -54,6 +57,7 @@ class main_controller implements main_interface
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
+	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
 	 * @param string                                $root_path                    phpBB root path
@@ -62,13 +66,14 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->helper = $helper;
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->ppde_operator_currency = $ppde_operator_currency;
+		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		$this->root_path = $root_path;
@@ -78,6 +83,7 @@ class main_controller implements main_interface
 	public function handle()
 	{
 		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		$this->get_return_url_mode($this->request->variable('mode', 'body'));
 
 		// When this extension is disabled, redirect users back to the forum index
 		if (empty($this->config['ppde_enable']))
@@ -89,7 +95,7 @@ class main_controller implements main_interface
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
 
 		// Prepare message for display
-		if ($this->get_donation_content_data())
+		if ($this->get_donation_content_data($this->mode_url))
 		{
 			$entity->get_vars();
 			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
@@ -130,7 +136,23 @@ class main_controller implements main_interface
 		));
 
 		// Send all data to the template file
-		return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
+		return $this->send_data_to_template();
+	}
+
+	/**
+	 * @param $mode
+	 */
+	private function get_return_url_mode($mode)
+	{
+		switch ($mode)
+		{
+			case 'cancel':
+			case 'success':
+				$this->mode_url = $mode;
+			default:
+				$this->mode_url = 'body';
+		}
+
 	}
 
 	/**
@@ -149,11 +171,14 @@ class main_controller implements main_interface
 	/**
 	 * Get content of current donation pages
 	 *
+	 * @param string $mode
+	 *
+	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data()
+	private function get_donation_content_data($mode)
 	{
-		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id());
+		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id(), $mode);
 	}
 
 	/**
@@ -378,5 +403,25 @@ class main_controller implements main_interface
 	private function is_sandbox()
 	{
 		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+	}
+
+	/**
+	 * Send data to the template file
+	 *
+	 * @param $mode
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @access private
+	 */
+	private function send_data_to_template()
+	{
+		switch ($this->mode_url)
+		{
+			case 'cancel':
+			case 'success':
+				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->mode_url) . '_TITLE'));
+			default;
+				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
+		}
 	}
 }

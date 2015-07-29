@@ -22,6 +22,7 @@ services:
             - @controller.helper
             - @skouat.ppde.operator.donation_pages
             - @skouat.ppde.operator.currency
+            - @request
             - @template
             - @user
             - %core.root_path%
