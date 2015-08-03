@@ -64,7 +64,7 @@ $lang = array_merge($lang, array(
 	'PPDE_STATS'              => 'Statistiques des dons',
 	'PPDE_VERSION'            => 'Version de <strong>%s</strong>',
 
-	'STAT_RESET_DATE'         => 'Réinitialiser la date d’installation du MOD',
+	'STAT_RESET_DATE'         => 'Réinitialiser la date d’installation de l’extension',
 	'STAT_RESET_DATE_EXPLAIN' => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
 	'STAT_RESET_DATE_CONFIRM' => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
 ));
@@ -213,4 +213,5 @@ $lang = array_merge($lang, array(
 	'PPDE_MUST_SELECT_LANG'              => 'Aucune langue n’a été sélectionnée.',
 	'PPDE_MUST_SELECT_PAGE'              => 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_PAGE_EXISTS'                   => 'La page de dons sélectionnée existe déjà.',
+	'PPDE_SETTINGS_MISSING'              => 'Veuillez vérifier les paramètres « ID du compte PayPal » ou « Adresse PayPal Sandbox ».',
 ));

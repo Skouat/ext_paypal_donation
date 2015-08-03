@@ -64,7 +64,7 @@ $lang = array_merge($lang, array(
 	'PPDE_STATS'              => 'Donation statistics',
 	'PPDE_VERSION'            => '<strong>%s</strong> version',
 
-	'STAT_RESET_DATE'         => 'Reset MOD Installation date',
+	'STAT_RESET_DATE'         => 'Reset Extension Installation date',
 	'STAT_RESET_DATE_EXPLAIN' => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
 	'STAT_RESET_DATE_CONFIRM' => 'Are you sure you wish to reset the installation date of this extension?',
 ));
@@ -213,4 +213,5 @@ $lang = array_merge($lang, array(
 	'PPDE_MUST_SELECT_LANG'              => 'No language selected.',
 	'PPDE_MUST_SELECT_PAGE'              => 'The selected donation page does not exist.',
 	'PPDE_PAGE_EXISTS'                   => 'This donation page already exists.',
+	'PPDE_SETTINGS_MISSING'              => 'Please check “Account ID” or “Sandbox address”.',
 ));
