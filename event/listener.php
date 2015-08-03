@@ -117,7 +117,7 @@ class listener implements EventSubscriberInterface
 	public function add_page_header_link($event)
 	{
 		$this->template->assign_vars(array(
-			'S_PPDE_LINK_ENABLED' => ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
+			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
 			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_main_controller'),
 		));
 	}

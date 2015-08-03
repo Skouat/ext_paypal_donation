@@ -30,6 +30,13 @@ interface main_interface
 	public function build_currency_select_menu($config_value = 0);
 
 	/**
+	 * Get auth acl for 'u_ppde_use'
+	 *
+	 * @return bool
+	 */
+	public function can_use_ppde();
+
+	/**
 	 * Generate statistics percent for display
 	 *
 	 * @return null

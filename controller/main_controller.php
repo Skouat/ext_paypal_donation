@@ -14,6 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller implements main_interface
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -56,6 +59,7 @@ class main_controller implements main_interface
 	/**
 	 * Constructor
 	 *
+	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
@@ -70,8 +74,9 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->helper = $helper;
@@ -86,14 +91,19 @@ class main_controller implements main_interface
 
 	public function handle()
 	{
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
-		$this->get_return_url_mode($this->request->variable('mode', 'body'));
-
 		// When this extension is disabled, redirect users back to the forum index
+		// Else if user is not allowed to use it, disallow access to the extension main page
 		if (empty($this->config['ppde_enable']))
 		{
 			redirect(append_sid("{$this->root_path}index.{$this->php_ext}"));
 		}
+		else if (!$this->can_use_ppde())
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		$this->get_return_url_mode($this->request->variable('mode', 'body'));
 
 		// Get data from the database
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
@@ -133,6 +143,14 @@ class main_controller implements main_interface
 
 		// Send all data to the template file
 		return $this->send_data_to_template();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function can_use_ppde()
+	{
+		return $this->auth->acl_get('u_ppde_use');
 	}
 
 	/**
@@ -422,8 +440,6 @@ class main_controller implements main_interface
 
 	/**
 	 * Send data to the template file
-	 *
-	 * @param $mode
 	 *
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 * @access private
