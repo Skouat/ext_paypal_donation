@@ -102,15 +102,7 @@ class listener implements EventSubscriberInterface
 			));
 
 			// Generate statistics percent for display
-			if ($this->ppde_controller_main->goal_stats_percent_conditions())
-			{
-				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
-			}
-
-			if ($this->ppde_controller_main->used_stats_percent_conditions())
-			{
-				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
-			}
+			$this->ppde_controller_main->generate_stats_percent();
 		}
 	}
 

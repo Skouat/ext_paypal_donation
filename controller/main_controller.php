@@ -111,15 +111,7 @@ class main_controller implements main_interface
 		}
 
 		// Generate statistics percent for display
-		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
-		{
-			$this->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
-		}
-
-		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
-		{
-			$this->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
-		}
+		$this->generate_stats_percent();
 
 		$this->template->assign_vars(array(
 			'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
@@ -189,18 +181,36 @@ class main_controller implements main_interface
 	/**
 	 * Generate statistics percent for display
 	 *
-	 * @param string $type
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 *
+	 * @return null
 	 * @access public
 	 */
-	public function generate_stats_percent($multiplicand, $dividend, $type = '')
+	public function generate_stats_percent()
 	{
-		$percent = ($multiplicand * 100) / $dividend;
+		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+		{
+			$this->assign_vars_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
+		}
 
+		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+		{
+			$this->assign_vars_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
+		}
+	}
+
+	/**
+	 * Assign statistics percent vars to template
+	 *
+	 * @param        $multiplicand
+	 * @param        $dividend
+	 * @param string $type
+	 *
+	 * @return null
+	 * @access public
+	 */
+	private function assign_vars_stats_percent($multiplicand, $dividend, $type = '')
+	{
 		$this->template->assign_vars(array(
-			'PPDE_' . $type => round($percent, 2),
+			'PPDE_' . $type => round(($multiplicand * 100) / $dividend, 2),
 			'S_' . $type    => !empty($type) ? true : false,
 		));
 	}
@@ -428,21 +438,5 @@ class main_controller implements main_interface
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function goal_stats_percent_conditions()
-	{
-		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function used_stats_percent_conditions()
-	{
-		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
 	}
 }

@@ -32,13 +32,10 @@ interface main_interface
 	/**
 	 * Generate statistics percent for display
 	 *
-	 * @param string $type
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 *
+	 * @return null
 	 * @access public
 	 */
-	public function generate_stats_percent($multiplicand, $dividend, $type = '');
+	public function generate_stats_percent();
 
 	/**
 	 * Get default currency data
