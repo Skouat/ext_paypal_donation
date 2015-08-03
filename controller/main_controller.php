@@ -17,6 +17,7 @@ class main_controller implements main_interface
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var ContainerInterface */
 	protected $container;
 
 	/** @var \phpbb\controller\helper */
@@ -427,5 +428,21 @@ class main_controller implements main_interface
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function goal_stats_percent_conditions()
+	{
+		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function used_stats_percent_conditions()
+	{
+		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
 	}
 }
