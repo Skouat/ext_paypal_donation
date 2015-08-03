@@ -129,7 +129,7 @@ class admin_settings_controller implements admin_settings_interface
 		// Set options for Global settings
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
-		$this->config->set('ppde_account_id', $this->request->variable('ppde_account_id', ''));
+		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
@@ -138,7 +138,7 @@ class admin_settings_controller implements admin_settings_interface
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', false));
-		$this->config->set('ppde_sandbox_address', $this->request->variable('ppde_sandbox_address', ''));
+		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
@@ -148,6 +148,38 @@ class admin_settings_controller implements admin_settings_interface
 		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0.0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
+	}
+
+	/**
+	 * Check if settings is required
+	 *
+	 * @param $settings
+	 * @param $depend_on
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function required_settings($settings, $depend_on)
+	{
+		if (empty($settings) && $depend_on == true)
+		{
+			trigger_error($this->user->lang('PPDE_SETTINGS_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Check if a settings depend on another.
+	 *
+	 * @param $config_name
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	protected function depend_on($config_name)
+	{
+		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 
 	/**
