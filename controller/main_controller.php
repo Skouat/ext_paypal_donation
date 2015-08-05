@@ -138,7 +138,7 @@ class main_controller implements main_interface
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->generate_form_action($this->use_sandbox()),
+			'S_PPDE_FORM_ACTION' => $this->generate_form_action(),
 		));
 
 		// Send all data to the template file
