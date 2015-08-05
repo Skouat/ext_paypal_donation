@@ -138,7 +138,7 @@ class main_controller implements main_interface
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->generate_form_action($this->is_sandbox()),
+			'S_PPDE_FORM_ACTION' => $this->generate_form_action($this->use_sandbox()),
 		));
 
 		// Send all data to the template file
@@ -391,14 +391,23 @@ class main_controller implements main_interface
 	/**
 	 * Get PayPal account id
 	 *
-	 * @param bool $is_sandbox
-	 *
 	 * @return string $this Paypal account Identifier
 	 * @access private
 	 */
-	private function get_account_id($is_sandbox = false)
+	private function get_account_id()
 	{
-		return $is_sandbox ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		return $this->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+	}
+
+	/**
+	 * Check if Sandbox is enable
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_sandbox()
+	{
+		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
 	}
 
 	/**
@@ -417,25 +426,12 @@ class main_controller implements main_interface
 	/**
 	 * Generate PayPal form action
 	 *
-	 * @param bool $is_sandbox
-	 *
 	 * @return string
 	 * @access private
 	 */
-	private function generate_form_action($is_sandbox = false)
+	private function generate_form_action()
 	{
-		return $is_sandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
-	}
-
-	/**
-	 * Check if Sandbox is enable
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function is_sandbox()
-	{
-		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+		return $this->use_sandbox() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 	/**

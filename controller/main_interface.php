@@ -83,4 +83,12 @@ interface main_interface
 	 * @access public
 	 */
 	public function get_ppde_used_langkey($currency_symbol);
+
+	/**
+	 * Check if Sandbox is enable
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_sandbox();
 }
