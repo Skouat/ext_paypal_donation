@@ -206,7 +206,7 @@ class admin_settings_controller implements admin_settings_interface
 
 		natsort($merge_items);
 
-		return $this->check_config(implode(',', $merge_items), 'string', '');
+		return $this->check_config(implode(',', array_unique($merge_items)), 'string', '');
 	}
 
 	/**

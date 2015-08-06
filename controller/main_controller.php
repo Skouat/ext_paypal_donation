@@ -315,25 +315,49 @@ class main_controller implements main_interface
 	 */
 	private function build_currency_value_select_menu()
 	{
-		// Retrieve donation value for drop-down list
 		$list_donation_value = '';
 
-		if ($this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'])
+		if ($this->get_dropbox_status())
 		{
 			$donation_ary_value = explode(',', $this->config['ppde_dropbox_value']);
 
 			foreach ($donation_ary_value as $value)
 			{
-				$int_value = (int) $value;
-				if (!empty($int_value) && ($int_value == $value))
-				{
-					$list_donation_value .= '<option value="' . $int_value . '">' . $int_value . '</option>';
-				}
+				$int_value = $this->settype_dropbox_int_value($value);
+				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '">' . $int_value . '</option>' : '';
 			}
 			unset($value);
 		}
 
 		return $list_donation_value;
+	}
+
+	/**
+	 * Get dropbox config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function get_dropbox_status()
+	{
+		return $this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'];
+	}
+
+	/**
+	 * Force dropbox value to integer
+	 *
+	 * @param int $value
+	 *
+	 * @return int
+	 */
+	private function settype_dropbox_int_value($value = 0)
+	{
+		if (settype($value, 'integer') && $value != 0)
+		{
+			return $value;
+		}
+
+		return 0;
 	}
 
 	/**
