@@ -156,6 +156,38 @@ class admin_currency_controller implements admin_currency_interface
 		unset($item_fields, $entity_function, $currency_data);
 
 		// If the form has been submitted or previewed
+		$errors = $this->check_submit($entity, $submit);
+
+		// Insert or update currency
+		$this->submit_data($entity, $submit, $errors);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_ERROR'           => (sizeof($errors)) ? true : false,
+			'ERROR_MSG'         => (sizeof($errors)) ? implode('<br />', $errors) : '',
+
+			'CURRENCY_NAME'     => $entity->get_name(),
+			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
+			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
+			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
+
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
+		));
+	}
+
+	/**
+	 * Check some settings before submitting data
+	 *
+	 * @param object $entity The currency entity object
+	 * @param bool   $submit
+	 *
+	 * @return array $errors
+	 * @access protected
+	 */
+	protected function check_submit($entity, $submit = false)
+	{
+		$errors = array();
+
 		if ($submit)
 		{
 			// Test if the form is valid
@@ -183,7 +215,21 @@ class admin_currency_controller implements admin_currency_interface
 			}
 		}
 
-		// Insert or update currency
+		return $errors;
+	}
+
+	/**
+	 * Submit data to the database
+	 *
+	 * @param object $entity The currency entity object
+	 * @param bool   $submit
+	 * @param array  $errors
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function submit_data($entity, $submit = false, $errors = array())
+	{
 		if ($submit && empty($errors))
 		{
 			if ($entity->currency_exists() && $this->request->variable('action', '') === 'add')
@@ -212,19 +258,6 @@ class admin_currency_controller implements admin_currency_interface
 				trigger_error($this->user->lang('PPDE_DC_ADDED') . adm_back_link($this->u_action));
 			}
 		}
-
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_ERROR'           => (sizeof($errors)) ? true : false,
-			'ERROR_MSG'         => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
-			'CURRENCY_NAME'     => $entity->get_name(),
-			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
-			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
-			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
-
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
-		));
 	}
 
 	/**
