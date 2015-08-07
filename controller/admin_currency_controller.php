@@ -142,8 +142,16 @@ class admin_currency_controller implements admin_currency_interface
 		// Set the currency's data in the entity
 		foreach ($item_fields as $entity_function => $currency_data)
 		{
-			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array(array($entity, 'set_' . $entity_function), array($currency_data));
+			try
+			{
+				// Calling the set_$entity_function on the entity and passing it $currency_data
+				call_user_func_array(array($entity, 'set_' . $entity_function), array($currency_data));
+			}
+			catch (\skouat\ppde\exception\base $e)
+			{
+				// Catch exceptions and add them to errors array
+				$errors[] = $e->get_message($this->user);
+			}
 		}
 		unset($item_fields, $entity_function, $currency_data);
 

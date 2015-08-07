@@ -71,6 +71,7 @@ class main implements main_interface
 	 * @param  array $data Data array, typically from the database
 	 *
 	 * @return main_interface $this->data object
+	 * @throws \skouat\ppde\exception\invalid_argument
 	 * @access public
 	 */
 	public function import($data)
@@ -84,7 +85,7 @@ class main implements main_interface
 			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field['name']]))
 			{
-				$this->display_error_message('PPDE_FIELD_MISSING', $field['name']);
+				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
 			}
 
 			// settype passes values by reference

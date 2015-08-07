@@ -128,11 +128,24 @@ class currency extends main implements currency_interface
 	 * Set Currency order number
 	 *
 	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @throws \skouat\ppde\exception\out_of_bounds
 	 * @access private
 	 */
 	private function set_order()
 	{
-		$this->data['currency_order'] = (int) $this->get_max_order() + 1;
+		$order = (int) $this->get_max_order() + 1;
+
+		/*
+		* If the data is out of range we'll throw an exception. We use 16777215 as a
+		* maximum because it matches the MySQL unsigned mediumint maximum value which
+		* is the lowest amongst the DBMS supported by phpBB.
+		*/
+		if ($order < 0 || $order > 16777215)
+		{
+			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
+		}
+
+		$this->data['currency_order'] = $order;
 
 		return $this;
 	}

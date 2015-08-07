@@ -207,7 +207,6 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Saisissez un code ISO.',
 	'PPDE_DC_EMPTY_SYMBOL'               => 'Saisissez un symbole.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'Vous devez désactiver la devise avant de pouvoir la supprimer.',
-	'PPDE_FIELD_MISSING'                 => 'Le champ « %s » est manquant.',
 	'PPDE_NO_CURRENCY'                   => 'Aucune devise n’a été trouvée.',
 	'PPDE_NO_DONATION_PAGES'             => 'Aucune page de dons n’a été trouvée.',
 	'PPDE_MUST_SELECT_LANG'              => 'Aucune langue n’a été sélectionnée.',
