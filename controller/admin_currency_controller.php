@@ -14,18 +14,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class admin_currency_controller implements admin_currency_interface
 {
-	protected $u_action;
-
 	protected $container;
+	protected $log;
 	protected $ppde_operator_currency;
 	protected $request;
 	protected $template;
 	protected $user;
 
+	protected $u_action;
+	protected $submit;
+
 	/**
 	 * Constructor
 	 *
 	 * @param ContainerInterface              $container              Service container interface
+	 * @param \phpbb\log\log                  $log                    The phpBB log system
 	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Operator object
 	 * @param \phpbb\request\request          $request                Request object
 	 * @param \phpbb\template\template        $template               Template object
@@ -33,9 +36,10 @@ class admin_currency_controller implements admin_currency_interface
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->container = $container;
+		$this->log = $log;
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->request = $request;
 		$this->template = $template;
@@ -99,6 +103,7 @@ class admin_currency_controller implements admin_currency_interface
 			'currency_name'     => $this->request->variable('currency_name', '', true),
 			'currency_iso_code' => $this->request->variable('currency_iso_code', '', true),
 			'currency_symbol'   => $this->request->variable('currency_symbol', '', true),
+			'currency_on_left'  => $this->request->variable('currency_on_left', true),
 			'currency_enable'   => $this->request->variable('currency_enable', false),
 		);
 
@@ -126,29 +131,70 @@ class admin_currency_controller implements admin_currency_interface
 	protected function add_edit_currency_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
-		$submit = $this->request->is_set_post('submit');
+		$this->submit = $this->request->is_set_post('submit');
 
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
 
 		// Grab the form's data fields
 		$item_fields = array(
-			'name'            => $data['currency_name'],
-			'iso_code'        => $data['currency_iso_code'],
-			'symbol'          => $data['currency_symbol'],
-			'currency_enable' => $data['currency_enable'],
+			'name'              => $data['currency_name'],
+			'iso_code'          => $data['currency_iso_code'],
+			'symbol'            => $data['currency_symbol'],
+			'currency_position' => $data['currency_on_left'],
+			'currency_enable'   => $data['currency_enable'],
 		);
 
 		// Set the currency's data in the entity
 		foreach ($item_fields as $entity_function => $currency_data)
 		{
-			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array(array($entity, 'set_' . $entity_function), array($currency_data));
+			try
+			{
+				// Calling the set_$entity_function on the entity and passing it $currency_data
+				call_user_func_array(array($entity, 'set_' . $entity_function), array($currency_data));
+			}
+			catch (\skouat\ppde\exception\base $e)
+			{
+				// Catch exceptions and add them to errors array
+				$errors[] = $e->get_message($this->user);
+			}
 		}
 		unset($item_fields, $entity_function, $currency_data);
 
-		// If the form has been submitted or previewed
-		if ($submit)
+		// If the form has been submitted
+		$errors = $this->check_submit($entity);
+
+		// Insert or update currency
+		$this->submit_data($entity, $errors);
+
+		// Set output vars for display in the template
+		$this->template->assign_vars(array(
+			'S_ERROR'           => (sizeof($errors)) ? true : false,
+			'ERROR_MSG'         => (sizeof($errors)) ? implode('<br />', $errors) : '',
+
+			'CURRENCY_NAME'     => $entity->get_name(),
+			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
+			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
+			'CURRENCY_POSITION' => $entity->get_currency_position(),
+			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
+
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
+		));
+	}
+
+	/**
+	 * Check some settings before submitting data
+	 *
+	 * @param object $entity The currency entity object
+	 *
+	 * @return array $errors
+	 * @access protected
+	 */
+	protected function check_submit($entity)
+	{
+		$errors = array();
+
+		if ($this->submit)
 		{
 			// Test if the form is valid
 			if (!check_form_key('add_edit_currency'))
@@ -175,12 +221,25 @@ class admin_currency_controller implements admin_currency_interface
 			}
 		}
 
-		// Insert or update currency
-		if ($submit && empty($errors))
+		return $errors;
+	}
+
+	/**
+	 * Submit data to the database
+	 *
+	 * @param object $entity The currency entity object
+	 * @param array  $errors
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function submit_data($entity, array $errors)
+	{
+		if ($this->submit && empty($errors))
 		{
 			if ($entity->currency_exists() && $this->request->variable('action', '') === 'add')
 			{
-				// Show user warning for an already exist page and provide link back to the edit page
+				// Show user warning for an already exist currency and provide link back to the edit page
 				$message = $this->user->lang('PPDE_CURRENCY_EXISTS');
 				$message .= '<br /><br />';
 				$message .= $this->user->lang('PPDE_DC_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;currency_id=' . $entity->get_id() . '">&raquo; ', '</a>');
@@ -191,32 +250,18 @@ class admin_currency_controller implements admin_currency_interface
 			{
 				// Save the edited item entity to the database
 				$entity->save();
-
-				// Show user confirmation of the saved item and provide link back to the previous page
-				trigger_error($this->user->lang('PPDE_DC_UPDATED') . adm_back_link($this->u_action));
+				$log_action = 'UPDATED';
 			}
 			else
 			{
 				// Add a new item entity to the database
 				$this->ppde_operator_currency->add_currency_data($entity);
-
-				// Show user confirmation of the added item and provide link back to the previous page
-				trigger_error($this->user->lang('PPDE_DC_ADDED') . adm_back_link($this->u_action));
+				$log_action = 'ADDED';
 			}
+			// Log and show user confirmation of the saved item and provide link back to the previous page
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DC_' . strtoupper($log_action), time(), array($entity->get_name()));
+			trigger_error($this->user->lang('PPDE_DC_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 		}
-
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_ERROR'           => (sizeof($errors)) ? true : false,
-			'ERROR_MSG'         => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
-			'CURRENCY_NAME'     => $entity->get_name(),
-			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
-			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
-			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
-
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
-		));
 	}
 
 	/**
@@ -243,6 +288,7 @@ class admin_currency_controller implements admin_currency_interface
 			'currency_name'     => $this->request->variable('currency_name', $entity->get_name(), true),
 			'currency_iso_code' => $this->request->variable('currency_iso_code', $entity->get_iso_code(), true),
 			'currency_symbol'   => $this->request->variable('currency_symbol', $entity->get_symbol(), true),
+			'currency_on_left'  => $this->request->variable('currency_on_left', $entity->get_currency_position()),
 			'currency_enable'   => $this->request->variable('currency_enable', $entity->get_currency_enable()),
 		);
 
@@ -269,8 +315,9 @@ class admin_currency_controller implements admin_currency_interface
 	 */
 	public function move_currency($currency_id, $direction)
 	{
-		// Initiate an entity
-		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+		// Initiate an entity and load data
+		$entity = $this->container->get('skouat.ppde.entity.currency');
+		$entity->load($currency_id);
 		$current_order = $entity->get_currency_order();
 
 		if ($current_order == 0 && $direction == 'move_up')
@@ -283,6 +330,12 @@ class admin_currency_controller implements admin_currency_interface
 		$switch_order_id = ($direction == 'move_down') ? $current_order + 1 : $current_order - 1;
 
 		$move_executed = $this->ppde_operator_currency->move($switch_order_id, $current_order, $entity->get_id());
+
+		// Log action if data was moved
+		if ($move_executed)
+		{
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DC_' . strtoupper($direction), time(), array(strtolower($this->user->lang('LOG_CURRENCY')), $entity->get_name()));
+		}
 
 		if ($this->request->is_ajax())
 		{
@@ -317,13 +370,16 @@ class admin_currency_controller implements admin_currency_interface
 		}
 
 		// Load selected currency
-		$entity = $this->container->get('skouat.ppde.entity.currency')->load($currency_id);
+		$entity = $this->container->get('skouat.ppde.entity.currency');
+		$entity->load($currency_id);
 
 		// Set the new status for this currency
 		$entity->set_currency_enable(($action == 'enable') ? 1 : 0);
 
 		// Save data to the database
 		$entity->save();
+		// Log action
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DC_' . strtoupper($action) . 'D', time(), array($entity->get_name()));
 	}
 
 	/**
@@ -336,33 +392,33 @@ class admin_currency_controller implements admin_currency_interface
 	 */
 	public function delete_currency($currency_id)
 	{
-		// Use a confirmation box routine when deleting a currency
-		if (confirm_box(true))
+		// Initiate an entity and load data
+		$entity = $this->container->get('skouat.ppde.entity.currency');
+		$entity->load($currency_id);
+
+		/** @type bool $data_disabled */
+		$data_disabled = $this->ppde_operator_currency->delete_currency_data($currency_id);
+
+		if (!$data_disabled)
 		{
-			// Return an error if it's the currency is enabled
-			if ($this->ppde_operator_currency->get_currency_data($currency_id, true))
-			{
-				trigger_error($this->user->lang('PPDE_DISABLE_BEFORE_DELETION') . adm_back_link($this->u_action), E_USER_WARNING);
-			}
-
-			// Delete the currency on confirmation
-			$this->ppde_operator_currency->delete_currency_data($currency_id);
-
-			// Show user confirmation of the deleted currency and provide link back to the previous page
-			trigger_error($this->user->lang('PPDE_DC_DELETED') . adm_back_link($this->u_action));
+			// Return an error if the currency is enabled
+			trigger_error($this->user->lang('PPDE_DISABLE_BEFORE_DELETION') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
-		else
-		{
-			// Request confirmation from the user to delete the currency
-			confirm_box(false, $this->user->lang('PPDE_DC_CONFIRM_DELETE'), build_hidden_fields(array(
-				'mode'        => 'currency',
-				'action'      => 'delete',
-				'currency_id' => $currency_id,
-			)));
 
-			// Use a redirect to take the user back to the previous page
-			// if the user chose not delete the currency from the confirmation page.
-			redirect($this->u_action);
+		// Log the action
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DC_DELETED', time(), array($entity->get_name()));
+
+		// If AJAX was used, show user a result message
+		if ($this->request->is_ajax())
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'MESSAGE_TITLE' => $this->user->lang['INFORMATION'],
+				'MESSAGE_TEXT'  => $this->user->lang('PPDE_DC_DELETED'),
+				'REFRESH_DATA'  => array(
+					'time' => 3
+				)
+			));
 		}
 	}
 

@@ -102,15 +102,7 @@ class listener implements EventSubscriberInterface
 			));
 
 			// Generate statistics percent for display
-			if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
-			{
-				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
-			}
-
-			if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
-			{
-				$this->ppde_controller_main->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
-			}
+			$this->ppde_controller_main->generate_stats_percent();
 		}
 	}
 
@@ -125,7 +117,7 @@ class listener implements EventSubscriberInterface
 	public function add_page_header_link($event)
 	{
 		$this->template->assign_vars(array(
-			'S_PPDE_LINK_ENABLED' => ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
+			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
 			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_main_controller'),
 		));
 	}

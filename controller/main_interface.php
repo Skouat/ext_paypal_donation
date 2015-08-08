@@ -30,15 +30,19 @@ interface main_interface
 	public function build_currency_select_menu($config_value = 0);
 
 	/**
+	 * Get auth acl for 'u_ppde_use'
+	 *
+	 * @return bool
+	 */
+	public function can_use_ppde();
+
+	/**
 	 * Generate statistics percent for display
 	 *
-	 * @param string $type
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 *
+	 * @return null
 	 * @access public
 	 */
-	public function generate_stats_percent($multiplicand, $dividend, $type = '');
+	public function generate_stats_percent();
 
 	/**
 	 * Get default currency data
@@ -54,29 +58,40 @@ interface main_interface
 	 * Retrieve the language key for donation goal
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_goal_langkey($currency_symbol);
+	public function get_ppde_goal_langkey($currency_symbol, $on_left = true);
 
 	/**
 	 * Retrieve the language key for donation raised
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_raised_langkey($currency_symbol);
+	public function get_ppde_raised_langkey($currency_symbol, $on_left = true);
 
 	/**
 	 * Retrieve the language key for donation used
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_used_langkey($currency_symbol);
+	public function get_ppde_used_langkey($currency_symbol, $on_left = true);
+
+	/**
+	 * Check if Sandbox is enable
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_sandbox();
 }

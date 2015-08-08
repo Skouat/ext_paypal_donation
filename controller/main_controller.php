@@ -14,9 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller implements main_interface
 {
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var ContainerInterface */
 	protected $container;
 
 	/** @var \phpbb\controller\helper */
@@ -55,6 +59,7 @@ class main_controller implements main_interface
 	/**
 	 * Constructor
 	 *
+	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
@@ -69,8 +74,9 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
+		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->helper = $helper;
@@ -85,17 +91,19 @@ class main_controller implements main_interface
 
 	public function handle()
 	{
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
-		$this->get_return_url_mode($this->request->variable('mode', 'body'));
-
 		// When this extension is disabled, redirect users back to the forum index
+		// Else if user is not allowed to use it, disallow access to the extension main page
 		if (empty($this->config['ppde_enable']))
 		{
 			redirect(append_sid("{$this->root_path}index.{$this->php_ext}"));
 		}
+		else if (!$this->can_use_ppde())
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
 
-		// Get data from the database
-		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
+		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		$this->get_return_url_mode($this->request->variable('mode', 'body'));
 
 		// Prepare message for display
 		if ($this->get_donation_content_data($this->mode_url))
@@ -109,37 +117,28 @@ class main_controller implements main_interface
 			));
 		}
 
-		// Generate statistics percent for display
-		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
-		{
-			$this->generate_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
-		}
-
-		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
-		{
-			$this->generate_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
-		}
-
 		$this->template->assign_vars(array(
-			'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
-			'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
-			'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
-
-			'L_PPDE_GOAL'        => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol']),
-			'L_PPDE_RAISED'      => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
-			'L_PPDE_USED'        => $this->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
-
 			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->generate_form_action($this->is_sandbox()),
+			'S_PPDE_FORM_ACTION' => $this->generate_form_action(),
 		));
+
+		$this->display_stats();
 
 		// Send all data to the template file
 		return $this->send_data_to_template();
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function can_use_ppde()
+	{
+		return $this->auth->acl_get('u_ppde_use');
 	}
 
 	/**
@@ -160,19 +159,6 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Get default currency symbol
-	 *
-	 * @param int $id
-	 *
-	 * @return array
-	 * @access public
-	 */
-	public function get_default_currency_data($id = 0)
-	{
-		return $this->ppde_operator_currency->get_currency_data($id, true);
-	}
-
-	/**
 	 * Get content of current donation pages
 	 *
 	 * @param string $mode
@@ -186,99 +172,6 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Generate statistics percent for display
-	 *
-	 * @param string $type
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 *
-	 * @access public
-	 */
-	public function generate_stats_percent($multiplicand, $dividend, $type = '')
-	{
-		$percent = ($multiplicand * 100) / $dividend;
-
-		$this->template->assign_vars(array(
-			'PPDE_' . $type => round($percent, 2),
-			'S_' . $type    => !empty($type) ? true : false,
-		));
-	}
-
-	/**
-	 * Retrieve the language key for donation goal
-	 *
-	 * @param string $currency_symbol Currency symbol
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_ppde_goal_langkey($currency_symbol)
-	{
-		if ((int) $this->config['ppde_goal'] <= 0)
-		{
-			$l_ppde_goal = $this->user->lang['DONATE_NO_GOAL'];
-		}
-		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
-		{
-			$l_ppde_goal = $this->user->lang['DONATE_GOAL_REACHED'];
-		}
-		else
-		{
-			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', (int) $this->config['ppde_goal'], $currency_symbol);
-		}
-
-		return $l_ppde_goal;
-	}
-
-	/**
-	 * Retrieve the language key for donation raised
-	 *
-	 * @param string $currency_symbol Currency symbol
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_ppde_raised_langkey($currency_symbol)
-	{
-		if ((int) $this->config['ppde_raised'] <= 0)
-		{
-			$l_ppde_raised = $this->user->lang['DONATE_NOT_RECEIVED'];
-		}
-		else
-		{
-			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', (int) $this->config['ppde_raised'], $currency_symbol);
-		}
-
-		return $l_ppde_raised;
-	}
-
-	/**
-	 * Retrieve the language key for donation used
-	 *
-	 * @param string $currency_symbol Currency symbol
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_ppde_used_langkey($currency_symbol)
-	{
-		if ((int) $this->config['ppde_used'] <= 0)
-		{
-			$l_ppde_used = $this->user->lang['DONATE_NOT_USED'];
-		}
-		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
-		{
-			$l_ppde_used = $this->user->lang('DONATE_USED', (int) $this->config['ppde_used'], $currency_symbol, (int) $this->config['ppde_raised']);
-		}
-		else
-		{
-			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', (int) $this->config['ppde_used'], $currency_symbol);
-		}
-
-		return $l_ppde_used;
-	}
-
-	/**
 	 * Build pull down menu options of available currency value
 	 *
 	 * @return string List of currency value set in ACP for dropdown menu
@@ -286,25 +179,49 @@ class main_controller implements main_interface
 	 */
 	private function build_currency_value_select_menu()
 	{
-		// Retrieve donation value for drop-down list
 		$list_donation_value = '';
 
-		if ($this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'])
+		if ($this->get_dropbox_status())
 		{
 			$donation_ary_value = explode(',', $this->config['ppde_dropbox_value']);
 
 			foreach ($donation_ary_value as $value)
 			{
-				$int_value = (int) $value;
-				if (!empty($int_value) && ($int_value == $value))
-				{
-					$list_donation_value .= '<option value="' . $int_value . '">' . $int_value . '</option>';
-				}
+				$int_value = $this->settype_dropbox_int_value($value);
+				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '">' . $int_value . '</option>' : '';
 			}
 			unset($value);
 		}
 
 		return $list_donation_value;
+	}
+
+	/**
+	 * Get dropbox config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function get_dropbox_status()
+	{
+		return $this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'];
+	}
+
+	/**
+	 * Force dropbox value to integer
+	 *
+	 * @param int $value
+	 *
+	 * @return int
+	 */
+	private function settype_dropbox_int_value($value = 0)
+	{
+		if (settype($value, 'integer') && $value != 0)
+		{
+			return $value;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -362,14 +279,23 @@ class main_controller implements main_interface
 	/**
 	 * Get PayPal account id
 	 *
-	 * @param bool $is_sandbox
-	 *
 	 * @return string $this Paypal account Identifier
 	 * @access private
 	 */
-	private function get_account_id($is_sandbox = false)
+	private function get_account_id()
 	{
-		return $is_sandbox ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		return $this->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+	}
+
+	/**
+	 * Check if Sandbox is enable
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_sandbox()
+	{
+		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
 	}
 
 	/**
@@ -388,31 +314,185 @@ class main_controller implements main_interface
 	/**
 	 * Generate PayPal form action
 	 *
-	 * @param bool $is_sandbox
-	 *
 	 * @return string
 	 * @access private
 	 */
-	private function generate_form_action($is_sandbox = false)
+	private function generate_form_action()
 	{
-		return $is_sandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+		return $this->use_sandbox() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 	/**
-	 * Check if Sandbox is enable
+	 * Assign statistics vars to the template
 	 *
-	 * @return bool
+	 * @return null
 	 * @access private
 	 */
-	private function is_sandbox()
+	private function display_stats()
 	{
-		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
+		{
+			// Get data from the database
+			$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
+
+			$this->template->assign_vars(array(
+				'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
+				'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
+				'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
+
+				'L_PPDE_GOAL'        => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'L_PPDE_RAISED'      => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'L_PPDE_USED'        => $this->get_ppde_used_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+			));
+
+			// Generate statistics percent for display
+			$this->generate_stats_percent();
+		}
+	}
+
+	/**
+	 * Get default currency symbol
+	 *
+	 * @param int $id
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_default_currency_data($id = 0)
+	{
+		return $this->ppde_operator_currency->get_currency_data($id, true);
+	}
+
+	/**
+	 * Retrieve the language key for donation goal
+	 *
+	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_ppde_goal_langkey($currency_symbol, $on_left = true)
+	{
+		if ((int) $this->config['ppde_goal'] <= 0)
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_NO_GOAL'];
+		}
+		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
+		{
+			$l_ppde_goal = $this->user->lang['DONATE_GOAL_REACHED'];
+		}
+		else
+		{
+			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', $this->get_amount((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+		}
+
+		return $l_ppde_goal;
+	}
+
+	/**
+	 * Put the currency on the left or on the right of the amount
+	 *
+	 * @param int    $value
+	 * @param string $currency
+	 * @param bool   $on_left
+	 *
+	 * @return string
+	 */
+	private function get_amount($value, $currency, $on_left = true)
+	{
+		return $on_left ? $currency . $value : $value . $currency;
+	}
+
+	/**
+	 * Retrieve the language key for donation raised
+	 *
+	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_ppde_raised_langkey($currency_symbol, $on_left = true)
+	{
+		if ((int) $this->config['ppde_raised'] <= 0)
+		{
+			$l_ppde_raised = $this->user->lang['DONATE_NOT_RECEIVED'];
+		}
+		else
+		{
+			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+		}
+
+		return $l_ppde_raised;
+	}
+
+	/**
+	 * Retrieve the language key for donation used
+	 *
+	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_ppde_used_langkey($currency_symbol, $on_left = true)
+	{
+		if ((int) $this->config['ppde_used'] <= 0)
+		{
+			$l_ppde_used = $this->user->lang['DONATE_NOT_USED'];
+		}
+		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
+		{
+			$l_ppde_used = $this->user->lang('DONATE_USED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+		}
+		else
+		{
+			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+		}
+
+		return $l_ppde_used;
+	}
+
+	/**
+	 * Generate statistics percent for display
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function generate_stats_percent()
+	{
+		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+		{
+			$this->assign_vars_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
+		}
+
+		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+		{
+			$this->assign_vars_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
+		}
+	}
+
+	/**
+	 * Assign statistics percent vars to template
+	 *
+	 * @param        $multiplicand
+	 * @param        $dividend
+	 * @param string $type
+	 *
+	 * @return null
+	 * @access public
+	 */
+	private function assign_vars_stats_percent($multiplicand, $dividend, $type = '')
+	{
+		$this->template->assign_vars(array(
+			'PPDE_' . $type => round(($multiplicand * 100) / $dividend, 2),
+			'S_' . $type    => !empty($type) ? true : false,
+		));
 	}
 
 	/**
 	 * Send data to the template file
-	 *
-	 * @param $mode
 	 *
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 * @access private

@@ -28,6 +28,7 @@ class v1_0_0_schema extends \phpbb\db\migration\migration
 						'currency_name'     => array('VCHAR:50', ''),
 						'currency_iso_code' => array('VCHAR:10', ''),
 						'currency_symbol'   => array('VCHAR:10', ''),
+						'currency_on_left'  => array('BOOL', 1),
 						'currency_enable'   => array('BOOL', 1),
 						'currency_order'    => array('UINT', 0),
 					),

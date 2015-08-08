@@ -17,6 +17,7 @@ services:
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
+            - @auth
             - @config
             - @service_container
             - @controller.helper
@@ -32,6 +33,7 @@ services:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
             - @service_container
+            - @log
             - @skouat.ppde.operator.currency
             - @request
             - @template
@@ -41,6 +43,7 @@ services:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
             - @service_container
+            - @log
             - @skouat.ppde.operator.donation_pages
             - @request
             - @template
@@ -96,7 +99,7 @@ services:
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency
         arguments:
-            - @cache
+            - @cache.driver
             - @service_container
             - @dbal.conn
             - %skouat.ppde.tables.ppde_currency%
