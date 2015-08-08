@@ -12,10 +12,6 @@ namespace skouat\ppde\controller;
 
 class admin_overview_controller implements admin_overview_interface
 {
-	protected $u_action;
-	protected $ext_name;
-	protected $ext_meta = array();
-
 	protected $auth;
 	protected $cache;
 	protected $config;
@@ -27,6 +23,10 @@ class admin_overview_controller implements admin_overview_interface
 	protected $phpbb_container;
 	protected $phpbb_root_path;
 	protected $php_ext;
+
+	protected $ext_name;
+	protected $ext_meta = array();
+	protected $u_action;
 
 	/**
 	 * Constructor

@@ -76,9 +76,6 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS'                       => 'General Settings',
 	'PPDE_SETTINGS_EXPLAIN'               => 'Here you can configure the main settings for PayPal Donation.',
 
-	'MODE_CURRENCY'                       => 'currency',
-	'MODE_DONATION_PAGES'                 => 'donation pages',
-
 	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'        => 'General Settings',
 	'PPDE_ENABLE'                         => 'Enable PayPal Donation',
@@ -186,7 +183,18 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	//logs
-	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation: Settings updated.</strong>',
+	'LOG_PPDE_DC_ADDED'         => '<strong>PayPal Donation: New currency added</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'       => '<strong>PayPal Donation: Currency deleted</strong><br />» %s',
+	'LOG_PPDE_DC_DISABLED'      => '<strong>PayPal Donation: Currency disabled</strong><br />» %s',
+	'LOG_PPDE_DC_ENABLED'       => '<strong>PayPal Donation: Currency enabled</strong><br />» %s',
+	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation: Move down the currency</strong> “%s”',
+	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation: Move up the currency</strong> “%s”',
+	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation: Currency edited</strong><br />» %s',
+	'LOG_PPDE_DP_LANG_ADDED'    => '<strong>PayPal Donation: New donation page added</strong><br />» “%1$s” for the language “%2$s”', // eg: » “Donation success” for the language “British English”',
+	'LOG_PPDE_DP_LANG_DELETED'  => '<strong>PayPal Donation: Donation page deleted</strong><br />» “%1$s” for the language “%2$s”',
+	'LOG_PPDE_DP_LANG_UPDATED'  => '<strong>PayPal Donation: Donation page updated</strong><br />» “%1$s” for the language “%2$s”',
+	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation: Settings updated</strong>',
+	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation: Installation date reset</strong>',
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'    => 'Are you sure you want to delete the selected currency?',

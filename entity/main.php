@@ -13,7 +13,7 @@ namespace skouat\ppde\entity;
 /**
  * @property string u_action
  */
-class main implements main_interface
+abstract class main implements main_interface
 {
 	/**
 	 * Suffix for the language keys returned by exceptions

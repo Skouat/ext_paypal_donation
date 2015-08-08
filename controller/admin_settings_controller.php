@@ -14,14 +14,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class admin_settings_controller implements admin_settings_interface
 {
-	protected $u_action;
-
 	protected $config;
 	protected $container;
 	protected $ppde_operator_currency;
 	protected $request;
 	protected $template;
 	protected $user;
+
+	protected $u_action;
 
 	/**
 	 * Constructor

@@ -116,7 +116,13 @@ class currency implements currency_interface
 	 */
 	public function delete_currency_data($currency_id)
 	{
-		// Delete the donation page from the database
+		// Return false if the currency is enabled
+		if ($this->get_currency_data($currency_id, true))
+		{
+			return false;
+		}
+
+		// Delete the currency from the database
 		$sql = 'DELETE FROM ' . $this->ppde_currency_table . '
 			WHERE currency_id = ' . (int) $currency_id;
 		$this->db->sql_query($sql);

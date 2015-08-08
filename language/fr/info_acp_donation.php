@@ -76,9 +76,6 @@ $lang = array_merge($lang, array(
 	'PPDE_SETTINGS'                       => 'Paramètres généraux',
 	'PPDE_SETTINGS_EXPLAIN'               => '',
 
-	'MODE_CURRENCY'                       => 'devise',
-	'MODE_DONATION_PAGES'                 => 'pages de dons',
-
 	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'        => 'Paramètres généraux',
 	'PPDE_ENABLE'                         => 'Activer PayPal Donation',
@@ -186,7 +183,18 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	//logs
-	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour.</strong>',
+	'LOG_PPDE_DC_ADDED'         => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'       => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
+	'LOG_PPDE_DC_DISABLED'      => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
+	'LOG_PPDE_DC_ENABLED'       => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
+	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
+	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
+	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
+	'LOG_PPDE_DP_LANG_ADDED'    => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_LANG_DELETED'  => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_LANG_UPDATED'  => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
+	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour</strong>',
+	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
 
 	// Confirm box
 	'PPDE_DC_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette devise ?',

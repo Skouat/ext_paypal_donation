@@ -33,6 +33,7 @@ services:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
             - @service_container
+            - @log
             - @skouat.ppde.operator.currency
             - @request
             - @template
@@ -42,6 +43,7 @@ services:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
             - @service_container
+            - @log
             - @skouat.ppde.operator.donation_pages
             - @request
             - @template
