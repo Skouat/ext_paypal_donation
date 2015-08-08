@@ -32,7 +32,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	 * Constructor
 	 *
 	 * @param ContainerInterface                    $container                    Service container interface
-	 * @param \phpbb\log\log                        $log                    The phpBB log system
+	 * @param \phpbb\log\log                        $log                          The phpBB log system
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Operator object
 	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
@@ -205,8 +205,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			{
 				call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
 			}
-			catch
-			(\skouat\ppde\exception\base $e)
+			catch (\skouat\ppde\exception\base $e)
 			{
 				// Catch exceptions and add them to errors array
 				$errors[] = $e->get_message($this->user);
@@ -229,9 +228,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 				// Calling the set_$entity_function on the entity and passing it $page_data
 				call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
 			}
-
-			catch
-			(\skouat\ppde\exception\base $e)
+			catch (\skouat\ppde\exception\base $e)
 			{
 				// Catch exceptions and add them to errors array
 				$errors[] = $e->get_message($this->user);
@@ -386,6 +383,22 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
+	 * Get Local lang name
+	 *
+	 * @param array $langs
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function get_lang_local_name($langs)
+	{
+		foreach ($langs as $lang)
+		{
+			$this->lang_local_name = $lang['name'];
+		}
+	}
+
+	/**
 	 * Edit a donation page
 	 *
 	 * @param int $page_id Donation page identifier
@@ -461,22 +474,6 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 					'time' => 3
 				)
 			));
-		}
-	}
-
-	/**
-	 * Get Local lang name
-	 *
-	 * @param array $langs
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function get_lang_local_name($langs)
-	{
-		foreach ($langs as $lang)
-		{
-			$this->lang_local_name = $lang['name'];
 		}
 	}
 
