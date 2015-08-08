@@ -46,21 +46,15 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			//Misc Settings
 			array('config.add', array('ppde_install_date', time())),
 
+			// add new permissions
 			array('permission.add', array('u_ppde_use', true)),
 			array('permission.add', array('a_ppde_manage', true)),
 
-			array('permission.permission_set',
-				array('ROLE_USER_FULL',
-					array('u_ppde_use')
-				)
-			),
+			//assign permissions to roles
+			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_use'))),
+			array('permission.permission_set', array('ROLE_ADMIN_FULL', array('a_ppde_manage'))),
 
-			array('permission.permission_set',
-				array('ROLE_ADMIN_FULL',
-					array('a_ppde_manage')
-				)
-			),
-
+			// add new module
 			array('module.add', array(
 				'acp',
 				'ACP_CAT_DOT_MODS',
@@ -82,10 +76,9 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				)
 			)),
 
+			// Run custom actions
 			array('custom', array(array(&$this, 'add_ppde_donation_pages_data'))),
 			array('custom', array(array(&$this, 'add_ppde_currency_data'))),
-
-			array('config.add', array('ppde_version', '1.0.0-dev')),
 		);
 	}
 
@@ -135,6 +128,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'USD',
 				'currency_symbol'   => '&#36;', // symbol dollar
 				'currency_enable'   => true,
+				'currency_on_left'  => true,
 				'currency_order'    => 1,
 			),
 			array(
@@ -142,6 +136,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'EUR',
 				'currency_symbol'   => '&#8364;', // symbol euro
 				'currency_enable'   => true,
+				'currency_on_left'  => false,
 				'currency_order'    => 2,
 			),
 			array(
@@ -149,6 +144,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'AUD',
 				'currency_symbol'   => '&#36;', // symbol $
 				'currency_enable'   => true,
+				'currency_on_left'  => true,
 				'currency_order'    => 3,
 			),
 			array(
@@ -156,6 +152,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'CAD',
 				'currency_symbol'   => '&#36;', // symbol $
 				'currency_enable'   => true,
+				'currency_on_left'  => true,
 				'currency_order'    => 4,
 			),
 			array(
@@ -163,6 +160,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'HKD',
 				'currency_symbol'   => '&#36;', // symbol $
 				'currency_enable'   => true,
+				'currency_on_left'  => true,
 				'currency_order'    => 5,
 			),
 			array(
@@ -170,6 +168,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'GBP',
 				'currency_symbol'   => '&#163;', // symbol livre sterling
 				'currency_enable'   => true,
+				'currency_on_left'  => true,
 				'currency_order'    => 6,
 			),
 			array(
@@ -177,6 +176,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'currency_iso_code' => 'JPY',
 				'currency_symbol'   => '&#165;', // symbol yen
 				'currency_enable'   => true,
+				'currency_on_left'  => false,
 				'currency_order'    => 7,
 			),
 		);

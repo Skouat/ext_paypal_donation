@@ -103,6 +103,7 @@ class admin_currency_controller implements admin_currency_interface
 			'currency_name'     => $this->request->variable('currency_name', '', true),
 			'currency_iso_code' => $this->request->variable('currency_iso_code', '', true),
 			'currency_symbol'   => $this->request->variable('currency_symbol', '', true),
+			'currency_on_left'  => $this->request->variable('currency_on_left', true),
 			'currency_enable'   => $this->request->variable('currency_enable', false),
 		);
 
@@ -137,10 +138,11 @@ class admin_currency_controller implements admin_currency_interface
 
 		// Grab the form's data fields
 		$item_fields = array(
-			'name'            => $data['currency_name'],
-			'iso_code'        => $data['currency_iso_code'],
-			'symbol'          => $data['currency_symbol'],
-			'currency_enable' => $data['currency_enable'],
+			'name'              => $data['currency_name'],
+			'iso_code'          => $data['currency_iso_code'],
+			'symbol'            => $data['currency_symbol'],
+			'currency_position' => $data['currency_on_left'],
+			'currency_enable'   => $data['currency_enable'],
 		);
 
 		// Set the currency's data in the entity
@@ -173,6 +175,7 @@ class admin_currency_controller implements admin_currency_interface
 			'CURRENCY_NAME'     => $entity->get_name(),
 			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
 			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
+			'CURRENCY_POSITION' => $entity->get_currency_position(),
 			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
 
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="currency_id" value="' . $entity->get_id() . '" />',
@@ -285,6 +288,7 @@ class admin_currency_controller implements admin_currency_interface
 			'currency_name'     => $this->request->variable('currency_name', $entity->get_name(), true),
 			'currency_iso_code' => $this->request->variable('currency_iso_code', $entity->get_iso_code(), true),
 			'currency_symbol'   => $this->request->variable('currency_symbol', $entity->get_symbol(), true),
+			'currency_on_left'  => $this->request->variable('currency_on_left', $entity->get_currency_position()),
 			'currency_enable'   => $this->request->variable('currency_enable', $entity->get_currency_enable()),
 		);
 

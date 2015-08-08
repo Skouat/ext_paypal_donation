@@ -79,6 +79,24 @@ interface currency_interface extends main_interface
 	public function set_currency_enable($enable);
 
 	/**
+	 * Get Currency status
+	 *
+	 * @return boolean
+	 * @access public
+	 */
+	public function get_currency_position();
+
+	/**
+	 * Set Currency status
+	 *
+	 * @param bool $on_left
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function set_currency_position($on_left);
+
+	/**
 	 * Get Currency ISO code name
 	 *
 	 * @return int Lang identifier

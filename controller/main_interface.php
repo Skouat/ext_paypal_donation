@@ -58,31 +58,34 @@ interface main_interface
 	 * Retrieve the language key for donation goal
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_goal_langkey($currency_symbol);
+	public function get_ppde_goal_langkey($currency_symbol, $on_left = true);
 
 	/**
 	 * Retrieve the language key for donation raised
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_raised_langkey($currency_symbol);
+	public function get_ppde_raised_langkey($currency_symbol, $on_left = true);
 
 	/**
 	 * Retrieve the language key for donation used
 	 *
 	 * @param string $currency_symbol Currency symbol
+	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_used_langkey($currency_symbol);
+	public function get_ppde_used_langkey($currency_symbol, $on_left = true);
 
 	/**
 	 * Check if Sandbox is enable

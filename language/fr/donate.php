@@ -56,17 +56,17 @@ $lang = array_merge($lang, array(
 
 	// Statistics
 	// Note for translators----->    %1$d = donation raised; %2$s = currency
-	'DONATE_RECEIVED'             => 'Nous avons reçu <strong>%1$d</strong> %2$s de dons.',
+	'DONATE_RECEIVED'             => 'Nous avons reçu <strong>%s</strong> de dons.',
 	'DONATE_NOT_RECEIVED'         => 'Nous n’avons pas encore reçu de dons.',
 
 	// Note for translators----->    %1$d = donation goal; %2$s = currency
-	'DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%1$d</strong> %2$s.',
+	'DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%s</strong>.',
 	'DONATE_GOAL_REACHED'         => 'L’objectif de don a été atteint.',
 	'DONATE_NO_GOAL'              => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
 
 	// Note for translators----->    %1$d = donation used; %2$s = currency; %3$d = donation raised;
-	'DONATE_USED'                 => 'Les dons ont été utilisé à hauteur de <strong>%1$d</strong> %2$s des <strong>%3$d</strong> %2$s déjà reçus.',
-	'DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%1$d</strong> %2$s. Tous les dons ont été utilisés.',
+	'DONATE_USED'                 => 'Les dons ont été utilisé à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
+	'DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
 	'DONATE_NOT_USED'             => 'Les dons n’ont pas été utilisés.',
 
 	// Viewonline

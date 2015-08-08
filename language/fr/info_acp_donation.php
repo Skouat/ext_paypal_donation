@@ -167,15 +167,19 @@ $lang = array_merge($lang, array(
 	// Currency Management
 	'PPDE_DC_CONFIG'           => 'Gestion des devises',
 	'PPDE_DC_CONFIG_EXPLAIN'   => 'Permet de gérer les devises pour faire un don.',
-	'PPDE_DC_NAME'             => 'Nom de la devise',
-	'PPDE_DC_NAME_EXPLAIN'     => 'Exemple : Euro.',
-	'PPDE_DC_ISO_CODE'         => 'Code ISO 4217',
-	'PPDE_DC_ISO_CODE_EXPLAIN' => 'Code alphabétique de la devise.<br />En savoir plus sur la norme ISO 4217… Consultez la <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
-	'PPDE_DC_SYMBOL'           => 'Symbole de la devise',
-	'PPDE_DC_SYMBOL_EXPLAIN'   => 'Inscire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
+	'PPDE_DC_CREATE_CURRENCY'  => 'Ajouter une devise',
 	'PPDE_DC_ENABLE'           => 'Activer la devise',
 	'PPDE_DC_ENABLE_EXPLAIN'   => 'Si activée, la devise sera disponible dans la liste de sélection.',
-	'PPDE_DC_CREATE_CURRENCY'  => 'Ajouter une devise',
+	'PPDE_DC_ISO_CODE'         => 'Code ISO 4217',
+	'PPDE_DC_ISO_CODE_EXPLAIN' => 'Code alphabétique de la devise.<br />En savoir plus sur la norme ISO 4217… Consultez la <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
+	'PPDE_DC_NAME'             => 'Nom de la devise',
+	'PPDE_DC_NAME_EXPLAIN'     => 'Exemple : Euro.',
+	'PPDE_DC_POSITION'         => 'Position du symbole',
+	'PPDE_DC_POSITION_EXPLAIN' => 'Défini où le symbole de la devise sera positionné par rapport au montant affiché.<br />Exemple : <strong>$20</strong> ou <strong>15€</strong>.',
+	'PPDE_DC_POSITION_LEFT'    => 'À gauche',
+	'PPDE_DC_POSITION_RIGHT'   => 'À droite',
+	'PPDE_DC_SYMBOL'           => 'Symbole de la devise',
+	'PPDE_DC_SYMBOL_EXPLAIN'   => 'Inscire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
 ));
 
 /**

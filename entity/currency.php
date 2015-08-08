@@ -65,6 +65,9 @@ class currency extends main implements currency_interface
 				'item_symbol'   => array(
 					'name' => 'currency_symbol',
 					'type' => 'string'),
+				'item_on_left'   => array(
+					'name' => 'currency_on_left',
+					'type' => 'boolean'),
 				'item_enable'   => array(
 					'name' => 'currency_enable',
 					'type' => 'boolean'),
@@ -267,6 +270,33 @@ class currency extends main implements currency_interface
 	{
 		// Set the item type on our data array
 		$this->data['currency_enable'] = (bool) $enable;
+
+		return $this;
+	}
+
+	/**
+	 * Get Currency status
+	 *
+	 * @return boolean
+	 * @access public
+	 */
+	public function get_currency_position()
+	{
+		return (isset($this->data['currency_on_left'])) ? (bool) $this->data['currency_on_left'] : false;
+	}
+
+	/**
+	 * Set Currency status
+	 *
+	 * @param bool $on_left
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function set_currency_position($on_left)
+	{
+		// Set the item type on our data array
+		$this->data['currency_on_left'] = (bool) $on_left;
 
 		return $this;
 	}
