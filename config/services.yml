@@ -99,7 +99,7 @@ services:
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency
         arguments:
-            - @cache
+            - @cache.driver
             - @service_container
             - @dbal.conn
             - %skouat.ppde.tables.ppde_currency%

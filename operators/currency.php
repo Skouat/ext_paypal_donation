@@ -27,63 +27,19 @@ class currency implements currency_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\cache\service              $cache               Cache object
-	 * @param ContainerInterface                $container           Service container interface
-	 * @param \phpbb\db\driver\driver_interface $db                  Database connection
-	 * @param string                            $ppde_currency_table Table name
+	 * @param \phpbb\cache\driver\driver_interface $cache               Cache object
+	 * @param ContainerInterface                   $container           Service container interface
+	 * @param \phpbb\db\driver\driver_interface    $db                  Database connection
+	 * @param string                               $ppde_currency_table Table name
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\cache\service $cache, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_currency_table)
+	public function __construct(\phpbb\cache\driver\driver_interface $cache, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_currency_table)
 	{
 		$this->cache = $cache;
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_currency_table = $ppde_currency_table;
-	}
-
-	/**
-	 * Get data from currency table
-	 *
-	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
-	 * @param bool $only_enabled Status of currency (Default: false)
-	 *
-	 * @return array Array of currency data entities
-	 * @access public
-	 */
-	public function get_currency_data($currency_id = 0, $only_enabled = false)
-	{
-		$entities = array();
-
-		// Build main sql request
-		$sql_ary = array(
-			'SELECT'   => '*',
-			'FROM'     => array($this->ppde_currency_table => 'c'),
-			'WHERE'    => '',
-			'ORDER_BY' => 'c.currency_order',
-		);
-
-		// Use WHERE clause when $currency_id is different from 0
-		$sql_ary['WHERE'] .= (int) $currency_id ? 'c.currency_id = ' . (int) $currency_id : '';
-
-		// Use WHERE clause when $only_enabled is true
-		if ($only_enabled)
-		{
-			$sql_ary['WHERE'] .= !empty($sql_ary['WHERE']) ? ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
-		}
-
-		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query($sql);
-
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Import each currency page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.currency')->import($row);
-		}
-		$this->db->sql_freeresult($result);
-
-		// Return all page entities
-		return $entities;
 	}
 
 	/**
@@ -129,6 +85,50 @@ class currency implements currency_interface
 
 		// Return true/false if a donation page was deleted
 		return (bool) $this->db->sql_affectedrows();
+	}
+
+	/**
+	 * Get data from currency table
+	 *
+	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
+	 * @param bool $only_enabled Status of currency (Default: false)
+	 *
+	 * @return array Array of currency data entities
+	 * @access public
+	 */
+	public function get_currency_data($currency_id = 0, $only_enabled = false)
+	{
+		$entities = array();
+
+		// Build main sql request
+		$sql_ary = array(
+			'SELECT'   => '*',
+			'FROM'     => array($this->ppde_currency_table => 'c'),
+			'WHERE'    => '',
+			'ORDER_BY' => 'c.currency_order',
+		);
+
+		// Use WHERE clause when $currency_id is different from 0
+		$sql_ary['WHERE'] .= (int) $currency_id ? 'c.currency_id = ' . (int) $currency_id : '';
+
+		// Use WHERE clause when $only_enabled is true
+		if ($only_enabled)
+		{
+			$sql_ary['WHERE'] .= !empty($sql_ary['WHERE']) ? ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
+		}
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			// Import each currency page row into an entity
+			$entities[] = $this->container->get('skouat.ppde.entity.currency')->import($row);
+		}
+		$this->db->sql_freeresult($result);
+
+		// Return all page entities
+		return $entities;
 	}
 
 	/**
