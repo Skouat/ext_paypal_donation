@@ -17,6 +17,7 @@ class main_controller implements main_interface
 	protected $auth;
 	protected $config;
 	protected $container;
+	protected $extension_manager;
 	protected $helper;
 	protected $ppde_operator_donation_pages;
 	protected $ppde_operator_currency;
@@ -25,14 +26,15 @@ class main_controller implements main_interface
 	protected $user;
 	protected $root_path;
 	protected $php_ext;
-
-	/** @var string donation_body */
+	/** @var array */
+	protected $ext_meta = array();
+	/** @var string */
+	protected $ext_name;
+	/** @var string */
 	private $donation_body;
-
-	/** @var array donation_body */
+	/** @var array */
 	private $donation_content_data;
-
-	/** @var string return_args_url */
+	/** @var string */
 	private $return_args_url;
 
 	/**
@@ -41,6 +43,8 @@ class main_controller implements main_interface
 	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension
+	 *                                                                            manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
@@ -53,11 +57,12 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
+		$this->extension_manager = $extension_manager;
 		$this->helper = $helper;
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->ppde_operator_currency = $ppde_operator_currency;
@@ -104,7 +109,7 @@ class main_controller implements main_interface
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->generate_form_action(),
+			'S_PPDE_FORM_ACTION' => $this->get_paypal_url(),
 			'S_RETURN_ARGS'      => $this->return_args_url,
 			'S_SANDBOX'          => $this->use_sandbox(),
 		));
@@ -296,12 +301,13 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Generate PayPal form action
+	 * Get PayPal URL
+	 * Used in form and in IPN process
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function generate_form_action()
+	public function get_paypal_url()
 	{
 		return $this->use_sandbox() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
 	}
@@ -491,5 +497,109 @@ class main_controller implements main_interface
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
+	}
+
+	/**
+	 * Check if cURL is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_curl()
+	{
+		if (function_exists('curl_init') && function_exists('curl_exec'))
+		{
+			$this->get_ext_meta();
+
+			$ch = curl_init($this->ext_meta['extra']['version-check']['host']);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$response = curl_exec($ch);
+			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+
+			curl_close($ch);
+
+			return ($response !== false || $response_status !== '0') ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_fsockopen()
+	{
+		if (function_exists('fsockopen'))
+		{
+			$this->get_ext_meta();
+
+			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
+
+			$fp = @fsockopen($url['path'], 80);
+
+			return ($fp !== false) ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get extension metadata
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function get_ext_meta()
+	{
+		if (empty($this->ext_meta))
+		{
+			$this->load_metadata();
+		}
+	}
+
+	/**
+	 * Load metadata for this extension
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function load_metadata()
+	{
+		// Retrieve the extension name based on the namespace of this file
+		$this->retrieve_ext_name();
+
+		// If they've specified an extension, let's load the metadata manager and validate it.
+		if ($this->ext_name)
+		{
+			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->user, $this->root_path);
+
+			try
+			{
+				$this->ext_meta = $md_manager->get_metadata('all');
+			}
+			catch (\phpbb\extension\exception $e)
+			{
+				trigger_error($e, E_USER_WARNING);
+			}
+		}
+
+		return $this->ext_meta;
+	}
+
+	/**
+	 * Retrieve the extension name
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function retrieve_ext_name()
+	{
+		$namespace_ary = explode('\\', __NAMESPACE__);
+		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
 	}
 }

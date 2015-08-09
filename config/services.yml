@@ -14,12 +14,22 @@ services:
         tags:
             - { name: event.listener }
 
+    skouat.ppde.ipn_listener:
+        class: skouat\ppde\controller\ipn_listener
+        arguments:
+            - @config
+            - @skouat.ppde.controller
+            - @request
+            - @user
+            - %core.root_path%
+
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
             - @auth
             - @config
             - @service_container
+            - @ext.manager
             - @controller.helper
             - @skouat.ppde.operator.donation_pages
             - @skouat.ppde.operator.currency
@@ -57,12 +67,11 @@ services:
             - @auth
             - @cache
             - @config
-            - @ext.manager
             - @log
+            - @skouat.ppde.controller
             - @request
             - @template
             - @user
-            - %core.root_path%
             - %core.php_ext%
 
     skouat.ppde.controller.admin.settings:
@@ -70,6 +79,7 @@ services:
         arguments:
             - @config
             - @service_container
+            - @skouat.ppde.controller
             - @skouat.ppde.operator.currency
             - @request
             - @template

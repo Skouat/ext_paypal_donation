@@ -16,6 +16,7 @@ class admin_settings_controller implements admin_settings_interface
 {
 	protected $config;
 	protected $container;
+	protected $ppde_controller_main;
 	protected $ppde_operator_currency;
 	protected $request;
 	protected $template;
@@ -26,19 +27,21 @@ class admin_settings_controller implements admin_settings_interface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config            $config                 Config object
-	 * @param ContainerInterface              $container              Service container interface
-	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Operator object
-	 * @param \phpbb\request\request          $request                Request object
-	 * @param \phpbb\template\template        $template               Template object
-	 * @param \phpbb\user                     $user                   User object
+	 * @param \phpbb\config\config                    $config                 Config object
+	 * @param ContainerInterface                      $container              Service container interface
+	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main   Main controller object
+	 * @param \skouat\ppde\operators\currency         $ppde_operator_currency Operator object
+	 * @param \phpbb\request\request                  $request                Request object
+	 * @param \phpbb\template\template                $template               Template object
+	 * @param \phpbb\user                             $user                   User object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->request = $request;
 		$this->template = $template;
@@ -100,6 +103,10 @@ class admin_settings_controller implements admin_settings_interface
 			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'            => $this->check_config($this->config['ppde_header_link']),
 
+			// PayPal IPN vars
+			'S_PPDE_IPN_ENABLE'             => $this->check_config($this->config['ppde_ipn_enable']),
+			'S_PPDE_IPN_LOGGING'            => $this->check_config($this->config['ppde_ipn_logging']),
+
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
 
@@ -135,6 +142,10 @@ class admin_settings_controller implements admin_settings_interface
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->clean_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')));
 
+		// Set options for PayPal IPN
+		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
+		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
+
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', false));
@@ -148,6 +159,10 @@ class admin_settings_controller implements admin_settings_interface
 		$this->config->set('ppde_goal', $this->request->variable('ppde_goal', 0.0));
 		$this->config->set('ppde_used_enable', $this->request->variable('ppde_used_enable', false));
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
+
+		// Set misc settings
+		$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
+		$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
 	}
 
 	/**

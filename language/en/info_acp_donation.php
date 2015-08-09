@@ -51,22 +51,26 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'           => 'Overview',
+	'PPDE_OVERVIEW'                  => 'Overview',
 
-	'INFO_CURL'               => 'cURL',
-	'INFO_FSOCKOPEN'          => 'Fsockopen',
-	'INFO_DETECTED'           => 'Detected',
-	'INFO_NOT_DETECTED'       => 'Not detected',
+	'INFO_CURL'                      => 'cURL',
+	'INFO_FSOCKOPEN'                 => 'Fsockopen',
+	'INFO_DETECTED'                  => 'Detected',
+	'INFO_NOT_DETECTED'              => 'Not detected',
 
-	'PPDE_INSTALL_DATE'       => 'Install date of <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'    => 'No version check information given.',
-	'PPDE_NOT_UP_TO_DATE'     => '%s is not up to date',
-	'PPDE_STATS'              => 'Donation statistics',
-	'PPDE_VERSION'            => '<strong>%s</strong> version',
+	'PPDE_INSTALL_DATE'              => 'Install date of <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK'           => 'No version check information given.',
+	'PPDE_NOT_UP_TO_DATE'            => '%s is not up to date',
+	'PPDE_STATS'                     => 'Donation statistics',
+	'PPDE_VERSION'                   => '<strong>%s</strong> version',
 
-	'STAT_RESET_DATE'         => 'Reset Extension Installation date',
-	'STAT_RESET_DATE_EXPLAIN' => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
-	'STAT_RESET_DATE_CONFIRM' => 'Are you sure you wish to reset the installation date of this extension?',
+	'STAT_RESET_DATE'                => 'Reset Extension Installation date',
+	'STAT_RESET_DATE_EXPLAIN'        => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
+	'STAT_RESET_DATE_CONFIRM'        => 'Are you sure you wish to reset the installation date of this extension?',
+
+	'STAT_RETEST_CURL_FSOCK'         => 'Re-detect “cURL” and “fsockopen”',
+	'STAT_RETEST_CURL_FSOCK_EXPLAIN' => 'Allow to re-detect this features if the webserver configuration have changed.',
+	'STAT_RETEST_CURL_FSOCK_CONFIRM' => 'Are you sure you wish to re-detect “cURL” and “fsockopen”?',
 ));
 
 /**
@@ -91,6 +95,13 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'         => 'If enabled, it will replace the Textbox by a drop-down list.',
 	'PPDE_DROPBOX_VALUE'                  => 'Drop-down donation value',
 	'PPDE_DROPBOX_VALUE_EXPLAIN'          => 'Define the numbers you want to see in the drop-down list.<br />Use <strong>comma</strong> (",") <strong>with no space</strong> to separate each values.',
+
+	// PayPal IPN settings
+	'PPDE_LEGEND_IPN_SETTINGS'            => 'PayPal IPN settings',
+	'PPDE_IPN_ENABLE'                     => 'Enable IPN',
+	'PPDE_IPN_ENABLE_EXPLAIN'             => 'Enable this option if you want use Instant Payment Notification of PayPal services.',
+	'PPDE_IPN_LOGGING'                    => 'Log Errors',
+	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Log Errors and Data into /store/transaction.log',
 
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'        => 'PayPal sandbox settings',

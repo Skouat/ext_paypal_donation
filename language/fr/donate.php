@@ -69,3 +69,12 @@ $lang = array_merge($lang, array(
 	// Viewonline
 	'PPDE_VIEWONLINE'             => 'Consulte la page des dons',
 ));
+
+$lang = array_merge($lang, array(
+	// Error
+	'CURL_ERROR'                 => 'Erreur cURL :',
+	'FSOCK_ERROR'                => 'Erreur fsockopen :',
+	'INVALID_TRANSACTION_RECORD' => 'Transaction invalide : ID de transaction non trouvé.',
+	'INVALID_RESPONSE_STATUS'    => 'Statut de réponse non valide : ',
+	'UNEXPECTED_RESPONSE'        => 'Réponse innatendue de PayPal.',
+));

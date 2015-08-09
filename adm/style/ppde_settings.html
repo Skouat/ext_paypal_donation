@@ -55,6 +55,20 @@
 	</fieldset>
 
 	<fieldset>
+		<legend>{L_PPDE_LEGEND_IPN_SETTINGS}</legend>
+		<dl>
+			<dt><label for="ppde_ipn_enable">{L_PPDE_IPN_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_IPN_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_ipn_enable" name="ppde_ipn_enable" value="1"<!-- IF S_PPDE_IPN_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_ipn_enable" value="0"<!-- IF not S_PPDE_IPN_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_ipn_logging">{L_PPDE_IPN_LOGGING}{L_COLON}</label><br /><span>{L_PPDE_IPN_LOGGING_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_ipn_logging" name="ppde_ipn_logging" value="1"<!-- IF S_PPDE_IPN_LOGGING --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_ipn_logging" value="0"<!-- IF not S_PPDE_IPN_LOGGING --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
 		<legend>{L_PPDE_LEGEND_SANDBOX_SETTINGS}</legend>
 		<dl>
 			<dt><label for="ppde_sandbox_enable">{L_PPDE_SANDBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ENABLE_EXPLAIN}</span></dt>

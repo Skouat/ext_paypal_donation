@@ -29,6 +29,12 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_dropbox_enable', false)),
 			array('config.add', array('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')),
 
+			// IPN Settings
+			array('config.add', array('ppde_ipn_enable', false)),
+			array('config.add', array('ppde_ipn_logging', true)),
+			array('config.add', array('ppde_curl_detected', false)),
+			array('config.add', array('ppde_fsock_detected', false)),
+
 			// Sandbox Settings
 			array('config.add', array('ppde_sandbox_enable', false)),
 			array('config.add', array('ppde_sandbox_founder_enable', true)),
@@ -72,45 +78,13 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 				'PPDE_ACP_DONATION',
 				array(
 					'module_basename' => '\skouat\ppde\acp\ppde_module',
-					'modes'           => array('overview', 'settings', 'donation_pages', 'currency'),
+					'modes'           => array('overview', 'settings', 'donation_pages', 'currency', 'transactions'),
 				)
 			)),
 
 			// Run custom actions
-			array('custom', array(array(&$this, 'add_ppde_donation_pages_data'))),
 			array('custom', array(array(&$this, 'add_ppde_currency_data'))),
 		);
-	}
-
-	/**
-	 * Add initial data to the database
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function add_ppde_donation_pages_data()
-	{
-		// Define data
-		$dp_data = array(
-			array(
-				'page_title'   => 'donation_body',
-				'page_lang_id' => 1,
-				'page_content' => '',
-			),
-			array(
-				'page_title'   => 'donation_success',
-				'page_lang_id' => 1,
-				'page_content' => '',
-			),
-			array(
-				'page_title'   => 'donation_cancel',
-				'page_lang_id' => 1,
-				'page_content' => '',
-			),
-		);
-
-		// Insert data
-		$this->db->sql_multi_insert($this->table_prefix . 'ppde_donation_pages', $dp_data);
 	}
 
 	/**
