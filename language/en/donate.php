@@ -55,16 +55,13 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_TITLE'          => 'Test PayPal Donation with PayPal Sandbox',
 
 	// Statistics
-	// Note for translators----->    %1$d = donation raised; %2$s = currency
 	'DONATE_RECEIVED'             => 'We received <strong>%s</strong> in donations.',
 	'DONATE_NOT_RECEIVED'         => 'We haven’t received any donations.',
 
-	// Note for translators----->    %1$d = donation goal; %2$s = currency
 	'DONATE_GOAL_RAISE'           => 'Our goal is to raise <strong>%s</strong>.',
 	'DONATE_GOAL_REACHED'         => 'Our goal donation was reached.',
 	'DONATE_NO_GOAL'              => 'We haven’t defined a donation goal.',
 
-	// Note for translators----->    %1$d = donation used; %2$s = currency; %3$d = donation raised;
 	'DONATE_USED'                 => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong>%2$s already received.',
 	'DONATE_USED_EXCEEDED'        => 'We used <strong>%s</strong>. All your donations have been used.',
 	'DONATE_NOT_USED'             => 'We haven’t used any donations.',

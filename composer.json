@@ -12,7 +12,13 @@
 	"authors": [
 		{
 			"name": "Skouat",
+			"homepage": "http://skouat.github.io/ext_paypal_donation",
 			"role": "Developer"
+		},
+		{
+			"name": "cabot",
+			"homepage": "http://cabotweb.fr",
+			"role": "SushiMaker"
 		}
 	],
 	"require": {

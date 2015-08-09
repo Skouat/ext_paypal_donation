@@ -14,37 +14,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller implements main_interface
 {
-	/** @var \phpbb\auth\auth */
 	protected $auth;
-
-	/** @var \phpbb\config\config */
 	protected $config;
-
-	/** @var ContainerInterface */
 	protected $container;
-
-	/** @var \phpbb\controller\helper */
 	protected $helper;
-
-	/** @var \skouat\ppde\operators\donation_pages */
 	protected $ppde_operator_donation_pages;
-
-	/** @var \skouat\ppde\operators\currency */
 	protected $ppde_operator_currency;
-
-	/** @var \phpbb\request\request */
 	protected $request;
-
-	/** @var \phpbb\template\template */
 	protected $template;
-
-	/** @var \phpbb\user */
 	protected $user;
-
-	/** @var string phpBB root path */
 	protected $root_path;
-
-	/** @var string phpEx */
 	protected $php_ext;
 
 	/** @var string donation_body */
@@ -119,6 +98,7 @@ class main_controller implements main_interface
 
 		$this->template->assign_vars(array(
 			'DONATION_BODY'      => $this->donation_body,
+			'IMG_LOADER'         => '<img src="' . $this->root_path . '../ext/skouat/ppde/images/loader.gif' . '" />',
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
@@ -326,9 +306,9 @@ class main_controller implements main_interface
 	 * Assign statistics vars to the template
 	 *
 	 * @return null
-	 * @access private
+	 * @access public
 	 */
-	private function display_stats()
+	public function display_stats()
 	{
 		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
 		{
@@ -458,9 +438,9 @@ class main_controller implements main_interface
 	 * Generate statistics percent for display
 	 *
 	 * @return null
-	 * @access public
+	 * @access private
 	 */
-	public function generate_stats_percent()
+	private function generate_stats_percent()
 	{
 		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
 		{

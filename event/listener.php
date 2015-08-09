@@ -88,21 +88,12 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
 		{
-			$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
-
 			$this->template->assign_vars(array(
 				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
-				'PPDE_GOAL_ENABLE'        => $this->config['ppde_goal_enable'],
-				'PPDE_RAISED_ENABLE'      => $this->config['ppde_raised_enable'],
-				'PPDE_USED_ENABLE'        => $this->config['ppde_used_enable'],
-
-				'L_PPDE_GOAL'             => $this->ppde_controller_main->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol']),
-				'L_PPDE_RAISED'           => $this->ppde_controller_main->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
-				'L_PPDE_USED'             => $this->ppde_controller_main->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
 			));
 
-			// Generate statistics percent for display
-			$this->ppde_controller_main->generate_stats_percent();
+			//Assign statistics vars to the template
+			$this->ppde_controller_main->display_stats();
 		}
 	}
 

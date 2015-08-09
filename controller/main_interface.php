@@ -37,12 +37,12 @@ interface main_interface
 	public function can_use_ppde();
 
 	/**
-	 * Generate statistics percent for display
+	 * Assign statistics vars to the template
 	 *
 	 * @return null
 	 * @access public
 	 */
-	public function generate_stats_percent();
+	public function display_stats();
 
 	/**
 	 * Get default currency data

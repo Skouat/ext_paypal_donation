@@ -2,7 +2,6 @@
 ---------------------------------------- */
 
 /* PayPal Button */
-
 #contactpaypal, #contactpaypal input, #contactpaypal div {
     background: url("images/paypal_button.png") no-repeat;
     height: 26px;
@@ -31,10 +30,11 @@
 /* image loader */
 fieldset.loader {
     display: none;
+    height: 28px;
+    vertical-align: middle;
 }
 
-img.loader {
-    background: url("images/loader.gif");
+#processingpaypal img {
     margin-bottom: -5px;
     padding-right: 10px;
     height: 16px;
@@ -45,7 +45,6 @@ img.loader {
 div.prog_grey {
     background: #CCCCCC url("images/prog_grey.png") repeat-x;
     border: 1px solid #000000;
-    width: 100%;
     margin-top: 2px;
 }
 
@@ -78,8 +77,10 @@ p.donation_stats {
 }
 
 /* form displaying */
-div.center {
+div.donate_value {
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* icon */
