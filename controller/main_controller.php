@@ -32,8 +32,8 @@ class main_controller implements main_interface
 	/** @var array donation_body */
 	private $donation_content_data;
 
-	/** @var string mode_url */
-	private $mode_url;
+	/** @var string return_args_url */
+	private $return_args_url;
 
 	/**
 	 * Constructor
@@ -82,10 +82,10 @@ class main_controller implements main_interface
 		}
 
 		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
-		$this->get_return_url_mode($this->request->variable('mode', 'body'));
+		$this->set_return_args_url($this->request->variable('return', 'body'));
 
 		// Prepare message for display
-		if ($this->get_donation_content_data($this->mode_url))
+		if ($this->get_donation_content_data($this->return_args_url))
 		{
 			$entity->get_vars();
 			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
@@ -97,14 +97,16 @@ class main_controller implements main_interface
 		}
 
 		$this->template->assign_vars(array(
+			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'DONATION_BODY'      => $this->donation_body,
 			'IMG_LOADER'         => '<img src="' . $this->root_path . '../ext/skouat/ppde/images/loader.gif' . '" />',
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
-			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
 			'S_PPDE_FORM_ACTION' => $this->generate_form_action(),
+			'S_RETURN_ARGS'      => $this->return_args_url,
+			'S_SANDBOX'          => $this->use_sandbox(),
 		));
 
 		$this->display_stats();
@@ -122,18 +124,21 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * @param $mode
+	 * @param string $set_return_args_url
 	 */
-	private function get_return_url_mode($mode)
+	private function set_return_args_url($set_return_args_url)
 	{
-		switch ($mode)
+		switch ($set_return_args_url)
 		{
 			case 'cancel':
 			case 'success':
-				$this->mode_url = $mode;
+				$this->template->assign_vars(array(
+					'L_PPDE_DONATION_TITLE' => $this->user->lang['PPDE_' . strtoupper($set_return_args_url) . '_TITLE'],
+				));
+				$this->return_args_url = $set_return_args_url;
 				break;
 			default:
-				$this->mode_url = 'body';
+				$this->return_args_url = 'body';
 		}
 
 	}
@@ -141,14 +146,43 @@ class main_controller implements main_interface
 	/**
 	 * Get content of current donation pages
 	 *
-	 * @param string $mode
+	 * @param string $return_args_url
 	 *
 	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data($mode)
+	private function get_donation_content_data($return_args_url)
 	{
-		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id(), $mode);
+		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id(), $return_args_url);
+	}
+
+	/**
+	 * Build pull down menu options of available currency
+	 *
+	 * @param int $config_value Currency identifier; default: 0
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function build_currency_select_menu($config_value = 0)
+	{
+		// Grab the list of all enabled currencies; 0 is for all data
+		$currency_items = $this->ppde_operator_currency->get_currency_data(0, true);
+
+		// Process each rule menu item for pull-down
+		foreach ($currency_items as $currency_item)
+		{
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('options', array(
+				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
+				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
+				'CURRENCY_NAME'      => $currency_item['currency_name'],
+				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
+
+				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
+			));
+		}
+		unset ($currency_items, $currency_item);
 	}
 
 	/**
@@ -205,35 +239,6 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Build pull down menu options of available currency
-	 *
-	 * @param int $config_value Currency identifier; default: 0
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function build_currency_select_menu($config_value = 0)
-	{
-		// Grab the list of all enabled currencies; 0 is for all data
-		$currency_items = $this->ppde_operator_currency->get_currency_data(0, true);
-
-		// Process each rule menu item for pull-down
-		foreach ($currency_items as $currency_item)
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', array(
-				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
-				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
-				'CURRENCY_NAME'      => $currency_item['currency_name'],
-				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-
-				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
-			));
-		}
-		unset ($currency_items, $currency_item);
-	}
-
-	/**
 	 * Build PayPal hidden fields
 	 *
 	 * @return string PayPal hidden field needed to fill PayPal forms
@@ -241,7 +246,6 @@ class main_controller implements main_interface
 	 */
 	private function paypal_hidden_fields()
 	{
-		//
 		return build_hidden_fields(array(
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
@@ -288,7 +292,7 @@ class main_controller implements main_interface
 	 */
 	private function generate_paypal_return_url($arg)
 	{
-		return append_sid(generate_board_url(true) . $this->user->page['script_path'] . $this->user->page['page_name'], 'mode=' . $arg);
+		return append_sid(generate_board_url(true) . $this->user->page['script_path'] . $this->user->page['page_name'], 'return=' . $arg);
 	}
 
 	/**
@@ -479,11 +483,11 @@ class main_controller implements main_interface
 	 */
 	private function send_data_to_template()
 	{
-		switch ($this->mode_url)
+		switch ($this->return_args_url)
 		{
 			case 'cancel':
 			case 'success':
-				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->mode_url) . '_TITLE'));
+				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}

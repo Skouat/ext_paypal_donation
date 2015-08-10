@@ -1,6 +1,6 @@
 <!-- INCLUDE overall_header.html -->
 
-<!-- IF MODE eq 'success' or MODE eq 'cancel' -->
+<!-- IF S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' -->
 	<h2>{SITENAME} :: {L_PPDE_DONATION_TITLE}</h2>
 	<!-- IF DONATION_BODY -->
 	<div class="panel">
@@ -9,7 +9,7 @@
 	<!-- ENDIF -->
 <!-- ELSE -->
 	<!-- IF S_SANDBOX -->
-		<h2>{L_SANDBOX_TITLE}</h2>
+		<h2>{L_PPDE_SANDBOX_TITLE}</h2>
 	<!-- ELSE -->
 		<h2>{L_PPDE_DONATION_TITLE_HEAD} {SITENAME}</h2>
 	<!-- ENDIF -->
