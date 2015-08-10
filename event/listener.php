@@ -109,7 +109,7 @@ class listener implements EventSubscriberInterface
 	{
 		$this->template->assign_vars(array(
 			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
-			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_main_controller'),
+			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat.ppde.donate'),
 		));
 	}
 
@@ -146,7 +146,7 @@ class listener implements EventSubscriberInterface
 			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donate') === 0)
 			{
 				$event['location'] = $this->user->lang('PPDE_VIEWONLINE');
-				$event['location_url'] = $this->controller_helper->route('skouat_ppde_main_controller');
+				$event['location_url'] = $this->controller_helper->route('skouat.ppde.donate');
 			}
 		}
 	}

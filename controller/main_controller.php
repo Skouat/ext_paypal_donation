@@ -257,6 +257,7 @@ class main_controller implements main_interface
 			'item_name'     => $this->user->lang['PPDE_DONATION_TITLE_HEAD'] . ' ' . $this->config['sitename'],
 			'no_shipping'   => 1,
 			'return'        => $this->generate_paypal_return_url('success'),
+			'notify_url'    => $this->generate_paypal_notify_return_url(),
 			'cancel_return' => $this->generate_paypal_return_url('cancel'),
 			'item_number'   => 'uid_' . $this->user->data['user_id'] . '_' . time(),
 			'tax'           => 0,
@@ -297,7 +298,18 @@ class main_controller implements main_interface
 	 */
 	private function generate_paypal_return_url($arg)
 	{
-		return append_sid(generate_board_url(true) . $this->user->page['script_path'] . $this->user->page['page_name'], 'return=' . $arg);
+		return generate_board_url(true) . $this->helper->route('skouat.ppde.donate', array('return' => $arg));
+	}
+
+	/**
+	 * Generate PayPal return notify URL
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function generate_paypal_notify_return_url()
+	{
+		return generate_board_url(true) . $this->helper->route('skouat.ppde.ipn_listener');
 	}
 
 	/**
