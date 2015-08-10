@@ -316,12 +316,14 @@ class main_controller implements main_interface
 	 * Get PayPal URL
 	 * Used in form and in IPN process
 	 *
+	 * @param bool $is_test_ipn
+	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_paypal_url()
+	public function get_paypal_url($is_test_ipn = false)
 	{
-		return $this->use_sandbox() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+		return ($is_test_ipn || $this->use_sandbox()) ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 	/**

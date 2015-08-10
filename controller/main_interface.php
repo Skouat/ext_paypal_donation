@@ -74,10 +74,12 @@ interface main_interface
 	 * Get PayPal URL
 	 * Used in form and in IPN process
 	 *
+	 * @param bool $is_test_ipn
+	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_paypal_url();
+	public function get_paypal_url($is_test_ipn = false);
 
 	/**
 	 * Retrieve the language key for donation goal

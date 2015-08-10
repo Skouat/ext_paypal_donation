@@ -6,6 +6,9 @@
  * @copyright (c) 2015 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
+ * Special Thanks to the following individuals for their inspiration:
+ *    David Lewis (Highway of Life) http://startrekguide.com
+ *    Micah Carrick (email@micahcarrick.com) http://www.micahcarrick.com
  */
 
 namespace skouat\ppde\controller;
@@ -26,13 +29,6 @@ class ipn_listener
 	 */
 	private $args_return_uri = array();
 	/**
-	 *  If true, explicitly sets cURL to use SSL version 3. Use this if cURL
-	 *  is compiled with GnuTLS SSL.
-	 *
-	 * @var boolean
-	 */
-	private $force_ssl_v3 = true;
-	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
 	 * @var string
@@ -44,10 +40,6 @@ class ipn_listener
 	 * @var string
 	 */
 	private $response_status = '';
-	/**
-	 * Define the member ID of the sender.
-	 */
-	private $sender_data = array();
 	/**
 	 * The amount of time, in seconds, to wait for the PayPal server to respond
 	 * before timing out. Default 30 seconds.
@@ -105,70 +97,51 @@ class ipn_listener
 
 	public function handle()
 	{
-		if ($this->use_log_error = $this->get_ipn_logging())
-		{
-			$this->log_error('DEBUG:', $this->use_log_error, false, E_USER_NOTICE, $this->get_post_data());
-		}
+		// Set IPN logging
+		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
 
+		// Check the transaction returned by PayPal
 		$this->validate_transaction();
 	}
 
-	/**
-	 * Get IPN log errors status
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function get_ipn_logging()
-	{
-		return (bool) $this->config['ppde_ipn_logging'];
-	}
 
 	/**
-	 * Log error messages
-	 *
-	 * @param string $message
-	 * @param bool   $log_in_file
-	 * @param bool   $exit
-	 * @param int    $error_type
-	 * @param array  $args
-	 *
-	 * @return null
-	 * @access private
+	 * Post Data back to PayPal to validate the authenticity of the transaction.
 	 */
-	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
+	private function validate_transaction()
 	{
-		$error_timestamp = date('d-M-Y H:i:s Z');
+		// Request and populate $this->transaction_data
+		$this->get_post_data($this->transaction_vars_list());
 
-		$backtrace = '';
-		if ($this->ppde_controller_main->use_sandbox())
+		if ($this->validate_post_data() === false)
 		{
-			$backtrace = get_backtrace();
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
+			// The minimum required checks are not met
+			// So we force to log collected data in /store/ppde_transaction.log
+			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, true, E_USER_NOTICE, array($this->transaction_data));
 		}
 
-		$message = str_replace('<br />', ';', $message);
-
-		if (sizeof($args))
+		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
+		foreach ($decode_ary as $key)
 		{
-			$message .= '[args] ';
-			foreach ($args as $key => $value)
-			{
-				$value = urlencode($value);
-				$message .= $key . ' = ' . $value . ";\n";
-			}
-			unset($value);
+			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
 		}
 
-		if ($log_in_file)
+		$this->set_args_return_uri();
+
+		// Get PayPal or Sandbox URL
+		$this->u_paypal = $this->ppde_controller_main->get_paypal_url((bool) $this->transaction_data['test_ipn']);
+
+		$this->initiate_paypal_connection();
+
+		if (strpos($this->response_status, '200') === false)
 		{
-			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transaction.log');
+			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
 		}
 
-		if ($exit)
-		{
-			trigger_error($message, $error_type);
-		}
+		// the item number contains the user_id and the payment time in timestamp format
+		$this->extract_item_number_data();
+
+		$this->check_response();
 	}
 
 	/**
@@ -198,55 +171,13 @@ class ipn_listener
 		}
 		else
 		{
-			foreach ($this->request->variable_names(\phpbb\request\request_interface::GET) as $key)
+			foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
 			{
 				$post_data[$key] = $this->request->variable($key, '', true);
 			}
 		}
 
 		return $post_data;
-	}
-
-	/**
-	 * Post Data back to PayPal to validate the authenticity of the transaction.
-	 */
-	private function validate_transaction()
-	{
-		// Get PayPal or Sandbox URL
-		$this->u_paypal = $this->ppde_controller_main->get_paypal_url();
-
-		// Request and populate $this->transaction_data
-		$this->get_post_data($this->transaction_vars_list());
-
-		if ($this->validate_post_data() === false)
-		{
-			// The minimum required checks are not met
-			// So we force to log collected data in /store/ppde_transaction.log
-			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, false, E_USER_NOTICE, array($this->transaction_data));
-
-			// And we stop the execution of the code.
-			exit;
-		}
-
-		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
-		foreach ($decode_ary as $key)
-		{
-			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
-		}
-
-		$this->set_args_return_uri();
-
-		$this->initiate_paypal_connection();
-
-		if (strpos($this->response_status, '200') === false)
-		{
-			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
-		}
-
-		// the item number contains the user_id and the payment time in timestamp format
-		$this->extract_item_number_data();
-
-		$this->check_response();
 	}
 
 	/**
@@ -323,6 +254,53 @@ class ipn_listener
 		}
 
 		return false;
+	}
+
+	/**
+	 * Log error messages
+	 *
+	 * @param string $message
+	 * @param bool   $log_in_file
+	 * @param bool   $exit
+	 * @param int    $error_type
+	 * @param array  $args
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
+	{
+		$error_timestamp = date('d-M-Y H:i:s Z');
+
+		$backtrace = '';
+		if ($this->ppde_controller_main->use_sandbox())
+		{
+			$backtrace = get_backtrace();
+			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
+		}
+
+		$message = str_replace('<br />', ';', $message);
+
+		if (sizeof($args))
+		{
+			$message .= "\n[args]\n";
+			foreach ($args as $key => $value)
+			{
+				$value = urlencode($value);
+				$message .= $key . ' = ' . $value . ";\n";
+			}
+			unset($value);
+		}
+
+		if ($log_in_file)
+		{
+			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transaction.log');
+		}
+
+		if ($exit)
+		{
+			trigger_error($message, $error_type);
+		}
 	}
 
 	/**
@@ -423,9 +401,9 @@ class ipn_listener
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
 	 * @return null
-	 * @access protected
+	 * @access private
 	 */
-	protected function curl_post($encoded_data)
+	private function curl_post($encoded_data)
 	{
 		$ch = curl_init();
 
@@ -439,16 +417,13 @@ class ipn_listener
 		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+		// We force the use of SSLv3
+		curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'SSLv3');
 
 		if ($this->use_log_error)
 		{
 			curl_setopt($ch, CURLOPT_HEADER, true);
 			curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
-		}
-
-		if ($this->force_ssl_v3)
-		{
-			curl_setopt($ch, CURLOPT_SSLVERSION, 3);
 		}
 
 		$this->response = curl_exec($ch);
@@ -480,9 +455,9 @@ class ipn_listener
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
 	 * @return null
-	 * @access protected
+	 * @access private
 	 */
-	protected function fsock_post($encoded_data)
+	private function fsock_post($encoded_data)
 	{
 		$errstr = '';
 		$errno = 0;
@@ -548,19 +523,18 @@ class ipn_listener
 	{
 		if (strcmp($this->response, 'VERIFIED') == 0)
 		{
-			$this->log_error('DEBUG VERIFIED:' . $this->get_text_report(), $this->use_log_error);
+			$this->log_error("DEBUG VERIFIED:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->verified = $this->transaction_data['confirmed'] = true;
-			$this->sender_data = $this->transaction_data['user_id'];
 		}
 		else if (strcmp($this->response, 'INVALID') == 0)
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error('DEBUG INVALID:' . $this->get_text_report(), $this->use_log_error);
+			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error);
 		}
 		else
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error('DEBUG OTHER:' . $this->get_text_report(), $this->use_log_error);
+			$this->log_error("DEBUG OTHER:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->log_error($this->user->lang['UNEXPECTED_RESPONSE'], $this->use_log_error, true);
 		}
 	}
@@ -573,8 +547,9 @@ class ipn_listener
 	 * this method in your own class to customize the report.
 	 *
 	 * @return string
+	 * @access private
 	 */
-	public function get_text_report()
+	private function get_text_report()
 	{
 		$r = '';
 
@@ -594,33 +569,17 @@ class ipn_listener
 		// HTTP Response
 		$this->text_report_insert_line($r);
 		$r .= "\n" . $this->get_response() . "\n";
+		$r .= "\n" . $this->get_response_status() . "\n";
+		$this->text_report_insert_line($r);
 
 		// POST vars
-		$this->text_report_insert_line($r);
 		$r .= "\n";
-
 		$this->text_report_insert_args($r);
-
 		$r .= "\n\n";
 
 		return $r;
 	}
 
-	/**
-	 * Insert $this->transaction_data args int the text report
-	 *
-	 * @param string $r
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function text_report_insert_args(&$r = '')
-	{
-		foreach ($this->transaction_data as $key => $value)
-		{
-			$r .= str_pad($key, 25) . $value . "\n";
-		}
-	}
 	/**
 	 * Insert hyphens line in the text report
 	 *
@@ -644,9 +603,39 @@ class ipn_listener
 	 * HTTP headers.
 	 *
 	 * @return string
+	 * @access private
 	 */
-	public function get_response()
+	private function get_response()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Get Response Status
+	 *
+	 * Return the HTTP Code from PayPal
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function get_response_status()
+	{
+		return $this->response_status;
+	}
+
+	/**
+	 * Insert $this->transaction_data args int the text report
+	 *
+	 * @param string $r
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function text_report_insert_args(&$r = '')
+	{
+		foreach ($this->transaction_data as $key => $value)
+		{
+			$r .= str_pad($key, 25) . $value . "\n";
+		}
 	}
 }
