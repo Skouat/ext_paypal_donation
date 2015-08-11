@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Operator for a set of pages
  */
-class currency implements currency_interface
+class currency extends main implements currency_interface
 {
 	protected $data;
 
@@ -40,26 +40,6 @@ class currency implements currency_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_currency_table = $ppde_currency_table;
-	}
-
-	/**
-	 * Add a currency
-	 *
-	 * @param object $entity Currency entity with new data to insert
-	 *
-	 * @return currency_interface Add currency entity
-	 * @access public
-	 */
-	public function add_currency_data($entity)
-	{
-		// Insert the data to the database
-		$entity->insert();
-
-		// Get the newly inserted identifier
-		$currency_id = $entity->get_id();
-
-		// Reload the data to return a fresh currency entity
-		return $entity->load($currency_id);
 	}
 
 	/**

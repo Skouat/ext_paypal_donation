@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Operator for a set of pages
  */
-class donation_pages implements donation_pages_interface
+class donation_pages extends main implements donation_pages_interface
 {
 	protected $data;
 
@@ -125,26 +125,6 @@ class donation_pages implements donation_pages_interface
 
 		// Return all available languages
 		return $langs;
-	}
-
-	/**
-	 * Add a Page
-	 *
-	 * @param object $entity Page entity with new data to insert
-	 *
-	 * @return donation_pages_interface Added page entity
-	 * @access public
-	 */
-	public function add_pages_data($entity)
-	{
-		// Insert the data to the database
-		$entity->insert();
-
-		// Get the newly inserted identifier
-		$page_id = $entity->get_id();
-
-		// Reload the data to return a fresh page entity
-		return $entity->load($page_id);
 	}
 
 	/**

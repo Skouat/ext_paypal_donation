@@ -373,7 +373,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			else
 			{
 				// Add a new item entity to the database
-				$this->ppde_operator_donation_pages->add_pages_data($entity);
+				$this->ppde_operator_donation_pages->add_data($entity);
 				$log_action = 'ADDED';
 			}
 			// Show user confirmation of the added item and provide link back to the previous page

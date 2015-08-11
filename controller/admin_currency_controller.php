@@ -257,7 +257,7 @@ class admin_currency_controller implements admin_currency_interface
 			else
 			{
 				// Add a new item entity to the database
-				$this->ppde_operator_currency->add_currency_data($entity);
+				$this->ppde_operator_currency->add_data($entity);
 				$log_action = 'ADDED';
 			}
 			// Log and show user confirmation of the saved item and provide link back to the previous page

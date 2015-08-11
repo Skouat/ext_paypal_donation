@@ -13,7 +13,7 @@ namespace skouat\ppde\entity;
 /**
  * @property string u_action
  */
-abstract class main implements main_interface
+abstract class main
 {
 	/**
 	 * Suffix for the language keys returned by exceptions
@@ -44,11 +44,11 @@ abstract class main implements main_interface
 	/**
 	 * Construct
 	 *
-	 * @param \phpbb\db\driver\driver_interface $db             Database object
-	 * @param \phpbb\user                       $user           User object
-	 * @param string                            $message_suffix Prefix for the messages thrown by exceptions
-	 * @param string                            $table_name     Table name
-	 * @param array                             $table_schema   Array with column names to overwrite and type of data
+	 * @param \phpbb\db\driver\driver_interface    $db             Database object
+	 * @param \phpbb\user                          $user           User object
+	 * @param string                               $message_suffix Prefix for the messages thrown by exceptions
+	 * @param string                               $table_name     Table name
+	 * @param array                                $table_schema   Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */

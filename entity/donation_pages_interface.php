@@ -15,7 +15,7 @@ namespace skouat\ppde\entity;
  *
  * This describes all of the methods we'll have for a single donation page
  */
-interface donation_pages_interface extends main_interface
+interface donation_pages_interface
 {
 	/**
 	 * Check the page_id exist from the database for this donation page

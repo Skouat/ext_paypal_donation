@@ -39,16 +39,6 @@ interface donation_pages_interface
 	public function get_languages($lang_id = 0);
 
 	/**
-	 * Add a Page
-	 *
-	 * @param object $entity Page entity with new data to insert
-	 *
-	 * @return donation_pages_interface Added page entity
-	 * @access public
-	 */
-	public function add_pages_data($entity);
-
-	/**
 	 * Delete a page
 	 *
 	 * @param int $page_id The page identifier to delete

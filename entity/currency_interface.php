@@ -15,7 +15,7 @@ namespace skouat\ppde\entity;
  *
  * This describes all of the methods we'll have for a single donation page
  */
-interface currency_interface extends main_interface
+interface currency_interface
 {
 	/**
 	 * Check the currency_id exist from the database for this currency
