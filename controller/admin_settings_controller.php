@@ -61,30 +61,8 @@ class admin_settings_controller implements admin_settings_interface
 
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
-		// Is the form being submitted to us?
-		if ($this->request->is_set_post('submit'))
-		{
-			// Test if the submitted form is valid
-			if (!check_form_key('ppde_settings'))
-			{
-				$errors[] = $this->user->lang('FORM_INVALID');
-			}
 
-			// If no errors, process the form data
-			if (empty($errors))
-			{
-				// Set the options the user configured
-				$this->set_settings();
-
-				// Add option settings change action to the admin log
-				$phpbb_log = $this->container->get('log');
-				$phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_SETTINGS_UPDATED');
-
-				// Option settings have been updated and logged
-				// Confirm this to the user and provide link back to previous page
-				trigger_error($this->user->lang('PPDE_SETTINGS_SAVED') . adm_back_link($this->u_action));
-			}
-		}
+		$this->submit_settings();
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
@@ -126,6 +104,58 @@ class admin_settings_controller implements admin_settings_interface
 	}
 
 	/**
+	 * The form submitting if 'submit' is true
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function submit_settings()
+	{
+		// Is the form being submitted to us?
+		if ($this->request->is_set_post('submit'))
+		{
+			// Test if the submitted form is valid
+			$errors = $this->form_key_error('ppde_settings');
+
+			// If no errors, process the form data
+			if (empty($errors))
+			{
+				// Set the options the user configured
+				$this->set_settings();
+
+				// Add option settings change action to the admin log
+				$phpbb_log = $this->container->get('log');
+				$phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_SETTINGS_UPDATED');
+
+				// Option settings have been updated and logged
+				// Confirm this to the user and provide link back to previous page
+				trigger_error($this->user->lang('PPDE_SETTINGS_SAVED') . adm_back_link($this->u_action));
+			}
+		}
+	}
+
+	/**
+	 * Return Lang keys of the error if the form key is invalid
+	 *
+	 * @param string $form_key
+	 *
+	 * @return array $errors
+	 * @access private
+	 */
+	private function form_key_error($form_key)
+	{
+		$errors = array();
+
+		// Test if the submitted form is valid
+		if (!check_form_key($form_key))
+		{
+			$errors[] = $this->user->lang('FORM_INVALID');
+		}
+
+		return $errors;
+	}
+
+	/**
 	 * Set the options a user can configure
 	 *
 	 * @return null
@@ -134,13 +164,12 @@ class admin_settings_controller implements admin_settings_interface
 	protected function set_settings()
 	{
 		// Set options for Global settings
-		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
-		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
-		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->clean_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')));
+		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
+		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
@@ -149,7 +178,6 @@ class admin_settings_controller implements admin_settings_interface
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', false));
-		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
@@ -163,38 +191,10 @@ class admin_settings_controller implements admin_settings_interface
 		// Set misc settings
 		$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
 		$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
-	}
 
-	/**
-	 * Check if settings is required
-	 *
-	 * @param $settings
-	 * @param $depend_on
-	 *
-	 * @return mixed
-	 * @access protected
-	 */
-	protected function required_settings($settings, $depend_on)
-	{
-		if (empty($settings) && $depend_on == true)
-		{
-			trigger_error($this->user->lang('PPDE_SETTINGS_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
-		return $settings;
-	}
-
-	/**
-	 * Check if a settings depend on another.
-	 *
-	 * @param $config_name
-	 *
-	 * @return bool
-	 * @access protected
-	 */
-	protected function depend_on($config_name)
-	{
-		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
+		// Settings with dependencies are the last to be set.
+		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
+		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
 	}
 
 	/**
@@ -241,6 +241,38 @@ class admin_settings_controller implements admin_settings_interface
 		settype($default, $type);
 
 		return $config ? $config : $default;
+	}
+
+	/**
+	 * Check if settings is required
+	 *
+	 * @param $settings
+	 * @param $depend_on
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function required_settings($settings, $depend_on)
+	{
+		if (empty($settings) && $depend_on == true)
+		{
+			trigger_error($this->user->lang('PPDE_SETTINGS_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Check if a settings depend on another.
+	 *
+	 * @param $config_name
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	protected function depend_on($config_name)
+	{
+		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 
 	/**

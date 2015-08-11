@@ -72,9 +72,10 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'					=> 'cURL error: ',
-	'FSOCK_ERROR'					=> 'fsockopen error: ',
-	'INVALID_TRANSACTION_RECORD'	=> 'Invalid Transaction Record: No Transaction ID found',
-	'INVALID_RESPONSE_STATUS'		=> 'Invalid response status: ',
-	'UNEXPECTED_RESPONSE'			=> 'Unexpected response from PayPal.',
+	'CURL_ERROR'                 => 'cURL error: ',
+	'FSOCK_ERROR'                => 'fsockopen error: ',
+	'NO_CONNECTION_DETECTED'     => 'cURL and fsockopen() have not been detected. Please contact the administrator of your Web server.',
+	'INVALID_TRANSACTION_RECORD' => 'Invalid Transaction Record: No Transaction ID found',
+	'INVALID_RESPONSE_STATUS'    => 'Invalid response status: ',
+	'UNEXPECTED_RESPONSE'        => 'Unexpected response from PayPal.',
 ));

@@ -29,6 +29,10 @@ class ipn_listener
 	 */
 	private $args_return_uri = array();
 	/**
+	 * @var array
+	 */
+	private $curl_fsock = array();
+	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
 	 * @var string
@@ -70,7 +74,7 @@ class ipn_listener
 	/**
 	 * Transaction status
 	 *
-	 * @type bool
+	 * @var boolean
 	 */
 	private $verified = false;
 
@@ -100,8 +104,111 @@ class ipn_listener
 		// Set IPN logging
 		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
 
+		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
+		$this->set_curl_fsock();
+
+		if ($this->get_curl_fsock() == 'none')
+		{
+			$this->log_error($this->user->lang['NO_CONNECTION_DETECTED'], true, true, E_USER_WARNING);
+		}
+
 		// Check the transaction returned by PayPal
 		$this->validate_transaction();
+	}
+
+	/**
+	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
+	 * If none is available we set the property 'no_curl_fsock' to true.
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function set_curl_fsock()
+	{
+		if ($this->config['ppde_curl_detected'])
+		{
+			$this->curl_fsock = array(
+				'curl'  => true,
+				'fsock' => false,
+				'none'  => false,
+			);
+		}
+		else if ($this->config['ppde_fsock_detected'])
+		{
+			$this->curl_fsock = array(
+				'curl'  => false,
+				'fsock' => true,
+				'none'  => false,
+			);
+		}
+		else
+		{
+			$this->curl_fsock = array(
+				'curl'  => false,
+				'fsock' => false,
+				'none'  => true,
+			);
+		}
+	}
+
+	/**
+	 * Get the service that will be used to contact PayPal: cURL or fsockopen()
+	 * Return the name of the key that is set to true.
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function get_curl_fsock()
+	{
+		return array_search(true, $this->curl_fsock);
+	}
+
+
+	/**
+	 * Log error messages
+	 *
+	 * @param string $message
+	 * @param bool   $log_in_file
+	 * @param bool   $exit
+	 * @param int    $error_type
+	 * @param array  $args
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
+	{
+		$error_timestamp = date('d-M-Y H:i:s Z');
+
+		$backtrace = '';
+		if ($this->ppde_controller_main->use_sandbox())
+		{
+			$backtrace = get_backtrace();
+			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
+		}
+
+		$message = str_replace('<br />', ';', $message);
+
+		if (sizeof($args))
+		{
+			$message .= "\n[args]\n";
+			foreach ($args as $key => $value)
+			{
+				$value = urlencode($value);
+				$message .= $key . ' = ' . $value . ";\n";
+			}
+			unset($value);
+		}
+
+		if ($log_in_file)
+		{
+			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transaction.log');
+		}
+
+		if ($exit)
+		{
+			trigger_error($message, $error_type);
+		}
 	}
 
 
@@ -113,7 +220,7 @@ class ipn_listener
 		// Request and populate $this->transaction_data
 		$this->get_post_data($this->transaction_vars_list());
 
-		if ($this->validate_post_data() === false)
+		if ($this->validate_post_data() == false)
 		{
 			// The minimum required checks are not met
 			// So we force to log collected data in /store/ppde_transaction.log
@@ -257,53 +364,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Log error messages
-	 *
-	 * @param string $message
-	 * @param bool   $log_in_file
-	 * @param bool   $exit
-	 * @param int    $error_type
-	 * @param array  $args
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
-	{
-		$error_timestamp = date('d-M-Y H:i:s Z');
-
-		$backtrace = '';
-		if ($this->ppde_controller_main->use_sandbox())
-		{
-			$backtrace = get_backtrace();
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
-		}
-
-		$message = str_replace('<br />', ';', $message);
-
-		if (sizeof($args))
-		{
-			$message .= "\n[args]\n";
-			foreach ($args as $key => $value)
-			{
-				$value = urlencode($value);
-				$message .= $key . ' = ' . $value . ";\n";
-			}
-			unset($value);
-		}
-
-		if ($log_in_file)
-		{
-			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transaction.log');
-		}
-
-		if ($exit)
-		{
-			trigger_error($message, $error_type);
-		}
-	}
-
-	/**
 	 * Check if txn_id contains only ASCII chars.
 	 * Return false if it contains non ASCII chars.
 	 *
@@ -380,13 +440,17 @@ class ipn_listener
 	 */
 	private function initiate_paypal_connection()
 	{
-		if ($this->config['ppde_curl_detected'])
+		if ($this->curl_fsock['curl'])
 		{
 			$this->curl_post($this->args_return_uri);
 		}
-		else
+		else if ($this->curl_fsock['fsock'])
 		{
 			$this->fsock_post($this->args_return_uri);
+		}
+		else
+		{
+			$this->log_error($this->user->lang['NO_CONNECTION_DETECTED'], $this->use_log_error, true, E_USER_ERROR, $this->transaction_data);
 		}
 	}
 
@@ -417,8 +481,6 @@ class ipn_listener
 		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
-		// We force the use of SSLv3
-		curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'SSLv3');
 
 		if ($this->use_log_error)
 		{
@@ -480,7 +542,7 @@ class ipn_listener
 		else
 		{
 			// Send the data to PayPal
-			fputs($fp, $header . $encoded_data . "\r\n\r\n");
+			fputs($fp, $header . $encoded_data);
 
 			// Loop through the response
 			while (!feof($fp))
@@ -513,7 +575,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Check response returned by PayPal et log errors if it is not a valid response
+	 * Check response returned by PayPal et log errors if there is no valid response
 	 * Set true if response is 'VERIFIED'. In other case set to false and log errors
 	 *
 	 * @return null
@@ -521,12 +583,12 @@ class ipn_listener
 	 */
 	private function check_response()
 	{
-		if (strcmp($this->response, 'VERIFIED') == 0)
+		if ($this->txn_is_verified())
 		{
 			$this->log_error("DEBUG VERIFIED:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->verified = $this->transaction_data['confirmed'] = true;
 		}
-		else if (strcmp($this->response, 'INVALID') == 0)
+		else if ($this->txn_is_invalid())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
 			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error);
@@ -537,6 +599,52 @@ class ipn_listener
 			$this->log_error("DEBUG OTHER:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->log_error($this->user->lang['UNEXPECTED_RESPONSE'], $this->use_log_error, true);
 		}
+	}
+
+	/**
+	 * Check if transaction is VERIFIED for both method: cURL or fsockopen()
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function txn_is_verified()
+	{
+		return $this->is_curl_strcmp('VERIFIED') || $this->is_fsock_strpos('VERIFIED');
+	}
+
+	/**
+	 * If cURL is available we use strcmp() to get the Pay
+	 *
+	 * @param $arg
+	 *
+	 * @return bool
+	 */
+	private function is_curl_strcmp($arg)
+	{
+		return $this->curl_fsock['curl'] && strcmp($this->response, $arg) === 0;
+	}
+
+	/**
+	 * If fsockopen is available we use strpos()
+	 *
+	 * @param $arg
+	 *
+	 * @return bool
+	 */
+	private function is_fsock_strpos($arg)
+	{
+		return $this->curl_fsock['fsock'] && strpos($this->response, $arg) !== false;
+	}
+
+	/**
+	 * Check if transaction is INVALID for both method: cURL or fsockopen()
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function txn_is_invalid()
+	{
+		return $this->is_curl_strcmp('INVALID') || $this->is_fsock_strpos('INVALID');
 	}
 
 	/**
@@ -555,16 +663,7 @@ class ipn_listener
 
 		// Date and POST url
 		$this->text_report_insert_line($r);
-		$r .= "\n[" . date('m/d/Y g:i A') . '] - ' . $this->u_paypal;
-
-		if ($this->config['ppde_curl_detected'])
-		{
-			$r .= " (curl)\n";
-		}
-		else
-		{
-			$r .= " (fsockopen)\n";
-		}
+		$r .= "\n[" . date('m/d/Y g:i A') . '] - ' . $this->u_paypal . ' ( ' . $this->get_curl_fsock() . " )\n";
 
 		// HTTP Response
 		$this->text_report_insert_line($r);
