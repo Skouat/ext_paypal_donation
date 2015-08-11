@@ -62,17 +62,19 @@ class admin_currency_controller implements admin_currency_interface
 
 		foreach ($entities as $entity)
 		{
-			// Do not treat the item whether language identifier does not match
+			$enable_lang = (!$entity['currency_enable']) ? 'ENABLE' : 'DISABLE';
+			$enable_value = (!$entity['currency_enable']) ? 'enable' : 'disable';
+
 			$this->template->assign_block_vars('currency', array(
 				'CURRENCY_NAME'    => $entity['currency_name'],
 				'CURRENCY_ENABLED' => $entity['currency_enable'] ? true : false,
 
-				'U_ENABLE'         => $this->u_action . '&amp;action=enable&amp;currency_id=' . $entity['currency_id'],
-				'U_DISABLE'        => $this->u_action . '&amp;action=disable&amp;currency_id=' . $entity['currency_id'],
+				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;currency_id=' . $entity['currency_id'],
+				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;currency_id=' . $entity['currency_id'],
+				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;currency_id=' . $entity['currency_id'],
+				'L_ENABLE_DISABLE' => $this->user->lang[$enable_lang],
 				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;currency_id=' . $entity['currency_id'],
 				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;currency_id=' . $entity['currency_id'],
-				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;currency_id=' . $entity['currency_id'],
-				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;currency_id=' . $entity['currency_id'],
 			));
 		}
 
@@ -380,6 +382,14 @@ class admin_currency_controller implements admin_currency_interface
 		$entity->save();
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DC_' . strtoupper($action) . 'D', time(), array($entity->get_name()));
+
+		if ($this->request->is_ajax() && ($action == 'enable' || $action == 'disable'))
+		{
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'text'	=> $this->user->lang[($action == 'enable') ? 'DISABLE' : 'ENABLE'],
+			));
+		}
 	}
 
 	/**

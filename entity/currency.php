@@ -65,7 +65,7 @@ class currency extends main implements currency_interface
 				'item_symbol'   => array(
 					'name' => 'currency_symbol',
 					'type' => 'string'),
-				'item_on_left'   => array(
+				'item_on_left'  => array(
 					'name' => 'currency_on_left',
 					'type' => 'boolean'),
 				'item_enable'   => array(
