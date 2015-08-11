@@ -188,14 +188,10 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
 
-		// Grab Template vars
-		$dp_vars = $entity->get_vars(true);
-
-		// Grab the form data's message parsing options (possible values: 1 or 0)
-		$message_parse_options = array(
-			'bbcode'    => $this->submit_or_preview() ? $data['bbcode'] : $entity->message_bbcode_enabled(),
-			'magic_url' => $this->submit_or_preview() ? $data['magic_url'] : $entity->message_magic_url_enabled(),
-			'smilies'   => $this->submit_or_preview() ? $data['smilies'] : $entity->message_smilies_enabled(),
+		$message_parse_options = array_merge(
+			$this->get_message_parse_options($entity, $data, 'bbcode'),
+			$this->get_message_parse_options($entity, $data, 'magic_url'),
+			$this->get_message_parse_options($entity, $data, 'smilies')
 		);
 
 		// Set the message parse options in the entity
@@ -238,28 +234,15 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 
 		$errors = $this->check_submit_preview($entity);
 
-		// Preview
-		if ($this->preview && empty($errors))
-		{
-			// Set output vars for display in the template
-			$this->template->assign_vars(array(
-				'S_PPDE_DP_PREVIEW' => $this->preview,
+		// Grab predefined template vars and assign preview message to the template.
+		$entity->get_vars(true);
+		$this->assign_preview_template_vars($entity, $errors);
 
-				'PPDE_DP_PREVIEW'   => $entity->replace_template_vars($entity->get_message_for_display()),
-			));
-		}
-
+		// Submit form data
 		$this->submit_data($entity, $errors);
 
-		// Assigning predefined variables in a template block vars
-		for ($i = 0, $size = sizeof($dp_vars); $i < $size; $i++)
-		{
-			$this->template->assign_block_vars('dp_vars', array(
-					'NAME'     => $dp_vars[$i]['name'],
-					'VARIABLE' => $dp_vars[$i]['var'],
-					'EXAMPLE'  => $dp_vars[$i]['value'])
-			);
-		}
+		// Assign predefined variables in a template block vars
+		$this->assign_predefined_block_vars($entity);
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
@@ -295,14 +278,31 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
+	 * Get parse options of the message
+	 *
+	 * @param object $entity The donation pages entity object
+	 * @param array  $data   The form data to be processed
+	 * @param string $type
+	 *
+	 * @return array
+	 */
+	private function get_message_parse_options($entity, $data, $type)
+	{
+		return array($type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func(array($entity, 'message_' . $type . '_enabled')));
+	}
+
+	/**
 	 * Get result of submit and preview expression
+	 *
+	 * @param bool $submit
+	 * @param bool $preview
 	 *
 	 * @return bool
 	 * @access protected
 	 */
-	protected function submit_or_preview()
+	protected function submit_or_preview($submit = false, $preview = false)
 	{
-		return (bool) $this->submit || $this->preview;
+		return (bool) $submit || $preview;
 	}
 
 	/**
@@ -318,7 +318,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		$errors = array();
 
 		// If the form has been submitted or previewed
-		if ($this->submit_or_preview())
+		if ($this->submit_or_preview($this->submit, $this->preview))
 		{
 			// Test if the form is valid
 			if (!check_form_key('add_edit_donation_page'))
@@ -343,9 +343,30 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
+	 * Assign vars to the template if preview is true.
+	 *
+	 * @param object $entity The donation pages entity object
+	 * @param        $errors
+	 *
+	 * @access private
+	 */
+	private function assign_preview_template_vars($entity, $errors)
+	{
+		if ($this->preview && empty($errors))
+		{
+			// Set output vars for display in the template
+			$this->template->assign_vars(array(
+				'S_PPDE_DP_PREVIEW' => $this->preview,
+
+				'PPDE_DP_PREVIEW'   => $entity->replace_template_vars($entity->get_message_for_display()),
+			));
+		}
+	}
+
+	/**
 	 *  Submit data to the database
 	 *
-	 * @param object $entity
+	 * @param object $entity The donation pages entity object
 	 * @param array  $errors
 	 */
 	protected function submit_data($entity, array $errors)
@@ -395,6 +416,28 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		foreach ($langs as $lang)
 		{
 			$this->lang_local_name = $lang['name'];
+		}
+	}
+
+	/**
+	 * Assign Predefined vars to a template block_vars
+	 *
+	 * @param object $entity The donation pages entity object
+	 *
+	 * @access private
+	 */
+	private function assign_predefined_block_vars($entity)
+	{
+		// Grab Template vars
+		$vars = $entity->get_vars(true);
+
+		for ($i = 0, $size = sizeof($vars); $i < $size; $i++)
+		{
+			$this->template->assign_block_vars('dp_vars', array(
+					'NAME'     => $vars[$i]['name'],
+					'VARIABLE' => $vars[$i]['var'],
+					'EXAMPLE'  => $vars[$i]['value'])
+			);
 		}
 	}
 
