@@ -65,8 +65,9 @@ div.prog_green {
 }
 
 span.progress {
-    padding-left: 25px;
+    display: inline-block;
     font-size: 18px;
+    padding-left: 25px;
 }
 
 /* Text donation stats */
