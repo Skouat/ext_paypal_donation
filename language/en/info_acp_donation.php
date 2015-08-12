@@ -230,11 +230,11 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Enter an ISO code.',
 	'PPDE_DC_EMPTY_SYMBOL'               => 'Enter a symbol.',
 	'PPDE_DC_EXISTS'                     => 'This currency already exists.',
+	'PPDE_DC_NO_CURRENCY'                => 'No currency found.',
 	'PPDE_DP_EMPTY_LANG_ID'              => 'No language selected.',
 	'PPDE_DP_EMPTY_NAME'                 => 'The selected donation page does not exist.',
 	'PPDE_DP_EXISTS'                     => 'This donation page already exists.',
+	'PPDE_DP_NO_DONATION_PAGES'          => 'No donation page found.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'You must disable this currency before deleting it.',
-	'PPDE_NO_CURRENCY'                   => 'No currency found.',
-	'PPDE_NO_DONATION_PAGES'             => 'No donation page found.',
 	'PPDE_SETTINGS_MISSING'              => 'Please check “Account ID” or “Sandbox address”.',
 ));

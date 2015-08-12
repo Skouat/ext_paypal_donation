@@ -44,7 +44,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->user = $user;
 		parent::__construct(
 			$ppde_operator_currency,
-			'PPDE_DC_',
+			'PPDE_DC',
 			'currency',
 			'currency'
 		);
@@ -195,8 +195,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 
 			$log_action = $this->add_edit_data($entity);
 			// Log and show user confirmation of the saved item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . strtoupper($log_action), time(), array($entity->get_name()));
-			trigger_error($this->user->lang[$this->lang_key_prefix . strtoupper($log_action)] . adm_back_link($this->u_action));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($entity->get_name()));
+			trigger_error($this->user->lang[$this->lang_key_prefix . '_' . strtoupper($log_action)] . adm_back_link($this->u_action));
 		}
 	}
 
@@ -270,7 +270,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		// Log action if data was moved
 		if ($move_executed)
 		{
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . strtoupper($direction), time(), array($entity->get_name()));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($direction), time(), array($entity->get_name()));
 		}
 
 		if ($this->request->is_ajax())
@@ -296,7 +296,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		// Return an error if no currency
 		if (!$currency_id)
 		{
-			trigger_error($this->user->lang[$this->lang_key_prefix . 'NO_CURRENCY'] . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->user->lang[$this->lang_key_prefix . '_NO_CURRENCY'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Return an error if it's the last enabled currency
@@ -315,7 +315,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		// Save data to the database
 		$entity->save();
 		// Log action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . strtoupper($action) . 'D', time(), array($entity->get_name()));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), array($entity->get_name()));
 
 		if ($this->request->is_ajax() && ($action == 'enable' || $action == 'disable'))
 		{
@@ -350,7 +350,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		}
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . 'DELETED', time(), array($entity->get_name()));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));
 
 		// If AJAX was used, show user a result message
 		$this->ajax_delete_result_message();

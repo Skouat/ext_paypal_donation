@@ -16,11 +16,12 @@ namespace skouat\ppde\entity;
 abstract class main
 {
 	/**
-	 * Suffix for the language keys returned by exceptions
+	 * Prefix and suffix for the language keys returned by exceptions
 	 *
 	 * @type string
 	 */
-	protected $message_suffix;
+	protected $lang_key_suffix;
+	protected $lang_key_prefix;
 
 	/** @var string */
 	protected $table_name;
@@ -46,17 +47,19 @@ abstract class main
 	 *
 	 * @param \phpbb\db\driver\driver_interface    $db             Database object
 	 * @param \phpbb\user                          $user           User object
-	 * @param string                               $message_suffix Prefix for the messages thrown by exceptions
+	 * @param string                               $lang_key_suffix Prefix for the messages thrown by exceptions
+	 * @param string                               $lang_key_prefix Prefix for the messages thrown by exceptions
 	 * @param string                               $table_name     Table name
 	 * @param array                                $table_schema   Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $message_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $lang_key_suffix = '', $lang_key_prefix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
 		$this->user = $user;
-		$this->message_suffix = $message_suffix;
+		$this->lang_key_suffix = $lang_key_suffix;
+		$this->$lang_key_prefix = $lang_key_prefix;
 		$this->table_name = $table_name;
 		$this->table_schema = $table_schema;
 	}
@@ -70,7 +73,7 @@ abstract class main
 	 *
 	 * @param  array $data Data array, typically from the database
 	 *
-	 * @return main_interface $this->data object
+	 * @return object $this->data object
 	 * @throws \skouat\ppde\exception\invalid_argument
 	 * @access public
 	 */
@@ -136,7 +139,7 @@ abstract class main
 		if ($this->data === false)
 		{
 			// A item does not exist
-			$this->display_error_message('PPDE_NO_' . $this->message_suffix);
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		return $this;
@@ -169,7 +172,7 @@ abstract class main
 	 *
 	 * @param string $name
 	 *
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return object $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_name($name)

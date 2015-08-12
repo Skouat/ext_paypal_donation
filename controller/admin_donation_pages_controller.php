@@ -52,7 +52,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		$this->php_ext = $php_ext;
 		parent::__construct(
 			$ppde_operator_donation_pages,
-			'PPDE_DP_LANG',
+			'PPDE_DP',
 			'page',
 			'donation_page'
 		);
@@ -362,8 +362,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 
 			$log_action = $this->add_edit_data($entity);
 			// Log and show user confirmation of the saved item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . strtoupper($log_action), time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
-			trigger_error($this->user->lang($this->lang_key_prefix . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+			trigger_error($this->user->lang($this->lang_key_prefix . '_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
 		}
 	}
 
@@ -446,7 +446,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		$this->ppde_operator->delete_page($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . 'DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
 		$this->ajax_delete_result_message();

@@ -76,9 +76,9 @@ abstract class admin_main
 		if ($this->is_added_data_exists($entity))
 		{
 			// Show user warning for an already exist page and provide link back to the edit page
-			$message = $this->user->lang[$this->lang_key_prefix . 'EXISTS'];
+			$message = $this->user->lang[$this->lang_key_prefix . '_EXISTS'];
 			$message .= '<br /><br />';
-			$message .= $this->user->lang($this->lang_key_prefix . 'GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
+			$message .= $this->user->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
 			trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 	}
@@ -167,7 +167,7 @@ abstract class admin_main
 
 		if (call_user_func(array($entity, 'get_' . $field_name)) == $value_cmp && $submit_or_preview)
 		{
-			$errors[] = $this->user->lang[$this->lang_key_prefix . 'EMPTY_' . strtoupper($field_name)];
+			$errors[] = $this->user->lang[$this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name)];
 		}
 
 		return $errors;
@@ -214,7 +214,7 @@ abstract class admin_main
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
 				'MESSAGE_TITLE' => $this->user->lang['INFORMATION'],
-				'MESSAGE_TEXT'  => $this->user->lang[$this->lang_key_prefix . 'DELETED'],
+				'MESSAGE_TEXT'  => $this->user->lang[$this->lang_key_prefix . '_DELETED'],
 				'REFRESH_DATA'  => array(
 					'time' => 3
 				)

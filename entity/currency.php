@@ -11,7 +11,8 @@
 namespace skouat\ppde\entity;
 
 /**
- * Entity for a currency
+ * @property \phpbb\user    db      phpBB Database object
+ * @property \phpbb\user    user    phpBB User object
  */
 class currency extends main implements currency_interface
 {
@@ -28,9 +29,6 @@ class currency extends main implements currency_interface
 	 * @access protected
 	 */
 	protected $data;
-
-	protected $db;
-	protected $user;
 	protected $currency_table;
 
 	/**
@@ -51,6 +49,7 @@ class currency extends main implements currency_interface
 			$db,
 			$user,
 			'CURRENCY',
+			'PPDE_DC',
 			$table_name,
 			array(
 				'item_id'       => array(
@@ -108,7 +107,7 @@ class currency extends main implements currency_interface
 		if (!empty($this->data['currency_id']))
 		{
 			// The page already exists
-			$this->display_error_message('PPDE_CURRENCY_EXIST');
+			$this->display_error_message($this->lang_key_prefix .'_EXIST');
 		}
 
 		// Make extra sure there is no currency_id set
