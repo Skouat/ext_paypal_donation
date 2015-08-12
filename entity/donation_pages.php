@@ -56,6 +56,7 @@ class donation_pages extends main implements donation_pages_interface
 			$db,
 			$user,
 			'DONATION_PAGES',
+			'PPDE_DP',
 			$table_name,
 			array(
 				'item_id'                      => array(
