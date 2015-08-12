@@ -24,14 +24,4 @@ interface admin_settings_interface
 	 * @access public
 	 */
 	public function display_settings();
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action);
 }

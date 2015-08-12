@@ -74,14 +74,4 @@ interface admin_currency_interface
 	 * @access public
 	 */
 	public function delete_currency($currency_id);
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action);
 }

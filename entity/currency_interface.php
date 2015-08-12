@@ -23,7 +23,7 @@ interface currency_interface
 	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
 	 * @access public
 	 */
-	public function currency_exists();
+	public function data_exists();
 
 	/**
 	 * Import and validate data for donation page
@@ -77,6 +77,14 @@ interface currency_interface
 	 * @access public
 	 */
 	public function set_currency_enable($enable);
+
+	/**
+	 * Get the order number of the currency
+	 *
+	 * @return int Order identifier
+	 * @access public
+	 */
+	public function get_currency_order();
 
 	/**
 	 * Get Currency status
@@ -141,12 +149,4 @@ interface currency_interface
 	 * @access public
 	 */
 	public function set_page_url($u_action);
-
-	/**
-	 * Get the order number of the currency
-	 *
-	 * @return int Order identifier
-	 * @access public
-	 */
-	public function get_currency_order();
 }

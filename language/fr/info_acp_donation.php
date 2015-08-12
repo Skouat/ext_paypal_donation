@@ -205,9 +205,9 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
 	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
 	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
-	'LOG_PPDE_DP_LANG_ADDED'    => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_LANG_DELETED'  => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_LANG_UPDATED'  => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
+	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
 	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
 
@@ -219,9 +219,9 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_DELETED'           => 'Une devise a été supprimée.',
 	'PPDE_DP_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_GO_TO_PAGE'        => '%sModifier la page de dons existante%s',
-	'PPDE_DP_LANG_ADDED'        => 'Une page de dons pour la langue « %s » a été ajoutée.',
-	'PPDE_DP_LANG_DELETED'      => 'Une page de dons pour la langue « %s » a été supprimée.',
-	'PPDE_DP_LANG_UPDATED'      => 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_DP_ADDED'             => 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_DELETED'           => 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_UPDATED'           => 'Une page de dons pour la langue « %s » a été mise à jour.',
 	'PPDE_SETTINGS_SAVED'       => 'Les paramètres de PayPal Donation ont été sauvegardés.',
 
 	// Errors
@@ -229,11 +229,12 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_EMPTY_NAME'                 => 'Saisissez un nom de devise.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Saisissez un code ISO.',
 	'PPDE_DC_EMPTY_SYMBOL'               => 'Saisissez un symbole.',
+	'PPDE_DC_EXISTS'                     => 'Cette devise existe déjà.',
+	'PPDE_DP_EMPTY_LANG_ID'              => 'Aucune langue n’a été sélectionnée.',
+	'PPDE_DP_EMPTY_NAME'                 => 'La page de dons sélectionnée n’existe pas.',
+	'PPDE_DP_EXISTS'                     => 'Cette page de dons existe déjà.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'Vous devez désactiver la devise avant de pouvoir la supprimer.',
 	'PPDE_NO_CURRENCY'                   => 'Aucune devise n’a été trouvée.',
 	'PPDE_NO_DONATION_PAGES'             => 'Aucune page de dons n’a été trouvée.',
-	'PPDE_MUST_SELECT_LANG'              => 'Aucune langue n’a été sélectionnée.',
-	'PPDE_MUST_SELECT_PAGE'              => 'La page de dons sélectionnée n’existe pas.',
-	'PPDE_PAGE_EXISTS'                   => 'La page de dons sélectionnée existe déjà.',
 	'PPDE_SETTINGS_MISSING'              => 'Veuillez vérifier les paramètres « ID du compte PayPal » ou « Adresse PayPal Sandbox ».',
 ));

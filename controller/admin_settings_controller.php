@@ -12,7 +12,7 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class admin_settings_controller implements admin_settings_interface
+class admin_settings_controller extends admin_main implements admin_settings_interface
 {
 	protected $config;
 	protected $container;
@@ -21,8 +21,6 @@ class admin_settings_controller implements admin_settings_interface
 	protected $request;
 	protected $template;
 	protected $user;
-
-	protected $u_action;
 
 	/**
 	 * Constructor
@@ -273,18 +271,5 @@ class admin_settings_controller implements admin_settings_interface
 	protected function depend_on($config_name)
 	{
 		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
-	}
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 }

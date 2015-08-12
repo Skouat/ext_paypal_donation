@@ -12,21 +12,20 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class admin_donation_pages_controller implements admin_donation_pages_interface
+/**
+ * @property object                 ppde_operator Operator object. Inherit property statement from admin_main
+ * @property \phpbb\log\log         log           The phpBB log system. Inherit property statement from admin_main
+ * @property \phpbb\request\request request       Request object. Inherit property statement from admin_main
+ * @property \phpbb\user            user          User object. Inherit property statement from admin_main
+ */
+class admin_donation_pages_controller extends admin_main implements admin_donation_pages_interface
 {
 	protected $container;
-	protected $log;
-	protected $ppde_operator_donation_pages;
-	protected $request;
 	protected $template;
-	protected $user;
 	protected $phpbb_root_path;
 	protected $php_ext;
 
 	protected $lang_local_name;
-	protected $preview;
-	protected $submit;
-	protected $u_action;
 
 	/**
 	 * Constructor
@@ -46,12 +45,17 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	{
 		$this->container = $container;
 		$this->log = $log;
-		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		parent::__construct(
+			$ppde_operator_donation_pages,
+			'PPDE_DP_LANG',
+			'page',
+			'donation_page'
+		);
 	}
 
 	/**
@@ -63,38 +67,33 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	public function display_donation_pages()
 	{
 		// Get list of available language packs
-		$langs = $this->ppde_operator_donation_pages->get_languages();
+		$langs = $this->ppde_operator->get_languages();
 
 		// Set output vars
 		foreach ($langs as $lang => $entry)
 		{
-			$this->template->assign_block_vars('ppde_langs', array(
-				'LANG_LOCAL_NAME' => $entry['name'],
-			));
-
-			// Grab language id
-			$lang_id = $entry['id'];
+			$this->assign_langs_template_vars($entry);
 
 			// Grab all the pages from the db
-			$entities = $this->ppde_operator_donation_pages->get_pages_data($lang_id);
+			$data_ary = $this->ppde_operator->get_pages_data($entry['id']);
 
-			foreach ($entities as $page)
+			foreach ($data_ary as $data)
 			{
 				// Do not treat the item whether language identifier does not match
-				if ($page['page_lang_id'] != $lang_id)
+				if ($data['page_lang_id'] != $entry['id'])
 				{
 					continue;
 				}
 
 				$this->template->assign_block_vars('ppde_langs.dp_list', array(
-					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($page['page_title'])],
+					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($data['page_title'])],
 					'DONATION_PAGE_LANG'  => (string) $lang,
 
-					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;page_id=' . $page['page_id'],
-					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;page_id=' . $page['page_id'],
+					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix . '_id=' . $data['page_id'],
+					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $data['page_id'],
 				));
 			}
-			unset($entities, $page);
+			unset($data_ary, $data);
 		}
 		unset($entry, $langs, $lang);
 
@@ -102,6 +101,30 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		$this->template->assign_vars(array(
 			'U_ACTION' => $this->u_action,
 		));
+	}
+
+	/**
+	 * Assign language template vars to a block vars
+	 * $s_select is for build options select menu
+	 *
+	 * @param array   $lang
+	 * @param bool    $s_select
+	 * @param integer $current
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function assign_langs_template_vars($lang, $s_select = false, $current = 0)
+	{
+		$this->template->assign_block_vars('ppde_langs', array('LANG_LOCAL_NAME' => $lang['name']));
+
+		if ($s_select)
+		{
+			$this->template->assign_block_vars('ppde_langs', array(
+				'VALUE'      => $lang['id'],
+				'S_SELECTED' => ($lang['id'] == $current) ? true : false,
+			));
+		}
 	}
 
 	/**
@@ -146,7 +169,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	/**
 	 * Set template var options for language select menus
 	 *
-	 * @param string $current ID of the language assigned to the donation page
+	 * @param integer $current ID of the language assigned to the donation page
 	 *
 	 * @return null
 	 * @access protected
@@ -154,16 +177,12 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	protected function create_language_options($current)
 	{
 		// Grab all available language packs
-		$langs = $this->ppde_operator_donation_pages->get_languages();
+		$langs = $this->ppde_operator->get_languages();
 
 		// Set the options list template vars
 		foreach ($langs as $lang)
 		{
-			$this->template->assign_block_vars('ppde_langs', array(
-				'LANG_LOCAL_NAME' => $lang['name'],
-				'VALUE'           => $lang['id'],
-				'S_SELECTED'      => ($lang['id'] == $current) ? true : false,
-			));
+			$this->assign_langs_template_vars($lang, true, $current);
 		}
 	}
 
@@ -174,9 +193,9 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	 * @param array  $data   The form data to be processed
 	 *
 	 * @return null
-	 * @access protected
+	 * @access private
 	 */
-	protected function add_edit_donation_page_data($entity, $data)
+	private function add_edit_donation_page_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -216,41 +235,31 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		);
+		$errors = array_merge($errors, $this->set_entity_data($entity, $item_fields));
 
-		foreach ($item_fields as $entity_function => $page_data)
-		{
-			try
-			{
-				// Calling the set_$entity_function on the entity and passing it $page_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($page_data));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
-		}
-		unset($item_fields, $entity_function, $page_data);
+		// Check some settings before submitting data
+		$errors = array_merge($errors,
+			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($entity, 'name', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($entity, 'lang_id', 0, $this->submit_or_preview($this->submit))
+		);
 
-		$errors = $this->check_submit_preview($entity);
-
-		// Grab predefined template vars and assign preview message to the template.
-		$entity->get_vars(true);
+		// Grab predefined template vars
+		$vars = $entity->get_vars(true);
+		// Assign variables in a template block vars
 		$this->assign_preview_template_vars($entity, $errors);
+		$this->assign_predefined_block_vars($vars);
 
 		// Submit form data
 		$this->submit_data($entity, $errors);
-
-		// Assign predefined variables in a template block vars
-		$this->assign_predefined_block_vars($entity);
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_ERROR'                        => (sizeof($errors)) ? true : false,
 			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
 
-			'L_DONATION_PAGES_TITLE'         => $this->user->lang(strtoupper($entity->get_name())),
-			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
+			'L_DONATION_PAGES_TITLE'         => $this->user->lang[strtoupper($entity->get_name())],
+			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang[strtoupper($entity->get_name()) . '_EXPLAIN'],
 			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 
 			'S_BBCODE_DISABLE_CHECKED'       => !$entity->message_bbcode_enabled(),
@@ -258,10 +267,10 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 			'S_MAGIC_URL_DISABLE_CHECKED'    => !$entity->message_magic_url_enabled(),
 
 			'BBCODE_STATUS'                  => $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
-			'SMILIES_STATUS'                 => $this->user->lang('SMILIES_ARE_ON'),
-			'IMG_STATUS'                     => $this->user->lang('IMAGES_ARE_ON'),
-			'FLASH_STATUS'                   => $this->user->lang('FLASH_IS_ON'),
-			'URL_STATUS'                     => $this->user->lang('URL_IS_ON'),
+			'SMILIES_STATUS'                 => $this->user->lang['SMILIES_ARE_ON'],
+			'IMG_STATUS'                     => $this->user->lang['IMAGES_ARE_ON'],
+			'FLASH_STATUS'                   => $this->user->lang['FLASH_IS_ON'],
+			'URL_STATUS'                     => $this->user->lang['URL_IS_ON'],
 
 			'S_BBCODE_ALLOWED'               => true,
 			'S_SMILIES_ALLOWED'              => true,
@@ -285,61 +294,11 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	 * @param string $type
 	 *
 	 * @return array
+	 * @access private
 	 */
 	private function get_message_parse_options($entity, $data, $type)
 	{
 		return array($type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func(array($entity, 'message_' . $type . '_enabled')));
-	}
-
-	/**
-	 * Get result of submit and preview expression
-	 *
-	 * @param bool $submit
-	 * @param bool $preview
-	 *
-	 * @return bool
-	 * @access protected
-	 */
-	protected function submit_or_preview($submit = false, $preview = false)
-	{
-		return (bool) $submit || $preview;
-	}
-
-	/**
-	 * Check some settings before submitting data
-	 *
-	 * @param object $entity The currency entity object
-	 *
-	 * @return null
-	 * @access protected
-	 */
-	protected function check_submit_preview($entity)
-	{
-		$errors = array();
-
-		// If the form has been submitted or previewed
-		if ($this->submit_or_preview($this->submit, $this->preview))
-		{
-			// Test if the form is valid
-			if (!check_form_key('add_edit_donation_page'))
-			{
-				$errors[] = $this->user->lang('FORM_INVALID');
-			}
-
-			// Do not allow an empty item name
-			if ($entity->get_name() == '')
-			{
-				$errors[] = $this->user->lang('PPDE_MUST_SELECT_PAGE');
-			}
-
-			// Do not allow an unselected language name
-			if ($entity->get_lang_id() == 0 && $this->submit)
-			{
-				$errors[] = $this->user->lang('PPDE_MUST_SELECT_LANG');
-			}
-		}
-
-		return $errors;
 	}
 
 	/**
@@ -364,42 +323,47 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	}
 
 	/**
+	 * Assign Predefined variables to a template block_vars
+	 *
+	 * @param array $vars
+	 *
+	 * @return null
+	 * @access   private
+	 */
+	private function assign_predefined_block_vars($vars)
+	{
+		for ($i = 0, $size = sizeof($vars); $i < $size; $i++)
+		{
+			$this->template->assign_block_vars('dp_vars', array(
+					'NAME'     => $vars[$i]['name'],
+					'VARIABLE' => $vars[$i]['var'],
+					'EXAMPLE'  => $vars[$i]['value'])
+			);
+		}
+	}
+
+	/**
 	 *  Submit data to the database
 	 *
 	 * @param object $entity The donation pages entity object
 	 * @param array  $errors
+	 *
+	 * @return null
+	 * @access private
 	 */
-	protected function submit_data($entity, array $errors)
+	private function submit_data($entity, array $errors)
 	{
-		if ($this->submit && empty($errors) && !$this->preview)
+		if ($this->can_submit_data($errors))
 		{
-			if ($entity->donation_page_exists() && $this->request->variable('action', '') === 'add')
-			{
-				// Show user warning for an already exist page and provide link back to the edit page
-				$message = $this->user->lang('PPDE_PAGE_EXISTS');
-				$message .= '<br /><br />';
-				$message .= $this->user->lang('PPDE_DP_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;page_id=' . $entity->get_id() . '">&raquo; ', '</a>');
-				trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
-			}
+			$this->trigger_error_data_already_exists($entity);
 
 			// Grab the local language name
-			$this->get_lang_local_name($this->ppde_operator_donation_pages->get_languages($entity->get_lang_id()));
+			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
-			if ($entity->get_id())
-			{
-				// Save the edited item entity to the database
-				$entity->save();
-				$log_action = 'UPDATED';
-			}
-			else
-			{
-				// Add a new item entity to the database
-				$this->ppde_operator_donation_pages->add_data($entity);
-				$log_action = 'ADDED';
-			}
-			// Show user confirmation of the added item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DP_LANG_' . strtoupper($log_action), time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
-			trigger_error($this->user->lang('PPDE_DP_LANG_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
+			$log_action = $this->add_edit_data($entity);
+			// Log and show user confirmation of the saved item and provide link back to the previous page
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . strtoupper($log_action), time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+			trigger_error($this->user->lang($this->lang_key_prefix . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
 		}
 	}
 
@@ -409,35 +373,13 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 	 * @param array $langs
 	 *
 	 * @return null
-	 * @access protected
+	 * @access private
 	 */
-	protected function get_lang_local_name($langs)
+	private function get_lang_local_name($langs)
 	{
 		foreach ($langs as $lang)
 		{
 			$this->lang_local_name = $lang['name'];
-		}
-	}
-
-	/**
-	 * Assign Predefined vars to a template block_vars
-	 *
-	 * @param object $entity The donation pages entity object
-	 *
-	 * @access private
-	 */
-	private function assign_predefined_block_vars($entity)
-	{
-		// Grab Template vars
-		$vars = $entity->get_vars(true);
-
-		for ($i = 0, $size = sizeof($vars); $i < $size; $i++)
-		{
-			$this->template->assign_block_vars('dp_vars', array(
-					'NAME'     => $vars[$i]['name'],
-					'VARIABLE' => $vars[$i]['var'],
-					'EXAMPLE'  => $vars[$i]['value'])
-			);
 		}
 	}
 
@@ -478,7 +420,7 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		$this->template->assign_vars(array(
 			'S_EDIT_DONATION_PAGE' => true,
 
-			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;page_id=' . $page_id,
+			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $page_id,
 			'U_BACK'               => $this->u_action,
 		));
 	}
@@ -498,38 +440,15 @@ class admin_donation_pages_controller implements admin_donation_pages_interface
 		$entity->load($page_id);
 
 		// Before deletion, grab the local language name
-		$this->get_lang_local_name($this->ppde_operator_donation_pages->get_languages($entity->get_lang_id()));
+		$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
 		// Delete the donation page
-		$this->ppde_operator_donation_pages->delete_page($page_id);
+		$this->ppde_operator->delete_page($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_DP_LANG_DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . 'DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
-		if ($this->request->is_ajax())
-		{
-			$json_response = new \phpbb\json_response;
-			$json_response->send(array(
-				'MESSAGE_TITLE' => $this->user->lang['INFORMATION'],
-				'MESSAGE_TEXT'  => $this->user->lang('PPDE_DP_LANG_DELETED', $this->lang_local_name),
-				'REFRESH_DATA'  => array(
-					'time' => 3
-				)
-			));
-		}
-	}
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
+		$this->ajax_delete_result_message();
 	}
 }

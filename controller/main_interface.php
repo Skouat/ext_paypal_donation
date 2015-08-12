@@ -121,6 +121,7 @@ interface main_interface
 	 * @access public
 	 */
 	public function load_metadata();
+
 	/**
 	 * Check if Sandbox is enable
 	 *

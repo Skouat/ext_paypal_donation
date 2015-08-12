@@ -10,7 +10,7 @@
 
 namespace skouat\ppde\controller;
 
-class admin_overview_controller implements admin_overview_interface
+class admin_overview_controller extends admin_main implements admin_overview_interface
 {
 	protected $auth;
 	protected $cache;
@@ -24,7 +24,6 @@ class admin_overview_controller implements admin_overview_interface
 
 	protected $ext_name;
 	protected $ext_meta = array();
-	protected $u_action;
 
 	/**
 	 * Constructor
@@ -32,7 +31,7 @@ class admin_overview_controller implements admin_overview_interface
 	 * @param \phpbb\auth\auth                        $auth                 Authentication object
 	 * @param \phpbb\cache\service                    $cache                Cache object
 	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\log\log                          $log            The phpBB log system
+	 * @param \phpbb\log\log                          $log                  The phpBB log system
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
 	 * @param \phpbb\request\request                  $request              Request object
 	 * @param \phpbb\template\template                $template             Template object
@@ -185,18 +184,5 @@ class admin_overview_controller implements admin_overview_interface
 				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->user->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
 			));
 		}
-	}
-
-	/**
-	 * Set page url
-	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function set_page_url($u_action)
-	{
-		$this->u_action = $u_action;
 	}
 }

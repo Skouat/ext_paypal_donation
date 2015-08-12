@@ -89,7 +89,7 @@ class donation_pages extends main implements donation_pages_interface
 	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
 	 * @access public
 	 */
-	public function donation_page_exists()
+	public function data_exists()
 	{
 		$sql = 'SELECT page_id
 			FROM ' . $this->donation_pages_table . "

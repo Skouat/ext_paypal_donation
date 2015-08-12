@@ -84,7 +84,7 @@ class currency extends main implements currency_interface
 	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
 	 * @access public
 	 */
-	public function currency_exists()
+	public function data_exists()
 	{
 		$sql = 'SELECT currency_id
 			FROM ' . $this->currency_table . "

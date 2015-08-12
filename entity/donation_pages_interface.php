@@ -23,7 +23,7 @@ interface donation_pages_interface
 	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
 	 * @access public
 	 */
-	public function donation_page_exists();
+	public function data_exists();
 
 	/**
 	 * Insert the item for the first time
