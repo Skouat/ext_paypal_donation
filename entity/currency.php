@@ -11,8 +11,8 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\user    db      phpBB Database object
- * @property \phpbb\user    user    phpBB User object
+ * @property \phpbb\db\driver\driver_interface    db      phpBB Database object
+ * @property \phpbb\user                          user    phpBB User object
  */
 class currency extends main implements currency_interface
 {
@@ -78,118 +78,17 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Check the currency_id exist from the database for this currency
+	 * SQL Query to return the ID of selected currency
 	 *
-	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @return string
 	 * @access public
 	 */
-	public function data_exists()
+	public function get_sql_data_exists()
 	{
-		$sql = 'SELECT currency_id
+		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
 			WHERE currency_iso_code = '" . $this->db->sql_escape($this->data['currency_iso_code']) . "'
-			AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
-		$this->db->sql_query($sql);
-
-		return $this->db->sql_fetchfield('currency_id');
-	}
-
-	/**
-	 * Insert the item for the first time
-	 *
-	 * Will throw an exception if the item was already inserted (call save() instead)
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function insert()
-	{
-		if (!empty($this->data['currency_id']))
-		{
-			// The page already exists
-			$this->display_error_message($this->lang_key_prefix .'_EXIST');
-		}
-
-		// Make extra sure there is no currency_id set
-		unset($this->data['currency_id']);
-
-		// Set the Order value before insert new data
-		$this->set_order();
-
-		// Insert data to the database
-		$sql = 'INSERT INTO ' . $this->currency_table . ' ' . $this->db->sql_build_array('INSERT', $this->data);
-		$this->db->sql_query($sql);
-
-		// Set the currency_id using the id created by the SQL insert
-		$this->data['currency_id'] = (int) $this->db->sql_nextid();
-
-		return $this;
-	}
-
-	/**
-	 * Set Currency order number
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @throws \skouat\ppde\exception\out_of_bounds
-	 * @access private
-	 */
-	private function set_order()
-	{
-		$order = (int) $this->get_max_order() + 1;
-
-		/*
-		* If the data is out of range we'll throw an exception. We use 16777215 as a
-		* maximum because it matches the MySQL unsigned mediumint maximum value which
-		* is the lowest amongst the DBMS supported by phpBB.
-		*/
-		if ($order < 0 || $order > 16777215)
-		{
-			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
-		}
-
-		$this->data['currency_order'] = $order;
-
-		return $this;
-	}
-
-	/**
-	 * Get max currency order value
-	 *
-	 * @return int Order identifier
-	 * @access private
-	 */
-	private function get_max_order()
-	{
-		$sql = 'SELECT MAX(currency_order) AS max_order
-			FROM ' . $this->currency_table;
-		$this->db->sql_query($sql);
-
-		return $this->db->sql_fetchfield('max_order');
-	}
-
-	/**
-	 * Save the current settings to the database
-	 *
-	 * This must be called before closing or any changes will not be saved!
-	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function save()
-	{
-		if (empty($this->data['currency_name']) || empty($this->data['currency_iso_code']) || empty($this->data['currency_symbol']))
-		{
-			// The currency field missing
-			$this->display_error_message('PPDE_NO_CURRENCY');
-		}
-
-		$sql = 'UPDATE ' . $this->currency_table . '
-			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
-			WHERE currency_id = ' . $this->get_id();
-		$this->db->sql_query($sql);
-
-		return $this;
+				AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
 	}
 
 	/**
@@ -309,5 +208,57 @@ class currency extends main implements currency_interface
 	public function get_currency_order()
 	{
 		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+	}
+
+	/**
+	 * Check if required field are set
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_required_field()
+	{
+		return empty($this->data['currency_name']) || empty($this->data['currency_iso_code']) || empty($this->data['currency_symbol']);
+	}
+
+	/**
+	 * Set Currency order number
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @throws \skouat\ppde\exception\out_of_bounds
+	 * @access protected
+	 */
+	protected function set_order()
+	{
+		$order = (int) $this->get_max_order() + 1;
+
+		/*
+		* If the data is out of range we'll throw an exception. We use 16777215 as a
+		* maximum because it matches the MySQL unsigned mediumint maximum value which
+		* is the lowest amongst the DBMS supported by phpBB.
+		*/
+		if ($order < 0 || $order > 16777215)
+		{
+			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
+		}
+
+		$this->data['currency_order'] = $order;
+
+		return $this;
+	}
+
+	/**
+	 * Get max currency order value
+	 *
+	 * @return int Order identifier
+	 * @access private
+	 */
+	private function get_max_order()
+	{
+		$sql = 'SELECT MAX(currency_order) AS max_order
+			FROM ' . $this->currency_table;
+		$this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('max_order');
 	}
 }

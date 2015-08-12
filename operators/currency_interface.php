@@ -18,17 +18,6 @@ namespace skouat\ppde\operators;
 interface currency_interface
 {
 	/**
-	 * Get data from currency table
-	 *
-	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
-	 * @param bool $only_enabled Currency states (Default: false)
-	 *
-	 * @return array Array of currency data entities
-	 * @access public
-	 */
-	public function get_currency_data($currency_id = 0, $only_enabled = false);
-
-	/**
 	 * Delete a currency
 	 *
 	 * @param int $currency_id The currency identifier to delete
@@ -37,6 +26,35 @@ interface currency_interface
 	 * @access public
 	 */
 	public function delete_currency_data($currency_id);
+
+	/**
+	 * Check all items order and fix them if necessary
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function fix_currency_order();
+
+	/**
+	 * SQL Query to return currency data table
+	 *
+	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies
+	 * @param bool $only_enabled Status of currency (Default: false)
+	 *
+	 * @return array Array of currency data entities
+	 * @access public
+	 */
+	public function get_sql_data($currency_id = 0, $only_enabled = false);
+
+	/**
+	 * Checks if the currency is the last enabled.
+	 *
+	 * @param string $action
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function last_currency_enabled($action = '');
 
 	/**
 	 * Move a currency up/down
@@ -49,22 +67,4 @@ interface currency_interface
 	 * @access public
 	 */
 	public function move($switch_order_id, $current_order, $id);
-
-	/**
-	 * Check all items order and fix them if necessary
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function fix_currency_order();
-
-	/**
-	 * Checks if the currency is the last enabled.
-	 *
-	 * @param string $action
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function last_currency_enabled($action = '');
 }

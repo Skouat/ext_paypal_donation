@@ -11,7 +11,9 @@
 namespace skouat\ppde\entity;
 
 /**
- * Entity for a donation page
+ * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
+ * @property \phpbb\user                          user               phpBB User object
+ * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
  */
 class donation_pages extends main implements donation_pages_interface
 {
@@ -32,8 +34,6 @@ class donation_pages extends main implements donation_pages_interface
 	protected $dp_vars;
 
 	protected $config;
-	protected $db;
-	protected $user;
 	protected $donation_pages_table;
 
 	/**
@@ -85,129 +85,69 @@ class donation_pages extends main implements donation_pages_interface
 	}
 
 	/**
-	 * Check the page_id exist from the database for this donation page
-	 *
-	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
-	 * @access public
-	 */
-	public function data_exists()
-	{
-		$sql = 'SELECT page_id
-			FROM ' . $this->donation_pages_table . "
-			WHERE page_title = '" . $this->db->sql_escape($this->data['page_title']) . "'
-			AND page_lang_id = " . (int) $this->data['page_lang_id'];
-		$result = $this->db->sql_query($sql);
-		$this->data['page_id'] = (int) $this->db->sql_fetchfield('page_id');
-		$this->db->sql_freeresult($result);
-
-		return $this->data['page_id'];
-	}
-
-	/**
-	 * Insert the item for the first time
-	 *
-	 * Will throw an exception if the item was already inserted (call save() instead)
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function insert()
-	{
-		if (!empty($this->data['page_id']))
-		{
-			// The page already exists
-			$this->display_error_message('PPDE_PAGE_EXIST');
-		}
-
-		// Make extra sure there is no page_id set
-		unset($this->data['page_id']);
-
-		// Insert the page data to the database
-		$sql = 'INSERT INTO ' . $this->donation_pages_table . ' ' . $this->db->sql_build_array('INSERT', $this->data);
-		$this->db->sql_query($sql);
-
-		// Set the page_id using the id created by the SQL insert
-		$this->data['page_id'] = (int) $this->db->sql_nextid();
-
-		return $this;
-	}
-
-	/**
-	 * Save the current settings to the database
-	 *
-	 * This must be called before closing or any changes will not be saved!
-	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function save()
-	{
-		if (empty($this->data['page_title']) || empty($this->data['page_lang_id']))
-		{
-			// The page already exists
-			$this->display_error_message('PPDE_NO_DONATION_PAGES');
-		}
-
-		$sql = 'UPDATE ' . $this->donation_pages_table . '
-			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
-			WHERE page_id = ' . $this->get_id();
-		$this->db->sql_query($sql);
-
-		return $this;
-	}
-
-	/**
 	 * Get template vars
-	 *
-	 * @param bool $acp
 	 *
 	 * @return array $this->dp_vars
 	 * @access public
 	 */
-	public function get_vars($acp = false)
+	public function get_vars()
 	{
 		$this->dp_vars = array(
-			0 => array(
-				'var'   => '{USER_ID}',
-				'value' => $this->user->data['user_id'],
+			0 => array('var'   => '{USER_ID}',
+					   'value' => $this->user->data['user_id'],
 			),
-			1 => array(
-				'var'   => '{USERNAME}',
-				'value' => $this->user->data['username'],
+			1 => array('var'   => '{USERNAME}',
+					   'value' => $this->user->data['username'],
 			),
-			2 => array(
-				'var'   => '{SITE_NAME}',
-				'value' => $this->config['sitename'],
+			2 => array('var'   => '{SITE_NAME}',
+					   'value' => $this->config['sitename'],
 			),
-			3 => array(
-				'var'   => '{SITE_DESC}',
-				'value' => $this->config['site_desc'],
+			3 => array('var'   => '{SITE_DESC}',
+					   'value' => $this->config['site_desc'],
 			),
-			4 => array(
-				'var'   => '{BOARD_CONTACT}',
-				'value' => $this->config['board_contact'],
+			4 => array('var'   => '{BOARD_CONTACT}',
+					   'value' => $this->config['board_contact'],
 			),
-			5 => array(
-				'var'   => '{BOARD_EMAIL}',
-				'value' => $this->config['board_email'],
+			5 => array('var'   => '{BOARD_EMAIL}',
+					   'value' => $this->config['board_email'],
 			),
-			6 => array(
-				'var'   => '{BOARD_SIG}',
-				'value' => $this->config['board_email_sig'],
+			6 => array('var'   => '{BOARD_SIG}',
+					   'value' => $this->config['board_email_sig'],
 			),
 		);
 
-		if ($acp)
+		if ($this->is_in_admin())
 		{
-			//Add language entries for displaying the vars
-			for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
-			{
-				$this->dp_vars[$i]['name'] = $this->user->lang['PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
-			}
+			$this->add_predefined_lang_vars();
 		}
 
 		return $this->dp_vars;
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_in_admin()
+	{
+		return defined('IN_ADMIN') ? IN_ADMIN : false;
+	}
+
+	/**
+	 * Add language key for donation pages Predefined vars
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function add_predefined_lang_vars()
+	{
+		//Add language entries for displaying the vars
+		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		{
+			$this->dp_vars[$i]['name'] = $this->user->lang[$this->lang_key_prefix . '_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
+		}
 	}
 
 	/**
@@ -468,5 +408,30 @@ class donation_pages extends main implements donation_pages_interface
 		$this->set_message_option(OPTION_FLAG_SMILIES, true);
 
 		return $this;
+	}
+
+	/**
+	 * SQL Query to return the ID of selected donation page
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_sql_data_exists()
+	{
+		return 'SELECT page_id
+			FROM ' . $this->donation_pages_table . "
+			WHERE page_title = '" . $this->db->sql_escape($this->data['page_title']) . "'
+			AND page_lang_id = " . (int) $this->data['page_lang_id'];
+	}
+
+	/**
+	 * Check if required field are set
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_required_field()
+	{
+		return empty($this->data['page_title']) || empty($this->data['page_lang_id']);
 	}
 }

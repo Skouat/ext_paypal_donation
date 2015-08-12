@@ -13,15 +13,14 @@ namespace skouat\ppde\operators;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Operator for a set of pages
+ * @property  \phpbb\db\driver\driver_interface    $db    Database connection
  */
 class currency extends main implements currency_interface
 {
-	protected $data;
-
+	protected $db;
 	protected $cache;
 	protected $container;
-	protected $db;
+	protected $data;
 	protected $ppde_currency_table;
 
 	/**
@@ -53,7 +52,7 @@ class currency extends main implements currency_interface
 	public function delete_currency_data($currency_id)
 	{
 		// Return false if the currency is enabled
-		if ($this->get_currency_data($currency_id, true))
+		if ($this->get_data($this->get_sql_data($currency_id, true)))
 		{
 			return false;
 		}
@@ -68,18 +67,16 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Get data from currency table
+	 * SQL Query to return currency data table
 	 *
-	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies (Default: 0)
+	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies
 	 * @param bool $only_enabled Status of currency (Default: false)
 	 *
 	 * @return array Array of currency data entities
 	 * @access public
 	 */
-	public function get_currency_data($currency_id = 0, $only_enabled = false)
+	public function get_sql_data($currency_id = 0, $only_enabled = false)
 	{
-		$entities = array();
-
 		// Build main sql request
 		$sql_ary = array(
 			'SELECT'   => '*',
@@ -97,18 +94,8 @@ class currency extends main implements currency_interface
 			$sql_ary['WHERE'] .= !empty($sql_ary['WHERE']) ? ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
 		}
 
-		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query($sql);
-
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Import each currency page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.currency')->import($row);
-		}
-		$this->db->sql_freeresult($result);
-
 		// Return all page entities
-		return $entities;
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**

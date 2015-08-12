@@ -13,14 +13,14 @@ namespace skouat\ppde\operators;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Operator for a set of pages
+ * @property  \phpbb\db\driver\driver_interface    $db           Database connection
+ * @property  ContainerInterface                   $container    Service container interface
  */
 class donation_pages extends main implements donation_pages_interface
 {
-	protected $data;
-
 	protected $container;
-	protected $db;
+	/** @type string */
+	protected $module_name;
 	protected $ppde_donation_pages_table;
 
 	/**
@@ -37,39 +37,25 @@ class donation_pages extends main implements donation_pages_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
+		$this->module_name = 'donation_pages';
 	}
 
 	/**
-	 * Get data from donation pages table
+	 * SQL Query to return donation pages data table
 	 *
-	 * @param int    $lang_id
-	 * @param string $mode
+	 * @param int    $lang_id Language Identifier
+	 * @param string $mode    Could be 'success', 'cancel and 'body'. (Default: 'all_pages')
 	 *
-	 * @return array Array of page data entities
+	 * @return string
 	 * @access public
 	 */
-	public function get_pages_data($lang_id = 0, $mode = 'all_pages')
+	public function get_sql_data($lang_id = 0, $mode = 'all_pages')
 	{
-		$entities = array();
-
-		// Load all page data from the database
-		// Build sql query with alias field
-		$sql = 'SELECT *
+		return 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
 				WHERE page_lang_id = ' . (int) ($lang_id) .
-					$this->set_sql_and_page_title($mode) . '
+		$this->set_sql_and_page_title($mode) . '
 				ORDER BY page_title';
-		$result = $this->db->sql_query($sql);
-
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Import each donation page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.donation_pages')->import($row);
-		}
-		$this->db->sql_freeresult($result);
-
-		// Return all page entities
-		return $entities;
 	}
 
 	/**

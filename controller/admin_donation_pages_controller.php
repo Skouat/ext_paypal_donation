@@ -75,7 +75,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 			$this->assign_langs_template_vars($entry);
 
 			// Grab all the pages from the db
-			$data_ary = $this->ppde_operator->get_pages_data($entry['id']);
+			$data_ary = $this->ppde_operator->get_data($this->ppde_operator->get_sql_data($entry['id']));
 
 			foreach ($data_ary as $data)
 			{
@@ -117,8 +117,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	{
 		$this->template->assign_block_vars('ppde_langs', array(
 			'LANG_LOCAL_NAME' => $lang['name'],
-			'VALUE'      => $lang['id'],
-			'S_SELECTED' => ((int) $lang['id'] == (int) $current) ? true : false,
+			'VALUE'           => $lang['id'],
+			'S_SELECTED'      => ((int) $lang['id'] == (int) $current) ? true : false,
 		));
 	}
 
@@ -240,7 +240,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		);
 
 		// Grab predefined template vars
-		$vars = $entity->get_vars(true);
+		$vars = $entity->get_vars();
+
 		// Assign variables in a template block vars
 		$this->assign_preview_template_vars($entity, $errors);
 		$this->assign_predefined_block_vars($vars);
@@ -392,7 +393,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		add_form_key('add_edit_donation_page');
 
 		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages')->load($page_id);
+		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		$entity->load($page_id);
 
 		// Collect the form data
 		$data = array(

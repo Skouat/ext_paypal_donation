@@ -18,15 +18,14 @@ namespace skouat\ppde\operators;
 interface donation_pages_interface
 {
 	/**
-	 * Get data from donation pages table
+	 * Delete a page
 	 *
-	 * @param int    $lang_id
-	 * @param string $mode
+	 * @param int $page_id The page identifier to delete
 	 *
-	 * @return array Array of page data entities
+	 * @return bool True if row was deleted, false otherwise
 	 * @access public
 	 */
-	public function get_pages_data($lang_id = 0, $mode = 'all_pages');
+	public function delete_page($page_id);
 
 	/**
 	 * Get list language packs
@@ -39,13 +38,13 @@ interface donation_pages_interface
 	public function get_languages($lang_id = 0);
 
 	/**
-	 * Delete a page
+	 * SQL Query to return donation pages data
 	 *
-	 * @param int $page_id The page identifier to delete
+	 * @param int    $lang_id
+	 * @param string $mode
 	 *
-	 * @return bool True if row was deleted, false otherwise
+	 * @return string
 	 * @access public
 	 */
-	public function delete_page($page_id);
-
+	public function get_sql_data($lang_id = 0, $mode = 'all_pages');
 }

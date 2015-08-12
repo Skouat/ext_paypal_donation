@@ -91,27 +91,29 @@ abstract class admin_main
 	 */
 	protected function is_added_data_exists($entity)
 	{
-		return $entity->data_exists() && $this->request->variable('action', '') === 'add';
+		return $entity->data_exists($entity->get_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
 
 	/**
 	 * @param object $entity The entity object
 	 *
+	 * @param string $run_before_insert
+	 *
 	 * @return string $log_action
 	 * @access protected
 	 */
-	protected function add_edit_data($entity)
+	protected function add_edit_data($entity, $run_before_insert = '')
 	{
 		if ($entity->get_id())
 		{
 			// Save the edited item entity to the database
-			$entity->save();
+			$entity->save($entity->check_required_field());
 			$log_action = 'UPDATED';
 		}
 		else
 		{
 			// Add a new item entity to the database
-			$this->ppde_operator->add_data($entity);
+			$this->ppde_operator->add_data($entity, $run_before_insert);
 			$log_action = 'ADDED';
 		}
 

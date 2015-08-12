@@ -10,33 +10,15 @@
 
 namespace skouat\ppde\entity;
 
-/**
- * @property string u_action
- */
 abstract class main
 {
-	/**
-	 * Prefix and suffix for the language keys returned by exceptions
-	 *
-	 * @type string
-	 */
-	protected $lang_key_suffix;
 	protected $lang_key_prefix;
-
-	/** @var string */
+	protected $lang_key_suffix;
 	protected $table_name;
-
-	/**
-	 * Table schema and data type in the table
-	 *
-	 * @type array
-	 */
 	protected $table_schema;
-
+	protected $u_action;
 	/**
 	 * Declare overridden properties
-	 *
-	 * @type mixed
 	 */
 	protected $db;
 	protected $user;
@@ -45,12 +27,12 @@ abstract class main
 	/**
 	 * Construct
 	 *
-	 * @param \phpbb\db\driver\driver_interface    $db             Database object
-	 * @param \phpbb\user                          $user           User object
-	 * @param string                               $lang_key_suffix Prefix for the messages thrown by exceptions
-	 * @param string                               $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string                               $table_name     Table name
-	 * @param array                                $table_schema   Array with column names to overwrite and type of data
+	 * @param \phpbb\db\driver\driver_interface $db              Database object
+	 * @param \phpbb\user                       $user            User object
+	 * @param string                            $lang_key_prefix Prefix for the messages thrown by exceptions
+	 * @param string                            $lang_key_suffix Suffix for the messages thrown by exceptions
+	 * @param string                            $table_name      Table name
+	 * @param array                             $table_schema    Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */
@@ -59,7 +41,7 @@ abstract class main
 		$this->db = $db;
 		$this->user = $user;
 		$this->lang_key_suffix = $lang_key_suffix;
-		$this->$lang_key_prefix = $lang_key_prefix;
+		$this->lang_key_prefix = $lang_key_prefix;
 		$this->table_name = $table_name;
 		$this->table_schema = $table_schema;
 	}
@@ -105,6 +87,43 @@ abstract class main
 	}
 
 	/**
+	 * Insert the item for the first time
+	 *
+	 * Will throw an exception if the item was already inserted (call save() instead)
+	 *
+	 * @param string $run_before_insert
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function insert($run_before_insert = '')
+	{
+		if (!empty($this->data[$this->table_schema['item_id']['name']]))
+		{
+			// The page already exists
+			$this->display_error_message($this->lang_key_prefix . '_EXIST');
+		}
+
+		// Run some stuff before insert data in database
+		if ($run_before_insert)
+		{
+			$this->function_before_insert($run_before_insert);
+		}
+
+		// Make extra sure there is no page_id set
+		unset($this->data[$this->table_schema['item_id']['name']]);
+
+		// Insert the page data to the database
+		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
+		$this->db->sql_query($sql);
+
+		// Set the page_id using the id created by the SQL insert
+		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
+
+		return $this;
+	}
+
+	/**
 	 * Display Error message
 	 *
 	 * @param string $lang_key
@@ -120,11 +139,87 @@ abstract class main
 	}
 
 	/**
+	 * @param $function_name
+	 *
+	 * @return mixed
+	 */
+	private function function_before_insert($function_name)
+	{
+		return call_user_func(array($this, $function_name));
+	}
+
+	/**
+	 * Save the current settings to the database
+	 *
+	 * This must be called before closing or any changes will not be saved!
+	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	 *
+	 * @param bool $required_fields
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function save($required_fields)
+	{
+		if ($required_fields)
+		{
+			// The page already exists
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+		}
+
+		$sql = 'UPDATE ' . $this->table_schema . '
+			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . $this->get_id();
+		$this->db->sql_query($sql);
+
+		return $this;
+	}
+
+	/**
+	 * Get id
+	 *
+	 * @return int Item identifier
+	 * @access public
+	 */
+	public function get_id()
+	{
+		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
+	}
+
+	/**
+	 * Check the Identifier of the called data exists in the database
+	 *
+	 * @param string $sql SQL Query
+	 *
+	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @access public
+	 */
+	public function data_exists($sql)
+	{
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield($this->table_schema['item_id']['name']);
+	}
+
+	/**
+	 * SQL Query to return the ID of selected currency
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_sql_data_exists()
+	{
+		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
+ 			FROM ' . $this->table_name . '
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . $this->data[$this->table_name['item_id']['name']];
+	}
+
+	/**
 	 * Load the data from the database
 	 *
 	 * @param int $id
 	 *
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return object $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function load($id)
@@ -143,17 +238,6 @@ abstract class main
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Get id
-	 *
-	 * @return int Item identifier
-	 * @access public
-	 */
-	public function get_id()
-	{
-		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
 	}
 
 	/**
@@ -194,5 +278,16 @@ abstract class main
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
+	}
+
+	/**
+	 * Check if required field are set
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_required_field()
+	{
+		return false;
 	}
 }

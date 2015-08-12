@@ -62,7 +62,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->ppde_operator->fix_currency_order();
 
 		// Grab all the pages from the db
-		$data_ary = $this->ppde_operator->get_currency_data();
+		$data_ary = $this->ppde_operator->get_data($this->ppde_operator->get_sql_data());
 
 		foreach ($data_ary as $data)
 		{
@@ -128,8 +128,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	/**
 	 * Process currency data to be added or edited
 	 *
-	 * @param object $entity The currency entity object
-	 * @param array  $data   The form data to be processed
+	 * @param \skouat\ppde\entity\currency $entity The currency entity object
+	 * @param array                        $data   The form data to be processed
 	 *
 	 * @return null
 	 * @access private
@@ -193,7 +193,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		{
 			$this->trigger_error_data_already_exists($entity);
 
-			$log_action = $this->add_edit_data($entity);
+			$log_action = $this->add_edit_data($entity, 'set_order');
 			// Log and show user confirmation of the saved item and provide link back to the previous page
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($entity->get_name()));
 			trigger_error($this->user->lang[$this->lang_key_prefix . '_' . strtoupper($log_action)] . adm_back_link($this->u_action));
@@ -313,7 +313,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$entity->set_currency_enable(($action == 'enable') ? 1 : 0);
 
 		// Save data to the database
-		$entity->save();
+		$entity->save($entity->check_required_field());
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), array($entity->get_name()));
 

@@ -18,9 +18,7 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 	protected $container;
 	protected $ppde_controller_main;
 	protected $ppde_operator_currency;
-	protected $request;
 	protected $template;
-	protected $user;
 
 	/**
 	 * Constructor
@@ -44,6 +42,7 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->lang_key_prefix = 'PPDE_SETTINGS';
 	}
 
 	/**
@@ -109,57 +108,33 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 	 */
 	private function submit_settings()
 	{
-		// Is the form being submitted to us?
-		if ($this->request->is_set_post('submit'))
-		{
-			// Test if the submitted form is valid
-			$errors = $this->form_key_error('ppde_settings');
-
-			// If no errors, process the form data
-			if (empty($errors))
-			{
-				// Set the options the user configured
-				$this->set_settings();
-
-				// Add option settings change action to the admin log
-				$phpbb_log = $this->container->get('log');
-				$phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_SETTINGS_UPDATED');
-
-				// Option settings have been updated and logged
-				// Confirm this to the user and provide link back to previous page
-				trigger_error($this->user->lang('PPDE_SETTINGS_SAVED') . adm_back_link($this->u_action));
-			}
-		}
-	}
-
-	/**
-	 * Return Lang keys of the error if the form key is invalid
-	 *
-	 * @param string $form_key
-	 *
-	 * @return array $errors
-	 * @access private
-	 */
-	private function form_key_error($form_key)
-	{
-		$errors = array();
+		$this->submit = $this->request->is_set_post('submit');
 
 		// Test if the submitted form is valid
-		if (!check_form_key($form_key))
-		{
-			$errors[] = $this->user->lang('FORM_INVALID');
-		}
+		$errors = $this->is_invalid_form('ppde_settings', $this->submit);
 
-		return $errors;
+		if ($this->can_submit_data($errors))
+		{
+			// Set the options the user configured
+			$this->set_settings();
+
+			// Add option settings change action to the admin log
+			$phpbb_log = $this->container->get('log');
+			$phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
+
+			// Option settings have been updated and logged
+			// Confirm this to the user and provide link back to previous page
+			trigger_error($this->user->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
+		}
 	}
 
 	/**
 	 * Set the options a user can configure
 	 *
 	 * @return null
-	 * @access protected
+	 * @access private
 	 */
-	protected function set_settings()
+	private function set_settings()
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
@@ -201,9 +176,9 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 	 * @param string $config_value
 	 *
 	 * @return string
-	 * @access protected
+	 * @access private
 	 */
-	protected function clean_items_list($config_value)
+	private function clean_items_list($config_value)
 	{
 		$items_list = explode(',', $config_value);
 		$merge_items = array();
@@ -248,13 +223,13 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 	 * @param $depend_on
 	 *
 	 * @return mixed
-	 * @access protected
+	 * @access private
 	 */
-	protected function required_settings($settings, $depend_on)
+	private function required_settings($settings, $depend_on)
 	{
 		if (empty($settings) && $depend_on == true)
 		{
-			trigger_error($this->user->lang('PPDE_SETTINGS_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->user->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		return $settings;
@@ -266,9 +241,9 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 	 * @param $config_name
 	 *
 	 * @return bool
-	 * @access protected
+	 * @access private
 	 */
-	protected function depend_on($config_name)
+	private function depend_on($config_name)
 	{
 		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
