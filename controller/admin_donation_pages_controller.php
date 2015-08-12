@@ -108,23 +108,18 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	 * $s_select is for build options select menu
 	 *
 	 * @param array   $lang
-	 * @param bool    $s_select
 	 * @param integer $current
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function assign_langs_template_vars($lang, $s_select = false, $current = 0)
+	private function assign_langs_template_vars($lang, $current = 0)
 	{
-		$this->template->assign_block_vars('ppde_langs', array('LANG_LOCAL_NAME' => $lang['name']));
-
-		if ($s_select)
-		{
-			$this->template->assign_block_vars('ppde_langs', array(
-				'VALUE'      => $lang['id'],
-				'S_SELECTED' => ($lang['id'] == $current) ? true : false,
-			));
-		}
+		$this->template->assign_block_vars('ppde_langs', array(
+			'LANG_LOCAL_NAME' => $lang['name'],
+			'VALUE'      => $lang['id'],
+			'S_SELECTED' => ((int) $lang['id'] == (int) $current) ? true : false,
+		));
 	}
 
 	/**
@@ -182,7 +177,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		// Set the options list template vars
 		foreach ($langs as $lang)
 		{
-			$this->assign_langs_template_vars($lang, true, $current);
+			$this->assign_langs_template_vars($lang, $current);
 		}
 	}
 
