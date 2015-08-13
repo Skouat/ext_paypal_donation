@@ -10,19 +10,25 @@
 
 namespace skouat\ppde\operators;
 
-/**
- * @property  \phpbb\db\driver\driver_interface                         db        Database connection
- * @property  \Symfony\Component\DependencyInjection\ContainerInterface container Service container interface
- */
 abstract class main
 {
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+	/** @var \Symfony\Component\DependencyInjection\ContainerInterface */
+	protected $container;
+	/** @var string */
+	protected $container_entity_name;
+
 	/**
 	 * Constructor
 	 *
+	 * @param string $container_entity_name
+	 *
 	 * @access public
 	 */
-	public function __construct()
+	public function __construct($container_entity_name = '')
 	{
+		$this->container_entity_name = $container_entity_name;
 	}
 
 	/**
@@ -62,7 +68,7 @@ abstract class main
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			// Import each currency page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.currency')->import($row);
+			$entities[] = $this->container->get($this->container_entity_name)->import($row);
 		}
 		$this->db->sql_freeresult($result);
 

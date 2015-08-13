@@ -13,13 +13,13 @@ namespace skouat\ppde\operators;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property  \phpbb\db\driver\driver_interface    $db    Database connection
+ * @property  \phpbb\db\driver\driver_interface    $db                       Database connection
+ * @property  ContainerInterface                   $container                Service container interface
+ * @property  string                               $container_entity_name    Name of Service container interface
  */
 class currency extends main implements currency_interface
 {
-	protected $db;
 	protected $cache;
-	protected $container;
 	protected $data;
 	protected $ppde_currency_table;
 
@@ -39,6 +39,7 @@ class currency extends main implements currency_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_currency_table = $ppde_currency_table;
+		parent::__construct('skouat.ppde.entity.currency');
 	}
 
 	/**

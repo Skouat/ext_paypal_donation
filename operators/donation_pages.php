@@ -13,14 +13,12 @@ namespace skouat\ppde\operators;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property  \phpbb\db\driver\driver_interface    $db           Database connection
- * @property  ContainerInterface                   $container    Service container interface
+ * @property  \phpbb\db\driver\driver_interface    $db                       Database connection
+ * @property  ContainerInterface                   $container                Service container interface
+ * @property  string                               $container_entity_name    Name of Service container interface
  */
 class donation_pages extends main implements donation_pages_interface
 {
-	protected $container;
-	/** @type string */
-	protected $module_name;
 	protected $ppde_donation_pages_table;
 
 	/**
@@ -37,7 +35,7 @@ class donation_pages extends main implements donation_pages_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
-		$this->module_name = 'donation_pages';
+		parent::__construct('skouat.ppde.entity.donation_pages');
 	}
 
 	/**
