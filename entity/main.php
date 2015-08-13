@@ -167,7 +167,7 @@ abstract class main
 			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
-		$sql = 'UPDATE ' . $this->table_schema . '
+		$sql = 'UPDATE ' . $this->table_name . '
 			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
 			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . $this->get_id();
 		$this->db->sql_query($sql);
