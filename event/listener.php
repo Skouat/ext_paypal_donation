@@ -68,12 +68,10 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Load data for donations statistics
 	 *
-	 * @param object $event The event object
-	 *
 	 * @return null
 	 * @access public
 	 */
-	public function load_index_data($event)
+	public function load_index_data()
 	{
 		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
 		{
@@ -89,16 +87,14 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Create a URL to the donation pages controller file for the header linklist
 	 *
-	 * @param object $event The event object
-	 *
 	 * @return null
 	 * @access public
 	 */
-	public function add_page_header_link($event)
+	public function add_page_header_link()
 	{
 		$this->template->assign_vars(array(
 			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
-			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat.ppde.donate'),
+			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_donate'),
 		));
 	}
 
@@ -135,7 +131,7 @@ class listener implements EventSubscriberInterface
 			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donate') === 0)
 			{
 				$event['location'] = $this->user->lang('PPDE_VIEWONLINE');
-				$event['location_url'] = $this->controller_helper->route('skouat.ppde.donate');
+				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donate');
 			}
 		}
 	}

@@ -300,7 +300,7 @@ class main_controller implements main_interface
 	 */
 	private function generate_paypal_return_url($arg)
 	{
-		return generate_board_url(true) . $this->helper->route('skouat.ppde.donate', array('return' => $arg));
+		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', array('return' => $arg));
 	}
 
 	/**
@@ -311,7 +311,7 @@ class main_controller implements main_interface
 	 */
 	private function generate_paypal_notify_return_url()
 	{
-		return generate_board_url(true) . $this->helper->route('skouat.ppde.ipn_listener');
+		return generate_board_url(true) . $this->helper->route('skouat_ppde_ipn_listener');
 	}
 
 	/**
