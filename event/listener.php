@@ -17,22 +17,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class listener implements EventSubscriberInterface
 {
-	/** @var \phpbb\config\config */
 	protected $config;
-
-	/** @var \phpbb\controller\helper */
 	protected $controller_helper;
-
-	/** @var \skouat\ppde\controller\main_controller */
 	protected $ppde_controller_main;
-
-	/** @var \phpbb\template\template */
 	protected $template;
-
-	/** @var \phpbb\user */
 	protected $user;
-
-	/** @var string phpEx */
 	protected $php_ext;
 
 	/**

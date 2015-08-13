@@ -12,23 +12,34 @@ namespace skouat\ppde\controller;
 
 abstract class admin_main
 {
+	/** @var string */
 	protected $id_prefix;
+	/** @var string */
 	protected $lang_key_prefix;
+	/** @var \phpbb\log\log */
 	protected $log;
+	/** @var string */
 	protected $module_name;
+	/** @var \skouat\ppde\operators\main */
 	protected $ppde_operator;
+	/** @var bool */
 	protected $preview;
+	/** @var \phpbb\request\request */
 	protected $request;
+	/** @var bool */
 	protected $submit;
+	/** @var string */
 	protected $u_action;
+	/** @var \phpbb\user */
 	protected $user;
 
 	/**
 	 * Constructor
 	 *
-	 * @param object $ppde_operator   Operator object
-	 * @param string $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string $id_prefix       Prefix for the URL identifier
+	 * @param \skouat\ppde\operators\main $ppde_operator   Operator object
+	 * @param string                      $lang_key_prefix Prefix for the messages thrown by exceptions
+	 * @param string                      $id_prefix       Prefix for the URL identifier
+	 * @param string                      $module_name     Name of the module currently used
 	 *
 	 * @access public
 	 */
@@ -67,7 +78,7 @@ abstract class admin_main
 	/**
 	 * Trigger error message if data already exists
 	 *
-	 * @param object $entity The entity object
+	 * @param \skouat\ppde\entity\main $entity The entity object
 	 *
 	 * @access protected
 	 */
@@ -84,7 +95,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * @param object $entity The entity object
+	 * @param \skouat\ppde\entity\main $entity The entity object
 	 *
 	 * @return bool
 	 * @access protected
@@ -95,9 +106,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * @param object $entity The entity object
+	 * Parse data to the entity
 	 *
-	 * @param string $run_before_insert
+	 * @param \skouat\ppde\entity\main $entity The entity object
+	 * @param string                   $run_before_insert
 	 *
 	 * @return string $log_action
 	 * @access protected
@@ -124,8 +136,8 @@ abstract class admin_main
 	 * Set data in the $entity object.
 	 * Use call_user_func_array() to call $entity function
 	 *
-	 * @param object $entity The entity object
-	 * @param array  $data_ary
+	 * @param \skouat\ppde\entity\main $entity The entity object
+	 * @param array                    $data_ary
 	 *
 	 * @return array
 	 * @access protected
@@ -155,10 +167,11 @@ abstract class admin_main
 	/**
 	 * Check some settings before submitting data
 	 *
-	 * @param object     $entity            The entity object
-	 * @param string     $field_name        Name of the entity function to call
-	 * @param string|int $value_cmp         Default value to compare with the call_user_func() return value
-	 * @param bool       $submit_or_preview Form submit or preview status
+	 * @param \skouat\ppde\entity\main $entity            The entity object
+	 * @param string                   $field_name        Name of the entity function to call
+	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return
+	 *                                                    value
+	 * @param bool                     $submit_or_preview Form submit or preview status
 	 *
 	 * @return array $errors
 	 * @access protected

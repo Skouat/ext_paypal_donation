@@ -41,7 +41,7 @@ interface currency_interface
 	 * @param int  $currency_id  Identifier of currency; Set to 0 to get all currencies
 	 * @param bool $only_enabled Status of currency (Default: false)
 	 *
-	 * @return array Array of currency data entities
+	 * @return string
 	 * @access public
 	 */
 	public function get_sql_data($currency_id = 0, $only_enabled = false);

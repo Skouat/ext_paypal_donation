@@ -12,6 +12,12 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @property \phpbb\request\request    request            Request object
+ * @property \phpbb\user               user               User object
+ * @property bool                      submit             Prefix for the messages thrown by exceptions
+ * @property string                    lang_key_prefix    Prefix for the messages thrown by exceptions
+ */
 class admin_settings_controller extends admin_main implements admin_settings_interface
 {
 	protected $config;

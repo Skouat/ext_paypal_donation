@@ -13,10 +13,10 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property object                     ppde_operator        Operator object
- * @property \phpbb\log\log             log                  The phpBB log system
- * @property \phpbb\request\request     request              Request object
- * @property \phpbb\user                user                 User object
+ * @property \phpbb\log\log                     log              The phpBB log system
+ * @property \skouat\ppde\operators\currency    ppde_operator    Operator object
+ * @property \phpbb\request\request             request          Request object
+ * @property \phpbb\user                        user             User object
  */
 class admin_currency_controller extends admin_main implements admin_currency_interface
 {
@@ -181,8 +181,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	/**
 	 * Submit data to the database
 	 *
-	 * @param object $entity The currency entity object
-	 * @param array  $errors
+	 * @param \skouat\ppde\entity\currency $entity The currency entity object
+	 * @param array                        $errors
 	 *
 	 * @return null
 	 * @access private

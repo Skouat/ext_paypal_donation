@@ -13,10 +13,10 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property object                 ppde_operator Operator object. Inherit property statement from admin_main
- * @property \phpbb\log\log         log           The phpBB log system. Inherit property statement from admin_main
- * @property \phpbb\request\request request       Request object. Inherit property statement from admin_main
- * @property \phpbb\user            user          User object. Inherit property statement from admin_main
+ * @property \skouat\ppde\operators\donation_pages    ppde_operator    Operator object.
+ * @property \phpbb\log\log                           log              The phpBB log system.
+ * @property \phpbb\request\request                   request          Request object.
+ * @property \phpbb\user                              user             User object.
  */
 class admin_donation_pages_controller extends admin_main implements admin_donation_pages_interface
 {
@@ -184,8 +184,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	/**
 	 * Process donation pages data to be added or edited
 	 *
-	 * @param object $entity The donation pages entity object
-	 * @param array  $data   The form data to be processed
+	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
+	 * @param array                              $data   The form data to be processed
 	 *
 	 * @return null
 	 * @access private
@@ -285,9 +285,9 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	/**
 	 * Get parse options of the message
 	 *
-	 * @param object $entity The donation pages entity object
-	 * @param array  $data   The form data to be processed
-	 * @param string $type
+	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
+	 * @param array                              $data   The form data to be processed
+	 * @param string                             $type
 	 *
 	 * @return array
 	 * @access private
@@ -300,8 +300,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	/**
 	 * Assign vars to the template if preview is true.
 	 *
-	 * @param object $entity The donation pages entity object
-	 * @param        $errors
+	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
+	 * @param                                    $errors
 	 *
 	 * @access private
 	 */
@@ -341,8 +341,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	/**
 	 *  Submit data to the database
 	 *
-	 * @param object $entity The donation pages entity object
-	 * @param array  $errors
+	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
+	 * @param array                              $errors
 	 *
 	 * @return null
 	 * @access private
