@@ -219,17 +219,19 @@ abstract class admin_main
 	/**
 	 * Show user a result message if AJAX was used
 	 *
+	 * @param string $message Text message to show to the user
+	 *
 	 * @return null
 	 * @access protected
 	 */
-	protected function ajax_delete_result_message()
+	protected function ajax_delete_result_message($message = '')
 	{
 		if ($this->request->is_ajax())
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
 				'MESSAGE_TITLE' => $this->user->lang['INFORMATION'],
-				'MESSAGE_TEXT'  => $this->user->lang[$this->lang_key_prefix . '_DELETED'],
+				'MESSAGE_TEXT'  => $message,
 				'REFRESH_DATA'  => array(
 					'time' => 3
 				)

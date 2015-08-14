@@ -353,6 +353,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));
 
 		// If AJAX was used, show user a result message
-		$this->ajax_delete_result_message();
+		$message = $this->user->lang[$this->lang_key_prefix . '_DELETED'];
+		$this->ajax_delete_result_message($message);
 	}
 }

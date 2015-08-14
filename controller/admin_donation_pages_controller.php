@@ -446,6 +446,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
-		$this->ajax_delete_result_message();
+		$message = $this->user->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);
+		$this->ajax_delete_result_message($message);
 	}
 }
