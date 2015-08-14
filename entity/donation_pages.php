@@ -14,6 +14,7 @@ namespace skouat\ppde\entity;
  * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
  * @property \phpbb\user                          user               phpBB User object
  * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class donation_pages extends main implements donation_pages_interface
 {
@@ -55,31 +56,17 @@ class donation_pages extends main implements donation_pages_interface
 		parent::__construct(
 			$db,
 			$user,
-			'DONATION_PAGES',
 			'PPDE_DP',
+			'DONATION_PAGES',
 			$table_name,
 			array(
-				'item_id'                      => array(
-					'name' => 'page_id',
-					'type' => 'integer'),
-				'item_name'                    => array(
-					'name' => 'page_title',
-					'type' => 'string'),
-				'item_lang_id'                 => array(
-					'name' => 'page_lang_id',
-					'type' => 'integer'),
-				'item_content'                 => array(
-					'name' => 'page_content',
-					'type' => 'string'),
-				'item_content_bbcode_bitfield' => array(
-					'name' => 'page_content_bbcode_bitfield',
-					'type' => 'string'),
-				'item_content_bbcode_uid'      => array(
-					'name' => 'page_content_bbcode_uid',
-					'type' => 'string'),
-				'item_content_bbcode_options'  => array(
-					'name' => 'page_content_bbcode_options',
-					'type' => 'integer'),
+				'item_id'                      => array('name' => 'page_id', 'type' => 'integer'),
+				'item_name'                    => array('name' => 'page_title', 'type' => 'string'),
+				'item_lang_id'                 => array('name' => 'page_lang_id', 'type' => 'integer'),
+				'item_content'                 => array('name' => 'page_content', 'type' => 'string'),
+				'item_content_bbcode_bitfield' => array('name' => 'page_content_bbcode_bitfield', 'type' => 'string'),
+				'item_content_bbcode_uid'      => array('name' => 'page_content_bbcode_uid', 'type' => 'string'),
+				'item_content_bbcode_options'  => array('name' => 'page_content_bbcode_options', 'type' => 'integer'),
 			)
 		);
 	}

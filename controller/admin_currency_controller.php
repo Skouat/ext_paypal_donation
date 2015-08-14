@@ -13,16 +13,19 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \phpbb\log\log                     log              The phpBB log system
- * @property \skouat\ppde\operators\currency    ppde_operator    Operator object
- * @property \phpbb\request\request             request          Request object
- * @property \phpbb\user                        user             User object
+ * @property ContainerInterface                 container         Service container interface
+ * @property string                             id_prefix_name    Prefix name for identifier in the URL
+ * @property string                             lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log                     log               The phpBB log system
+ * @property string                             module_name       Name of the module currently used
+ * @property \skouat\ppde\operators\currency    ppde_operator     Operator object
+ * @property \phpbb\request\request             request           Request object
+ * @property bool                               submit            State of submit $_POST variable
+ * @property \phpbb\template\template           $template         Template object
+ * @property \phpbb\user                        user              User object
  */
 class admin_currency_controller extends admin_main implements admin_currency_interface
 {
-	protected $container;
-	protected $template;
-
 	/**
 	 * Constructor
 	 *
@@ -44,8 +47,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->user = $user;
 		parent::__construct(
 			$ppde_operator_currency,
-			'PPDE_DC',
 			'currency',
+			'PPDE_DC',
 			'currency'
 		);
 	}
@@ -73,12 +76,12 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 				'CURRENCY_NAME'    => $data['currency_name'],
 				'CURRENCY_ENABLED' => $data['currency_enable'] ? true : false,
 
-				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix . '_id=' . $data['currency_id'],
-				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $data['currency_id'],
-				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix . '_id=' . $data['currency_id'],
+				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'L_ENABLE_DISABLE' => $this->user->lang[$enable_lang],
-				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix . '_id=' . $data['currency_id'],
-				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix . '_id=' . $data['currency_id'],
+				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 			));
 		}
 
@@ -102,7 +105,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		add_form_key('add_edit_currency');
 
 		// Initiate an entity
-		$entity = $this->container->get('skouat.ppde.entity.currency');
+		/** @type \skouat\ppde\entity\currency $entity */
+		$entity = $this->get_container_entity();
 
 		// Collect the form data
 		$data = array(
@@ -174,7 +178,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 			'CURRENCY_POSITION' => $entity->get_currency_position(),
 			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="' . $this->id_prefix . '_id" value="' . $entity->get_id() . '" />',
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '" />',
 		));
 	}
 
@@ -214,7 +218,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		add_form_key('add_edit_currency');
 
 		// Initiate an entity
-		$entity = $this->container->get('skouat.ppde.entity.currency');
+		/** @type \skouat\ppde\entity\currency $entity */
+		$entity = $this->get_container_entity();
 		$entity->set_page_url($this->u_action);
 		$entity->load($currency_id);
 
@@ -235,7 +240,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->template->assign_vars(array(
 			'S_EDIT'        => true,
 
-			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $currency_id,
+			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $currency_id,
 			'U_BACK'        => $this->u_action,
 		));
 	}
@@ -252,7 +257,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	public function move_currency($currency_id, $direction)
 	{
 		// Initiate an entity and load data
-		$entity = $this->container->get('skouat.ppde.entity.currency');
+		/** @type \skouat\ppde\entity\currency $entity */
+		$entity = $this->get_container_entity();
 		$entity->load($currency_id);
 		$current_order = $entity->get_currency_order();
 
@@ -306,7 +312,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		}
 
 		// Load selected currency
-		$entity = $this->container->get('skouat.ppde.entity.currency');
+		$entity = $this->get_container_entity();
 		$entity->load($currency_id);
 
 		// Set the new status for this currency
@@ -337,7 +343,8 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	public function delete_currency($currency_id)
 	{
 		// Initiate an entity and load data
-		$entity = $this->container->get('skouat.ppde.entity.currency');
+		/** @type \skouat\ppde\entity\currency $entity */
+		$entity = $this->get_container_entity();
 		$entity->load($currency_id);
 
 		/** @type bool $data_disabled */
@@ -351,9 +358,6 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 
 		// Log the action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));
-
-		// If AJAX was used, show user a result message
-		$message = $this->user->lang[$this->lang_key_prefix . '_DELETED'];
-		$this->ajax_delete_result_message($message);
+		trigger_error($this->user->lang[$this->lang_key_prefix . '_DELETED'] . adm_back_link($this->u_action));
 	}
 }

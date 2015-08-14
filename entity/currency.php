@@ -11,8 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\db\driver\driver_interface    db      phpBB Database object
- * @property \phpbb\user                          user    phpBB User object
+ * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
+ * @property \phpbb\user                          user               phpBB User object
+ * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class currency extends main implements currency_interface
 {
@@ -48,31 +50,17 @@ class currency extends main implements currency_interface
 		parent::__construct(
 			$db,
 			$user,
-			'CURRENCY',
 			'PPDE_DC',
+			'CURRENCY',
 			$table_name,
 			array(
-				'item_id'       => array(
-					'name' => 'currency_id',
-					'type' => 'integer'),
-				'item_name'     => array(
-					'name' => 'currency_name',
-					'type' => 'string'),
-				'item_iso_code' => array(
-					'name' => 'currency_iso_code',
-					'type' => 'string'),
-				'item_symbol'   => array(
-					'name' => 'currency_symbol',
-					'type' => 'string'),
-				'item_on_left'  => array(
-					'name' => 'currency_on_left',
-					'type' => 'boolean'),
-				'item_enable'   => array(
-					'name' => 'currency_enable',
-					'type' => 'boolean'),
-				'item_order'    => array(
-					'name' => 'currency_order',
-					'type' => 'integer'),
+				'item_id'       => array('name' => 'currency_id', 'type' => 'integer'),
+				'item_name'     => array('name' => 'currency_name', 'type' => 'string'),
+				'item_iso_code' => array('name' => 'currency_iso_code', 'type' => 'string'),
+				'item_symbol'   => array('name' => 'currency_symbol', 'type' => 'string'),
+				'item_on_left'  => array('name' => 'currency_on_left', 'type' => 'boolean'),
+				'item_enable'   => array('name' => 'currency_enable', 'type' => 'boolean'),
+				'item_order'    => array('name' => 'currency_order', 'type' => 'integer'),
 			)
 		);
 	}

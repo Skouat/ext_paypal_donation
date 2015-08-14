@@ -22,19 +22,16 @@ abstract class main
 	/**
 	 * Constructor
 	 *
-	 * @param string $container_entity_name
-	 *
 	 * @access public
 	 */
-	public function __construct($container_entity_name = '')
+	public function __construct()
 	{
-		$this->container_entity_name = $container_entity_name;
 	}
 
 	/**
 	 * Add a data
 	 *
-	 * @param object $entity Data entity with new data to insert
+	 * @param \skouat\ppde\entity\main $entity Data entity with new data to insert
 	 * @param string $run_before_insert
 	 *
 	 * @return mixed

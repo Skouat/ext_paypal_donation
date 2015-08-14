@@ -12,10 +12,7 @@ namespace skouat\ppde\entity;
 
 abstract class main
 {
-	protected $lang_key_prefix;
-	protected $lang_key_suffix;
-	protected $table_name;
-	protected $table_schema;
+	/** @type string */
 	protected $u_action;
 	/**
 	 * Declare overridden properties
@@ -23,6 +20,10 @@ abstract class main
 	protected $db;
 	protected $user;
 	protected $data;
+	protected $lang_key_prefix;
+	protected $lang_key_suffix;
+	protected $table_name;
+	protected $table_schema;
 
 	/**
 	 * Construct
@@ -36,12 +37,12 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $lang_key_suffix = '', $lang_key_prefix = '', $table_name = '', $table_schema = array())
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
 		$this->user = $user;
-		$this->lang_key_suffix = $lang_key_suffix;
 		$this->lang_key_prefix = $lang_key_prefix;
+		$this->lang_key_suffix = $lang_key_suffix;
 		$this->table_name = $table_name;
 		$this->table_schema = $table_schema;
 	}

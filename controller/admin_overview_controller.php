@@ -10,16 +10,20 @@
 
 namespace skouat\ppde\controller;
 
+/**
+ * @property \phpbb\log\log             log          The phpBB log system.
+ * @property \phpbb\request\request     request      Request object.
+ * @property \phpbb\template\template   $template    Template object
+ * @property string                     u_action
+ * @property \phpbb\user                user         User object.
+ */
+
 class admin_overview_controller extends admin_main implements admin_overview_interface
 {
 	protected $auth;
 	protected $cache;
 	protected $config;
-	protected $log;
 	protected $ppde_controller_main;
-	protected $request;
-	protected $template;
-	protected $user;
 	protected $php_ext;
 
 	protected $ext_name;

@@ -13,18 +13,19 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \phpbb\request\request    request            Request object
- * @property \phpbb\user               user               User object
- * @property bool                      submit             Prefix for the messages thrown by exceptions
- * @property string                    lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property ContainerInterface         container          The phpBB log system
+ * @property string                     lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\request\request     request            Request object
+ * @property bool                       submit             State of submit $_POST variable
+ * @property \phpbb\template\template   $template          Template object
+ * @property string                     u_action
+ * @property \phpbb\user                user               User object
  */
 class admin_settings_controller extends admin_main implements admin_settings_interface
 {
 	protected $config;
-	protected $container;
 	protected $ppde_controller_main;
 	protected $ppde_operator_currency;
-	protected $template;
 
 	/**
 	 * Constructor
@@ -85,6 +86,9 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 			'S_PPDE_HEADER_LINK'            => $this->check_config($this->config['ppde_header_link']),
 
 			// PayPal IPN vars
+			'PPDE_DONORS_GROUP_ID'          => 'select ppde_donors_group_id',
+			'PPDE_IPN_DEFAULT_GROUP'        => $this->check_config($this->config['ppde_ipn_default_group']),
+			'PPDE_SEND_CONFIRMATION'        => 'select ppde_send_confirmation',
 			'S_PPDE_IPN_ENABLE'             => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_LOGGING'            => $this->check_config($this->config['ppde_ipn_logging']),
 
@@ -153,6 +157,9 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
+		$this->config->set('donation_donors_group_id', $this->request->variable('donation_donors_group_id', 0));
+		$this->config->set('donation_group_as_default', $this->request->variable('donation_group_as_default', false));
+		$this->config->set('donation_send_confirmation', $this->request->variable('donation_send_confirmation', false));
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));

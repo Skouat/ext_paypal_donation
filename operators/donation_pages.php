@@ -13,9 +13,9 @@ namespace skouat\ppde\operators;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property  \phpbb\db\driver\driver_interface    $db                       Database connection
- * @property  ContainerInterface                   $container                Service container interface
- * @property  string                               $container_entity_name    Name of Service container interface
+ * @property \phpbb\db\driver\driver_interface    db                       Database connection
+ * @property ContainerInterface                   container                Service container interface
+ * @property string                               container_entity_name    Name of the called container
  */
 class donation_pages extends main implements donation_pages_interface
 {
@@ -35,7 +35,7 @@ class donation_pages extends main implements donation_pages_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
-		parent::__construct('skouat.ppde.entity.donation_pages');
+		$this->container_entity_name = 'skouat.ppde.entity.donation_pages';
 	}
 
 	/**
@@ -52,7 +52,7 @@ class donation_pages extends main implements donation_pages_interface
 		return 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
 				WHERE page_lang_id = ' . (int) ($lang_id) .
-		$this->set_sql_and_page_title($mode) . '
+					$this->build_sql_and_page_title($mode) . '
 				ORDER BY page_title';
 	}
 
@@ -64,7 +64,7 @@ class donation_pages extends main implements donation_pages_interface
 	 * @return string
 	 * @access private
 	 */
-	private function set_sql_and_page_title($mode)
+	private function build_sql_and_page_title($mode)
 	{
 		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
 		switch ($mode)

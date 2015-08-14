@@ -12,8 +12,10 @@ namespace skouat\ppde\controller;
 
 abstract class admin_main
 {
+	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
+	protected $container;
 	/** @var string */
-	protected $id_prefix;
+	protected $id_prefix_name;
 	/** @var string */
 	protected $lang_key_prefix;
 	/** @var \phpbb\log\log */
@@ -28,6 +30,8 @@ abstract class admin_main
 	protected $request;
 	/** @var bool */
 	protected $submit;
+	/** @var \phpbb\template\template */
+	protected $template;
 	/** @var string */
 	protected $u_action;
 	/** @var \phpbb\user */
@@ -38,17 +42,17 @@ abstract class admin_main
 	 *
 	 * @param \skouat\ppde\operators\main $ppde_operator   Operator object
 	 * @param string                      $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string                      $id_prefix       Prefix for the URL identifier
+	 * @param string                      $id_prefix_name  Prefix name for identifier in the URL
 	 * @param string                      $module_name     Name of the module currently used
 	 *
 	 * @access public
 	 */
-	public function __construct($ppde_operator, $lang_key_prefix = '', $id_prefix = '', $module_name = '')
+	public function __construct($ppde_operator, $module_name, $lang_key_prefix, $id_prefix_name)
 	{
 		$this->ppde_operator = $ppde_operator;
-		$this->lang_key_prefix = $lang_key_prefix;
-		$this->id_prefix = $id_prefix;
 		$this->module_name = $module_name;
+		$this->lang_key_prefix = $lang_key_prefix;
+		$this->id_prefix_name = $id_prefix_name;
 	}
 
 	/**
@@ -89,7 +93,7 @@ abstract class admin_main
 			// Show user warning for an already exist page and provide link back to the edit page
 			$message = $this->user->lang[$this->lang_key_prefix . '_EXISTS'];
 			$message .= '<br /><br />';
-			$message .= $this->user->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
+			$message .= $this->user->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
 			trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 	}
@@ -237,5 +241,16 @@ abstract class admin_main
 				)
 			));
 		}
+	}
+
+	/**
+	 * Return the entity ContainerInterface used by the ACP module in use
+	 *
+	 * @return object
+	 * @access protected
+	 */
+	protected function get_container_entity()
+	{
+		return $this->container->get('skouat.ppde.entity.' . $this->module_name);
 	}
 }

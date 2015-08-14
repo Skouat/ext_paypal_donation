@@ -13,18 +13,22 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \skouat\ppde\operators\donation_pages    ppde_operator    Operator object.
- * @property \phpbb\log\log                           log              The phpBB log system.
- * @property \phpbb\request\request                   request          Request object.
- * @property \phpbb\user                              user             User object.
+ * @property ContainerInterface                       container         The phpBB log system
+ * @property string                                   id_prefix_name    Prefix name for identifier in the URL
+ * @property string                                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \skouat\ppde\operators\donation_pages    ppde_operator     Operator object.
+ * @property \phpbb\log\log                           log               The phpBB log system.
+ * @property string                                   module_name       Name of the module currently used
+ * @property bool                                     preview           State of preview $_POST variable
+ * @property \phpbb\request\request                   request           Request object.
+ * @property bool                                     submit            State of submit $_POST variable
+ * @property \phpbb\template\template                 $template         Template object
+ * @property \phpbb\user                              user              User object.
  */
 class admin_donation_pages_controller extends admin_main implements admin_donation_pages_interface
 {
-	protected $container;
-	protected $template;
 	protected $phpbb_root_path;
 	protected $php_ext;
-
 	protected $lang_local_name;
 
 	/**
@@ -52,9 +56,9 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		$this->php_ext = $php_ext;
 		parent::__construct(
 			$ppde_operator_donation_pages,
+			'donation_pages',
 			'PPDE_DP',
-			'page',
-			'donation_page'
+			'page'
 		);
 	}
 
@@ -89,8 +93,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($data['page_title'])],
 					'DONATION_PAGE_LANG'  => (string) $lang,
 
-					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix . '_id=' . $data['page_id'],
-					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $data['page_id'],
+					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
+					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 				));
 			}
 			unset($data_ary, $data);
@@ -131,10 +135,11 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	public function add_donation_page()
 	{
 		// Add form key
-		add_form_key('add_edit_donation_page');
+		add_form_key('add_edit_donation_pages');
 
 		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		/** @type \skouat\ppde\entity\donation_pages $entity */
+		$entity = $this->get_container_entity();
 
 		// Collect the form data
 		$data = array(
@@ -393,7 +398,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		add_form_key('add_edit_donation_page');
 
 		// Initiate a page donation entity
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		/** @type \skouat\ppde\entity\donation_pages $entity */
+		$entity = $this->get_container_entity();
 		$entity->load($page_id);
 
 		// Collect the form data
@@ -417,7 +423,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		$this->template->assign_vars(array(
 			'S_EDIT_DONATION_PAGE' => true,
 
-			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix . '_id=' . $page_id,
+			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $page_id,
 			'U_BACK'               => $this->u_action,
 		));
 	}
@@ -433,7 +439,8 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	public function delete_donation_page($page_id)
 	{
 		// Initiate an entity and load data
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
+		/** @type \skouat\ppde\entity\donation_pages $entity */
+		$entity = $this->get_container_entity();
 		$entity->load($page_id);
 
 		// Before deletion, grab the local language name
