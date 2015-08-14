@@ -132,7 +132,7 @@ class donation_pages extends main implements donation_pages_interface
 	 */
 	private function is_in_admin()
 	{
-		return defined('IN_ADMIN') ? IN_ADMIN : false;
+		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
 	}
 
 	/**
