@@ -191,14 +191,30 @@ abstract class main
 	 *
 	 * @param string $sql SQL Query
 	 *
-	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @return bool
 	 * @access public
 	 */
 	public function data_exists($sql)
 	{
 		$this->db->sql_query($sql);
+		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
 
-		return (int) $this->db->sql_fetchfield($this->table_schema['item_id']['name']);
+		return (bool) $this->data[$this->table_schema['item_id']['name']];
+	}
+
+	/**
+	 * Set item Identifier
+	 *
+	 * @param int $id
+	 *
+	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_id($id)
+	{
+			$this->data[$this->table_schema['item_id']['name']] = (int) $id;
+
+		return $this;
 	}
 
 	/**
