@@ -53,7 +53,7 @@ class currency extends main implements currency_interface
 	public function delete_currency_data($currency_id)
 	{
 		// Return false if the currency is enabled
-		if ($this->get_data($this->get_sql_data($currency_id, true)))
+		if ($this->get_data($this->build_sql_data($currency_id, true)))
 		{
 			return false;
 		}
@@ -76,7 +76,7 @@ class currency extends main implements currency_interface
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data($currency_id = 0, $only_enabled = false)
+	public function build_sql_data($currency_id = 0, $only_enabled = false)
 	{
 		// Build main sql request
 		$sql_ary = array(

@@ -18,6 +18,14 @@ namespace skouat\ppde\entity;
 interface currency_interface
 {
 	/**
+	 * SQL Query to return the ID of selected donation page
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_data_exists();
+
+	/**
 	 * Check if required field are set
 	 *
 	 * @return bool

@@ -102,7 +102,7 @@ abstract class admin_main
 	 */
 	protected function is_added_data_exists($entity)
 	{
-		return $entity->data_exists($entity->get_sql_data_exists()) && $this->request->variable('action', '') === 'add';
+		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
 
 	/**

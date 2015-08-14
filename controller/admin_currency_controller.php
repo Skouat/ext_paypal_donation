@@ -62,7 +62,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		$this->ppde_operator->fix_currency_order();
 
 		// Grab all the pages from the db
-		$data_ary = $this->ppde_operator->get_data($this->ppde_operator->get_sql_data());
+		$data_ary = $this->ppde_operator->get_data($this->ppde_operator->build_sql_data());
 
 		foreach ($data_ary as $data)
 		{

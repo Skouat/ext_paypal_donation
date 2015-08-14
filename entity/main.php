@@ -212,7 +212,7 @@ abstract class main
 	 */
 	public function set_id($id)
 	{
-			$this->data[$this->table_schema['item_id']['name']] = (int) $id;
+		$this->data[$this->table_schema['item_id']['name']] = (int) $id;
 
 		return $this;
 	}
@@ -223,7 +223,7 @@ abstract class main
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data_exists()
+	public function build_sql_data_exists()
 	{
 		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
  			FROM ' . $this->table_name . '

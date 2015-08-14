@@ -160,7 +160,7 @@ class main_controller implements main_interface
 	{
 		return $this->donation_content_data =
 			$this->ppde_operator_donation_pages->get_data(
-				$this->ppde_operator_donation_pages->get_sql_data($this->user->get_iso_lang_id(), $return_args_url));
+				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url));
 	}
 
 	/**
@@ -174,7 +174,7 @@ class main_controller implements main_interface
 	public function build_currency_select_menu($config_value = 0)
 	{
 		// Grab the list of all enabled currencies; 0 is for all data
-		$currency_items = $this->ppde_operator_currency->get_data($this->ppde_operator_currency->get_sql_data(0, true));
+		$currency_items = $this->ppde_operator_currency->get_data($this->ppde_operator_currency->build_sql_data(0, true));
 
 		// Process each rule menu item for pull-down
 		foreach ($currency_items as $currency_item)
@@ -366,7 +366,7 @@ class main_controller implements main_interface
 	 */
 	public function get_default_currency_data($id = 0)
 	{
-		return $this->ppde_operator_currency->get_data($this->ppde_operator_currency->get_sql_data($id, true));
+		return $this->ppde_operator_currency->get_data($this->ppde_operator_currency->build_sql_data($id, true));
 	}
 
 	/**

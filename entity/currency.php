@@ -83,7 +83,7 @@ class currency extends main implements currency_interface
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data_exists()
+	public function build_sql_data_exists()
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "

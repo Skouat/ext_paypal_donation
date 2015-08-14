@@ -416,7 +416,7 @@ class donation_pages extends main implements donation_pages_interface
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data_exists()
+	public function build_sql_data_exists()
 	{
 		return 'SELECT page_id
 			FROM ' . $this->donation_pages_table . "

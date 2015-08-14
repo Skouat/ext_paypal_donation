@@ -44,7 +44,7 @@ interface currency_interface
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data($currency_id = 0, $only_enabled = false);
+	public function build_sql_data($currency_id = 0, $only_enabled = false);
 
 	/**
 	 * Checks if the currency is the last enabled.

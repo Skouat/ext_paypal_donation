@@ -18,6 +18,14 @@ namespace skouat\ppde\entity;
 interface donation_pages_interface
 {
 	/**
+	 * SQL Query to return the ID of selected donation page
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_data_exists();
+
+	/**
 	 * Get language id
 	 *
 	 * @return int Lang identifier
@@ -42,14 +50,6 @@ interface donation_pages_interface
 	 * @access public
 	 */
 	public function get_message_for_edit();
-
-	/**
-	 * SQL Query to return the ID of selected donation page
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_sql_data_exists();
 
 	/**
 	 * Get template vars

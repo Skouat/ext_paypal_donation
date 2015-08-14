@@ -46,5 +46,5 @@ interface donation_pages_interface
 	 * @return string
 	 * @access public
 	 */
-	public function get_sql_data($lang_id = 0, $mode = 'all_pages');
+	public function build_sql_data($lang_id = 0, $mode = 'all_pages');
 }

@@ -75,7 +75,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 			$this->assign_langs_template_vars($entry);
 
 			// Grab all the pages from the db
-			$data_ary = $this->ppde_operator->get_data($this->ppde_operator->get_sql_data($entry['id']));
+			$data_ary = $this->ppde_operator->get_data($this->ppde_operator->build_sql_data($entry['id']));
 
 			foreach ($data_ary as $data)
 			{
