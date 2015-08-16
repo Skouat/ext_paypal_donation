@@ -1,0 +1,216 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_PPDE_DT_CONFIG}</h1>
+<p>{L_PPDE_DT_CONFIG_EXPLAIN}</p>
+
+<!-- IF S_VIEW -->
+<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+
+<!-- IF S_ERROR -->
+<div class="errorbox">
+	<h3>{L_WARNING}</h3>
+
+	<p>{ERROR_MSG}</p>
+</div>
+<!-- ENDIF -->
+
+<form id="view_transactions" method="post" action="{U_ACTION}">
+	<fieldset>
+		<legend>{L_PPDE_DT_DETAILS}</legend>
+		<dl>
+			<dt><label for="txn_id">{L_PPDE_DT_TXN_ID}{L_COLON}</label><br /><span>{L_PPDE_DT_TXN_ID_EXPLAIN}</span>
+			</dt>
+			<dd><input id="txn_id" name="txn_id" type="text" class="text medium" disabled="yes" value="{TXN_ID}" /></dd>
+		</dl>
+		<hr />
+		<dl>
+			<dt><label for="board_username">{L_PPDE_DT_BOARD_USERNAME}{L_COLON}</label></dt>
+			<dd>
+				<input id="board_username" name="board_username" type="text" class="text medium" disabled="yes" value="{BOARD_USERNAME}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="name">{L_PPDE_DT_NAME}{L_COLON}</label></dt>
+			<dd><input id="name" name="name" type="text" class="text medium" disabled="yes" value="{NAME}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="payer_email">{L_PPDE_DT_PAYER_EMAIL}{L_COLON}</label></dt>
+			<dd>
+				<input id="payer_email" name="payer_email" type="text" class="text medium" disabled="yes" value="{PAYER_EMAIL}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="payer_id">{L_PPDE_DT_PAYER_ID}{L_COLON}</label></dt>
+			<dd>
+				<input id="payer_id" name="payer_id" type="text" class="text medium" disabled="yes" value="{PAYER_ID}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="payer_status">{L_PPDE_DT_PAYER_STATUS}{L_COLON}</label></dt>
+			<dd>
+				<input id="payer_status" name="payer_status" type="text" class="text medium" disabled="yes" value="{PAYER_STATUS}" />
+			</dd>
+		</dl>
+		<hr />
+		<dl>
+			<dt><label for="receiver_email">{L_PPDE_DT_RECEIVER_EMAIL}{L_COLON}</label></dt>
+			<dd>
+				<input id="receiver_email" name="receiver_email" type="text" class="text medium" disabled="yes" value="{RECEIVER_EMAIL}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="receiver_id">{L_PPDE_DT_RECEIVER_ID}{L_COLON}</label></dt>
+			<dd>
+				<input id="receiver_id" name="receiver_id" type="text" class="text medium" disabled="yes" value="{RECEIVER_ID}" />
+			</dd>
+		</dl>
+		<hr />
+		<dl>
+			<dt><label for="mc_gross">{L_PPDE_DT_TOTAL_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_DT_TOTAL_AMOUNT_EXPLAIN}</span>
+			</dt>
+			<dd>
+				<input id="mc_gross" name="mc_gross" type="text" class="text medium" disabled="yes" value="{MC_GROSS}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				<label for="mc_fee">{L_PPDE_DT_FEE_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_DT_FEE_AMOUNT_EXPLAIN}</span>
+			</dt>
+			<dd><input id="mc_fee" name="mc_fee" type="text" class="text medium" disabled="yes" value="{MC_FEE}" /></dd>
+		</dl>
+		<dl>
+			<dt>
+				<label for="mc_net">{L_PPDE_DT_NET_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_DT_NET_AMOUNT_EXPLAIN}</span>
+			</dt>
+			<dd><input id="mc_net" name="mc_net" type="text" class="text medium" disabled="yes" value="{MC_NET}" /></dd>
+		</dl>
+		<!-- IF S_CONVERT -->
+		<hr />
+		<dl>
+			<dt><label for="convert_from">{L_PPDE_DT_CONVERT_FROM}{L_COLON}</label><br /><span>{L_PPDE_DT_CONVERT_FROM_EXPLAIN}</span>
+			</dt>
+			<dd>
+				<input id="convert_from" name="convert_from" type="text" class="text medium" disabled="yes" value="{CONVERT_FROM}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="settle_amount">{L_PPDE_DT_SETTLE_AMOUNT}{L_COLON}</label><br /><span>{L_PPDE_DT_SETTLE_AMOUNT_EXPLAIN}</span>
+			</dt>
+			<dd>
+				<input id="settle_amount" name="settle_amount" type="text" class="text medium" disabled="yes" value="{SETTLE_AMOUNT}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="exchange_rate">{L_PPDE_DT_EXCHANGE_RATE}{L_COLON}</label><br /><span>{L_PPDE_DT_EXCHANGE_RATE_EXPLAIN}</span>
+			</dt>
+			<dd>
+				<input id="exchange_rate" name="exchange_rate" type="text" class="text medium" disabled="yes" value="{EXCHANGE_RATE}" />
+			</dd>
+		</dl>
+		<!-- ENDIF -->
+		<hr />
+		<dl>
+			<dt><label for="item_name">{L_PPDE_DT_ITEM_NAME}{L_COLON}</label></dt>
+			<dd>
+				<input id="item_name" name="item_name" type="text" class="text medium" disabled="yes" value="{ITEM_NAME}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="item_number">{L_PPDE_DT_ITEM_NUMBER}{L_COLON}</label></dt>
+			<dd>
+				<input id="item_number" name="item_number" type="text" class="text medium" disabled="yes" value="{ITEM_NUMBER}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="payment_date">{L_PPDE_DT_PAYMENT_DATE}{L_COLON}</label></dt>
+			<dd>
+				<input id="payment_date" name="payment_date" type="text" class="text medium" disabled="yes" value="{PAYMENT_DATE}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="payment_status">{L_PPDE_DT_PAYMENT_STATUS}{L_COLON}</label></dt>
+			<dd>
+				<input id="payment_status" name="payment_status" type="text" class="text medium" disabled="yes" value="{PAYMENT_STATUS}" />
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="update" value="{L_BACK}" />&nbsp;
+			{S_FORM_TOKEN}
+		</p>
+	</fieldset>
+</form>
+<!-- ELSE -->
+<form id="ppde_transactions" method="post" action="{U_ACTION}">
+	<fieldset class="display-options search-box">
+		{L_SEARCH_KEYWORDS}{L_COLON} <input type="text" name="keywords" value="{S_KEYWORDS}" />&nbsp;<input type="submit" class="button2" name="filter" value="{L_SEARCH}" />
+	</fieldset>
+
+	<!-- IF .pagination -->
+	<div class="pagination top-pagination">
+		<!-- INCLUDE pagination.html -->
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF .log -->
+	<table class="table1 zebra-table fixed-width-table">
+		<thead>
+		<tr>
+			<th>{L_PPDE_DT_TXN_ID}</th>
+			<th>{L_PPDE_DT_USERNAME}</th>
+			<th>{L_PPDE_DT_IPN_STATUS}</th>
+			<th>{L_PPDE_DT_PAYMENT_STATUS}</th>
+			<th>{L_PPDE_DT_PAYMENT_DATE}</th>
+			<!-- IF S_CLEARLOGS -->
+			<th style="width: 50px;">{L_MARK}</th>
+			<!-- ENDIF -->
+		</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN log -->
+		<tr>
+			<td>{log.TNX_ID}</td>
+			<td>{log.USERNAME}</td>
+			<td<!-- IF log.S_CONFIRMED --> style="color:#FF0000;"<!-- ENDIF -->>{log.CONFIRMED}</td>
+			<td<!-- IF log.S_PAYMENT_STATUS --> style="color:#FF0000;"<!-- ENDIF -->>{log.PAYMENT_STATUS}</td>
+			<td style="text-align: center;">{log.DATE}</td>
+			<!-- IF S_CLEARLOGS -->
+			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" /></td>
+			<!-- ENDIF -->
+		</tr>
+		<!-- END log -->
+		</tbody>
+	</table>
+
+	<!-- IF .pagination -->
+	<div class="pagination">
+		<!-- INCLUDE pagination.html -->
+	</div>
+	<!-- ENDIF -->
+
+	<!-- ELSE -->
+	<div class="errorbox">
+		<p>{L_NO_ENTRIES}</p>
+	</div>
+	<!-- ENDIF -->
+
+	<fieldset class="display-options">
+		{L_DISPLAY_LOG}{L_COLON} &nbsp;{S_LIMIT_DAYS}&nbsp;{L_SORT_BY}{L_COLON} {S_SORT_KEY} {S_SORT_DIR}
+		<input class="button2" type="submit" value="{L_GO}" name="sort" />
+		{S_FORM_TOKEN}
+	</fieldset>
+
+	<hr />
+
+	<!-- IF .log and S_CLEARLOGS -->
+	<fieldset class="quick">
+		<input class="button2" type="submit" name="delall" value="{L_DELETE_ALL}" />&nbsp;
+		<input class="button2" type="submit" name="delmarked" value="{L_DELETE_MARKED}" /><br />
+		<p class="small"><a href="#" onclick="marklist('ppde_transactions', 'mark', true); return false;">{L_MARK_ALL}</a> &bull; <a href="#" onclick="marklist('ppde_transactions', 'mark', false); return false;">{L_UNMARK_ALL}</a></p>
+	</fieldset>
+	<!-- ENDIF -->
+</form>
+<!-- ENDIF -->
+<!-- INCLUDE overall_footer.html -->

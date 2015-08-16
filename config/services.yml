@@ -31,9 +31,10 @@ services:
             - @service_container
             - @ext.manager
             - @controller.helper
+            - @skouat.ppde.entity.currency
             - @skouat.ppde.entity.donation_pages
-            - @skouat.ppde.operator.donation_pages
             - @skouat.ppde.operator.currency
+            - @skouat.ppde.operator.donation_pages
             - @request
             - @template
             - @user
@@ -86,6 +87,21 @@ services:
             - @template
             - @user
 
+    skouat.ppde.controller.admin.transactions:
+        class: skouat\ppde\controller\admin_transactions_controller
+        arguments:
+            - @auth
+            - @config
+            - @service_container
+            - @log
+            - @skouat.ppde.operator.transactions
+            - @request
+            - @template
+            - @user
+            - %core.adm_relative_path%
+            - %core.root_path%
+            - %core.php_ext%
+
     skouat.ppde.entity.main:
         class: skouat\ppde\entity\main
         arguments:
@@ -107,6 +123,13 @@ services:
             - @user
             - %skouat.ppde.tables.ppde_donation_pages%
 
+    skouat.ppde.entity.transactions:
+        class: skouat\ppde\entity\transactions
+        arguments:
+            - @dbal.conn
+            - @user
+            - %skouat.ppde.tables.ppde_transactions%
+
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency
         arguments:
@@ -121,3 +144,10 @@ services:
             - @service_container
             - @dbal.conn
             - %skouat.ppde.tables.ppde_donation_pages%
+
+    skouat.ppde.operator.transactions:
+        class: skouat\ppde\operators\transactions
+        arguments:
+            - @service_container
+            - @dbal.conn
+            - %skouat.ppde.tables.ppde_transactions%

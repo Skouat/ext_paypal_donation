@@ -45,6 +45,7 @@ $lang = array_merge($lang, array(
 	'PPDE_ACP_SETTINGS'       => 'General Settings',
 	'PPDE_ACP_DONATION_PAGES' => 'Donation Pages',
 	'PPDE_ACP_CURRENCY'       => 'Currency management',
+	'PPDE_ACP_TRANSACTIONS'   => 'Transactions log',
 ));
 
 /**
@@ -194,6 +195,74 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+ * mode: transactions
+ * Info: language keys are prefixed with 'PPDE_DT_' for 'PPDE_DONATION_TRANSACTION_'
+ */
+$lang = array_merge($lang, array(
+	// Transactions log Management
+	'PPDE_DT_CONFIG'                => 'Transactions log',
+	'PPDE_DT_CONFIG_EXPLAIN'        => 'Here you can show transactions details.',
+	'PPDE_DT_IPN_STATUS'            => 'IPN Status',
+	'PPDE_DT_PAYMENT_STATUS'        => 'Payment Status',
+	'PPDE_DT_TXN_ID'                => 'Transaction ID',
+	'PPDE_DT_TXN_ID_EXPLAIN'        => '',
+	'PPDE_DT_USERNAME'              => 'Donor name',
+
+	/**
+	 * TRANSLATORS PLEASE NOTE
+	 * The line below has a special note.
+	 * "## For translate:" followed by one "Don't" and one "Yes"
+	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
+	 */
+
+	## For translate:					Don't					Yes
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+										'canceled_reversal' => 'Canceled Reversal',
+										'completed'         => 'Completed',
+										'created'           => 'Created',
+										'denied'            => 'Denied',
+										'expired'           => 'Expired',
+										'failed'            => 'Failed',
+										'pending'           => 'Pending',
+										'refunded'          => 'Refunded',
+										'reversed'          => 'Reversed',
+										'processed'         => 'Processed',
+										'voided'            => 'Voided',
+	),
+
+	// Display transactions
+	'PPDE_DT_BOARD_USERNAME'		=> 'Donors',
+	'PPDE_DT_CONVERT_FROM'			=> 'Conversion from',
+	'PPDE_DT_CONVERT_FROM_EXPLAIN'	=> '',
+	'PPDE_DT_DETAILS'				=> 'Transaction details',
+	'PPDE_DT_EXCHANGE_RATE'			=> 'Exchange rate',
+	'PPDE_DT_EXCHANGE_RATE_EXPLAIN'	=> '',
+	'PPDE_DT_FEE_AMOUNT'			=> 'Fee amount',
+	'PPDE_DT_FEE_AMOUNT_EXPLAIN'	=> '',
+	'PPDE_DT_ITEM_NAME'				=> 'Item name',
+	'PPDE_DT_ITEM_NUMBER'			=> 'Item number',
+	'PPDE_DT_NET_AMOUNT'			=> 'Net amount',
+	'PPDE_DT_NET_AMOUNT_EXPLAIN'	=> '',
+	'PPDE_DT_NAME'					=> 'Name',
+	'PPDE_DT_PAYER_ID'				=> 'Payer ID',
+	'PPDE_DT_PAYER_EMAIL'			=> 'Payer e-mail',
+	'PPDE_DT_PAYER_STATUS'			=> 'Payer status',
+	'PPDE_DT_PAYMENT_DATE'          => 'Payment Date',
+	'PPDE_DT_RECEIVER_EMAIL'		=> 'Payment sent to',
+	'PPDE_DT_RECEIVER_ID'			=> 'Receiver ID',
+	'PPDE_DT_SETTLE_AMOUNT'			=> 'Conversion to',
+	'PPDE_DT_SETTLE_AMOUNT_EXPLAIN'	=> '',
+	'PPDE_DT_SORT_TXN_ID'           => 'Transaction ID',
+	'PPDE_DT_SORT_DONORS'           => 'Donors',
+	'PPDE_DT_SORT_IPN_STATUS'       => 'IPN Status',
+	'PPDE_DT_SORT_PAYMENT_STATUS'   => 'Payment Status',
+	'PPDE_DT_TOTAL_AMOUNT'			=> 'Total amount',
+	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'	=> '',
+	'PPDE_DT_UNVERIFIED'            => 'Not verified',
+	'PPDE_DT_VERIFIED'              => 'Verified',
+));
+
+/**
  * logs
  */
 $lang = array_merge($lang, array(
@@ -208,6 +277,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation: New donation page added</strong><br />» “%1$s” for the language “%2$s”', // eg: » “Donation success” for the language “British English”',
 	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation: Donation page deleted</strong><br />» “%1$s” for the language “%2$s”',
 	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation: Donation page updated</strong><br />» “%1$s” for the language “%2$s”',
+	'LOG_PPDE_DT_PURGED'        => '<strong>PayPal Donation: Purge transactions log</strong>',
 	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation: Installation date reset</strong>',
 
@@ -235,6 +305,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_EMPTY_NAME'                 => 'The selected donation page does not exist.',
 	'PPDE_DP_EXISTS'                     => 'This donation page already exists.',
 	'PPDE_DP_NO_DONATION_PAGES'          => 'No donation page found.',
+	'PPDE_DT_NO_TRANSACTION'             => 'No transaction found.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'You must disable this currency before deleting it.',
 	'PPDE_SETTINGS_MISSING'              => 'Please check “Account ID” or “Sandbox address”.',
 ));

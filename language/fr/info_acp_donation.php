@@ -45,6 +45,7 @@ $lang = array_merge($lang, array(
 	'PPDE_ACP_SETTINGS'       => 'Paramètres généraux',
 	'PPDE_ACP_DONATION_PAGES' => 'Pages des dons',
 	'PPDE_ACP_CURRENCY'       => 'Gestion des devises',
+	'PPDE_ACP_TRANSACTIONS'   => 'Journal des transactions',
 ));
 
 /**
@@ -194,6 +195,74 @@ $lang = array_merge($lang, array(
 ));
 
 /**
+ * mode: transactions
+ * Info: language keys are prefixed with 'PPDE_DT_' for 'PPDE_DONATION_TRANSACTION_'
+ */
+$lang = array_merge($lang, array(
+	// Transactions log
+	'PPDE_DT_CONFIG'                => 'Journal des transactions',
+	'PPDE_DT_CONFIG_EXPLAIN'        => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
+	'PPDE_DT_IPN_STATUS'            => 'Statut IPN',
+	'PPDE_DT_PAYMENT_STATUS'        => 'Statut du paiement',
+	'PPDE_DT_TXN_ID'                => 'Numéro transaction',
+	'PPDE_DT_TXN_ID_EXPLAIN'        => '',
+	'PPDE_DT_USERNAME'              => 'Nom du donateur',
+
+	/**
+	 * TRANSLATORS PLEASE NOTE
+	 * The line below has a special note.
+	 * "## For translate:" followed by one "Don't" and one "Yes"
+	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
+	 */
+
+	## For translate:					Don't					Yes
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+										'canceled_reversal' => 'Annulation invalidée',
+										'completed'         => 'Effectué',
+										'created'           => 'Créé',
+										'denied'            => 'Rejeté',
+										'expired'           => 'Expiré',
+										'failed'            => 'Échoué',
+										'pending'           => 'En attente',
+										'refunded'          => 'Remboursé',
+										'reversed'          => 'Annulé',
+										'processed'         => 'Accepté',
+										'voided'            => 'Annulé',
+	),
+
+	// Display transactions
+	'PPDE_DT_BOARD_USERNAME'        => 'Donateur',
+	'PPDE_DT_CONVERT_FROM'          => 'Conversion de',
+	'PPDE_DT_CONVERT_FROM_EXPLAIN'  => '',
+	'PPDE_DT_DETAILS'               => 'Détails de la transaction',
+	'PPDE_DT_EXCHANGE_RATE'         => 'Taux de change',
+	'PPDE_DT_EXCHANGE_RATE_EXPLAIN' => '',
+	'PPDE_DT_FEE_AMOUNT'            => 'Montant de la commission',
+	'PPDE_DT_FEE_AMOUNT_EXPLAIN'    => '',
+	'PPDE_DT_ITEM_NAME'             => 'Titre de l’objet',
+	'PPDE_DT_ITEM_NUMBER'           => 'Numéro d’objet',
+	'PPDE_DT_NAME'                  => 'Nom',
+	'PPDE_DT_NET_AMOUNT'            => 'Montant net',
+	'PPDE_DT_NET_AMOUNT_EXPLAIN'    => '',
+	'PPDE_DT_PAYER_ID'              => 'Identifiant de l’émetteur du paiement',
+	'PPDE_DT_PAYER_EMAIL'           => 'E-mail',
+	'PPDE_DT_PAYER_STATUS'          => 'État de l’émetteur du paiement',
+	'PPDE_DT_PAYMENT_DATE'          => 'Date du paiement',
+	'PPDE_DT_RECEIVER_EMAIL'        => 'Paiement envoyé à',
+	'PPDE_DT_RECEIVER_ID'           => 'Ident. compte marchand',
+	'PPDE_DT_SETTLE_AMOUNT'         => 'Conversion en',
+	'PPDE_DT_SETTLE_AMOUNT_EXPLAIN' => '',
+	'PPDE_DT_SORT_TXN_ID'           => 'Numéro transaction',
+	'PPDE_DT_SORT_DONORS'           => 'Donateur',
+	'PPDE_DT_SORT_IPN_STATUS'       => 'Statut IPN',
+	'PPDE_DT_SORT_PAYMENT_STATUS'   => 'État du paiement',
+	'PPDE_DT_TOTAL_AMOUNT'          => 'Montant total',
+	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'  => '',
+	'PPDE_DT_VERIFIED'              => 'Vérifié',
+	'PPDE_DT_UNVERIFIED'            => 'Non vérifié',
+));
+
+/**
  * logs
  */
 $lang = array_merge($lang, array(
@@ -208,6 +277,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
 	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
 	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
+	'LOG_PPDE_DT_PURGED'        => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
 	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
 
@@ -235,6 +305,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_EMPTY_NAME'                 => 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_DP_EXISTS'                     => 'Cette page de dons existe déjà.',
 	'PPDE_DP_NO_DONATION_PAGES'          => 'Aucune page de dons n’a été trouvée.',
+	'PPDE_DT_NO_TRANSACTION'             => 'Aucune transaction n’a été trouvée.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'Vous devez désactiver la devise avant de la supprimer.',
 	'PPDE_SETTINGS_MISSING'              => 'Veuillez vérifier les paramètres « ID du compte PayPal » ou « Adresse PayPal Sandbox ».',
 ));

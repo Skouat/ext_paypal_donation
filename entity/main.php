@@ -48,50 +48,6 @@ abstract class main
 	}
 
 	/**
-	 * Import and validate data
-	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
-	 *
-	 * @param  array $data Data array, typically from the database
-	 * @param array  $additional_table_schema
-	 *
-	 * @return object $this->data object
-	 * @throws \skouat\ppde\exception\invalid_argument
-	 * @access public
-	 */
-	public function import($data, $additional_table_schema = array())
-	{
-		// Clear out any saved data
-		$this->data = array();
-
-		// add additional field to the table schema
-		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
-
-		// Go through the basic fields and set them to our data array
-		foreach ($this->table_schema as $generic_field => $field)
-		{
-			// If the data wasn't sent to us, throw an exception
-			if (!isset($data[$field['name']]))
-			{
-				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
-			}
-
-			// settype passes values by reference
-			$value = $data[$field['name']];
-
-			// We're using settype to enforce data types
-			settype($value, $field['type']);
-
-			$this->data[$field['name']] = $value;
-		}
-		unset($field);
-
-		return $this->data;
-	}
-
-	/**
 	 * Insert the item for the first time
 	 *
 	 * Will throw an exception if the item was already inserted (call save() instead)
@@ -332,15 +288,17 @@ abstract class main
 	/**
 	 * Delete data from the database
 	 *
-	 * @param        $id
-	 * @param string $action_before_delete
+	 * @param integer $id
+	 * @param string  $action_before_delete
+	 *
+	 * @param string  $sql_where
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function delete($id, $action_before_delete = '')
+	public function delete($id, $action_before_delete = '', $sql_where = '')
 	{
-		if ($this->disallow_deletion($id))
+		if ($this->disallow_deletion($id) && empty($sql_where))
 		{
 			// The item selected does not exists
 			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
@@ -348,14 +306,21 @@ abstract class main
 
 		$this->run_function_before_action($action_before_delete);
 
+		$where_clause = !empty($sql_where) ? $sql_where : ' WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . (int) $id;
 		// Delete data from the database
-		$sql = 'DELETE FROM ' . $this->table_name . '
-			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . (int) $id;
+		$sql = 'DELETE FROM ' . $this->table_name . $where_clause;
 		$this->db->sql_query($sql);
 
 		return (bool) $this->db->sql_affectedrows();
 	}
 
+	/**
+	 * Returns if we can proceed to item deletion
+	 *
+	 * @param integer $id
+	 *
+	 * @return bool
+	 */
 	private function disallow_deletion($id)
 	{
 		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
@@ -384,5 +349,49 @@ abstract class main
 
 		// Return all page entities
 		return $entities;
+	}
+
+	/**
+	 * Import and validate data
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param  array $data Data array, typically from the database
+	 * @param array  $additional_table_schema
+	 *
+	 * @return object $this->data object
+	 * @throws \skouat\ppde\exception\invalid_argument
+	 * @access public
+	 */
+	public function import($data, $additional_table_schema = array())
+	{
+		// Clear out any saved data
+		$this->data = array();
+
+		// add additional field to the table schema
+		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
+
+		// Go through the basic fields and set them to our data array
+		foreach ($this->table_schema as $generic_field => $field)
+		{
+			// If the data wasn't sent to us, throw an exception
+			if (!isset($data[$field['name']]))
+			{
+				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
+			}
+
+			// settype passes values by reference
+			$value = $data[$field['name']];
+
+			// We're using settype to enforce data types
+			settype($value, $field['type']);
+
+			$this->data[$field['name']] = $value;
+		}
+		unset($field);
+
+		return $this->data;
 	}
 }

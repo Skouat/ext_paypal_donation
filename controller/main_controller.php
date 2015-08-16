@@ -61,7 +61,7 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
