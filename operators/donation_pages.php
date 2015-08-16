@@ -12,13 +12,10 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @property \phpbb\db\driver\driver_interface    db                       Database connection
- * @property ContainerInterface                   container                Service container interface
- * @property string                               container_entity_name    Name of the called container
- */
-class donation_pages extends main implements donation_pages_interface
+class donation_pages implements donation_pages_interface
 {
+	protected $container;
+	protected $db;
 	protected $ppde_donation_pages_table;
 
 	/**
@@ -35,7 +32,6 @@ class donation_pages extends main implements donation_pages_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
-		$this->container_entity_name = 'skouat.ppde.entity.donation_pages';
 	}
 
 	/**
@@ -109,24 +105,5 @@ class donation_pages extends main implements donation_pages_interface
 
 		// Return all available languages
 		return $langs;
-	}
-
-	/**
-	 * Delete a page
-	 *
-	 * @param int $page_id The page identifier to delete
-	 *
-	 * @return bool True if row was deleted, false otherwise
-	 * @access public
-	 */
-	public function delete_page($page_id)
-	{
-		// Delete the donation page from the database
-		$sql = 'DELETE FROM ' . $this->ppde_donation_pages_table . '
-			WHERE page_id = ' . (int) $page_id;
-		$this->db->sql_query($sql);
-
-		// Return true/false if a donation page was deleted
-		return (bool) $this->db->sql_affectedrows();
 	}
 }

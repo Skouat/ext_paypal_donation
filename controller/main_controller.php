@@ -19,8 +19,10 @@ class main_controller implements main_interface
 	protected $container;
 	protected $extension_manager;
 	protected $helper;
-	protected $ppde_operator_donation_pages;
+	protected $ppde_entity_currency;
+	protected $ppde_entity_donation_pages;
 	protected $ppde_operator_currency;
+	protected $ppde_operator_donation_pages;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -46,8 +48,10 @@ class main_controller implements main_interface
 	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension
 	 *                                                                            manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
-	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
+	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
+	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
+	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
 	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
@@ -57,15 +61,17 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->extension_manager = $extension_manager;
 		$this->helper = $helper;
-		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
+		$this->ppde_entity_currency = $ppde_entity_currency;
+		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
 		$this->ppde_operator_currency = $ppde_operator_currency;
+		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -159,7 +165,7 @@ class main_controller implements main_interface
 	private function get_donation_content_data($return_args_url)
 	{
 		return $this->donation_content_data =
-			$this->ppde_operator_donation_pages->get_data(
+			$this->ppde_entity_donation_pages->get_data(
 				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url));
 	}
 
@@ -174,7 +180,7 @@ class main_controller implements main_interface
 	public function build_currency_select_menu($config_value = 0)
 	{
 		// Grab the list of all enabled currencies; 0 is for all data
-		$currency_items = $this->ppde_operator_currency->get_data($this->ppde_operator_currency->build_sql_data(0, true));
+		$currency_items = $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data(0, true));
 
 		// Process each rule menu item for pull-down
 		foreach ($currency_items as $currency_item)
@@ -366,7 +372,7 @@ class main_controller implements main_interface
 	 */
 	public function get_default_currency_data($id = 0)
 	{
-		return $this->ppde_operator_currency->get_data($this->ppde_operator_currency->build_sql_data($id, true));
+		return $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data($id, true));
 	}
 
 	/**
@@ -543,28 +549,6 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Check if fsockopen is available
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_fsockopen()
-	{
-		if (function_exists('fsockopen'))
-		{
-			$this->get_ext_meta();
-
-			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
-
-			$fp = @fsockopen($url['path'], 80);
-
-			return ($fp !== false) ? true : false;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Get extension metadata
 	 *
 	 * @return null
@@ -617,5 +601,27 @@ class main_controller implements main_interface
 	{
 		$namespace_ary = explode('\\', __NAMESPACE__);
 		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
+	}
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_fsockopen()
+	{
+		if (function_exists('fsockopen'))
+		{
+			$this->get_ext_meta();
+
+			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
+
+			$fp = @fsockopen($url['path'], 80);
+
+			return ($fp !== false) ? true : false;
+		}
+
+		return false;
 	}
 }

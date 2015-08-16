@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -22,8 +22,6 @@ abstract class admin_main
 	protected $log;
 	/** @var string */
 	protected $module_name;
-	/** @var \skouat\ppde\operators\main */
-	protected $ppde_operator;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -40,16 +38,14 @@ abstract class admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \skouat\ppde\operators\main $ppde_operator   Operator object
 	 * @param string                      $lang_key_prefix Prefix for the messages thrown by exceptions
 	 * @param string                      $id_prefix_name  Prefix name for identifier in the URL
 	 * @param string                      $module_name     Name of the module currently used
 	 *
 	 * @access public
 	 */
-	public function __construct($ppde_operator, $module_name, $lang_key_prefix, $id_prefix_name)
+	public function __construct($module_name, $lang_key_prefix, $id_prefix_name)
 	{
-		$this->ppde_operator = $ppde_operator;
 		$this->module_name = $module_name;
 		$this->lang_key_prefix = $lang_key_prefix;
 		$this->id_prefix_name = $id_prefix_name;
@@ -128,8 +124,14 @@ abstract class admin_main
 		}
 		else
 		{
-			// Add a new item entity to the database
-			$this->ppde_operator->add_data($entity, $run_before_insert);
+			// Insert the data to the database
+			$entity->insert($run_before_insert);
+
+			// Get the newly inserted identifier
+			$id = $entity->get_id();
+
+			// Reload the data to return a fresh entity
+			$entity->load($id);
 			$log_action = 'ADDED';
 		}
 
@@ -252,5 +254,18 @@ abstract class admin_main
 	protected function get_container_entity()
 	{
 		return $this->container->get('skouat.ppde.entity.' . $this->module_name);
+	}
+
+	/**
+	 * Set u_action output vars for display in the template
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function u_action_assign_template_vars()
+	{
+		$this->template->assign_vars(array(
+			'U_ACTION' => $this->u_action,
+		));
 	}
 }

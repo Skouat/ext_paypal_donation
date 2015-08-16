@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property ContainerInterface                       container         The phpBB log system
  * @property string                                   id_prefix_name    Prefix name for identifier in the URL
  * @property string                                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \skouat\ppde\operators\donation_pages    ppde_operator     Operator object.
  * @property \phpbb\log\log                           log               The phpBB log system.
  * @property string                                   module_name       Name of the module currently used
  * @property bool                                     preview           State of preview $_POST variable
@@ -29,6 +28,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 {
 	protected $phpbb_root_path;
 	protected $php_ext;
+	protected $ppde_operator;
 	protected $lang_local_name;
 
 	/**
@@ -49,13 +49,13 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	{
 		$this->container = $container;
 		$this->log = $log;
+		$this->ppde_operator = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 		parent::__construct(
-			$ppde_operator_donation_pages,
 			'donation_pages',
 			'PPDE_DP',
 			'page'
@@ -73,13 +73,17 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		// Get list of available language packs
 		$langs = $this->ppde_operator->get_languages();
 
+		// Initiate an entity
+		/** @type \skouat\ppde\entity\donation_pages $entity */
+		$entity = $this->get_container_entity();
+
 		// Set output vars
 		foreach ($langs as $lang => $entry)
 		{
 			$this->assign_langs_template_vars($entry);
 
 			// Grab all the pages from the db
-			$data_ary = $this->ppde_operator->get_data($this->ppde_operator->build_sql_data($entry['id']));
+			$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($entry['id']));
 
 			foreach ($data_ary as $data)
 			{
@@ -101,10 +105,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		}
 		unset($entry, $langs, $lang);
 
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'U_ACTION' => $this->u_action,
-		));
+	$this->u_action_assign_template_vars();
 	}
 
 	/**
@@ -446,8 +447,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		// Before deletion, grab the local language name
 		$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
-		// Delete the donation page
-		$this->ppde_operator->delete_page($page_id);
+		$entity->delete($page_id);
 
 		// Log the action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));

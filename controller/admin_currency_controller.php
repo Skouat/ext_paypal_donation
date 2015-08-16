@@ -18,14 +18,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                             lang_key_prefix   Prefix for the messages thrown by exceptions
  * @property \phpbb\log\log                     log               The phpBB log system
  * @property string                             module_name       Name of the module currently used
- * @property \skouat\ppde\operators\currency    ppde_operator     Operator object
  * @property \phpbb\request\request             request           Request object
  * @property bool                               submit            State of submit $_POST variable
  * @property \phpbb\template\template           $template         Template object
+ * @property string                             u_action          Action URL
  * @property \phpbb\user                        user              User object
  */
 class admin_currency_controller extends admin_main implements admin_currency_interface
 {
+	protected $ppde_operator;
+
 	/**
 	 * Constructor
 	 *
@@ -42,11 +44,11 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	{
 		$this->container = $container;
 		$this->log = $log;
+		$this->ppde_operator = $ppde_operator_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		parent::__construct(
-			$ppde_operator_currency,
 			'currency',
 			'PPDE_DC',
 			'currency'
@@ -61,11 +63,15 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 	 */
 	public function display_currency()
 	{
-		// Check that currency_order is valid and fix it if necessary
+		// Check if currency_order is valid and fix it if necessary
 		$this->ppde_operator->fix_currency_order();
 
+		// Initiate an entity
+		/** @type \skouat\ppde\entity\currency $entity */
+		$entity = $this->get_container_entity();
+
 		// Grab all the pages from the db
-		$data_ary = $this->ppde_operator->get_data($this->ppde_operator->build_sql_data());
+		$data_ary = $entity->get_data($this->ppde_operator->build_sql_data());
 
 		foreach ($data_ary as $data)
 		{
@@ -74,7 +80,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 
 			$this->template->assign_block_vars('currency', array(
 				'CURRENCY_NAME'    => $data['currency_name'],
-				'CURRENCY_ENABLED' => $data['currency_enable'] ? true : false,
+				'CURRENCY_ENABLED' => (bool) $data['currency_enable'],
 
 				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
@@ -84,13 +90,9 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 			));
 		}
-
 		unset($data_ary, $page);
 
-		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'U_ACTION' => $this->u_action,
-		));
+		$this->u_action_assign_template_vars();
 	}
 
 	/**
@@ -346,15 +348,7 @@ class admin_currency_controller extends admin_main implements admin_currency_int
 		/** @type \skouat\ppde\entity\currency $entity */
 		$entity = $this->get_container_entity();
 		$entity->load($currency_id);
-
-		/** @type bool $data_disabled */
-		$data_disabled = $this->ppde_operator->delete_currency_data($currency_id);
-
-		if (!$data_disabled)
-		{
-			// Return an error if the currency is enabled
-			trigger_error($this->user->lang['PPDE_DISABLE_BEFORE_DELETION'] . adm_back_link($this->u_action), E_USER_WARNING);
-		}
+		$entity->delete($currency_id, 'check_currency_enable');
 
 		// Log the action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));

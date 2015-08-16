@@ -112,17 +112,6 @@ class donation_pages extends main implements donation_pages_interface
 	}
 
 	/**
-	 * Check we are in the ACP
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function is_in_admin()
-	{
-		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
-	}
-
-	/**
 	 * Add language key for donation pages Predefined vars
 	 *
 	 * @return null

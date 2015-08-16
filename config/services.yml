@@ -31,6 +31,7 @@ services:
             - @service_container
             - @ext.manager
             - @controller.helper
+            - @skouat.ppde.entity.donation_pages
             - @skouat.ppde.operator.donation_pages
             - @skouat.ppde.operator.currency
             - @request

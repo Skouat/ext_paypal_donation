@@ -12,15 +12,11 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @property  \phpbb\db\driver\driver_interface    db                       Database connection
- * @property  ContainerInterface                   container                Service container interface
- * @property  string                               container_entity_name    Name of Service container interface
- */
-class currency extends main implements currency_interface
+class currency implements currency_interface
 {
 	protected $cache;
-	protected $data;
+	protected $container;
+	protected $db;
 	protected $ppde_currency_table;
 
 	/**
@@ -39,32 +35,6 @@ class currency extends main implements currency_interface
 		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_currency_table = $ppde_currency_table;
-		$this->container_entity_name = 'skouat.ppde.entity.currency';
-	}
-
-	/**
-	 * Delete a currency
-	 *
-	 * @param int $currency_id The currency identifier to delete
-	 *
-	 * @return bool True if row was deleted, false otherwise
-	 * @access public
-	 */
-	public function delete_currency_data($currency_id)
-	{
-		// Return false if the currency is enabled
-		if ($this->get_data($this->build_sql_data($currency_id, true)))
-		{
-			return false;
-		}
-
-		// Delete the currency from the database
-		$sql = 'DELETE FROM ' . $this->ppde_currency_table . '
-			WHERE currency_id = ' . (int) $currency_id;
-		$this->db->sql_query($sql);
-
-		// Return true/false if a donation page was deleted
-		return (bool) $this->db->sql_affectedrows();
 	}
 
 	/**
@@ -82,12 +52,14 @@ class currency extends main implements currency_interface
 		$sql_ary = array(
 			'SELECT'   => '*',
 			'FROM'     => array($this->ppde_currency_table => 'c'),
-			'WHERE'    => '',
 			'ORDER_BY' => 'c.currency_order',
 		);
 
 		// Use WHERE clause when $currency_id is different from 0
-		$sql_ary['WHERE'] .= (int) $currency_id ? 'c.currency_id = ' . (int) $currency_id : '';
+		if ((int) $currency_id)
+		{
+			$sql_ary['WHERE'] = 'c.currency_id = ' . (int) $currency_id;
+		}
 
 		// Use WHERE clause when $only_enabled is true
 		if ($only_enabled)
@@ -97,6 +69,46 @@ class currency extends main implements currency_interface
 
 		// Return all page entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
+	}
+
+	/**
+	 * Check all items order and fix them if necessary
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function fix_currency_order()
+	{
+		$result = $this->db->sql_query($this->sql_currency_order());
+		$order = 0;
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			++$order;
+
+			if ($row['currency_order'] != $order)
+			{
+				$this->db->sql_query('UPDATE ' . $this->ppde_currency_table . '
+						SET currency_order = ' . $order . '
+						WHERE currency_id = ' . $row['currency_id']);
+			}
+		}
+
+		$this->db->sql_freeresult($result);
+	}
+
+	/**
+	 * Returns SQL Query
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function sql_currency_order()
+	{
+		// By default, check that image_order is valid and fix it if necessary
+		return 'SELECT currency_id, currency_order
+				FROM ' . $this->ppde_currency_table . '
+				ORDER BY currency_order';
 	}
 
 	/**
@@ -136,37 +148,6 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Check all items order and fix them if necessary
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function fix_currency_order()
-	{
-		// By default, check that image_order is valid and fix it if necessary
-		$sql = 'SELECT currency_id, currency_order
-				FROM ' . $this->ppde_currency_table . '
-				ORDER BY currency_order';
-		$result = $this->db->sql_query($sql);
-
-		if ($row = $this->db->sql_fetchrow($result))
-		{
-			$order = 0;
-			do
-			{
-				++$order;
-				if ($row['currency_order'] != $order)
-				{
-					$this->db->sql_query('UPDATE ' . $this->ppde_currency_table . '
-						SET currency_order = ' . $order . '
-						WHERE currency_id = ' . $row['currency_id']);
-				}
-			} while ($row = $this->db->sql_fetchrow($result));
-		}
-		$this->db->sql_freeresult($result);
-	}
-
-	/**
 	 * Checks if the currency is the last enabled.
 	 *
 	 * @param string $action
@@ -190,11 +171,17 @@ class currency extends main implements currency_interface
 	private function count_currency_enable($action = '')
 	{
 		// Count the number of available currencies
-		$sql = 'SELECT COUNT(currency_id) AS cnt_currency
-				FROM ' . $this->ppde_currency_table;
-		$sql .= ($action == 'disable') ? ' WHERE currency_enable = 1' : '';
+		$sql_ary = array(
+			'SELECT' => 'COUNT(c.currency_id) AS cnt_currency',
+			'FROM'   => array($this->ppde_currency_table => 'c'),
+		);
 
-		$this->db->sql_query($sql);
+		if ($action == 'disable')
+		{
+			$sql_ary['WHERE'] = 'currency_enable = 1';
+		}
+
+		$this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
 
 		return $this->db->sql_fetchfield('cnt_currency');
 	}

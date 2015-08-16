@@ -134,17 +134,6 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Get Currency status
-	 *
-	 * @return boolean
-	 * @access public
-	 */
-	public function get_currency_enable()
-	{
-		return (isset($this->data['currency_enable'])) ? (bool) $this->data['currency_enable'] : false;
-	}
-
-	/**
 	 * Set Currency status
 	 *
 	 * @param bool $enable
@@ -248,5 +237,31 @@ class currency extends main implements currency_interface
 		$this->db->sql_query($sql);
 
 		return $this->db->sql_fetchfield('max_order');
+	}
+
+	/**
+	 * Returns error if the currency is enabled
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function check_currency_enable()
+	{
+		if ($this->get_currency_enable())
+		{
+			// Return an error if the currency is enabled
+			trigger_error($this->user->lang['PPDE_DISABLE_BEFORE_DELETION'] . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Get Currency status
+	 *
+	 * @return boolean
+	 * @access public
+	 */
+	public function get_currency_enable()
+	{
+		return (isset($this->data['currency_enable'])) ? (bool) $this->data['currency_enable'] : false;
 	}
 }

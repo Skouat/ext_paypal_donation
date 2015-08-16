@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property \phpbb\request\request     request            Request object
  * @property bool                       submit             State of submit $_POST variable
  * @property \phpbb\template\template   $template          Template object
- * @property string                     u_action
+ * @property string                     u_action           Action URL
  * @property \phpbb\user                user               User object
  */
 class admin_settings_controller extends admin_main implements admin_settings_interface

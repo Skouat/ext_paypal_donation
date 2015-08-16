@@ -18,16 +18,6 @@ namespace skouat\ppde\operators;
 interface currency_interface
 {
 	/**
-	 * Delete a currency
-	 *
-	 * @param int $currency_id The currency identifier to delete
-	 *
-	 * @return bool True if row was deleted, false otherwise
-	 * @access public
-	 */
-	public function delete_currency_data($currency_id);
-
-	/**
 	 * Check all items order and fix them if necessary
 	 *
 	 * @return null

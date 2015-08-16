@@ -11,11 +11,11 @@
 namespace skouat\ppde\controller;
 
 /**
- * @property \phpbb\log\log             log          The phpBB log system.
- * @property \phpbb\request\request     request      Request object.
+ * @property \phpbb\log\log             log          The phpBB log system
+ * @property \phpbb\request\request     request      Request object
  * @property \phpbb\template\template   $template    Template object
- * @property string                     u_action
- * @property \phpbb\user                user         User object.
+ * @property string                     u_action     Action URL
+ * @property \phpbb\user                user         User object
  */
 
 class admin_overview_controller extends admin_main implements admin_overview_interface
@@ -98,6 +98,16 @@ class admin_overview_controller extends admin_main implements admin_overview_int
 		));
 	}
 
+	/**
+	 * Do action regarding the value of $action
+	 *
+	 * @param $id
+	 * @param $mode
+	 * @param $action
+	 *
+	 * @return null
+	 * @access private
+	 */
 	private function do_action($id, $mode, $action)
 	{
 		if ($action)

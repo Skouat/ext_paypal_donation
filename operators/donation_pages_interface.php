@@ -18,16 +18,6 @@ namespace skouat\ppde\operators;
 interface donation_pages_interface
 {
 	/**
-	 * Delete a page
-	 *
-	 * @param int $page_id The page identifier to delete
-	 *
-	 * @return bool True if row was deleted, false otherwise
-	 * @access public
-	 */
-	public function delete_page($page_id);
-
-	/**
 	 * Get list language packs
 	 *
 	 * @param int $lang_id

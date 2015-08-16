@@ -235,6 +235,6 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_EMPTY_NAME'                 => 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_DP_EXISTS'                     => 'Cette page de dons existe déjà.',
 	'PPDE_DP_NO_DONATION_PAGES'          => 'Aucune page de dons n’a été trouvée.',
-	'PPDE_DISABLE_BEFORE_DELETION'       => 'Vous devez désactiver la devise avant de pouvoir la supprimer.',
+	'PPDE_DISABLE_BEFORE_DELETION'       => 'Vous devez désactiver la devise avant de la supprimer.',
 	'PPDE_SETTINGS_MISSING'              => 'Veuillez vérifier les paramètres « ID du compte PayPal » ou « Adresse PayPal Sandbox ».',
 ));

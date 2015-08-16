@@ -55,15 +55,19 @@ abstract class main
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
 	 * @param  array $data Data array, typically from the database
+	 * @param array  $additional_table_schema
 	 *
 	 * @return object $this->data object
 	 * @throws \skouat\ppde\exception\invalid_argument
 	 * @access public
 	 */
-	public function import($data)
+	public function import($data, $additional_table_schema = array())
 	{
 		// Clear out any saved data
 		$this->data = array();
+
+		// add additional field to the table schema
+		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
 
 		// Go through the basic fields and set them to our data array
 		foreach ($this->table_schema as $generic_field => $field)
@@ -106,10 +110,7 @@ abstract class main
 		}
 
 		// Run some stuff before insert data in database
-		if ($run_before_insert)
-		{
-			$this->function_before_insert($run_before_insert);
-		}
+		$this->run_function_before_action($run_before_insert);
 
 		// Make extra sure there is no page_id set
 		unset($this->data[$this->table_schema['item_id']['name']]);
@@ -140,13 +141,22 @@ abstract class main
 	}
 
 	/**
+	 * Run function before do some alter some data in the database
+	 *
 	 * @param $function_name
 	 *
-	 * @return mixed
+	 * @return bool
+	 * @access private
 	 */
-	private function function_before_insert($function_name)
+	private function run_function_before_action($function_name)
 	{
-		return call_user_func(array($this, $function_name));
+		$func_result = true;
+		if ($function_name)
+		{
+			$func_result = (bool) call_user_func(array($this, $function_name));
+		}
+
+		return $func_result;
 	}
 
 	/**
@@ -306,5 +316,73 @@ abstract class main
 	public function check_required_field()
 	{
 		return false;
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_in_admin()
+	{
+		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
+	}
+
+	/**
+	 * Delete data from the database
+	 *
+	 * @param        $id
+	 * @param string $action_before_delete
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function delete($id, $action_before_delete = '')
+	{
+		if ($this->disallow_deletion($id))
+		{
+			// The item selected does not exists
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+		}
+
+		$this->run_function_before_action($action_before_delete);
+
+		// Delete data from the database
+		$sql = 'DELETE FROM ' . $this->table_name . '
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . (int) $id;
+		$this->db->sql_query($sql);
+
+		return (bool) $this->db->sql_affectedrows();
+	}
+
+	private function disallow_deletion($id)
+	{
+		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
+	}
+
+	/**
+	 * Get data from the database
+	 *
+	 * @param string $sql
+	 * @param array  $additional_table_schema
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_data($sql, $additional_table_schema = array())
+	{
+		$entities = array();
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			// Import each currency page row into an entity
+			$entities[] = $this->import($row, $additional_table_schema);
+		}
+		$this->db->sql_freeresult($result);
+
+		// Return all page entities
+		return $entities;
 	}
 }
