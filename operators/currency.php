@@ -64,7 +64,7 @@ class currency implements currency_interface
 		// Use WHERE clause when $only_enabled is true
 		if ($only_enabled)
 		{
-			$sql_ary['WHERE'] .= !empty($sql_ary['WHERE']) ? ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
+			$sql_ary['WHERE'] = !empty($sql_ary['WHERE']) ? $sql_ary['WHERE'] . ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
 		}
 
 		// Return all page entities
