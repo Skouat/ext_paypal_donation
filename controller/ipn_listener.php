@@ -13,14 +13,19 @@
 
 namespace skouat\ppde\controller;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 define('ASCII_RANGE', '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
-class ipn_listener
+/**
+ * @property ContainerInterface                       container         The phpBB log system
+ * @property \phpbb\request\request                   request           Request object.
+ * @property \phpbb\user                              user              User object.
+ */
+class ipn_listener extends admin_main
 {
 	protected $config;
 	protected $ppde_controller_main;
-	protected $request;
-	protected $user;
 	protected $root_path;
 	/**
 	 * Args from PayPal notify return URL
@@ -38,6 +43,12 @@ class ipn_listener
 	 * @var string
 	 */
 	private $response = '';
+	/**
+	 * Full PayPal response for include in text report
+	 *
+	 * @var string
+	 */
+	private $report_response = '';
 	/**
 	 * PayPal response status (code 200 or other)
 	 *
@@ -82,6 +93,7 @@ class ipn_listener
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                    $config               Config object
+	 * @param ContainerInterface                      $container            Service container interface
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
 	 * @param \phpbb\request\request                  $request              Request object
 	 * @param \phpbb\user                             $user                 User object
@@ -90,9 +102,10 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\user $user, $root_path)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\user $user, $root_path)
 	{
 		$this->config = $config;
+		$this->container = $container;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->request = $request;
 		$this->user = $user;
@@ -107,13 +120,20 @@ class ipn_listener
 		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
 		$this->set_curl_fsock();
 
+		// if no connection detected, disable IPN, log error and exit code execution
 		if ($this->get_curl_fsock() == 'none')
 		{
+			$this->config->set('ppde_ipn_enable', false);
 			$this->log_error($this->user->lang['NO_CONNECTION_DETECTED'], true, true, E_USER_WARNING);
 		}
 
 		// Check the transaction returned by PayPal
 		$this->validate_transaction();
+
+		$this->log_to_db();
+
+		// If no trigger_error, still retrying to submit transaction details
+		trigger_error('trigger_error() needed to close communication with PayPal', E_USER_NOTICE);
 	}
 
 	/**
@@ -211,9 +231,11 @@ class ipn_listener
 		}
 	}
 
-
 	/**
 	 * Post Data back to PayPal to validate the authenticity of the transaction.
+	 *
+	 * @return bool
+	 * @access private
 	 */
 	private function validate_transaction()
 	{
@@ -224,7 +246,7 @@ class ipn_listener
 		{
 			// The minimum required checks are not met
 			// So we force to log collected data in /store/ppde_transaction.log
-			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, true, E_USER_NOTICE, array($this->transaction_data));
+			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
@@ -245,10 +267,7 @@ class ipn_listener
 			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
 		}
 
-		// the item number contains the user_id and the payment time in timestamp format
-		$this->extract_item_number_data();
-
-		$this->check_response();
+		return $this->check_response();
 	}
 
 	/**
@@ -469,26 +488,23 @@ class ipn_listener
 	 */
 	private function curl_post($encoded_data)
 	{
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL, $this->u_paypal);
+		$ch = curl_init($this->u_paypal);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
 
 		if ($this->use_log_error)
 		{
 			curl_setopt($ch, CURLOPT_HEADER, true);
-			curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+			curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		}
 
-		$this->response = curl_exec($ch);
+		$this->report_response = $this->response = curl_exec($ch);
 		if (curl_errno($ch) != 0)
 		{
 			// cURL error
@@ -559,34 +575,25 @@ class ipn_listener
 				}
 			}
 
+			$this->report_response = $this->response;
+
 			fclose($fp);
 		}
-	}
-
-	/**
-	 * Retrieve user_id and payment_time from item_number args
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function extract_item_number_data()
-	{
-		list($this->transaction_data['user_id'], $this->transaction_data['payment_time']) = explode('_', substr($this->transaction_data['item_number'], 4));
 	}
 
 	/**
 	 * Check response returned by PayPal et log errors if there is no valid response
 	 * Set true if response is 'VERIFIED'. In other case set to false and log errors
 	 *
-	 * @return null
+	 * @return bool $this->verified
 	 * @access private
 	 */
 	private function check_response()
 	{
 		if ($this->txn_is_verified())
 		{
-			$this->log_error("DEBUG VERIFIED:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->verified = $this->transaction_data['confirmed'] = true;
+			$this->log_error("DEBUG VERIFIED:\n" . $this->get_text_report(), $this->use_log_error);
 		}
 		else if ($this->txn_is_invalid())
 		{
@@ -599,6 +606,8 @@ class ipn_listener
 			$this->log_error("DEBUG OTHER:\n" . $this->get_text_report(), $this->use_log_error);
 			$this->log_error($this->user->lang['UNEXPECTED_RESPONSE'], $this->use_log_error, true);
 		}
+
+		return $this->verified;
 	}
 
 	/**
@@ -621,7 +630,7 @@ class ipn_listener
 	 */
 	private function is_curl_strcmp($arg)
 	{
-		return $this->curl_fsock['curl'] && strcmp($this->response, $arg) === 0;
+		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
 	}
 
 	/**
@@ -634,17 +643,6 @@ class ipn_listener
 	private function is_fsock_strpos($arg)
 	{
 		return $this->curl_fsock['fsock'] && strpos($this->response, $arg) !== false;
-	}
-
-	/**
-	 * Check if transaction is INVALID for both method: cURL or fsockopen()
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function txn_is_invalid()
-	{
-		return $this->is_curl_strcmp('INVALID') || $this->is_fsock_strpos('INVALID');
 	}
 
 	/**
@@ -667,7 +665,7 @@ class ipn_listener
 
 		// HTTP Response
 		$this->text_report_insert_line($r);
-		$r .= "\n" . $this->get_response() . "\n";
+		$r .= "\n" . $this->get_report_response() . "\n";
 		$r .= "\n" . $this->get_response_status() . "\n";
 		$this->text_report_insert_line($r);
 
@@ -704,9 +702,9 @@ class ipn_listener
 	 * @return string
 	 * @access private
 	 */
-	private function get_response()
+	private function get_report_response()
 	{
-		return $this->response;
+		return $this->report_response;
 	}
 
 	/**
@@ -735,6 +733,107 @@ class ipn_listener
 		foreach ($this->transaction_data as $key => $value)
 		{
 			$r .= str_pad($key, 25) . $value . "\n";
+		}
+	}
+
+	/**
+	 * Check if transaction is INVALID for both method: cURL or fsockopen()
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function txn_is_invalid()
+	{
+		return $this->is_curl_strcmp('INVALID') || $this->is_fsock_strpos('INVALID');
+	}
+
+	/**
+	 * Log the transaction to the database
+	 *
+	 * @access private
+	 */
+	private function log_to_db()
+	{
+		// Initiate a transaction log entity
+		/** @type \skouat\ppde\entity\transactions $entity */
+		$entity = $this->container->get('skouat.ppde.entity.transactions');
+
+		// the item number contains the user_id and the payment time in timestamp format
+		$this->extract_item_number_data();
+
+		// list the data to be thrown into the database
+		$data = $this->build_data_ary();
+
+		$errors = $this->set_entity_data($entity, $data);
+
+		$this->submit_data($entity, $errors);
+	}
+
+	/**
+	 * Retrieve user_id and payment_time from item_number args
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function extract_item_number_data()
+	{
+		list($this->transaction_data['user_id'], $this->transaction_data['payment_time']) = explode('_', substr($this->transaction_data['item_number'], 4));
+	}
+
+	/**
+	 * Prepare data array() before send it to $entity
+	 *
+	 * @return array
+	 */
+	private function build_data_ary()
+	{
+		return array(
+			'receiver_id'       => $this->transaction_data['receiver_id'],
+			'receiver_email'    => $this->transaction_data['receiver_email'],
+			'residence_country' => $this->transaction_data['residence_country'],
+			'business'          => $this->transaction_data['business'],
+			'confirmed'         => (bool) $this->transaction_data['confirmed'],
+			'test_ipn'          => $this->transaction_data['test_ipn'],
+			'txn_id'            => $this->transaction_data['txn_id'],
+			'txn_type'          => $this->transaction_data['txn_type'],
+			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
+			'payer_email'       => $this->transaction_data['payer_email'],
+			'payer_id'          => $this->transaction_data['payer_id'],
+			'payer_status'      => $this->transaction_data['payer_status'],
+			'first_name'        => $this->transaction_data['first_name'],
+			'last_name'         => $this->transaction_data['last_name'],
+			'user_id'           => (int) $this->transaction_data['user_id'],
+			'item_name'         => $this->transaction_data['item_name'],
+			'item_number'       => $this->transaction_data['item_number'],
+			'mc_currency'       => $this->transaction_data['mc_currency'],
+			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
+			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
+			'net_amount'        => number_format($this->transaction_data['mc_gross'] - $this->transaction_data['mc_fee'], 2),
+			'payment_date'      => $this->transaction_data['payment_date'],
+			'payment_status'    => $this->transaction_data['payment_status'],
+			'payment_time'      => $this->transaction_data['payment_time'],
+			'payment_type'      => $this->transaction_data['payment_type'],
+			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
+			'settle_currency'   => $this->transaction_data['settle_currency'],
+			'exchange_rate'     => $this->transaction_data['exchange_rate'],
+		);
+	}
+
+	/**
+	 *  Submit data to the database
+	 *
+	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
+	 *
+	 * @param array                            $errors
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function submit_data($entity, $errors)
+	{
+		if ($this->verified && empty($errors))
+		{
+			$this->add_edit_data($entity);
 		}
 	}
 }

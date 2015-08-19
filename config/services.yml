@@ -18,6 +18,7 @@ services:
         class: skouat\ppde\controller\ipn_listener
         arguments:
             - @config
+            - @service_container
             - @skouat.ppde.controller
             - @request
             - @user
