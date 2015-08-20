@@ -242,7 +242,7 @@ class ipn_listener extends admin_main
 		// Request and populate $this->transaction_data
 		$this->get_post_data($this->transaction_vars_list());
 
-		if ($this->validate_post_data() == false)
+		if ($this->validate_post_data() === false)
 		{
 			// The minimum required checks are not met
 			// So we force to log collected data in /store/ppde_transactions.log
