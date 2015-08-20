@@ -132,8 +132,9 @@ class ipn_listener extends admin_main
 
 		$this->log_to_db();
 
-		// If no trigger_error, still retrying to submit transaction details
-		trigger_error('trigger_error() needed to close communication with PayPal', E_USER_NOTICE);
+		// We stop the execution of the code because nothing need to be returned to phpBB.
+		// And PayPal need it to terminate properly the IPN process.
+		exit;
 	}
 
 	/**
