@@ -37,12 +37,28 @@ interface main_interface
 	public function can_use_ppde();
 
 	/**
-	 * Generate statistics percent for display
+	 * Check if cURL is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_curl();
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_fsockopen();
+
+	/**
+	 * Assign statistics vars to the template
 	 *
 	 * @return null
 	 * @access public
 	 */
-	public function generate_stats_percent();
+	public function display_stats();
 
 	/**
 	 * Get default currency data
@@ -53,6 +69,17 @@ interface main_interface
 	 * @access public
 	 */
 	public function get_default_currency_data($id = 0);
+
+	/**
+	 * Get PayPal URL
+	 * Used in form and in IPN process
+	 *
+	 * @param bool $is_test_ipn
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_paypal_url($is_test_ipn = false);
 
 	/**
 	 * Retrieve the language key for donation goal
@@ -86,6 +113,14 @@ interface main_interface
 	 * @access public
 	 */
 	public function get_ppde_used_langkey($currency_symbol, $on_left = true);
+
+	/**
+	 * Load metadata for this extension
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function load_metadata();
 
 	/**
 	 * Check if Sandbox is enable

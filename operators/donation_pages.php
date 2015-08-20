@@ -12,13 +12,8 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Operator for a set of pages
- */
 class donation_pages implements donation_pages_interface
 {
-	protected $data;
-
 	protected $container;
 	protected $db;
 	protected $ppde_donation_pages_table;
@@ -40,36 +35,21 @@ class donation_pages implements donation_pages_interface
 	}
 
 	/**
-	 * Get data from donation pages table
+	 * SQL Query to return donation pages data table
 	 *
-	 * @param int    $lang_id
-	 * @param string $mode
+	 * @param int    $lang_id Language Identifier
+	 * @param string $mode    Could be 'success', 'cancel and 'body'. (Default: 'all_pages')
 	 *
-	 * @return array Array of page data entities
+	 * @return string
 	 * @access public
 	 */
-	public function get_pages_data($lang_id = 0, $mode = 'all_pages')
+	public function build_sql_data($lang_id = 0, $mode = 'all_pages')
 	{
-		$entities = array();
-
-		// Load all page data from the database
-		// Build sql query with alias field
-		$sql = 'SELECT *
+		return 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
 				WHERE page_lang_id = ' . (int) ($lang_id) .
-					$this->set_sql_and_page_title($mode) . '
+					$this->build_sql_and_page_title($mode) . '
 				ORDER BY page_title';
-		$result = $this->db->sql_query($sql);
-
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Import each donation page row into an entity
-			$entities[] = $this->container->get('skouat.ppde.entity.donation_pages')->import($row);
-		}
-		$this->db->sql_freeresult($result);
-
-		// Return all page entities
-		return $entities;
 	}
 
 	/**
@@ -80,7 +60,7 @@ class donation_pages implements donation_pages_interface
 	 * @return string
 	 * @access private
 	 */
-	private function set_sql_and_page_title($mode)
+	private function build_sql_and_page_title($mode)
 	{
 		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
 		switch ($mode)
@@ -125,44 +105,5 @@ class donation_pages implements donation_pages_interface
 
 		// Return all available languages
 		return $langs;
-	}
-
-	/**
-	 * Add a Page
-	 *
-	 * @param object $entity Page entity with new data to insert
-	 *
-	 * @return donation_pages_interface Added page entity
-	 * @access public
-	 */
-	public function add_pages_data($entity)
-	{
-		// Insert the data to the database
-		$entity->insert();
-
-		// Get the newly inserted identifier
-		$page_id = $entity->get_id();
-
-		// Reload the data to return a fresh page entity
-		return $entity->load($page_id);
-	}
-
-	/**
-	 * Delete a page
-	 *
-	 * @param int $page_id The page identifier to delete
-	 *
-	 * @return bool True if row was deleted, false otherwise
-	 * @access public
-	 */
-	public function delete_page($page_id)
-	{
-		// Delete the donation page from the database
-		$sql = 'DELETE FROM ' . $this->ppde_donation_pages_table . '
-			WHERE page_id = ' . (int) $page_id;
-		$this->db->sql_query($sql);
-
-		// Return true/false if a donation page was deleted
-		return (bool) $this->db->sql_affectedrows();
 	}
 }

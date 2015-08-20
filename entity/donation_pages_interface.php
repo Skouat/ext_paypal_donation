@@ -15,36 +15,15 @@ namespace skouat\ppde\entity;
  *
  * This describes all of the methods we'll have for a single donation page
  */
-interface donation_pages_interface extends main_interface
+interface donation_pages_interface
 {
 	/**
-	 * Check the page_id exist from the database for this donation page
+	 * SQL Query to return the ID of selected donation page
 	 *
-	 * @return int $this->data['page_id'] Donation page identifier; 0 if the page doesn't exist
+	 * @return string
 	 * @access public
 	 */
-	public function donation_page_exists();
-
-	/**
-	 * Insert the item for the first time
-	 *
-	 * Will throw an exception if the item was already inserted (call save() instead)
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function insert();
-
-	/**
-	 * Save the current settings to the database
-	 *
-	 * This must be called before closing or any changes will not be saved!
-	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function save();
+	public function build_sql_data_exists();
 
 	/**
 	 * Get language id
@@ -53,34 +32,6 @@ interface donation_pages_interface extends main_interface
 	 * @access public
 	 */
 	public function get_lang_id();
-
-	/**
-	 * Get template vars
-	 *
-	 * @param bool $acp
-	 *
-	 * @return array $this->dp_vars
-	 * @access public
-	 */
-	public function get_vars($acp = false);
-
-	/**
-	 * Set Lang identifier
-	 *
-	 * @param int $lang
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_lang_id($lang);
-
-	/**
-	 * Get message for edit
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_message_for_edit();
 
 	/**
 	 * Get message for display
@@ -93,24 +44,20 @@ interface donation_pages_interface extends main_interface
 	public function get_message_for_display($censor_text = true);
 
 	/**
-	 * Replace template vars in the message
-	 *
-	 * @param string $message
+	 * Get message for edit
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function replace_template_vars($message);
+	public function get_message_for_edit();
 
 	/**
-	 * Set message
+	 * Get template vars
 	 *
-	 * @param string $message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return array $this->dp_vars
 	 * @access public
 	 */
-	public function set_message($message);
+	public function get_vars();
 
 	/**
 	 * Check if bbcode is enabled on the message
@@ -121,36 +68,12 @@ interface donation_pages_interface extends main_interface
 	public function message_bbcode_enabled();
 
 	/**
-	 * Enable bbcode on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_enable_bbcode();
-
-	/**
 	 * Disable bbcode on the message
 	 *
 	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_disable_bbcode();
-
-	/**
-	 * Check if magic_url is enabled on the message
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function message_magic_url_enabled();
-
-	/**
-	 * Enable magic url on the message
-	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function message_enable_magic_url();
 
 	/**
 	 * Disable magic url on the message
@@ -161,12 +84,28 @@ interface donation_pages_interface extends main_interface
 	public function message_disable_magic_url();
 
 	/**
-	 * Check if smilies are enabled on the message
+	 * Disable smilies on the message
 	 *
-	 * @return bool
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function message_smilies_enabled();
+	public function message_disable_smilies();
+
+	/**
+	 * Enable bbcode on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_enable_bbcode();
+
+	/**
+	 * Enable magic url on the message
+	 *
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function message_enable_magic_url();
 
 	/**
 	 * Enable smilies on the message
@@ -177,20 +116,48 @@ interface donation_pages_interface extends main_interface
 	public function message_enable_smilies();
 
 	/**
-	 * Disable smilies on the message
+	 * Check if magic_url is enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function message_magic_url_enabled();
+
+	/**
+	 * Check if smilies are enabled on the message
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function message_smilies_enabled();
+
+	/**
+	 * Replace template vars in the message
+	 *
+	 * @param string $message
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function replace_template_vars($message);
+
+	/**
+	 * Set Lang identifier
+	 *
+	 * @param int $lang
 	 *
 	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function message_disable_smilies();
+	public function set_lang_id($lang);
 
 	/**
-	 * Set page url
+	 * Set message
 	 *
-	 * @param string $u_action Custom form action
+	 * @param string $message
 	 *
-	 * @return null
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_page_url($u_action);
+	public function set_message($message);
 }

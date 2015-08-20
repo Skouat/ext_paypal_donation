@@ -17,22 +17,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class listener implements EventSubscriberInterface
 {
-	/** @var \phpbb\config\config */
 	protected $config;
-
-	/** @var \phpbb\controller\helper */
 	protected $controller_helper;
-
-	/** @var \skouat\ppde\controller\main_controller */
 	protected $ppde_controller_main;
-
-	/** @var \phpbb\template\template */
 	protected $template;
-
-	/** @var \phpbb\user */
 	protected $user;
-
-	/** @var string phpEx */
 	protected $php_ext;
 
 	/**
@@ -79,46 +68,33 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Load data for donations statistics
 	 *
-	 * @param object $event The event object
-	 *
 	 * @return null
 	 * @access public
 	 */
-	public function load_index_data($event)
+	public function load_index_data()
 	{
 		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
 		{
-			$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
-
 			$this->template->assign_vars(array(
 				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
-				'PPDE_GOAL_ENABLE'        => $this->config['ppde_goal_enable'],
-				'PPDE_RAISED_ENABLE'      => $this->config['ppde_raised_enable'],
-				'PPDE_USED_ENABLE'        => $this->config['ppde_used_enable'],
-
-				'L_PPDE_GOAL'             => $this->ppde_controller_main->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol']),
-				'L_PPDE_RAISED'           => $this->ppde_controller_main->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol']),
-				'L_PPDE_USED'             => $this->ppde_controller_main->get_ppde_used_langkey($default_currency_data[0]['currency_symbol']),
 			));
 
-			// Generate statistics percent for display
-			$this->ppde_controller_main->generate_stats_percent();
+			//Assign statistics vars to the template
+			$this->ppde_controller_main->display_stats();
 		}
 	}
 
 	/**
 	 * Create a URL to the donation pages controller file for the header linklist
 	 *
-	 * @param object $event The event object
-	 *
 	 * @return null
 	 * @access public
 	 */
-	public function add_page_header_link($event)
+	public function add_page_header_link()
 	{
 		$this->template->assign_vars(array(
 			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
-			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_main_controller'),
+			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_donate'),
 		));
 	}
 
@@ -155,7 +131,7 @@ class listener implements EventSubscriberInterface
 			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donate') === 0)
 			{
 				$event['location'] = $this->user->lang('PPDE_VIEWONLINE');
-				$event['location_url'] = $this->controller_helper->route('skouat_ppde_main_controller');
+				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donate');
 			}
 		}
 	}

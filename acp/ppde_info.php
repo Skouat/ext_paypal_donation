@@ -34,6 +34,10 @@ class ppde_info
 					'title' => 'PPDE_ACP_CURRENCY',
 					'auth'  => 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'   => array('PPDE_ACP_DONATION')),
+				'transactions'    => array(
+					'title' => 'PPDE_ACP_TRANSACTIONS',
+					'auth'  => 'ext_skouat/ppde && acl_a_ppde_manage',
+					'cat'   => array('PPDE_ACP_DONATION')),
 			),
 		);
 	}

@@ -14,15 +14,28 @@ services:
         tags:
             - { name: event.listener }
 
+    skouat.ppde.ipn_listener:
+        class: skouat\ppde\controller\ipn_listener
+        arguments:
+            - @config
+            - @service_container
+            - @skouat.ppde.controller
+            - @request
+            - @user
+            - %core.root_path%
+
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
             - @auth
             - @config
             - @service_container
+            - @ext.manager
             - @controller.helper
-            - @skouat.ppde.operator.donation_pages
+            - @skouat.ppde.entity.currency
+            - @skouat.ppde.entity.donation_pages
             - @skouat.ppde.operator.currency
+            - @skouat.ppde.operator.donation_pages
             - @request
             - @template
             - @user
@@ -57,12 +70,11 @@ services:
             - @auth
             - @cache
             - @config
-            - @ext.manager
             - @log
+            - @skouat.ppde.controller
             - @request
             - @template
             - @user
-            - %core.root_path%
             - %core.php_ext%
 
     skouat.ppde.controller.admin.settings:
@@ -70,10 +82,26 @@ services:
         arguments:
             - @config
             - @service_container
+            - @skouat.ppde.controller
             - @skouat.ppde.operator.currency
             - @request
             - @template
             - @user
+
+    skouat.ppde.controller.admin.transactions:
+        class: skouat\ppde\controller\admin_transactions_controller
+        arguments:
+            - @auth
+            - @config
+            - @service_container
+            - @log
+            - @skouat.ppde.operator.transactions
+            - @request
+            - @template
+            - @user
+            - %core.adm_relative_path%
+            - %core.root_path%
+            - %core.php_ext%
 
     skouat.ppde.entity.main:
         class: skouat\ppde\entity\main
@@ -96,6 +124,13 @@ services:
             - @user
             - %skouat.ppde.tables.ppde_donation_pages%
 
+    skouat.ppde.entity.transactions:
+        class: skouat\ppde\entity\transactions
+        arguments:
+            - @dbal.conn
+            - @user
+            - %skouat.ppde.tables.ppde_transactions%
+
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency
         arguments:
@@ -110,3 +145,10 @@ services:
             - @service_container
             - @dbal.conn
             - %skouat.ppde.tables.ppde_donation_pages%
+
+    skouat.ppde.operator.transactions:
+        class: skouat\ppde\operators\transactions
+        arguments:
+            - @service_container
+            - @dbal.conn
+            - %skouat.ppde.tables.ppde_transactions%

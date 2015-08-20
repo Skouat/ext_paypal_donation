@@ -14,47 +14,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller implements main_interface
 {
-	/** @var \phpbb\auth\auth */
 	protected $auth;
-
-	/** @var \phpbb\config\config */
 	protected $config;
-
-	/** @var ContainerInterface */
 	protected $container;
-
-	/** @var \phpbb\controller\helper */
+	protected $extension_manager;
 	protected $helper;
-
-	/** @var \skouat\ppde\operators\donation_pages */
-	protected $ppde_operator_donation_pages;
-
-	/** @var \skouat\ppde\operators\currency */
+	protected $ppde_entity_currency;
+	protected $ppde_entity_donation_pages;
 	protected $ppde_operator_currency;
-
-	/** @var \phpbb\request\request */
+	protected $ppde_operator_donation_pages;
 	protected $request;
-
-	/** @var \phpbb\template\template */
 	protected $template;
-
-	/** @var \phpbb\user */
 	protected $user;
-
-	/** @var string phpBB root path */
 	protected $root_path;
-
-	/** @var string phpEx */
 	protected $php_ext;
-
-	/** @var string donation_body */
+	/** @var array */
+	protected $ext_meta = array();
+	/** @var string */
+	protected $ext_name;
+	/** @var string */
 	private $donation_body;
-
-	/** @var array donation_body */
+	/** @var array */
 	private $donation_content_data;
-
-	/** @var string mode_url */
-	private $mode_url;
+	/** @var string */
+	private $return_args_url;
 
 	/**
 	 * Constructor
@@ -62,9 +45,13 @@ class main_controller implements main_interface
 	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension
+	 *                                                                            manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
-	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
+	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
+	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
+	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
 	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
@@ -74,14 +61,17 @@ class main_controller implements main_interface
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
+		$this->extension_manager = $extension_manager;
 		$this->helper = $helper;
-		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
+		$this->ppde_entity_currency = $ppde_entity_currency;
+		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
 		$this->ppde_operator_currency = $ppde_operator_currency;
+		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -103,10 +93,10 @@ class main_controller implements main_interface
 		}
 
 		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
-		$this->get_return_url_mode($this->request->variable('mode', 'body'));
+		$this->set_return_args_url($this->request->variable('return', 'body'));
 
 		// Prepare message for display
-		if ($this->get_donation_content_data($this->mode_url))
+		if ($this->get_donation_content_data($this->return_args_url))
 		{
 			$entity->get_vars();
 			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
@@ -118,13 +108,16 @@ class main_controller implements main_interface
 		}
 
 		$this->template->assign_vars(array(
+			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'DONATION_BODY'      => $this->donation_body,
+			'IMG_LOADER'         => '<img src="' . $this->root_path . '../ext/skouat/ppde/images/loader.gif' . '" />',
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
-			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->generate_form_action(),
+			'S_PPDE_FORM_ACTION' => $this->get_paypal_url(),
+			'S_RETURN_ARGS'      => $this->return_args_url,
+			'S_SANDBOX'          => $this->use_sandbox(),
 		));
 
 		$this->display_stats();
@@ -142,18 +135,21 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * @param $mode
+	 * @param string $set_return_args_url
 	 */
-	private function get_return_url_mode($mode)
+	private function set_return_args_url($set_return_args_url)
 	{
-		switch ($mode)
+		switch ($set_return_args_url)
 		{
 			case 'cancel':
 			case 'success':
-				$this->mode_url = $mode;
+				$this->template->assign_vars(array(
+					'L_PPDE_DONATION_TITLE' => $this->user->lang['PPDE_' . strtoupper($set_return_args_url) . '_TITLE'],
+				));
+				$this->return_args_url = $set_return_args_url;
 				break;
 			default:
-				$this->mode_url = 'body';
+				$this->return_args_url = 'body';
 		}
 
 	}
@@ -161,14 +157,45 @@ class main_controller implements main_interface
 	/**
 	 * Get content of current donation pages
 	 *
-	 * @param string $mode
+	 * @param string $return_args_url
 	 *
 	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data($mode)
+	private function get_donation_content_data($return_args_url)
 	{
-		return $this->donation_content_data = $this->ppde_operator_donation_pages->get_pages_data($this->user->get_iso_lang_id(), $mode);
+		return $this->donation_content_data =
+			$this->ppde_entity_donation_pages->get_data(
+				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url));
+	}
+
+	/**
+	 * Build pull down menu options of available currency
+	 *
+	 * @param int $config_value Currency identifier; default: 0
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function build_currency_select_menu($config_value = 0)
+	{
+		// Grab the list of all enabled currencies; 0 is for all data
+		$currency_items = $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data(0, true));
+
+		// Process each rule menu item for pull-down
+		foreach ($currency_items as $currency_item)
+		{
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('options', array(
+				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
+				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
+				'CURRENCY_NAME'      => $currency_item['currency_name'],
+				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
+
+				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
+			));
+		}
+		unset ($currency_items, $currency_item);
 	}
 
 	/**
@@ -225,35 +252,6 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Build pull down menu options of available currency
-	 *
-	 * @param int $config_value Currency identifier; default: 0
-	 *
-	 * @return null
-	 * @access public
-	 */
-	public function build_currency_select_menu($config_value = 0)
-	{
-		// Grab the list of all enabled currencies; 0 is for all data
-		$currency_items = $this->ppde_operator_currency->get_currency_data(0, true);
-
-		// Process each rule menu item for pull-down
-		foreach ($currency_items as $currency_item)
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', array(
-				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
-				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
-				'CURRENCY_NAME'      => $currency_item['currency_name'],
-				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-
-				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
-			));
-		}
-		unset ($currency_items, $currency_item);
-	}
-
-	/**
 	 * Build PayPal hidden fields
 	 *
 	 * @return string PayPal hidden field needed to fill PayPal forms
@@ -261,13 +259,13 @@ class main_controller implements main_interface
 	 */
 	private function paypal_hidden_fields()
 	{
-		//
 		return build_hidden_fields(array(
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
 			'item_name'     => $this->user->lang['PPDE_DONATION_TITLE_HEAD'] . ' ' . $this->config['sitename'],
 			'no_shipping'   => 1,
 			'return'        => $this->generate_paypal_return_url('success'),
+			'notify_url'    => $this->generate_paypal_notify_return_url(),
 			'cancel_return' => $this->generate_paypal_return_url('cancel'),
 			'item_number'   => 'uid_' . $this->user->data['user_id'] . '_' . time(),
 			'tax'           => 0,
@@ -308,27 +306,41 @@ class main_controller implements main_interface
 	 */
 	private function generate_paypal_return_url($arg)
 	{
-		return append_sid(generate_board_url(true) . $this->user->page['script_path'] . $this->user->page['page_name'], 'mode=' . $arg);
+		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', array('return' => $arg));
 	}
 
 	/**
-	 * Generate PayPal form action
+	 * Generate PayPal return notify URL
 	 *
 	 * @return string
 	 * @access private
 	 */
-	private function generate_form_action()
+	private function generate_paypal_notify_return_url()
 	{
-		return $this->use_sandbox() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+		return generate_board_url(true) . $this->helper->route('skouat_ppde_ipn_listener');
+	}
+
+	/**
+	 * Get PayPal URL
+	 * Used in form and in IPN process
+	 *
+	 * @param bool $is_test_ipn
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_paypal_url($is_test_ipn = false)
+	{
+		return ($is_test_ipn || $this->use_sandbox()) ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 	/**
 	 * Assign statistics vars to the template
 	 *
 	 * @return null
-	 * @access private
+	 * @access public
 	 */
-	private function display_stats()
+	public function display_stats()
 	{
 		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
 		{
@@ -360,7 +372,7 @@ class main_controller implements main_interface
 	 */
 	public function get_default_currency_data($id = 0)
 	{
-		return $this->ppde_operator_currency->get_currency_data($id, true);
+		return $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data($id, true));
 	}
 
 	/**
@@ -458,9 +470,9 @@ class main_controller implements main_interface
 	 * Generate statistics percent for display
 	 *
 	 * @return null
-	 * @access public
+	 * @access private
 	 */
-	public function generate_stats_percent()
+	private function generate_stats_percent()
 	{
 		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
 		{
@@ -499,13 +511,117 @@ class main_controller implements main_interface
 	 */
 	private function send_data_to_template()
 	{
-		switch ($this->mode_url)
+		switch ($this->return_args_url)
 		{
 			case 'cancel':
 			case 'success':
-				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->mode_url) . '_TITLE'));
+				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
+	}
+
+	/**
+	 * Check if cURL is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_curl()
+	{
+		if (function_exists('curl_init') && function_exists('curl_exec'))
+		{
+			$this->get_ext_meta();
+
+			$ch = curl_init($this->ext_meta['extra']['version-check']['host']);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$response = curl_exec($ch);
+			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+
+			curl_close($ch);
+
+			return ($response !== false || $response_status !== '0') ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get extension metadata
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function get_ext_meta()
+	{
+		if (empty($this->ext_meta))
+		{
+			$this->load_metadata();
+		}
+	}
+
+	/**
+	 * Load metadata for this extension
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function load_metadata()
+	{
+		// Retrieve the extension name based on the namespace of this file
+		$this->retrieve_ext_name();
+
+		// If they've specified an extension, let's load the metadata manager and validate it.
+		if ($this->ext_name)
+		{
+			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->user, $this->root_path);
+
+			try
+			{
+				$this->ext_meta = $md_manager->get_metadata('all');
+			}
+			catch (\phpbb\extension\exception $e)
+			{
+				trigger_error($e, E_USER_WARNING);
+			}
+		}
+
+		return $this->ext_meta;
+	}
+
+	/**
+	 * Retrieve the extension name
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function retrieve_ext_name()
+	{
+		$namespace_ary = explode('\\', __NAMESPACE__);
+		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
+	}
+
+	/**
+	 * Check if fsockopen is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_fsockopen()
+	{
+		if (function_exists('fsockopen'))
+		{
+			$this->get_ext_meta();
+
+			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
+
+			$fp = @fsockopen($url['path'], 80);
+
+			return ($fp !== false) ? true : false;
+		}
+
+		return false;
 	}
 }

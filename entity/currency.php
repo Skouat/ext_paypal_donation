@@ -11,7 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * Entity for a currency
+ * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
+ * @property \phpbb\user                          user               phpBB User object
+ * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class currency extends main implements currency_interface
 {
@@ -28,9 +31,6 @@ class currency extends main implements currency_interface
 	 * @access protected
 	 */
 	protected $data;
-
-	protected $db;
-	protected $user;
 	protected $currency_table;
 
 	/**
@@ -50,147 +50,33 @@ class currency extends main implements currency_interface
 		parent::__construct(
 			$db,
 			$user,
+			'PPDE_DC',
 			'CURRENCY',
 			$table_name,
 			array(
-				'item_id'       => array(
-					'name' => 'currency_id',
-					'type' => 'integer'),
-				'item_name'     => array(
-					'name' => 'currency_name',
-					'type' => 'string'),
-				'item_iso_code' => array(
-					'name' => 'currency_iso_code',
-					'type' => 'string'),
-				'item_symbol'   => array(
-					'name' => 'currency_symbol',
-					'type' => 'string'),
-				'item_on_left'   => array(
-					'name' => 'currency_on_left',
-					'type' => 'boolean'),
-				'item_enable'   => array(
-					'name' => 'currency_enable',
-					'type' => 'boolean'),
-				'item_order'    => array(
-					'name' => 'currency_order',
-					'type' => 'integer'),
+				'item_id'       => array('name' => 'currency_id', 'type' => 'integer'),
+				'item_name'     => array('name' => 'currency_name', 'type' => 'string'),
+				'item_iso_code' => array('name' => 'currency_iso_code', 'type' => 'string'),
+				'item_symbol'   => array('name' => 'currency_symbol', 'type' => 'string'),
+				'item_on_left'  => array('name' => 'currency_on_left', 'type' => 'boolean'),
+				'item_enable'   => array('name' => 'currency_enable', 'type' => 'boolean'),
+				'item_order'    => array('name' => 'currency_order', 'type' => 'integer'),
 			)
 		);
 	}
 
 	/**
-	 * Check the currency_id exist from the database for this currency
+	 * SQL Query to return the ID of selected currency
 	 *
-	 * @return int $this->data['currency_id'] Currency identifier; 0 if the currency doesn't exist
+	 * @return string
 	 * @access public
 	 */
-	public function currency_exists()
+	public function build_sql_data_exists()
 	{
-		$sql = 'SELECT currency_id
+		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
 			WHERE currency_iso_code = '" . $this->db->sql_escape($this->data['currency_iso_code']) . "'
-			AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
-		$this->db->sql_query($sql);
-
-		return $this->db->sql_fetchfield('currency_id');
-	}
-
-	/**
-	 * Insert the item for the first time
-	 *
-	 * Will throw an exception if the item was already inserted (call save() instead)
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function insert()
-	{
-		if (!empty($this->data['currency_id']))
-		{
-			// The page already exists
-			$this->display_error_message('PPDE_CURRENCY_EXIST');
-		}
-
-		// Make extra sure there is no currency_id set
-		unset($this->data['currency_id']);
-
-		// Set the Order value before insert new data
-		$this->set_order();
-
-		// Insert data to the database
-		$sql = 'INSERT INTO ' . $this->currency_table . ' ' . $this->db->sql_build_array('INSERT', $this->data);
-		$this->db->sql_query($sql);
-
-		// Set the currency_id using the id created by the SQL insert
-		$this->data['currency_id'] = (int) $this->db->sql_nextid();
-
-		return $this;
-	}
-
-	/**
-	 * Set Currency order number
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @throws \skouat\ppde\exception\out_of_bounds
-	 * @access private
-	 */
-	private function set_order()
-	{
-		$order = (int) $this->get_max_order() + 1;
-
-		/*
-		* If the data is out of range we'll throw an exception. We use 16777215 as a
-		* maximum because it matches the MySQL unsigned mediumint maximum value which
-		* is the lowest amongst the DBMS supported by phpBB.
-		*/
-		if ($order < 0 || $order > 16777215)
-		{
-			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
-		}
-
-		$this->data['currency_order'] = $order;
-
-		return $this;
-	}
-
-	/**
-	 * Get max currency order value
-	 *
-	 * @return int Order identifier
-	 * @access private
-	 */
-	private function get_max_order()
-	{
-		$sql = 'SELECT MAX(currency_order) AS max_order
-			FROM ' . $this->currency_table;
-		$this->db->sql_query($sql);
-
-		return $this->db->sql_fetchfield('max_order');
-	}
-
-	/**
-	 * Save the current settings to the database
-	 *
-	 * This must be called before closing or any changes will not be saved!
-	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
-	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function save()
-	{
-		if (empty($this->data['currency_name']) || empty($this->data['currency_iso_code']) || empty($this->data['currency_symbol']))
-		{
-			// The currency field missing
-			$this->display_error_message('PPDE_NO_CURRENCY');
-		}
-
-		$sql = 'UPDATE ' . $this->currency_table . '
-			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
-			WHERE currency_id = ' . $this->get_id();
-		$this->db->sql_query($sql);
-
-		return $this;
+				AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
 	}
 
 	/**
@@ -248,17 +134,6 @@ class currency extends main implements currency_interface
 	}
 
 	/**
-	 * Get Currency status
-	 *
-	 * @return boolean
-	 * @access public
-	 */
-	public function get_currency_enable()
-	{
-		return (isset($this->data['currency_enable'])) ? (bool) $this->data['currency_enable'] : false;
-	}
-
-	/**
 	 * Set Currency status
 	 *
 	 * @param bool $enable
@@ -310,5 +185,83 @@ class currency extends main implements currency_interface
 	public function get_currency_order()
 	{
 		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+	}
+
+	/**
+	 * Check if required field are set
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_required_field()
+	{
+		return empty($this->data['currency_name']) || empty($this->data['currency_iso_code']) || empty($this->data['currency_symbol']);
+	}
+
+	/**
+	 * Set Currency order number
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @throws \skouat\ppde\exception\out_of_bounds
+	 * @access protected
+	 */
+	protected function set_order()
+	{
+		$order = (int) $this->get_max_order() + 1;
+
+		/*
+		* If the data is out of range we'll throw an exception. We use 16777215 as a
+		* maximum because it matches the MySQL unsigned mediumint maximum value which
+		* is the lowest amongst the DBMS supported by phpBB.
+		*/
+		if ($order < 0 || $order > 16777215)
+		{
+			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
+		}
+
+		$this->data['currency_order'] = $order;
+
+		return $this;
+	}
+
+	/**
+	 * Get max currency order value
+	 *
+	 * @return int Order identifier
+	 * @access private
+	 */
+	private function get_max_order()
+	{
+		$sql = 'SELECT MAX(currency_order) AS max_order
+			FROM ' . $this->currency_table;
+		$this->db->sql_query($sql);
+
+		return $this->db->sql_fetchfield('max_order');
+	}
+
+	/**
+	 * Returns error if the currency is enabled
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function check_currency_enable()
+	{
+		if ($this->get_currency_enable())
+		{
+			// Return an error if the currency is enabled
+			trigger_error($this->user->lang['PPDE_DISABLE_BEFORE_DELETION'] . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Get Currency status
+	 *
+	 * @return boolean
+	 * @access public
+	 */
+	public function get_currency_enable()
+	{
+		return (isset($this->data['currency_enable'])) ? (bool) $this->data['currency_enable'] : false;
 	}
 }

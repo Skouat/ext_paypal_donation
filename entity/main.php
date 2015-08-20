@@ -10,95 +10,75 @@
 
 namespace skouat\ppde\entity;
 
-/**
- * @property string u_action
- */
-abstract class main implements main_interface
+abstract class main
 {
-	/**
-	 * Suffix for the language keys returned by exceptions
-	 *
-	 * @type string
-	 */
-	protected $message_suffix;
-
-	/** @var string */
-	protected $table_name;
-
-	/**
-	 * Table schema and data type in the table
-	 *
-	 * @type array
-	 */
-	protected $table_schema;
-
+	/** @type string */
+	protected $u_action;
 	/**
 	 * Declare overridden properties
-	 *
-	 * @type mixed
 	 */
 	protected $db;
 	protected $user;
 	protected $data;
+	protected $lang_key_prefix;
+	protected $lang_key_suffix;
+	protected $table_name;
+	protected $table_schema;
 
 	/**
 	 * Construct
 	 *
-	 * @param \phpbb\db\driver\driver_interface $db             Database object
-	 * @param \phpbb\user                       $user           User object
-	 * @param string                            $message_suffix Prefix for the messages thrown by exceptions
-	 * @param string                            $table_name     Table name
-	 * @param array                             $table_schema   Array with column names to overwrite and type of data
+	 * @param \phpbb\db\driver\driver_interface $db              Database object
+	 * @param \phpbb\user                       $user            User object
+	 * @param string                            $lang_key_prefix Prefix for the messages thrown by exceptions
+	 * @param string                            $lang_key_suffix Suffix for the messages thrown by exceptions
+	 * @param string                            $table_name      Table name
+	 * @param array                             $table_schema    Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $message_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
 		$this->user = $user;
-		$this->message_suffix = $message_suffix;
+		$this->lang_key_prefix = $lang_key_prefix;
+		$this->lang_key_suffix = $lang_key_suffix;
 		$this->table_name = $table_name;
 		$this->table_schema = $table_schema;
 	}
 
 	/**
-	 * Import and validate data
+	 * Insert the item for the first time
 	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
+	 * Will throw an exception if the item was already inserted (call save() instead)
 	 *
-	 * @param  array $data Data array, typically from the database
+	 * @param string $run_before_insert
 	 *
-	 * @return main_interface $this->data object
-	 * @throws \skouat\ppde\exception\invalid_argument
+	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function import($data)
+	public function insert($run_before_insert = '')
 	{
-		// Clear out any saved data
-		$this->data = array();
-
-		// Go through the basic fields and set them to our data array
-		foreach ($this->table_schema as $generic_field => $field)
+		if (!empty($this->data[$this->table_schema['item_id']['name']]))
 		{
-			// If the data wasn't sent to us, throw an exception
-			if (!isset($data[$field['name']]))
-			{
-				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
-			}
-
-			// settype passes values by reference
-			$value = $data[$field['name']];
-
-			// We're using settype to enforce data types
-			settype($value, $field['type']);
-
-			$this->data[$field['name']] = $value;
+			// The page already exists
+			$this->display_error_message($this->lang_key_prefix . '_EXIST');
 		}
-		unset($field);
 
-		return $this->data;
+		// Run some stuff before insert data in database
+		$this->run_function_before_action($run_before_insert);
+
+		// Make extra sure there is no page_id set
+		unset($this->data[$this->table_schema['item_id']['name']]);
+
+		// Insert the page data to the database
+		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
+		$this->db->sql_query($sql);
+
+		// Set the page_id using the id created by the SQL insert
+		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
+
+		return $this;
 	}
 
 	/**
@@ -117,11 +97,112 @@ abstract class main implements main_interface
 	}
 
 	/**
+	 * Run function before do some alter some data in the database
+	 *
+	 * @param $function_name
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function run_function_before_action($function_name)
+	{
+		$func_result = true;
+		if ($function_name)
+		{
+			$func_result = (bool) call_user_func(array($this, $function_name));
+		}
+
+		return $func_result;
+	}
+
+	/**
+	 * Save the current settings to the database
+	 *
+	 * This must be called before closing or any changes will not be saved!
+	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	 *
+	 * @param bool $required_fields
+	 *
+	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function save($required_fields)
+	{
+		if ($required_fields)
+		{
+			// The page already exists
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+		}
+
+		$sql = 'UPDATE ' . $this->table_name . '
+			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . $this->get_id();
+		$this->db->sql_query($sql);
+
+		return $this;
+	}
+
+	/**
+	 * Get id
+	 *
+	 * @return int Item identifier
+	 * @access public
+	 */
+	public function get_id()
+	{
+		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
+	}
+
+	/**
+	 * Check the Identifier of the called data exists in the database
+	 *
+	 * @param string $sql SQL Query
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function data_exists($sql)
+	{
+		$this->db->sql_query($sql);
+		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
+
+		return (bool) $this->data[$this->table_schema['item_id']['name']];
+	}
+
+	/**
+	 * Set item Identifier
+	 *
+	 * @param int $id
+	 *
+	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_id($id)
+	{
+		$this->data[$this->table_schema['item_id']['name']] = (int) $id;
+
+		return $this;
+	}
+
+	/**
+	 * SQL Query to return the ID of selected currency
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_data_exists()
+	{
+		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
+ 			FROM ' . $this->table_name . '
+			WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . $this->data[$this->table_name['item_id']['name']];
+	}
+
+	/**
 	 * Load the data from the database
 	 *
 	 * @param int $id
 	 *
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return object $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function load($id)
@@ -136,21 +217,10 @@ abstract class main implements main_interface
 		if ($this->data === false)
 		{
 			// A item does not exist
-			$this->display_error_message('PPDE_NO_' . $this->message_suffix);
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Get id
-	 *
-	 * @return int Item identifier
-	 * @access public
-	 */
-	public function get_id()
-	{
-		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
 	}
 
 	/**
@@ -169,7 +239,7 @@ abstract class main implements main_interface
 	 *
 	 * @param string $name
 	 *
-	 * @return main_interface $this object for chaining calls; load()->set()->save()
+	 * @return object $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_name($name)
@@ -191,5 +261,137 @@ abstract class main implements main_interface
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
+	}
+
+	/**
+	 * Check if required field are set
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_required_field()
+	{
+		return false;
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_in_admin()
+	{
+		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
+	}
+
+	/**
+	 * Delete data from the database
+	 *
+	 * @param integer $id
+	 * @param string  $action_before_delete
+	 *
+	 * @param string  $sql_where
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function delete($id, $action_before_delete = '', $sql_where = '')
+	{
+		if ($this->disallow_deletion($id) && empty($sql_where))
+		{
+			// The item selected does not exists
+			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+		}
+
+		$this->run_function_before_action($action_before_delete);
+
+		$where_clause = !empty($sql_where) ? $sql_where : ' WHERE ' . $this->table_schema['item_id']['name'] . ' = ' . (int) $id;
+		// Delete data from the database
+		$sql = 'DELETE FROM ' . $this->table_name . $where_clause;
+		$this->db->sql_query($sql);
+
+		return (bool) $this->db->sql_affectedrows();
+	}
+
+	/**
+	 * Returns if we can proceed to item deletion
+	 *
+	 * @param integer $id
+	 *
+	 * @return bool
+	 */
+	private function disallow_deletion($id)
+	{
+		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
+	}
+
+	/**
+	 * Get data from the database
+	 *
+	 * @param string $sql
+	 * @param array  $additional_table_schema
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_data($sql, $additional_table_schema = array())
+	{
+		$entities = array();
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			// Import each currency page row into an entity
+			$entities[] = $this->import($row, $additional_table_schema);
+		}
+		$this->db->sql_freeresult($result);
+
+		// Return all page entities
+		return $entities;
+	}
+
+	/**
+	 * Import and validate data
+	 *
+	 * Used when the data is already loaded externally.
+	 * Any existing data on this page is over-written.
+	 * All data is validated and an exception is thrown if any data is invalid.
+	 *
+	 * @param  array $data Data array, typically from the database
+	 * @param array  $additional_table_schema
+	 *
+	 * @return object $this->data object
+	 * @throws \skouat\ppde\exception\invalid_argument
+	 * @access public
+	 */
+	public function import($data, $additional_table_schema = array())
+	{
+		// Clear out any saved data
+		$this->data = array();
+
+		// add additional field to the table schema
+		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
+
+		// Go through the basic fields and set them to our data array
+		foreach ($this->table_schema as $generic_field => $field)
+		{
+			// If the data wasn't sent to us, throw an exception
+			if (!isset($data[$field['name']]))
+			{
+				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
+			}
+
+			// settype passes values by reference
+			$value = $data[$field['name']];
+
+			// We're using settype to enforce data types
+			settype($value, $field['type']);
+
+			$this->data[$field['name']] = $value;
+		}
+		unset($field);
+
+		return $this->data;
 	}
 }

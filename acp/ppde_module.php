@@ -32,7 +32,9 @@ class ppde_module
 		{
 			case 'overview':
 			case 'settings':
+			case 'transactions':
 				// Get an instance of the admin controller
+				/** @type \skouat\ppde\controller\admin_main $admin_controller  */
 				$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
 
 				// Make the $u_action url available in the admin overview controller
@@ -44,21 +46,29 @@ class ppde_module
 				// Load a template from adm/style for our ACP page
 				$this->tpl_name = 'ppde_' . strtolower($mode);
 
-				if ($mode == 'overview')
+				switch ($mode)
 				{
-					// Load the display overview handle in the admin controller
-					$admin_controller->display_overview($id, $mode, $action);
-				}
-				else if ($mode == 'settings')
-				{
-					// Load the display options handle in the admin controller
-					$admin_controller->display_settings();
+					case 'overview':
+						// Load the display overview handle in the admin controller
+						/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
+						$admin_controller->display_overview($id, $mode, $action);
+						break;
+					case 'settings':
+						// Load the display options handle in the admin controller
+						/** @type \skouat\ppde\controller\admin_settings_controller $admin_controller */
+						$admin_controller->display_settings();
+						break;
+					case 'transactions':
+						// Load the display transactions log handle in the admin controller
+						/** @type \skouat\ppde\controller\admin_transactions_controller $admin_controller */
+						$admin_controller->display_transactions($id, $mode, $action);
 				}
 				break;
-
 			case 'donation_pages':
 				// Get an instance of the admin controller and the entity
+				/** @type \skouat\ppde\controller\admin_donation_pages_controller $admin_donation_pages_controller */
 				$admin_donation_pages_controller = $phpbb_container->get('skouat.ppde.controller.admin.donation_pages');
+				/** @type \skouat\ppde\entity\donation_pages $donation_pages_entity */
 				$donation_pages_entity = $phpbb_container->get('skouat.ppde.entity.donation_pages');
 
 				// Make the $u_action url available in controller and entity
@@ -101,10 +111,11 @@ class ppde_module
 				// Display module main page
 				$admin_donation_pages_controller->display_donation_pages();
 				break;
-
 			case 'currency':
 				// Get an instance of the admin controller and the entity
+				/** @type \skouat\ppde\controller\admin_currency_controller $admin_currency_controller */
 				$admin_currency_controller = $phpbb_container->get('skouat.ppde.controller.admin.currency');
+				/** @type \skouat\ppde\entity\currency $currency_entity */
 				$currency_entity = $phpbb_container->get('skouat.ppde.entity.currency');
 
 				// Make the $u_action url available in controller and entity
@@ -156,7 +167,6 @@ class ppde_module
 				// Display module main page
 				$admin_currency_controller->display_currency();
 				break;
-
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);
 				break;
