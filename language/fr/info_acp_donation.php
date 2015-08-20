@@ -52,26 +52,38 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'                  => 'Vue d’ensemble',
+	'PPDE_OVERVIEW'                          => 'Vue d’ensemble',
 
-	'INFO_CURL'                      => 'cURL',
-	'INFO_FSOCKOPEN'                 => 'Fsockopen',
-	'INFO_DETECTED'                  => 'Détecté',
-	'INFO_NOT_DETECTED'              => 'Non détecté',
+	'INFO_CURL'                              => 'cURL',
+	'INFO_FSOCKOPEN'                         => 'Fsockopen',
+	'INFO_DETECTED'                          => 'Détecté',
+	'INFO_NOT_DETECTED'                      => 'Non détecté',
 
-	'PPDE_INSTALL_DATE'              => 'Date d’installation de <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'           => 'Cette extension ne prend pas en charge le contrôle de version.',
-	'PPDE_NOT_UP_TO_DATE'            => '%s n’est pas à jour',
-	'PPDE_STATS'                     => 'Statistiques des dons',
-	'PPDE_VERSION'                   => 'Version de <strong>%s</strong>',
+	'PPDE_INSTALL_DATE'                      => 'Date d’installation de <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK'                   => 'Cette extension ne prend pas en charge le contrôle de version.',
+	'PPDE_NOT_UP_TO_DATE'                    => '%s n’est pas à jour',
+	'PPDE_STATS'                             => 'Statistiques des dons',
+	'PPDE_VERSION'                           => 'Version de <strong>%s</strong>',
 
-	'STAT_RESET_DATE'                => 'Réinitialiser la date d’installation de l’extension',
-	'STAT_RESET_DATE_EXPLAIN'        => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
-	'STAT_RESET_DATE_CONFIRM'        => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESET_DATE'                        => 'Réinitialiser la date d’installation de l’extension',
+	'STAT_RESET_DATE_EXPLAIN'                => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
+	'STAT_RESET_DATE_CONFIRM'                => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESYNC_DONORSCOUNTS'               => 'Actualiser les compteurs de donateurs',
+	'STAT_RESYNC_DONORSCOUNTS_EXPLAIN'       => 'Actualise tous les compteurs de donateurs. Seulement les donateurs actifs et anonymes seront pris en considération.',
+	'STAT_RESYNC_DONORSCOUNTS_CONFIRM'       => 'Êtes-vous sûr de vouloir actualiser les compteurs de donateurs ?',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS'         => 'Actualiser les compteurs de transactions',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN' => 'Seul les transactions journalisées seront prises en considération.',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_CONFIRM' => 'Êtes-vous sûr de vouloir actualiser les compteurs de transactions ?',
+	'STAT_RETEST_CURL_FSOCK'                 => 'Re-détecter « cURL » et « fsockopen »',
+	'STAT_RETEST_CURL_FSOCK_EXPLAIN'         => 'Permet de re-détecter ces fonctionnalités si la configuration du serveur a été modifiée.',
+	'STAT_RETEST_CURL_FSOCK_CONFIRM'         => 'Êtes-vous sûr de vouloir re-détecter « cURL » et « fsockopen » ?',
 
-	'STAT_RETEST_CURL_FSOCK'         => 'Re-détecter « cURL » et « fsockopen »',
-	'STAT_RETEST_CURL_FSOCK_EXPLAIN' => 'Permet de re-détecter ces fonctionnalités si la configuration du serveur a été modifiée.',
-	'STAT_RETEST_CURL_FSOCK_CONFIRM' => 'Êtes-vous sûr de vouloir re-détecter « cURL » et « fsockopen » ?',
+	'STATS_ANONYMOUS_DONORS_COUNT'           => 'Nombre de donateurs anonymes',
+	'STATS_ANONYMOUS_DONORS_PER_DAY'         => 'Moyenne journalière des donateurs anonymes',
+	'STATS_KNOWN_DONORS_COUNT'               => 'Nombre de donateurs connus',
+	'STATS_KNOWN_DONORS_PER_DAY'             => 'Moyenne journalière des donateurs connus',
+	'STATS_TRANSACTIONS_COUNT'               => 'Nombre de transactions',
+	'STATS_TRANSACTIONS_PER_DAY'             => 'Moyenne journalière des transactions',
 ));
 
 /**
@@ -257,43 +269,53 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_SORT_PAYMENT_STATUS'   => 'État du paiement',
 	'PPDE_DT_TOTAL_AMOUNT'          => 'Montant total',
 	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'  => '',
-	'PPDE_DT_VERIFIED'              => 'Vérifié',
 	'PPDE_DT_UNVERIFIED'            => 'Non vérifié',
+	'PPDE_DT_VERIFIED'              => 'Vérifié',
 ));
 
 /**
  * logs
  */
 $lang = array_merge($lang, array(
-	//logs
-	'LOG_PPDE_DC_ADDED'         => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
-	'LOG_PPDE_DC_DELETED'       => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
-	'LOG_PPDE_DC_DISABLED'      => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
-	'LOG_PPDE_DC_ENABLED'       => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
-	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
-	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
-	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
-	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
-	'LOG_PPDE_DT_PURGED'        => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
-	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour</strong>',
-	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
+	'LOG_PPDE_DC_ADDED'                       => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'                     => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
+	'LOG_PPDE_DC_DISABLED'                    => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
+	'LOG_PPDE_DC_ENABLED'                     => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
+	'LOG_PPDE_DC_MOVE_DOWN'                   => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
+	'LOG_PPDE_DC_MOVE_UP'                     => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
+	'LOG_PPDE_DC_UPDATED'                     => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
+	'LOG_PPDE_DP_ADDED'                       => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_DELETED'                     => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_UPDATED'                     => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
+	'LOG_PPDE_DT_PURGED'                      => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
+	'LOG_PPDE_SETTINGS_UPDATED'               => '<strong>PayPal Donation : Configuration mise à jour</strong>',
+	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
+	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation : Actualisation des compteurs des donateurs</strong>',
+	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation : Actualisation du compteur des transactions</strong>',
+	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation : Re-détection des connexions distantes</strong>',
+));
 
-	// Confirm box
-	'PPDE_DC_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
-	'PPDE_DC_GO_TO_PAGE'        => '%sModifier la devise existante%s',
-	'PPDE_DC_ADDED'             => 'Une devise a été ajoutée.',
-	'PPDE_DC_UPDATED'           => 'Une devise a été mise à jour.',
-	'PPDE_DC_DELETED'           => 'Une devise a été supprimée.',
-	'PPDE_DP_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
-	'PPDE_DP_GO_TO_PAGE'        => '%sModifier la page de dons existante%s',
-	'PPDE_DP_ADDED'             => 'Une page de dons pour la langue « %s » a été ajoutée.',
-	'PPDE_DP_DELETED'           => 'Une page de dons pour la langue « %s » a été supprimée.',
-	'PPDE_DP_UPDATED'           => 'Une page de dons pour la langue « %s » a été mise à jour.',
-	'PPDE_SETTINGS_SAVED'       => 'Les paramètres de PayPal Donation ont été sauvegardés.',
+/**
+ * Confirm box
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DC_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_GO_TO_PAGE'     => '%sModifier la devise existante%s',
+	'PPDE_DC_ADDED'          => 'Une devise a été ajoutée.',
+	'PPDE_DC_UPDATED'        => 'Une devise a été mise à jour.',
+	'PPDE_DC_DELETED'        => 'Une devise a été supprimée.',
+	'PPDE_DP_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
+	'PPDE_DP_GO_TO_PAGE'     => '%sModifier la page de dons existante%s',
+	'PPDE_DP_ADDED'          => 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_DELETED'        => 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_UPDATED'        => 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_SETTINGS_SAVED'    => 'Les paramètres de PayPal Donation ont été sauvegardés.',
+));
 
-	// Errors
+/**
+ * Errors
+ */
+$lang = array_merge($lang, array(
 	'PPDE_CANNOT_DISABLE_ALL_CURRENCIES' => 'Vous ne pouvez pas désactiver toutes les devises.',
 	'PPDE_DC_EMPTY_NAME'                 => 'Saisissez un nom de devise.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Saisissez un code ISO.',

@@ -52,26 +52,38 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'                  => 'Overview',
+	'PPDE_OVERVIEW'                          => 'Overview',
 
-	'INFO_CURL'                      => 'cURL',
-	'INFO_FSOCKOPEN'                 => 'Fsockopen',
-	'INFO_DETECTED'                  => 'Detected',
-	'INFO_NOT_DETECTED'              => 'Not detected',
+	'INFO_CURL'                              => 'cURL',
+	'INFO_FSOCKOPEN'                         => 'Fsockopen',
+	'INFO_DETECTED'                          => 'Detected',
+	'INFO_NOT_DETECTED'                      => 'Not detected',
 
-	'PPDE_INSTALL_DATE'              => 'Install date of <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'           => 'No version check information given.',
-	'PPDE_NOT_UP_TO_DATE'            => '%s is not up to date',
-	'PPDE_STATS'                     => 'Donation statistics',
-	'PPDE_VERSION'                   => '<strong>%s</strong> version',
+	'PPDE_INSTALL_DATE'                      => 'Install date of <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK'                   => 'No version check information given.',
+	'PPDE_NOT_UP_TO_DATE'                    => '%s is not up to date',
+	'PPDE_STATS'                             => 'Donation statistics',
+	'PPDE_VERSION'                           => '<strong>%s</strong> version',
 
-	'STAT_RESET_DATE'                => 'Reset Extension Installation date',
-	'STAT_RESET_DATE_EXPLAIN'        => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
-	'STAT_RESET_DATE_CONFIRM'        => 'Are you sure you wish to reset the installation date of this extension?',
+	'STAT_RESET_DATE'                        => 'Reset Extension Installation date',
+	'STAT_RESET_DATE_EXPLAIN'                => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
+	'STAT_RESET_DATE_CONFIRM'                => 'Are you sure you wish to reset the installation date of this extension?',
+	'STAT_RESYNC_DONORSCOUNTS'               => 'Resynchronise donors counts',
+	'STAT_RESYNC_DONORSCOUNTS_EXPLAIN'       => 'Resynchronise all donors counts. Only anonymous donors and active members will be taken in consideration.',
+	'STAT_RESYNC_DONORSCOUNTS_CONFIRM'       => 'Are you sure you wish to resynchronise donors counts?',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS'         => 'Resynchronise transactions counts',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN' => 'Only logged transactions will be taken into consideration.',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_CONFIRM' => 'Are you sure you wish to resynchronise transactions counts?',
+	'STAT_RETEST_CURL_FSOCK'                 => 'Re-detect “cURL” and “fsockopen”',
+	'STAT_RETEST_CURL_FSOCK_EXPLAIN'         => 'Allow to re-detect this features if the webserver configuration have changed.',
+	'STAT_RETEST_CURL_FSOCK_CONFIRM'         => 'Are you sure you wish to re-detect “cURL” and “fsockopen”?',
 
-	'STAT_RETEST_CURL_FSOCK'         => 'Re-detect “cURL” and “fsockopen”',
-	'STAT_RETEST_CURL_FSOCK_EXPLAIN' => 'Allow to re-detect this features if the webserver configuration have changed.',
-	'STAT_RETEST_CURL_FSOCK_CONFIRM' => 'Are you sure you wish to re-detect “cURL” and “fsockopen”?',
+	'STATS_ANONYMOUS_DONORS_COUNT'           => 'Number of anonymous donors',
+	'STATS_ANONYMOUS_DONORS_PER_DAY'         => 'Anonymous donors per day',
+	'STATS_KNOWN_DONORS_COUNT'               => 'Number of known donors',
+	'STATS_KNOWN_DONORS_PER_DAY'             => 'Known donors per day',
+	'STATS_TRANSACTIONS_COUNT'               => 'Number of transactions',
+	'STATS_TRANSACTIONS_PER_DAY'             => 'Transactions per day',
 ));
 
 /**
@@ -199,13 +211,12 @@ $lang = array_merge($lang, array(
  * Info: language keys are prefixed with 'PPDE_DT_' for 'PPDE_DONATION_TRANSACTION_'
  */
 $lang = array_merge($lang, array(
-	// Transactions log Management
+	// Transactions log
 	'PPDE_DT_CONFIG'                => 'Transactions log',
 	'PPDE_DT_CONFIG_EXPLAIN'        => 'Here you can show transactions details.',
 	'PPDE_DT_IPN_STATUS'            => 'IPN Status',
 	'PPDE_DT_PAYMENT_STATUS'        => 'Payment Status',
 	'PPDE_DT_TXN_ID'                => 'Transaction ID',
-	'PPDE_DT_TXN_ID_EXPLAIN'        => '',
 	'PPDE_DT_USERNAME'              => 'Donor name',
 
 	/**
@@ -241,9 +252,9 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_FEE_AMOUNT_EXPLAIN'    => '',
 	'PPDE_DT_ITEM_NAME'             => 'Item name',
 	'PPDE_DT_ITEM_NUMBER'           => 'Item number',
+	'PPDE_DT_NAME'                  => 'Name',
 	'PPDE_DT_NET_AMOUNT'            => 'Net amount',
 	'PPDE_DT_NET_AMOUNT_EXPLAIN'    => '',
-	'PPDE_DT_NAME'                  => 'Name',
 	'PPDE_DT_PAYER_ID'              => 'Payer ID',
 	'PPDE_DT_PAYER_EMAIL'           => 'Payer e-mail',
 	'PPDE_DT_PAYER_STATUS'          => 'Payer status',
@@ -266,35 +277,45 @@ $lang = array_merge($lang, array(
  * logs
  */
 $lang = array_merge($lang, array(
-	//logs
-	'LOG_PPDE_DC_ADDED'         => '<strong>PayPal Donation: New currency added</strong><br />» %s',
-	'LOG_PPDE_DC_DELETED'       => '<strong>PayPal Donation: Currency deleted</strong><br />» %s',
-	'LOG_PPDE_DC_DISABLED'      => '<strong>PayPal Donation: Currency disabled</strong><br />» %s',
-	'LOG_PPDE_DC_ENABLED'       => '<strong>PayPal Donation: Currency enabled</strong><br />» %s',
-	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation: Move down the currency</strong> “%s”',
-	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation: Move up the currency</strong> “%s”',
-	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation: Currency edited</strong><br />» %s',
-	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation: New donation page added</strong><br />» “%1$s” for the language “%2$s”', // eg: » “Donation success” for the language “British English”',
-	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation: Donation page deleted</strong><br />» “%1$s” for the language “%2$s”',
-	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation: Donation page updated</strong><br />» “%1$s” for the language “%2$s”',
-	'LOG_PPDE_DT_PURGED'        => '<strong>PayPal Donation: Purge transactions log</strong>',
-	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation: Settings updated</strong>',
-	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation: Installation date reset</strong>',
+	'LOG_PPDE_DC_ADDED'                       => '<strong>PayPal Donation: New currency added</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'                     => '<strong>PayPal Donation: Currency deleted</strong><br />» %s',
+	'LOG_PPDE_DC_DISABLED'                    => '<strong>PayPal Donation: Currency disabled</strong><br />» %s',
+	'LOG_PPDE_DC_ENABLED'                     => '<strong>PayPal Donation: Currency enabled</strong><br />» %s',
+	'LOG_PPDE_DC_MOVE_DOWN'                   => '<strong>PayPal Donation: Move down the currency</strong> “%s”',
+	'LOG_PPDE_DC_MOVE_UP'                     => '<strong>PayPal Donation: Move up the currency</strong> “%s”',
+	'LOG_PPDE_DC_UPDATED'                     => '<strong>PayPal Donation: Currency edited</strong><br />» %s',
+	'LOG_PPDE_DP_ADDED'                       => '<strong>PayPal Donation: New donation page added</strong><br />» “%1$s” for the language “%2$s”', // eg: » “Donation success” for the language “British English”',
+	'LOG_PPDE_DP_DELETED'                     => '<strong>PayPal Donation: Donation page deleted</strong><br />» “%1$s” for the language “%2$s”',
+	'LOG_PPDE_DP_UPDATED'                     => '<strong>PayPal Donation: Donation page updated</strong><br />» “%1$s” for the language “%2$s”',
+	'LOG_PPDE_DT_PURGED'                      => '<strong>PayPal Donation: Purge transactions log</strong>',
+	'LOG_PPDE_SETTINGS_UPDATED'               => '<strong>PayPal Donation: Settings updated</strong>',
+	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation: Installation date reset</strong>',
+	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation: Donor counts resynchronised</strong>',
+	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation: Transaction count resynchronised</strong>',
+	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation: Remote connection re-detected</strong>',
+));
 
-	// Confirm box
-	'PPDE_DC_CONFIRM_DELETE'    => 'Are you sure you want to delete the selected currency?',
-	'PPDE_DC_GO_TO_PAGE'        => '%sEdit existing currency%s',
-	'PPDE_DC_ADDED'             => 'A currency has been added.',
-	'PPDE_DC_UPDATED'           => 'A currency has been updated.',
-	'PPDE_DC_DELETED'           => 'A currency has been deleted.',
-	'PPDE_DP_CONFIRM_DELETE'    => 'Are you sure you want to delete the selected donation page?',
-	'PPDE_DP_GO_TO_PAGE'        => '%sEdit existing donation page%s',
-	'PPDE_DP_ADDED'             => 'A donation page for the language “%s” has been added.',
-	'PPDE_DP_DELETED'           => 'A donation page for the language “%s” has been removed.',
-	'PPDE_DP_UPDATED'           => 'A donation page for the language “%s” has been updated.',
-	'PPDE_SETTINGS_SAVED'       => 'Donation settings saved.',
+/**
+ * Confirm box
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DC_CONFIRM_DELETE' => 'Are you sure you want to delete the selected currency?',
+	'PPDE_DC_GO_TO_PAGE'     => '%sEdit existing currency%s',
+	'PPDE_DC_ADDED'          => 'A currency has been added.',
+	'PPDE_DC_UPDATED'        => 'A currency has been updated.',
+	'PPDE_DC_DELETED'        => 'A currency has been deleted.',
+	'PPDE_DP_CONFIRM_DELETE' => 'Are you sure you want to delete the selected donation page?',
+	'PPDE_DP_GO_TO_PAGE'     => '%sEdit existing donation page%s',
+	'PPDE_DP_ADDED'          => 'A donation page for the language “%s” has been added.',
+	'PPDE_DP_DELETED'        => 'A donation page for the language “%s” has been removed.',
+	'PPDE_DP_UPDATED'        => 'A donation page for the language “%s” has been updated.',
+	'PPDE_SETTINGS_SAVED'    => 'Donation settings saved.',
+));
 
-	// Errors
+/**
+ * Errors
+ */
+$lang = array_merge($lang, array(
 	'PPDE_CANNOT_DISABLE_ALL_CURRENCIES' => 'You cannot disable all currencies.',
 	'PPDE_DC_EMPTY_NAME'                 => 'Enter a currency name.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Enter an ISO code.',

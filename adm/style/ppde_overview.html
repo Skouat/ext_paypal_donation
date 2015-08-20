@@ -38,6 +38,24 @@
 	</thead>
 	<tbody>
 	<tr>
+		<td>{L_STATS_TRANSACTIONS_COUNT}{L_COLON}</td>
+		<td><strong>{TRANSACTIONS_COUNT}</strong></td>
+		<td>{L_STATS_TRANSACTIONS_PER_DAY}{L_COLON}</td>
+		<td><strong>{TRANSACTIONS_PER_DAY}</strong></td>
+	</tr>
+	<tr>
+		<td>{L_STATS_KNOWN_DONORS_COUNT}{L_COLON}</td>
+		<td><strong>{KNOWN_DONORS_COUNT}</strong></td>
+		<td>{L_STATS_KNOWN_DONORS_PER_DAY}{L_COLON}</td>
+		<td><strong>{KNOWN_DONORS_PER_DAY}</strong></td>
+	</tr>
+	<tr>
+		<td>{L_STATS_ANONYMOUS_DONORS_COUNT}{L_COLON}</td>
+		<td><strong>{ANONYMOUS_DONORS_COUNT}</strong></td>
+		<td>{L_STATS_ANONYMOUS_DONORS_PER_DAY}{L_COLON}</td>
+		<td><strong>{ANONYMOUS_DONORS_PER_DAY}</strong></td>
+	</tr>
+	<tr>
 		<td>{L_PPDE_INSTALL_DATE}{L_COLON}</td>
 		<td><strong>{PPDE_INSTALL_DATE}</strong></td>
 		<td>{L_INFO_CURL}{L_COLON}</td>
@@ -58,17 +76,28 @@
 <fieldset>
 	<legend>{L_STATISTIC_RESYNC_OPTIONS}</legend>
 
+	<form id="action_transactions_form" method="post" action="{U_ACTION}">
+		<dl>
+			<dt><label for="action_transactions">{L_STAT_RESYNC_TRANSACTIONSCOUNTS}</label><br /><span>{L_STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN}</span></dt>
+			<dd><input type="hidden" name="action" value="transactions" /><input class="button2" type="submit" id="action_transactions" name="action_transactions" value="{L_RUN}" /></dd>
+		</dl>
+	</form>
+	<form id="action_donors_form" method="post" action="{U_ACTION}">
+		<dl>
+			<dt><label for="action_donors">{L_STAT_RESYNC_DONORSCOUNTS}</label><br /><span>{L_STAT_RESYNC_DONORSCOUNTS_EXPLAIN}</span></dt>
+			<dd><input type="hidden" name="action" value="donors" /><input class="button2" type="submit" id="action_donors" name="action_donors" value="{L_RUN}" /></dd>
+		</dl>
+	</form>
 	<form id="action_date_form" method="post" action="{U_ACTION}">
 		<dl>
 			<dt><label for="action_date">{L_STAT_RESET_DATE}</label><br /><span>{L_STAT_RESET_DATE_EXPLAIN}</span></dt>
 			<dd><input type="hidden" name="action" value="date" /><input class="button2" type="submit" id="action_date" name="action_date" value="{L_RUN}" /></dd>
 		</dl>
 	</form>
-
-	<form id="action_remote_form" method="post" action="{U_ACTION}">
+	<form id="action_curl_fsock_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_remote">{L_STAT_RETEST_CURL_FSOCK}</label><br /><span>{L_STAT_RETEST_CURL_FSOCK_EXPLAIN}</span></dt>
-			<dd><input type="hidden" name="action" value="remote" /><input class="button2" type="submit" id="action_remote" name="action_remote" value="{L_RUN}" /></dd>
+			<dt><label for="action_curl_fsock">{L_STAT_RETEST_CURL_FSOCK}</label><br /><span>{L_STAT_RETEST_CURL_FSOCK_EXPLAIN}</span></dt>
+			<dd><input type="hidden" name="action" value="curl_fsock" /><input class="button2" type="submit" id="action_curl_fsock" name="action_curl_fsock" value="{L_RUN}" /></dd>
 		</dl>
 	</form>
 </fieldset>

@@ -21,10 +21,12 @@ namespace skouat\ppde\controller;
 class admin_overview_controller extends admin_main
 {
 	protected $auth;
+	protected $db;
 	protected $cache;
 	protected $config;
 	protected $ppde_controller_main;
 	protected $php_ext;
+	protected $table_ppde_transactions;
 
 	protected $ext_name;
 	protected $ext_meta = array();
@@ -32,21 +34,24 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth                        $auth                 Authentication object
-	 * @param \phpbb\cache\service                    $cache                Cache object
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\log\log                          $log                  The phpBB log system
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
-	 * @param \phpbb\request\request                  $request              Request object
-	 * @param \phpbb\template\template                $template             Template object
-	 * @param \phpbb\user                             $user                 User object
-	 * @param string                                  $php_ext              phpEx
+	 * @param \phpbb\auth\auth                        $auth                    Authentication object
+	 * @param \phpbb\db\driver\driver_interface       $db                      Database object
+	 * @param \phpbb\cache\service                    $cache                   Cache object
+	 * @param \phpbb\config\config                    $config                  Config object
+	 * @param \phpbb\log\log                          $log                     The phpBB log system
+	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main    Main controller object
+	 * @param \phpbb\request\request                  $request                 Request object
+	 * @param \phpbb\template\template                $template                Template object
+	 * @param \phpbb\user                             $user                    User object
+	 * @param string                                  $php_ext                 phpEx
+	 * @param string                                  $table_ppde_transactions Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
+		$this->db = $db;
 		$this->cache = $cache;
 		$this->config = $config;
 		$this->log = $log;
@@ -55,6 +60,7 @@ class admin_overview_controller extends admin_main
 		$this->template = $template;
 		$this->user = $user;
 		$this->php_ext = $php_ext;
+		$this->table_ppde_transactions = $table_ppde_transactions;
 	}
 
 	/**
@@ -88,6 +94,13 @@ class admin_overview_controller extends admin_main
 			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_VERSION'              => $this->ext_meta['version'],
 
+			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
+			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
+			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
+			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
+			'TRANSACTIONS_COUNT'        => $this->config['ppde_count_transactions'],
+			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_count_transactions'),
+
 			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
 			'S_FSOCKOPEN'               => $this->config['ppde_curl_detected'],
 			'S_CURL'                    => $this->config['ppde_fsock_detected'],
@@ -120,9 +133,14 @@ class admin_overview_controller extends admin_main
 						$confirm = true;
 						$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
 						break;
-					case 'remote':
+					case 'curl_fsock':
 						$confirm = true;
 						$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
+						break;
+					case 'donors':
+					case 'transactions':
+						$confirm = true;
+						$confirm_lang = 'STAT_RESYNC_' . strtoupper($action) . 'COUNTS_CONFIRM';
 						break;
 					default:
 						$confirm = true;
@@ -140,20 +158,30 @@ class admin_overview_controller extends admin_main
 			}
 			else
 			{
+				if (!$this->auth->acl_get('a_ppde_manage'))
+				{
+					trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
+				}
+
 				switch ($action)
 				{
 					case 'date':
-						if (!$this->auth->acl_get('a_ppde_manage'))
-						{
-							trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
-						}
-
 						$this->config->set('ppde_install_date', time() - 1);
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESET_DATE');
 						break;
 					case 'remote':
 						$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
 						$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RETEST_DATE');
+						break;
+					case 'transactions':
+						$this->config->set('ppde_count_transactions', $this->update_transactions_stats(), true);
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_TRANSACTIONSCOUNTS');
+						break;
+					case 'donors':
+						$this->config->set('ppde_known_donors_count', $this->update_known_donors_stats(), true);
+						$this->config->set('ppde_anonymous_donors_count', $this->update_anonymous_donors_stats());
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_DONORSCOUNTS');
 						break;
 				}
 			}
@@ -161,7 +189,58 @@ class admin_overview_controller extends admin_main
 	}
 
 	/**
-	 * Obtain the last version for this extension
+	 * Updates transactions stats into the database
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function update_transactions_stats()
+	{
+		$sql = 'SELECT COUNT(DISTINCT txn_id) AS transactions
+				FROM ' . $this->table_ppde_transactions . "
+				WHERE confirmed = 1
+					AND payment_status = 'Completed'";
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield('transactions');
+	}
+
+	/**
+	 * Updates known donors stats into the database
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function update_known_donors_stats()
+	{
+		$sql = 'SELECT COUNT(DISTINCT dd.user_id) AS known_donors
+				FROM ' . $this->table_ppde_transactions . ' dd
+				INNER JOIN ' . USERS_TABLE . ' u
+					ON dd.user_id = u.user_id
+				WHERE ' . $this->db->sql_in_set('u.user_type', array(USER_NORMAL, USER_FOUNDER));
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield('known_donors');
+	}
+
+	/**
+	 * Updates anonymous donors stats into the database
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function update_anonymous_donors_stats()
+	{
+		$sql = 'SELECT COUNT(DISTINCT dd.payer_id) AS anonymous_donors
+				FROM ' . $this->table_ppde_transactions . ' dd
+				WHERE dd.user_id = ' . ANONYMOUS;
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield('anonymous_donors');
+	}
+
+	/**
+	 * Obtains the last version for this extension
 	 *
 	 * @return null
 	 * @access private
@@ -198,5 +277,29 @@ class admin_overview_controller extends admin_main
 				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->user->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
 			));
 		}
+	}
+
+	/**
+	 * Returns the percent of items (transactions, donors) per day
+	 *
+	 * @param string $config_name
+	 *
+	 * @return float
+	 * @access private
+	 */
+	private function per_day_stats($config_name)
+	{
+		return sprintf('%.2f', (float) $this->config[$config_name] / $this->get_install_days());
+	}
+
+	/**
+	 * Returns the number of days from the date of installation of the extension.
+	 *
+	 * @return float
+	 * @access private
+	 */
+	private function get_install_days()
+	{
+		return (float) (time() - $this->config['ppde_install_date']) / 86400;
 	}
 }
