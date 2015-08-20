@@ -102,7 +102,7 @@ $lang = array_merge($lang, array(
 	'PPDE_IPN_ENABLE'                     => 'Activer IPN',
 	'PPDE_IPN_ENABLE_EXPLAIN'             => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.',
 	'PPDE_IPN_LOGGING'                    => 'Activer le journal des erreurs',
-	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/transaction.log</strong>.',
+	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/ppde_transactions.log</strong>.',
 
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'        => 'Paramètres PayPal Sandbox',

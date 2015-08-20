@@ -76,7 +76,7 @@ class ipn_listener extends admin_main
 	 */
 	private $u_paypal = '';
 	/**
-	 * If true, the error are logged into /store/transaction.log.
+	 * If true, the error are logged into /store/ppde_transactions.log.
 	 * If false, error aren't logged. Default false.
 	 *
 	 * @var boolean
@@ -183,7 +183,6 @@ class ipn_listener extends admin_main
 		return array_search(true, $this->curl_fsock);
 	}
 
-
 	/**
 	 * Log error messages
 	 *
@@ -222,7 +221,7 @@ class ipn_listener extends admin_main
 
 		if ($log_in_file)
 		{
-			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transaction.log');
+			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transactions.log');
 		}
 
 		if ($exit)
@@ -245,7 +244,7 @@ class ipn_listener extends admin_main
 		if ($this->validate_post_data() == false)
 		{
 			// The minimum required checks are not met
-			// So we force to log collected data in /store/ppde_transaction.log
+			// So we force to log collected data in /store/ppde_transactions.log
 			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 
