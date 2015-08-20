@@ -77,5 +77,5 @@ $lang = array_merge($lang, array(
 	'NO_CONNECTION_DETECTED'     => 'cURL et fsockopen() n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
 	'INVALID_TRANSACTION_RECORD' => 'Transaction invalide : ID de transaction non trouvé.',
 	'INVALID_RESPONSE_STATUS'    => 'Statut de réponse non valide : ',
-	'UNEXPECTED_RESPONSE'        => 'Réponse innatendue de PayPal.',
+	'UNEXPECTED_RESPONSE'        => 'Réponse inatendue de PayPal.',
 ));

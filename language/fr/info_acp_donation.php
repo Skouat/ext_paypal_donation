@@ -95,14 +95,14 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_ENABLE'                 => 'Activer le menu déroulant',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'         => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
 	'PPDE_DROPBOX_VALUE'                  => 'Valeurs de don du menu déroulant',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'          => 'Définissez les valeurs que vous faire apparaître dans le menu déroulant.<br />Séparez chaques valeurs par une virgule (",") et sans espaces.',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'          => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_SETTINGS'            => 'Paramètres IPN',
 	'PPDE_IPN_ENABLE'                     => 'Activer IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'             => 'Activer cette option pour utiliser les Notification Instantannée de Paiement',
-	'PPDE_IPN_LOGGING'                    => 'Journal des erreurs',
-	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Enregistrer les erreurs et les données liée à PayPal IPN dans <strong>/store/transaction.log</strong>',
+	'PPDE_IPN_ENABLE_EXPLAIN'             => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.',
+	'PPDE_IPN_LOGGING'                    => 'Activer le journal des erreurs',
+	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/transaction.log</strong>.',
 
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'        => 'Paramètres PayPal Sandbox',
@@ -111,7 +111,7 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE'         => 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN' => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
 	'PPDE_SANDBOX_ADDRESS'                => 'Adresse PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'        => 'Inscrire votre addresse e-mail de vendeur PayPal Sandbox.',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'        => 'Inscrire votre adresse e-mail de vendeur PayPal Sandbox.',
 
 	// Stats Donation settings
 	'PPDE_LEGEND_STATS_SETTINGS'          => 'Paramètres des statistiques',
@@ -138,7 +138,7 @@ $lang = array_merge($lang, array(
 $lang = array_merge($lang, array(
 	// Donation Page settings
 	'PPDE_DP_CONFIG'           => 'Pages des dons',
-	'PPDE_DP_CONFIG_EXPLAIN'   => 'Permet d’améliorer le rendu des pages personalisables de l’extension.',
+	'PPDE_DP_CONFIG_EXPLAIN'   => 'Permet d’améliorer le rendu des pages personnalisables de l’extension.',
 
 	'PPDE_DP_PAGE'             => 'Type de page',
 	'PPDE_DP_LANG'             => 'Langue',
@@ -191,7 +191,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_POSITION_LEFT'    => 'À gauche',
 	'PPDE_DC_POSITION_RIGHT'   => 'À droite',
 	'PPDE_DC_SYMBOL'           => 'Symbole de la devise',
-	'PPDE_DC_SYMBOL_EXPLAIN'   => 'Inscire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
+	'PPDE_DC_SYMBOL_EXPLAIN'   => 'Inscrire le symbole de la devise.<br />Exemple : <strong>€</strong> pour Euro.',
 ));
 
 /**
@@ -202,10 +202,9 @@ $lang = array_merge($lang, array(
 	// Transactions log
 	'PPDE_DT_CONFIG'                => 'Journal des transactions',
 	'PPDE_DT_CONFIG_EXPLAIN'        => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
-	'PPDE_DT_IPN_STATUS'            => 'Statut IPN',
-	'PPDE_DT_PAYMENT_STATUS'        => 'Statut du paiement',
-	'PPDE_DT_TXN_ID'                => 'Numéro transaction',
-	'PPDE_DT_TXN_ID_EXPLAIN'        => '',
+	'PPDE_DT_IPN_STATUS'            => 'État de la transaction',
+	'PPDE_DT_PAYMENT_STATUS'        => 'État du paiement',
+	'PPDE_DT_TXN_ID'                => 'Numéro de transaction',
 	'PPDE_DT_USERNAME'              => 'Nom du donateur',
 
 	/**
