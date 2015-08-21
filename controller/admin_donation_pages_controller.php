@@ -136,7 +136,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	public function add_donation_page()
 	{
 		// Add form key
-		add_form_key('add_edit_donation_pages');
+		add_form_key('add_edit_' . $this->module_name);
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */
@@ -238,7 +238,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 		);
 		$errors = array_merge($errors, $this->set_entity_data($entity, $item_fields));
 
-		// Check some settings before submitting data
+		// Check some settings before loading and submitting form
 		$errors = array_merge($errors,
 			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
 			$this->is_empty_data($entity, 'name', '', $this->submit_or_preview($this->submit)),
@@ -396,7 +396,7 @@ class admin_donation_pages_controller extends admin_main implements admin_donati
 	public function edit_donation_page($page_id)
 	{
 		// Add form key
-		add_form_key('add_edit_donation_page');
+		add_form_key('add_edit_' . $this->module_name);
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */
