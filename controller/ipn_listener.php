@@ -134,7 +134,8 @@ class ipn_listener extends admin_main
 
 		// We stop the execution of the code because nothing need to be returned to phpBB.
 		// And PayPal need it to terminate properly the IPN process.
-		exit;
+		garbage_collection();
+		exit_handler();
 	}
 
 	/**
