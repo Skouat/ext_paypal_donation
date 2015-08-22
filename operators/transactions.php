@@ -12,7 +12,7 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class transactions implements transactions_interface
+class transactions
 {
 	protected $container;
 	protected $db;

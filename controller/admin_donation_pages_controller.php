@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property \phpbb\template\template                 $template         Template object
  * @property \phpbb\user                              user              User object.
  */
-class admin_donation_pages_controller extends admin_main implements admin_donation_pages_interface
+class admin_donation_pages_controller extends admin_main
 {
 	protected $phpbb_root_path;
 	protected $php_ext;

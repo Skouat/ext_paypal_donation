@@ -12,7 +12,7 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class currency implements currency_interface
+class currency
 {
 	protected $cache;
 	protected $container;

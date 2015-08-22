@@ -18,7 +18,7 @@ namespace skouat\ppde\controller;
  * @property \phpbb\user                user         User object
  */
 
-class admin_overview_controller extends admin_main implements admin_overview_interface
+class admin_overview_controller extends admin_main
 {
 	protected $auth;
 	protected $cache;

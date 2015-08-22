@@ -54,7 +54,7 @@ abstract class main
 	 *
 	 * @param string $run_before_insert
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function insert($run_before_insert = '')
@@ -123,7 +123,7 @@ abstract class main
 	 *
 	 * @param bool $required_fields
 	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @return \skouat\ppde\entity\main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function save($required_fields)

@@ -16,7 +16,7 @@ namespace skouat\ppde\entity;
  * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
-class currency extends main implements currency_interface
+class currency extends main
 {
 	/**
 	 * Data for this entity
@@ -95,7 +95,7 @@ class currency extends main implements currency_interface
 	 *
 	 * @param string $symbol
 	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_symbol($symbol)
@@ -122,7 +122,7 @@ class currency extends main implements currency_interface
 	 *
 	 * @param string $iso_code
 	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_iso_code($iso_code)
@@ -201,7 +201,7 @@ class currency extends main implements currency_interface
 	/**
 	 * Set Currency order number
 	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @throws \skouat\ppde\exception\out_of_bounds
 	 * @access protected
 	 */

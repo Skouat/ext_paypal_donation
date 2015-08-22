@@ -16,7 +16,7 @@ namespace skouat\ppde\entity;
  * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
-class donation_pages extends main implements donation_pages_interface
+class donation_pages extends main
 {
 	/**
 	 * Data for this entity

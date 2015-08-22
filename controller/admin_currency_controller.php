@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                             u_action          Action URL
  * @property \phpbb\user                        user              User object
  */
-class admin_currency_controller extends admin_main implements admin_currency_interface
+class admin_currency_controller extends admin_main
 {
 	protected $ppde_operator;
 

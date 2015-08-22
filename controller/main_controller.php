@@ -12,7 +12,7 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class main_controller implements main_interface
+class main_controller
 {
 	protected $auth;
 	protected $config;

@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                     u_action           Action URL
  * @property \phpbb\user                user               User object
  */
-class admin_settings_controller extends admin_main implements admin_settings_interface
+class admin_settings_controller extends admin_main
 {
 	protected $config;
 	protected $ppde_controller_main;

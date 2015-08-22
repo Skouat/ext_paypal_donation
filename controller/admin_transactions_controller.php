@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                                   u_action          Action URL
  * @property \phpbb\user                              user              User object.
  */
-class admin_transactions_controller extends admin_main implements admin_transactions_interface
+class admin_transactions_controller extends admin_main
 {
 	protected $adm_relative_path;
 	protected $auth;

@@ -16,7 +16,7 @@ namespace skouat\ppde\entity;
  * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
-class transactions extends main implements transactions_interface
+class transactions extends main
 {
 	/**
 	 * Data for this entity
@@ -453,7 +453,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $txn_id
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_txn_id($txn_id)
@@ -468,7 +468,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $receiver_id
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_receiver_id($receiver_id)
@@ -483,7 +483,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $receiver_email
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_receiver_email($receiver_email)
@@ -498,7 +498,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $residence_country
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_residence_country($residence_country)
@@ -513,7 +513,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $business
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_business($business)
@@ -528,7 +528,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param bool $confirmed
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_confirmed($confirmed)
@@ -543,7 +543,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param bool $test_ipn
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_test_ipn($test_ipn)
@@ -558,7 +558,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $txn_type
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_txn_type($txn_type)
@@ -573,7 +573,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $parent_txn_id
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_parent_txn_id($parent_txn_id)
@@ -588,7 +588,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payer_email
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payer_email($payer_email)
@@ -603,7 +603,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payer_id
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payer_id($payer_id)
@@ -618,7 +618,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payer_status
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payer_status($payer_status)
@@ -633,7 +633,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $first_name
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_first_name($first_name)
@@ -648,7 +648,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $last_name
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_last_name($last_name)
@@ -663,7 +663,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param integer $user_id
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_user_id($user_id)
@@ -678,7 +678,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $custom
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_custom($custom)
@@ -693,7 +693,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $item_name
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_item_name($item_name)
@@ -708,7 +708,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $item_number
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_item_number($item_number)
@@ -723,7 +723,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $mc_currency
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_mc_currency($mc_currency)
@@ -738,7 +738,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param float $mc_fee
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_mc_fee($mc_fee)
@@ -754,7 +754,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param float $mc_gross
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_mc_gross($mc_gross)
@@ -770,7 +770,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param float $net_amount
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_net_amount($net_amount)
@@ -785,7 +785,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payment_date
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payment_date($payment_date)
@@ -800,7 +800,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payment_status
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payment_status($payment_status)
@@ -816,7 +816,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payment_time
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payment_time($payment_time)
@@ -831,7 +831,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $payment_type
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payment_type($payment_type)
@@ -847,7 +847,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param float $settle_amount
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_settle_amount($settle_amount)
@@ -862,7 +862,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $settle_currency
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_settle_currency($settle_currency)
@@ -878,7 +878,7 @@ class transactions extends main implements transactions_interface
 	 *
 	 * @param string $exchange_rate
 	 *
-	 * @return transactions_interface $this object for chaining calls; load()->set()->save()
+	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_exchange_rate($exchange_rate)
