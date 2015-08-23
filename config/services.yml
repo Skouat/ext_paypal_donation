@@ -20,6 +20,7 @@ services:
             - @config
             - @service_container
             - @skouat.ppde.controller
+            - @skouat.ppde.controller.admin.transactions
             - @request
             - @user
             - %core.root_path%

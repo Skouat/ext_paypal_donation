@@ -17,16 +17,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 define('ASCII_RANGE', '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
-/**
- * @property ContainerInterface                       container         The phpBB log system
- * @property \phpbb\request\request                   request           Request object.
- * @property \phpbb\user                              user              User object.
- */
-class ipn_listener extends admin_main
+class ipn_listener
 {
+	protected $container;
 	protected $config;
 	protected $ppde_controller_main;
+	protected $ppde_controller_transactions_admin;
+	protected $request;
 	protected $root_path;
+	protected $user;
 	/**
 	 * Args from PayPal notify return URL
 	 *
@@ -92,21 +91,23 @@ class ipn_listener extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param ContainerInterface                      $container            Service container interface
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
-	 * @param \phpbb\request\request                  $request              Request object
-	 * @param \phpbb\user                             $user                 User object
-	 * @param string                                  $root_path            phpBB root path
+	 * @param \phpbb\config\config                                  $config                              Config object
+	 * @param ContainerInterface                                    $container                           Service container interface
+	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main                Main controller object
+	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin  Admin transactions controller object
+	 * @param \phpbb\request\request                                $request                             Request object
+	 * @param \phpbb\user                                           $user                                User object
+	 * @param string                                                $root_path                           phpBB root path
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\user $user, $root_path)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
 		$this->user = $user;
 		$this->root_path = $root_path;
@@ -765,7 +766,7 @@ class ipn_listener extends admin_main
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
-		$errors = $this->set_entity_data($entity, $data);
+		$errors = $this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
 
 		$this->submit_data($entity, $errors);
 	}
@@ -834,7 +835,7 @@ class ipn_listener extends admin_main
 	{
 		if ($this->verified && empty($errors))
 		{
-			$this->add_edit_data($entity);
+			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
 	}
 }

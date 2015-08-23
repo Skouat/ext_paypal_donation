@@ -38,9 +38,9 @@ abstract class admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param string                      $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string                      $id_prefix_name  Prefix name for identifier in the URL
-	 * @param string                      $module_name     Name of the module currently used
+	 * @param string $lang_key_prefix Prefix for the messages thrown by exceptions
+	 * @param string $id_prefix_name  Prefix name for identifier in the URL
+	 * @param string $module_name     Name of the module currently used
 	 *
 	 * @access public
 	 */
@@ -49,6 +49,71 @@ abstract class admin_main
 		$this->module_name = $module_name;
 		$this->lang_key_prefix = $lang_key_prefix;
 		$this->id_prefix_name = $id_prefix_name;
+	}
+
+	/**
+	 * Parse data to the entity
+	 *
+	 * @param \skouat\ppde\entity\main $entity The entity object
+	 * @param string                   $run_before_insert
+	 *
+	 * @return string $log_action
+	 * @access public
+	 */
+	public function add_edit_data($entity, $run_before_insert = '')
+	{
+		if ($entity->get_id())
+		{
+			// Save the edited item entity to the database
+			$entity->save($entity->check_required_field());
+			$log_action = 'UPDATED';
+		}
+		else
+		{
+			// Insert the data to the database
+			$entity->insert($run_before_insert);
+
+			// Get the newly inserted identifier
+			$id = $entity->get_id();
+
+			// Reload the data to return a fresh entity
+			$entity->load($id);
+			$log_action = 'ADDED';
+		}
+
+		return $log_action;
+	}
+
+	/**
+	 * Set data in the $entity object.
+	 * Use call_user_func_array() to call $entity function
+	 *
+	 * @param \skouat\ppde\entity\main $entity The entity object
+	 * @param array                    $data_ary
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function set_entity_data($entity, $data_ary)
+	{
+		$errors = array();
+
+		foreach ($data_ary as $entity_function => $data)
+		{
+			try
+			{
+				// Calling the set_$entity_function on the entity and passing it $currency_data
+				call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
+			}
+			catch (\skouat\ppde\exception\base $e)
+			{
+				// Catch exceptions and add them to errors array
+				$errors[] = $e->get_message($this->user);
+			}
+		}
+		unset($data_ary, $entity_function, $data);
+
+		return $errors;
 	}
 
 	/**
@@ -103,71 +168,6 @@ abstract class admin_main
 	protected function is_added_data_exists($entity)
 	{
 		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
-	}
-
-	/**
-	 * Parse data to the entity
-	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param string                   $run_before_insert
-	 *
-	 * @return string $log_action
-	 * @access protected
-	 */
-	protected function add_edit_data($entity, $run_before_insert = '')
-	{
-		if ($entity->get_id())
-		{
-			// Save the edited item entity to the database
-			$entity->save($entity->check_required_field());
-			$log_action = 'UPDATED';
-		}
-		else
-		{
-			// Insert the data to the database
-			$entity->insert($run_before_insert);
-
-			// Get the newly inserted identifier
-			$id = $entity->get_id();
-
-			// Reload the data to return a fresh entity
-			$entity->load($id);
-			$log_action = 'ADDED';
-		}
-
-		return $log_action;
-	}
-
-	/**
-	 * Set data in the $entity object.
-	 * Use call_user_func_array() to call $entity function
-	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param array                    $data_ary
-	 *
-	 * @return array
-	 * @access protected
-	 */
-	protected function set_entity_data($entity, $data_ary)
-	{
-		$errors = array();
-
-		foreach ($data_ary as $entity_function => $data)
-		{
-			try
-			{
-				// Calling the set_$entity_function on the entity and passing it $currency_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
-		}
-		unset($data_ary, $entity_function, $data);
-
-		return $errors;
 	}
 
 	/**
