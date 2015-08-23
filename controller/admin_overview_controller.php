@@ -66,16 +66,14 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Display the overview page
 	 *
-	 * @param string $id     Module id
-	 * @param string $mode   Module categorie
 	 * @param string $action Action name
 	 *
 	 * @return null
 	 * @access public
 	 */
-	public function display_overview($id, $mode, $action)
+	public function display_overview($action)
 	{
-		$this->do_action($id, $mode, $action);
+		$this->do_action($action);
 
 		//Load metadata for this extension
 		$this->ext_meta = $this->ppde_controller_main->load_metadata();
@@ -85,21 +83,19 @@ class admin_overview_controller extends admin_main
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
+			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
+			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
 			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
 			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
+			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
+			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
+			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
+			'PPDE_VERSION'              => $this->ext_meta['version'],
+			'TRANSACTIONS_COUNT'        => $this->config['ppde_count_transactions'],
+			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_count_transactions'),
 
 			'L_PPDE_INSTALL_DATE'       => $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
 			'L_PPDE_VERSION'            => $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
-
-			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_VERSION'              => $this->ext_meta['version'],
-
-			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
-			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
-			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
-			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
-			'TRANSACTIONS_COUNT'        => $this->config['ppde_count_transactions'],
-			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_count_transactions'),
 
 			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
 			'S_FSOCKOPEN'               => $this->config['ppde_curl_detected'],
@@ -114,77 +110,97 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Do action regarding the value of $action
 	 *
-	 * @param $id
-	 * @param $mode
-	 * @param $action
+	 * @param string $action Requested action
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function do_action($id, $mode, $action)
+	private function do_action($action)
 	{
 		if ($action)
 		{
 			if (!confirm_box(true))
 			{
-				switch ($action)
-				{
-					case 'date':
-						$confirm = true;
-						$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
-						break;
-					case 'curl_fsock':
-						$confirm = true;
-						$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
-						break;
-					case 'donors':
-					case 'transactions':
-						$confirm = true;
-						$confirm_lang = 'STAT_RESYNC_' . strtoupper($action) . 'COUNTS_CONFIRM';
-						break;
-					default:
-						$confirm = true;
-						$confirm_lang = 'CONFIRM_OPERATION';
-				}
-
-				if ($confirm)
-				{
-					confirm_box(false, $this->user->lang[$confirm_lang], build_hidden_fields(array(
-						'i'      => $id,
-						'mode'   => $mode,
-						'action' => $action,
-					)));
-				}
+				$this->display_confirm($action);
 			}
 			else
 			{
-				if (!$this->auth->acl_get('a_ppde_manage'))
-				{
-					trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
-				}
-
-				switch ($action)
-				{
-					case 'date':
-						$this->config->set('ppde_install_date', time() - 1);
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESET_DATE');
-						break;
-					case 'remote':
-						$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
-						$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RETEST_DATE');
-						break;
-					case 'transactions':
-						$this->config->set('ppde_count_transactions', $this->update_transactions_stats(), true);
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_TRANSACTIONSCOUNTS');
-						break;
-					case 'donors':
-						$this->config->set('ppde_known_donors_count', $this->update_known_donors_stats(), true);
-						$this->config->set('ppde_anonymous_donors_count', $this->update_anonymous_donors_stats());
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_DONORSCOUNTS');
-						break;
-				}
+				$this->exec_action($action);
 			}
+		}
+	}
+
+	/**
+	 * Display confirm box
+	 *
+	 * @param string $action Requested action
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function display_confirm($action)
+	{
+		switch ($action)
+		{
+			case 'date':
+				$confirm = true;
+				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
+				break;
+			case 'curl_fsock':
+				$confirm = true;
+				$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
+				break;
+			case 'donors':
+			case 'transactions':
+				$confirm = true;
+				$confirm_lang = 'STAT_RESYNC_' . strtoupper($action) . 'COUNTS_CONFIRM';
+				break;
+			default:
+				$confirm = true;
+				$confirm_lang = 'CONFIRM_OPERATION';
+		}
+
+		if ($confirm)
+		{
+			confirm_box(false, $this->user->lang[$confirm_lang], build_hidden_fields(array(
+				'action' => $action,
+			)));
+		}
+	}
+
+	/**
+	 * @param $action
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function exec_action($action)
+	{
+		if (!$this->auth->acl_get('a_ppde_manage'))
+		{
+			trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		switch ($action)
+		{
+			case 'date':
+				$this->config->set('ppde_install_date', time() - 1);
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESET_DATE');
+				break;
+			case 'remote':
+				$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
+				$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RETEST_DATE');
+				break;
+			case 'transactions':
+				$this->config->set('ppde_count_transactions', $this->update_transactions_stats(), true);
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_TRANSACTIONSCOUNTS');
+				break;
+			case 'donors':
+				$this->config->set('ppde_known_donors_count', $this->update_known_donors_stats(), true);
+				$this->config->set('ppde_anonymous_donors_count', $this->update_anonymous_donors_stats());
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_DONORSCOUNTS');
+				break;
 		}
 	}
 

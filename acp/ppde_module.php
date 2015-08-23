@@ -10,15 +10,19 @@
 
 namespace skouat\ppde\acp;
 
-/**
- * @property string tpl_name
- * @property string page_title
- */
 class ppde_module
 {
 	/** @var string */
 	public $u_action;
+	/** @var string */
+	public $page_title;
+	/** @var string */
+	public $tpl_name;
 
+	/**
+	 * @param string $id
+	 * @param string $mode
+	 */
 	public function main($id, $mode)
 	{
 		global $phpbb_container, $request;
@@ -34,7 +38,7 @@ class ppde_module
 			case 'settings':
 			case 'transactions':
 				// Get an instance of the admin controller
-				/** @type \skouat\ppde\controller\admin_main $admin_controller  */
+				/** @type \skouat\ppde\controller\admin_main $admin_controller */
 				$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
 
 				// Make the $u_action url available in the admin overview controller
@@ -51,7 +55,7 @@ class ppde_module
 					case 'overview':
 						// Load the display overview handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
-						$admin_controller->display_overview($id, $mode, $action);
+						$admin_controller->display_overview($action);
 						break;
 					case 'settings':
 						// Load the display options handle in the admin controller
