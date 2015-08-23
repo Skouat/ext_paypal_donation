@@ -193,66 +193,75 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RETEST_DATE');
 				break;
 			case 'transactions':
-				$this->config->set('ppde_count_transactions', $this->update_transactions_stats(), true);
+				$this->config->set('ppde_count_transactions', $this->sql_query_update_stats('ppde_count_transactions'), true);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_TRANSACTIONSCOUNTS');
 				break;
 			case 'donors':
-				$this->config->set('ppde_known_donors_count', $this->update_known_donors_stats(), true);
-				$this->config->set('ppde_anonymous_donors_count', $this->update_anonymous_donors_stats());
+				$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
+				$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_DONORSCOUNTS');
 				break;
 		}
 	}
 
-	/**
-	 * Updates transactions stats into the database
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function update_transactions_stats()
+	private function sql_query_update_stats($config_name)
 	{
-		$sql = 'SELECT COUNT(DISTINCT txn_id) AS transactions
-				FROM ' . $this->table_ppde_transactions . "
-				WHERE confirmed = 1
-					AND payment_status = 'Completed'";
-		$this->db->sql_query($sql);
+		if (!$this->config->offsetExists($config_name))
+		{
+			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
+		}
 
-		return (int) $this->db->sql_fetchfield('transactions');
+		$this->db->sql_query($this->make_stats_sql_update($config_name));
+
+		return (int) $this->db->sql_fetchfield('count_result');
 	}
 
 	/**
-	 * Updates known donors stats into the database
+	 * Build SQL query for updating stats
 	 *
-	 * @return int
+	 * @param string $type
+	 *
+	 * @return string
 	 * @access private
 	 */
-	private function update_known_donors_stats()
+	private function make_stats_sql_update($type)
 	{
-		$sql = 'SELECT COUNT(DISTINCT dd.user_id) AS known_donors
-				FROM ' . $this->table_ppde_transactions . ' dd
-				INNER JOIN ' . USERS_TABLE . ' u
-					ON dd.user_id = u.user_id
-				WHERE ' . $this->db->sql_in_set('u.user_type', array(USER_NORMAL, USER_FOUNDER));
-		$this->db->sql_query($sql);
+		switch ($type)
+		{
+			case 'ppde_count_transactions':
+				$sql = $this->make_stats_sql_select('txn_id');
+				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
 
-		return (int) $this->db->sql_fetchfield('known_donors');
+				return $sql;
+			case 'ppde_known_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' LEFT JOIN ' . USERS_TABLE . 'u
+				 					ON txn.user_id = u.user_id
+								WHERE u.user_type = ' . USER_NORMAL . ' AND u.user_type = ' . USER_FOUNDER;
+
+				return $sql;
+			case 'ppde_anonymous_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
+
+				return $sql;
+			default:
+				return $this->make_stats_sql_select('txn_id');
+		}
 	}
 
 	/**
-	 * Updates anonymous donors stats into the database
+	 * Make body of SQL query for stats calculation.
 	 *
-	 * @return int
+	 * @param string $field_name Name of the field
+	 *
+	 * @return string
 	 * @access private
 	 */
-	private function update_anonymous_donors_stats()
+	private function make_stats_sql_select($field_name)
 	{
-		$sql = 'SELECT COUNT(DISTINCT dd.payer_id) AS anonymous_donors
-				FROM ' . $this->table_ppde_transactions . ' dd
-				WHERE dd.user_id = ' . ANONYMOUS;
-		$this->db->sql_query($sql);
-
-		return (int) $this->db->sql_fetchfield('anonymous_donors');
+		return 'SELECT COUNT(DISTINCT txn.' . $field_name . ') AS count_result
+				FROM ' . $this->table_ppde_transactions . ' txn';
 	}
 
 	/**

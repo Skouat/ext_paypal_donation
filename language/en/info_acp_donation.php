@@ -316,6 +316,7 @@ $lang = array_merge($lang, array(
  * Errors
  */
 $lang = array_merge($lang, array(
+	'EXCEPTION_INVALID_CONFIG_NAME'      => 'The config name “%s” does not exist.',
 	'PPDE_CANNOT_DISABLE_ALL_CURRENCIES' => 'You cannot disable all currencies.',
 	'PPDE_DC_EMPTY_NAME'                 => 'Enter a currency name.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Enter an ISO code.',
