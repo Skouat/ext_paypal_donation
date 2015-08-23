@@ -35,7 +35,9 @@ class ipn_listener
 	/**
 	 * @var array
 	 */
-	private $curl_fsock = array();
+	private $curl_fsock = array('curl'  => false,
+								'fsock' => false,
+								'none'  => true);
 	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
@@ -91,13 +93,13 @@ class ipn_listener
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                                  $config                              Config object
-	 * @param ContainerInterface                                    $container                           Service container interface
-	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main                Main controller object
-	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin  Admin transactions controller object
-	 * @param \phpbb\request\request                                $request                             Request object
-	 * @param \phpbb\user                                           $user                                User object
-	 * @param string                                                $root_path                           phpBB root path
+	 * @param \phpbb\config\config                                  $config                             Config object
+	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
+	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param \phpbb\request\request                                $request                            Request object
+	 * @param \phpbb\user                                           $user                               User object
+	 * @param string                                                $root_path                          phpBB root path
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
@@ -119,7 +121,7 @@ class ipn_listener
 		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
 
 		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
-		$this->set_curl_fsock();
+		$this->is_curl_fsock_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
 		if ($this->get_curl_fsock() == 'none')
@@ -141,37 +143,56 @@ class ipn_listener
 
 	/**
 	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
-	 * If none is available we set the property 'no_curl_fsock' to true.
+	 * If both are not available we use default value of the property 'use_curl'.
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function set_curl_fsock()
+	private function is_curl_fsock_detected()
 	{
-		if ($this->config['ppde_curl_detected'])
+		// First, we declare fsockopen() as detected if true
+		$this->check_curl_fsock_detected('ppde_fsock_detected', false, true, false);
+
+		// Finally to set as default method to use, cURL is the last method initiated.
+		$this->check_curl_fsock_detected('ppde_curl_detected', true, false, false);
+	}
+
+	/**
+	 * @param string $config_name
+	 * @param bool   $curl
+	 * @param bool   $fsock
+	 * @param bool   $none
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
+	{
+		if ($this->config[$config_name])
 		{
-			$this->curl_fsock = array(
-				'curl'  => true,
-				'fsock' => false,
-				'none'  => false,
-			);
+			$this->set_curl_fsock((bool) $curl, (bool) $fsock, (bool) $none);
 		}
-		else if ($this->config['ppde_fsock_detected'])
-		{
-			$this->curl_fsock = array(
-				'curl'  => false,
-				'fsock' => true,
-				'none'  => false,
-			);
-		}
-		else
-		{
-			$this->curl_fsock = array(
-				'curl'  => false,
-				'fsock' => false,
-				'none'  => true,
-			);
-		}
+	}
+
+	/**
+	 * Set the property 'curl_fsock'
+	 *
+	 * @param bool $curl
+	 * @param bool $fsock
+	 * @param bool $none
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
+	{
+		$this->curl_fsock = array(
+			'curl'  => (bool) $curl,
+			'fsock' => (bool) $fsock,
+			'none'  => (bool) $none,
+		);
+
+		return $this->curl_fsock;
 	}
 
 	/**
