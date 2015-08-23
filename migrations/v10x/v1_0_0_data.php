@@ -49,6 +49,11 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_used', 0)),
 			array('config.add', array('ppde_used_enable', false)),
 
+			// Overview Settings
+			array('config.add', array('ppde_transactions_count', 0)),
+			array('config.add', array('ppde_known_donors_count', 0)),
+			array('config.add', array('ppde_anonymous_donors_count', 0)),
+
 			//Misc Settings
 			array('config.add', array('ppde_install_date', time())),
 

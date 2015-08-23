@@ -235,9 +235,9 @@ class admin_overview_controller extends admin_main
 				return $sql;
 			case 'ppde_known_donors_count':
 				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' LEFT JOIN ' . USERS_TABLE . 'u
+				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
 				 					ON txn.user_id = u.user_id
-								WHERE u.user_type = ' . USER_NORMAL . ' AND u.user_type = ' . USER_FOUNDER;
+								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
 
 				return $sql;
 			case 'ppde_anonymous_donors_count':
