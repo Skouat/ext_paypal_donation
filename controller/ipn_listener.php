@@ -40,7 +40,7 @@ class ipn_listener
 								'fsock' => false,
 								'none'  => true);
 	/**
-	 * @var array
+	 * @var array|boolean
 	 */
 	private $payer_data;
 
@@ -956,7 +956,6 @@ class ipn_listener
 			if (empty($this->payer_data))
 			{
 				// no results, therefore the user is anonymous...
-				$this->payer_data = array();
 				$anonymous_user = true;
 			}
 		}
@@ -975,10 +974,8 @@ class ipn_listener
 			if (empty($this->payer_data))
 			{
 				// no results, therefore the user is really a guest
-				$this->payer_data = array();
+				return false;
 			}
-
-			return false;
 		}
 
 		return true;
