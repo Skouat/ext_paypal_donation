@@ -23,6 +23,7 @@ class ipn_listener
 	protected $config;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
+	protected $php_ext;
 	protected $request;
 	protected $root_path;
 	protected $user;
@@ -38,6 +39,11 @@ class ipn_listener
 	private $curl_fsock = array('curl'  => false,
 								'fsock' => false,
 								'none'  => true);
+	/**
+	 * @var array
+	 */
+	private $payer_data;
+
 	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
@@ -100,11 +106,12 @@ class ipn_listener
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\user                                           $user                               User object
 	 * @param string                                                $root_path                          phpBB root path
+	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
@@ -113,6 +120,7 @@ class ipn_listener
 		$this->request = $request;
 		$this->user = $user;
 		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 	}
 
 	public function handle()
@@ -134,6 +142,8 @@ class ipn_listener
 		$this->validate_transaction();
 
 		$this->log_to_db();
+
+		$this->do_actions();
 
 		// We stop the execution of the code because nothing need to be returned to phpBB.
 		// And PayPal need it to terminate properly the IPN process.
@@ -846,7 +856,6 @@ class ipn_listener
 	 *  Submit data to the database
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
-	 *
 	 * @param array                            $errors
 	 *
 	 * @return null
@@ -858,5 +867,120 @@ class ipn_listener
 		{
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
+	}
+
+	/**
+	 * Do actions if the transaction is verified
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function do_actions()
+	{
+		if ($this->verified)
+		{
+			$this->donors_group_user_add();
+		}
+	}
+
+	/**
+	 * Add donor to the donors group
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function donors_group_user_add()
+	{
+		// we add the user to the donors group
+		if ($this->can_use_autogroup())
+		{
+			if (!function_exists('group_user_add'))
+			{
+				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			}
+
+			// add the user to the donors group and set as default.
+			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
+		}
+	}
+
+	/**
+	 * Checks if all required settings are meet for adding the donor to the group of donors
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function can_use_autogroup()
+	{
+		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->transaction_data['payment_status'] === 'Completed';
+	}
+
+	/**
+	 * Checks if Autogroup could be used
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function autogroup_is_enabled()
+	{
+		return $this->verified && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_autogroup_enable'];
+	}
+
+	/**
+	 * Returns if donor is member
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function donor_is_member()
+	{
+		return $this->is_donor_is_member() && !empty($this->payer_data);
+	}
+
+	/**
+	 * Checks if the donor is a member
+	 *
+	 * @return bool
+	 * @access private
+	 */
+
+	private function is_donor_is_member()
+	{
+		$anonymous_user = false;
+
+		// if the user_id is not anonymous, get the user information (user id, username)
+		if ($this->transaction_data['user_id'] != ANONYMOUS)
+		{
+			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+
+			if (empty($this->payer_data))
+			{
+				// no results, therefore the user is anonymous...
+				$this->payer_data = array();
+				$anonymous_user = true;
+			}
+		}
+		else
+		{
+			// the user is anonymous by default
+			$anonymous_user = true;
+		}
+
+		if ($anonymous_user)
+		{
+			// if the user is anonymous, check their PayPal email address with all known email hashes
+			// to determine if the user exists in the database with that email
+			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('email', $this->transaction_data['payer_email']);
+
+			if (empty($this->payer_data))
+			{
+				// no results, therefore the user is really a guest
+				$this->payer_data = array();
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 }

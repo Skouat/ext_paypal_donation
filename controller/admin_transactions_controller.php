@@ -34,7 +34,7 @@ class admin_transactions_controller extends admin_main
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
 	protected $php_ext;
-	protected $ppde_operator;
+	public $ppde_operator;
 
 	/**
 	 * Constructor
