@@ -24,6 +24,7 @@ services:
             - @request
             - @user
             - %core.root_path%
+            - %core.php_ext%
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller

@@ -162,6 +162,38 @@ class transactions
 	}
 
 	/**
+	 * Returns user information based on the ID of the donor or they email
+	 *
+	 * @param string $type
+	 * @param int    $arg
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function query_donor_user_data($type = 'user', $arg = 1)
+	{
+
+		switch ($type)
+		{
+			case 'user':
+				$sql_where = ' WHERE user_id = ' . (int) $arg;
+				break;
+			case 'email':
+				$sql_where = ' WHERE user_email_hash = ' . crc32(strtolower($arg)) . strlen($arg);
+				break;
+			default:
+				$sql_where = '';
+		}
+
+		$sql = 'SELECT user_id, username
+			FROM ' . USERS_TABLE .
+			$sql_where;
+		$result = $this->db->sql_query($sql);
+
+		return $this->db->sql_fetchrow($result);
+	}
+
+	/**
 	 * Returns simple details of all PayPal transactions logged in the database
 	 *
 	 * @param array $get_logs_sql_ary
