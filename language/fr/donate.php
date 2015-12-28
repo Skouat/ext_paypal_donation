@@ -37,7 +37,8 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	// Header
-	'PPDE_HEADER_LINK_TITLE'      => 'Faire un don',
+	'PPDE_HEADER_LINK_TITLE'           => 'Faire un don',
+	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donateurs',
 
 	// Index page
 	'PPDE_INDEX_STATISTICS_TITLE' => 'Statistiques des dons',
@@ -46,28 +47,35 @@ $lang = array_merge($lang, array(
 	'IMG_LOADER'                  => 'chargement',
 
 	// Pages
-	'PPDE_DONATION_BUTTON_TITLE'  => 'Faire un don',
-	'PPDE_DONATION_TITLE'         => 'Faire un don',
-	'PPDE_DONATION_TITLE_HEAD'    => 'Faire un don pour',
-	'PPDE_CANCEL_TITLE'           => 'Dons annulés',
-	'PPDE_SUCCESS_TITLE'          => 'Dons validés',
-	'PPDE_CONTACT_PAYPAL'         => 'Connexion à PayPal - Veuillez patienter…',
-	'PPDE_SANDBOX_TITLE'          => 'Tester PayPal Donation avec PayPal Sandbox',
+	'PPDE_DONATION_BUTTON_TITLE' => 'Faire un don',
+	'PPDE_DONATION_TITLE'        => 'Faire un don',
+	'PPDE_DONATION_TITLE_HEAD'   => 'Faire un don pour',
+	'PPDE_CANCEL_TITLE'          => 'Dons annulés',
+	'PPDE_SUCCESS_TITLE'         => 'Dons validés',
+	'PPDE_CONTACT_PAYPAL'        => 'Connexion à PayPal - Veuillez patienter…',
+	'PPDE_SANDBOX_TITLE'         => 'Tester PayPal Donation avec PayPal Sandbox',
+
+	// Donors list
+	'PPDE_DONORLIST_TITLE'          => 'Liste des donateurs',
+	'PPDE_DONORLIST_DONATED_AMOUNT' => 'Total des dons',
+	'PPDE_DONORLIST_LAST_DATE'      => 'Dernier don',
+	'PPDE_NO_DONORS'                => 'Aucun donateur',
 
 	// Statistics
-	'DONATE_RECEIVED'             => 'Nous avons reçu <strong>%s</strong> de dons.',
-	'DONATE_NOT_RECEIVED'         => 'Nous n’avons pas encore reçu de dons.',
+	'DONATE_RECEIVED'      => 'Nous avons reçu <strong>%s</strong> de dons.',
+	'DONATE_NOT_RECEIVED'  => 'Nous n’avons pas encore reçu de dons.',
 
-	'DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%s</strong>.',
-	'DONATE_GOAL_REACHED'         => 'L’objectif de don a été atteint.',
-	'DONATE_NO_GOAL'              => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
+	'DONATE_GOAL_RAISE'    => 'Notre objectif est d’obtenir <strong>%s</strong>.',
+	'DONATE_GOAL_REACHED'  => 'L’objectif de don a été atteint.',
+	'DONATE_NO_GOAL'       => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
 
-	'DONATE_USED'                 => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
-	'DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
-	'DONATE_NOT_USED'             => 'Les dons n’ont pas été utilisés.',
+	'DONATE_USED'          => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
+	'DONATE_USED_EXCEEDED' => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
+	'DONATE_NOT_USED'      => 'Les dons n’ont pas été utilisés.',
 
 	// Viewonline
-	'PPDE_VIEWONLINE'             => 'Consulte la page des dons',
+	'PPDE_VIEWONLINE'           => 'Consulte la page des dons',
+	'PPDE_VIEWONLINE_DONORLIST' => 'Consulte la liste des donateurs',
 ));
 
 $lang = array_merge($lang, array(

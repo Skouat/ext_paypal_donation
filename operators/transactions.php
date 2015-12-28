@@ -68,6 +68,40 @@ class transactions
 	}
 
 	/**
+	 * SQL Query to return donors list details
+	 *
+	 * @param bool $anonymous
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_donorlist_data($anonymous = false)
+	{
+		// Build main sql request
+		$sql_ary = array(
+			'SELECT'    => '*, SUM(txn.mc_gross) AS amount, MAX(txn.payment_date) AS date, u.username, u.user_colour',
+			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
+			'LEFT_JOIN' => array(
+				array(
+					'FROM' => array(USERS_TABLE => 'u'),
+					'ON'   => 'u.user_id = txn.user_id',
+				),
+			),
+			'WHERE'     => "txn.payment_status = 'Completed'",
+		);
+
+		if (!$anonymous)
+		{
+			$sql_ary['GROUP_BY'] = 'txn.user_id';
+			$sql_ary['ORDER_BY'] = 'txn.user_id';
+			$sql_ary['WHERE'] = 'txn.user_id <> ' . ANONYMOUS . '
+					AND ' . $sql_ary['WHERE'];
+		}
+		// Return all transactions entities
+		return $this->db->sql_build_query('SELECT', $sql_ary);
+	}
+
+	/**
 	 * Returns the SQL Query for displaying simple transactions details
 	 *
 	 * @param $keywords

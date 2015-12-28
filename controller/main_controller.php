@@ -21,8 +21,10 @@ class main_controller
 	protected $helper;
 	protected $ppde_entity_currency;
 	protected $ppde_entity_donation_pages;
+	protected $ppde_entity_transactions;
 	protected $ppde_operator_currency;
 	protected $ppde_operator_donation_pages;
+	protected $ppde_operator_transactions;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -50,8 +52,10 @@ class main_controller
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
 	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
+	 * @param \skouat\ppde\entity\transactions      $ppde_entity_transactions     Transactions log entity object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
+	 * @param \skouat\ppde\operators\transactions   $ppde_operator_transactions   Transactions log operator object
 	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
@@ -61,7 +65,7 @@ class main_controller
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\entity\transactions $ppde_entity_transactions, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -70,8 +74,10 @@ class main_controller
 		$this->helper = $helper;
 		$this->ppde_entity_currency = $ppde_entity_currency;
 		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
+		$this->ppde_entity_transactions = $ppde_entity_transactions;
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
+		$this->ppde_operator_transactions = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -126,6 +132,47 @@ class main_controller
 		return $this->send_data_to_template();
 	}
 
+	public function donorlist_handle()
+	{
+		// When this extension is disabled, redirect users back to the forum index
+		// Else if user is not allowed to use it, disallow access to the extension main page
+		if (!$this->use_ipn())
+		{
+			redirect(append_sid("{$this->root_path}index.{$this->php_ext}"));
+		}
+		else if (!$this->can_view_ppde_donorlist())
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		$this->set_return_args_url('donorlist');
+
+		// adds fields to the table schema needed by entity->import()
+		$additional_table_schema = array(
+			'item_username'    => array('name' => 'username', 'type' => 'string'),
+			'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
+			'item_amount'      => array('name' => 'amount', 'type' => 'string'),
+			'item_last_date'   => array('name' => 'date', 'type' => 'string'),
+		);
+
+		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data(), $additional_table_schema);
+
+		foreach ($data_ary as $data)
+		{
+			// Get default currency data from the database
+			$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
+
+			$this->template->assign_block_vars('donorrow', array(
+				'PPDE_DONOR_USERNAME'    => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
+				'PPDE_DONATED_AMOUNT'    => $this->get_amount($data['amount'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_LAST_PAYMENT_DATE' => $this->user->format_date($data['date']),
+			));
+		}
+
+		// Send all data to the template file
+		return $this->send_data_to_template();
+	}
+
 	/**
 	 * @return bool
 	 * @access public
@@ -133,6 +180,15 @@ class main_controller
 	public function can_use_ppde()
 	{
 		return $this->auth->acl_get('u_ppde_use');
+	}
+
+	/**
+	 * @return bool
+	 * @access public
+	 */
+	public function can_view_ppde_donorlist()
+	{
+		return $this->auth->acl_get('u_ppde_view_donorlist');
 	}
 
 	/**
@@ -149,6 +205,12 @@ class main_controller
 			case 'success':
 				$this->template->assign_vars(array(
 					'L_PPDE_DONATION_TITLE' => $this->user->lang['PPDE_' . strtoupper($set_return_args_url) . '_TITLE'],
+				));
+				$this->return_args_url = $set_return_args_url;
+				break;
+			case 'donorlist':
+				$this->template->assign_vars(array(
+					'L_PPDE_DONORLIST_TITLE' => $this->user->lang['PPDE_DONORLIST_TITLE'],
 				));
 				$this->return_args_url = $set_return_args_url;
 				break;
@@ -298,6 +360,17 @@ class main_controller
 	public function use_sandbox()
 	{
 		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+	}
+
+	/**
+	 * Check if IPN is enabled
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_ipn()
+	{
+		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && (!empty($this->config['ppde_curl_detected']) || !empty($this->config['ppde_fsockopen_detected']));
 	}
 
 	/**
@@ -520,6 +593,8 @@ class main_controller
 			case 'cancel':
 			case 'success':
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
+			case 'donorlist':
+				return $this->helper->render('donorlist_body.html', $this->user->lang('PPDE_DONORLIST_TITLE'));
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
