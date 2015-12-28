@@ -152,7 +152,7 @@ class currency extends main
 	/**
 	 * Get Currency status
 	 *
-	 * @return boolean
+	 * @return bool
 	 * @access public
 	 */
 	public function get_currency_position()

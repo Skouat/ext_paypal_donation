@@ -99,7 +99,7 @@ abstract class main
 	/**
 	 * Run function before do some alter some data in the database
 	 *
-	 * @param $function_name
+	 * @param string $function_name
 	 *
 	 * @return bool
 	 * @access private
@@ -174,7 +174,7 @@ abstract class main
 	 *
 	 * @param int $id
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_id($id)
@@ -202,7 +202,7 @@ abstract class main
 	 *
 	 * @param int $id
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function load($id)
@@ -239,7 +239,7 @@ abstract class main
 	 *
 	 * @param string $name
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_name($name)

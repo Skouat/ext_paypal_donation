@@ -128,6 +128,7 @@ class main_controller
 
 	/**
 	 * @return bool
+	 * @access public
 	 */
 	public function can_use_ppde()
 	{
@@ -136,6 +137,9 @@ class main_controller
 
 	/**
 	 * @param string $set_return_args_url
+	 *
+	 * @return null
+	 * @access private
 	 */
 	private function set_return_args_url($set_return_args_url)
 	{
@@ -286,7 +290,7 @@ class main_controller
 	}
 
 	/**
-	 * Check if Sandbox is enable
+	 * Check if Sandbox is enabled
 	 *
 	 * @return bool
 	 * @access public
@@ -488,9 +492,9 @@ class main_controller
 	/**
 	 * Assign statistics percent vars to template
 	 *
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 * @param string $type
+	 * @param integer $multiplicand
+	 * @param integer $dividend
+	 * @param string  $type
 	 *
 	 * @return null
 	 * @access public

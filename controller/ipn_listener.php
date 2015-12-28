@@ -657,9 +657,10 @@ class ipn_listener
 	/**
 	 * If cURL is available we use strcmp() to get the Pay
 	 *
-	 * @param $arg
+	 * @param string $arg
 	 *
 	 * @return bool
+	 * @access private
 	 */
 	private function is_curl_strcmp($arg)
 	{
@@ -669,9 +670,10 @@ class ipn_listener
 	/**
 	 * If fsockopen is available we use strpos()
 	 *
-	 * @param $arg
+	 * @param string $arg
 	 *
 	 * @return bool
+	 * @access private
 	 */
 	private function is_fsock_strpos($arg)
 	{

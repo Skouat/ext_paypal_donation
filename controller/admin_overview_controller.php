@@ -169,7 +169,7 @@ class admin_overview_controller extends admin_main
 	}
 
 	/**
-	 * @param $action
+	 * @param string $action Requested action
 	 *
 	 * @return null
 	 * @access private
@@ -204,6 +204,14 @@ class admin_overview_controller extends admin_main
 		}
 	}
 
+	/**
+	 * Returns count result for updating stats
+	 *
+	 * @param string $config_name
+	 *
+	 * @return int
+	 * @access private
+	 */
 	private function sql_query_update_stats($config_name)
 	{
 		if (!$this->config->offsetExists($config_name))
@@ -309,7 +317,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @param string $config_name
 	 *
-	 * @return float
+	 * @return string
 	 * @access private
 	 */
 	private function per_day_stats($config_name)
