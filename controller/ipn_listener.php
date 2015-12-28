@@ -791,7 +791,7 @@ class ipn_listener
 		/** @type \skouat\ppde\entity\transactions $entity */
 		$entity = $this->container->get('skouat.ppde.entity.transactions');
 
-		// the item number contains the user_id and the payment time in timestamp format
+		// the item number contains the user_id
 		$this->extract_item_number_data();
 
 		// list the data to be thrown into the database
@@ -803,14 +803,14 @@ class ipn_listener
 	}
 
 	/**
-	 * Retrieve user_id and payment_time from item_number args
+	 * Retrieve user_id from item_number args
 	 *
 	 * @return null
 	 * @access private
 	 */
 	private function extract_item_number_data()
 	{
-		list($this->transaction_data['user_id'], $this->transaction_data['payment_time']) = explode('_', substr($this->transaction_data['item_number'], 4));
+		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
 	}
 
 	/**
@@ -842,9 +842,8 @@ class ipn_listener
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
 			'net_amount'        => number_format($this->transaction_data['mc_gross'] - $this->transaction_data['mc_fee'], 2),
-			'payment_date'      => $this->transaction_data['payment_date'],
+			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
-			'payment_time'      => $this->transaction_data['payment_time'],
 			'payment_type'      => $this->transaction_data['payment_type'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],

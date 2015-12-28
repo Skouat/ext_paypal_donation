@@ -63,7 +63,7 @@ class transactions
 			$sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $transaction_id;
 		}
 
-		// Return all page entities
+		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
@@ -98,7 +98,7 @@ class transactions
 
 		if ($log_time)
 		{
-			$get_logs_sql_ary['WHERE'] = 'txn.payment_time >= ' . (int) $log_time . '
+			$get_logs_sql_ary['WHERE'] = 'txn.payment_date >= ' . (int) $log_time . '
 					AND ' . $get_logs_sql_ary['WHERE'];
 		}
 

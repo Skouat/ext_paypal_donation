@@ -29,7 +29,6 @@ class transactions extends main
 	 *    user_id
 	 *    item_name
 	 *    item_number
-	 *    payment_time
 	 *    business
 	 *    receiver_id
 	 *    receiver_email
@@ -97,8 +96,7 @@ class transactions extends main
 				'item_mc_fee'            => array('name' => 'mc_fee', 'type' => 'float'),
 				'item_mc_gross'          => array('name' => 'mc_gross', 'type' => 'float'),
 				'item_net_amount'        => array('name' => 'net_amount', 'type' => 'float'),
-				'item_payment_date'      => array('name' => 'payment_date', 'type' => 'string'),
-				'item_payment_time'      => array('name' => 'payment_time', 'type' => 'string'),
+				'item_payment_date'      => array('name' => 'payment_date', 'type' => 'integer'),
 				'item_payment_status'    => array('name' => 'payment_status', 'type' => 'string'),
 				'item_payment_type'      => array('name' => 'payment_type', 'type' => 'string'),
 				'item_settle_amount'     => array('name' => 'settle_amount', 'type' => 'float'),
@@ -312,7 +310,7 @@ class transactions extends main
 	}
 
 	/**
-	 * Get PayPal item number (contains user_id and payment_time)
+	 * Get PayPal item number (contains user_id)
 	 *
 	 * @return string
 	 * @access public
@@ -371,24 +369,12 @@ class transactions extends main
 	/**
 	 * Get PayPal payment date
 	 *
-	 * @return string
+	 * @return integer
 	 * @access public
 	 */
 	public function get_payment_date()
 	{
-		return (isset($this->data['payment_date'])) ? (string) $this->data['payment_date'] : '';
-	}
-
-	/**
-	 * Get payment time
-	 * Value retrieved from the item_number
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_payment_time()
-	{
-		return (isset($this->data['payment_time'])) ? (string) $this->data['payment_time'] : '';
+		return (isset($this->data['payment_date'])) ? (int) $this->data['payment_date'] : '';
 	}
 
 	/**
@@ -704,7 +690,7 @@ class transactions extends main
 	}
 
 	/**
-	 * Set PayPal item number (contains user_id and payment_time)
+	 * Set PayPal item number (contains user_id)
 	 *
 	 * @param string $item_number
 	 *
@@ -783,14 +769,14 @@ class transactions extends main
 	/**
 	 * Set PayPal payment date
 	 *
-	 * @param string $payment_date
+	 * @param integer $payment_date
 	 *
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_payment_date($payment_date)
 	{
-		$this->data['payment_date'] = (string) $payment_date;
+		$this->data['payment_date'] = (int) $payment_date;
 
 		return $this;
 	}
@@ -806,22 +792,6 @@ class transactions extends main
 	public function set_payment_status($payment_status)
 	{
 		$this->data['payment_status'] = (string) $payment_status;
-
-		return $this;
-	}
-
-	/**
-	 * Set payment time
-	 * Value retrieved from the item_number
-	 *
-	 * @param string $payment_time
-	 *
-	 * @return transactions $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_payment_time($payment_time)
-	{
-		$this->data['payment_time'] = (string) $payment_time;
 
 		return $this;
 	}

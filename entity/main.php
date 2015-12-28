@@ -342,7 +342,7 @@ abstract class main
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Import each currency page row into an entity
+			// Import each row into an entity
 			$entities[] = $this->import($row, $additional_table_schema);
 		}
 		$this->db->sql_freeresult($result);
