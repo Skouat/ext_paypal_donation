@@ -17,16 +17,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 define('ASCII_RANGE', '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
-/**
- * @property ContainerInterface                       container         The phpBB log system
- * @property \phpbb\request\request                   request           Request object.
- * @property \phpbb\user                              user              User object.
- */
-class ipn_listener extends admin_main
+class ipn_listener
 {
+	protected $container;
 	protected $config;
 	protected $ppde_controller_main;
+	protected $ppde_controller_transactions_admin;
+	protected $php_ext;
+	protected $request;
 	protected $root_path;
+	protected $user;
 	/**
 	 * Args from PayPal notify return URL
 	 *
@@ -36,7 +36,14 @@ class ipn_listener extends admin_main
 	/**
 	 * @var array
 	 */
-	private $curl_fsock = array();
+	private $curl_fsock = array('curl'  => false,
+								'fsock' => false,
+								'none'  => true);
+	/**
+	 * @var array|boolean
+	 */
+	private $payer_data;
+
 	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
@@ -92,24 +99,28 @@ class ipn_listener extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param ContainerInterface                      $container            Service container interface
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
-	 * @param \phpbb\request\request                  $request              Request object
-	 * @param \phpbb\user                             $user                 User object
-	 * @param string                                  $root_path            phpBB root path
+	 * @param \phpbb\config\config                                  $config                             Config object
+	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
+	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param \phpbb\request\request                                $request                            Request object
+	 * @param \phpbb\user                                           $user                               User object
+	 * @param string                                                $root_path                          phpBB root path
+	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\user $user, $root_path)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
 		$this->user = $user;
 		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 	}
 
 	public function handle()
@@ -118,7 +129,7 @@ class ipn_listener extends admin_main
 		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
 
 		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
-		$this->set_curl_fsock();
+		$this->is_curl_fsock_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
 		if ($this->get_curl_fsock() == 'none')
@@ -132,6 +143,8 @@ class ipn_listener extends admin_main
 
 		$this->log_to_db();
 
+		$this->do_actions();
+
 		// We stop the execution of the code because nothing need to be returned to phpBB.
 		// And PayPal need it to terminate properly the IPN process.
 		garbage_collection();
@@ -140,37 +153,56 @@ class ipn_listener extends admin_main
 
 	/**
 	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
-	 * If none is available we set the property 'no_curl_fsock' to true.
+	 * If both are not available we use default value of the property 'use_curl'.
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function set_curl_fsock()
+	private function is_curl_fsock_detected()
 	{
-		if ($this->config['ppde_curl_detected'])
+		// First, we declare fsockopen() as detected if true
+		$this->check_curl_fsock_detected('ppde_fsock_detected', false, true, false);
+
+		// Finally to set as default method to use, cURL is the last method initiated.
+		$this->check_curl_fsock_detected('ppde_curl_detected', true, false, false);
+	}
+
+	/**
+	 * @param string $config_name
+	 * @param bool   $curl
+	 * @param bool   $fsock
+	 * @param bool   $none
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
+	{
+		if ($this->config[$config_name])
 		{
-			$this->curl_fsock = array(
-				'curl'  => true,
-				'fsock' => false,
-				'none'  => false,
-			);
+			$this->set_curl_fsock((bool) $curl, (bool) $fsock, (bool) $none);
 		}
-		else if ($this->config['ppde_fsock_detected'])
-		{
-			$this->curl_fsock = array(
-				'curl'  => false,
-				'fsock' => true,
-				'none'  => false,
-			);
-		}
-		else
-		{
-			$this->curl_fsock = array(
-				'curl'  => false,
-				'fsock' => false,
-				'none'  => true,
-			);
-		}
+	}
+
+	/**
+	 * Set the property 'curl_fsock'
+	 *
+	 * @param bool $curl
+	 * @param bool $fsock
+	 * @param bool $none
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
+	{
+		$this->curl_fsock = array(
+			'curl'  => (bool) $curl,
+			'fsock' => (bool) $fsock,
+			'none'  => (bool) $none,
+		);
+
+		return $this->curl_fsock;
 	}
 
 	/**
@@ -625,9 +657,10 @@ class ipn_listener extends admin_main
 	/**
 	 * If cURL is available we use strcmp() to get the Pay
 	 *
-	 * @param $arg
+	 * @param string $arg
 	 *
 	 * @return bool
+	 * @access private
 	 */
 	private function is_curl_strcmp($arg)
 	{
@@ -637,9 +670,10 @@ class ipn_listener extends admin_main
 	/**
 	 * If fsockopen is available we use strpos()
 	 *
-	 * @param $arg
+	 * @param string $arg
 	 *
 	 * @return bool
+	 * @access private
 	 */
 	private function is_fsock_strpos($arg)
 	{
@@ -759,26 +793,26 @@ class ipn_listener extends admin_main
 		/** @type \skouat\ppde\entity\transactions $entity */
 		$entity = $this->container->get('skouat.ppde.entity.transactions');
 
-		// the item number contains the user_id and the payment time in timestamp format
+		// the item number contains the user_id
 		$this->extract_item_number_data();
 
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
-		$errors = $this->set_entity_data($entity, $data);
+		$errors = $this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
 
 		$this->submit_data($entity, $errors);
 	}
 
 	/**
-	 * Retrieve user_id and payment_time from item_number args
+	 * Retrieve user_id from item_number args
 	 *
 	 * @return null
 	 * @access private
 	 */
 	private function extract_item_number_data()
 	{
-		list($this->transaction_data['user_id'], $this->transaction_data['payment_time']) = explode('_', substr($this->transaction_data['item_number'], 4));
+		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
 	}
 
 	/**
@@ -810,9 +844,8 @@ class ipn_listener extends admin_main
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
 			'net_amount'        => number_format($this->transaction_data['mc_gross'] - $this->transaction_data['mc_fee'], 2),
-			'payment_date'      => $this->transaction_data['payment_date'],
+			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
-			'payment_time'      => $this->transaction_data['payment_time'],
 			'payment_type'      => $this->transaction_data['payment_type'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
@@ -824,7 +857,6 @@ class ipn_listener extends admin_main
 	 *  Submit data to the database
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
-	 *
 	 * @param array                            $errors
 	 *
 	 * @return null
@@ -834,7 +866,119 @@ class ipn_listener extends admin_main
 	{
 		if ($this->verified && empty($errors))
 		{
-			$this->add_edit_data($entity);
+			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
+	}
+
+	/**
+	 * Do actions if the transaction is verified
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function do_actions()
+	{
+		if ($this->verified)
+		{
+			$this->donors_group_user_add();
+		}
+	}
+
+	/**
+	 * Add donor to the donors group
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function donors_group_user_add()
+	{
+		// we add the user to the donors group
+		if ($this->can_use_autogroup())
+		{
+			if (!function_exists('group_user_add'))
+			{
+				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			}
+
+			// add the user to the donors group and set as default.
+			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
+		}
+	}
+
+	/**
+	 * Checks if all required settings are meet for adding the donor to the group of donors
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function can_use_autogroup()
+	{
+		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->transaction_data['payment_status'] === 'Completed';
+	}
+
+	/**
+	 * Checks if Autogroup could be used
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function autogroup_is_enabled()
+	{
+		return $this->verified && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_autogroup_enable'];
+	}
+
+	/**
+	 * Returns if donor is member
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function donor_is_member()
+	{
+		return $this->is_donor_is_member() && !empty($this->payer_data);
+	}
+
+	/**
+	 * Checks if the donor is a member
+	 *
+	 * @return bool
+	 * @access private
+	 */
+
+	private function is_donor_is_member()
+	{
+		$anonymous_user = false;
+
+		// if the user_id is not anonymous, get the user information (user id, username)
+		if ($this->transaction_data['user_id'] != ANONYMOUS)
+		{
+			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+
+			if (empty($this->payer_data))
+			{
+				// no results, therefore the user is anonymous...
+				$anonymous_user = true;
+			}
+		}
+		else
+		{
+			// the user is anonymous by default
+			$anonymous_user = true;
+		}
+
+		if ($anonymous_user)
+		{
+			// if the user is anonymous, check their PayPal email address with all known email hashes
+			// to determine if the user exists in the database with that email
+			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('email', $this->transaction_data['payer_email']);
+
+			if (empty($this->payer_data))
+			{
+				// no results, therefore the user is really a guest
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

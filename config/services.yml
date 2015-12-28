@@ -20,9 +20,11 @@ services:
             - @config
             - @service_container
             - @skouat.ppde.controller
+            - @skouat.ppde.controller.admin.transactions
             - @request
             - @user
             - %core.root_path%
+            - %core.php_ext%
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
@@ -68,6 +70,7 @@ services:
         class: skouat\ppde\controller\admin_overview_controller
         arguments:
             - @auth
+            - @dbal.conn
             - @cache
             - @config
             - @log
@@ -76,6 +79,7 @@ services:
             - @template
             - @user
             - %core.php_ext%
+            - %skouat.ppde.tables.ppde_transactions%
 
     skouat.ppde.controller.admin.settings:
         class: skouat\ppde\controller\admin_settings_controller

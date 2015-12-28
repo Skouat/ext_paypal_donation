@@ -12,7 +12,7 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class transactions implements transactions_interface
+class transactions
 {
 	protected $container;
 	protected $db;
@@ -63,7 +63,7 @@ class transactions implements transactions_interface
 			$sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $transaction_id;
 		}
 
-		// Return all page entities
+		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
@@ -98,7 +98,7 @@ class transactions implements transactions_interface
 
 		if ($log_time)
 		{
-			$get_logs_sql_ary['WHERE'] = 'txn.payment_time >= ' . (int) $log_time . '
+			$get_logs_sql_ary['WHERE'] = 'txn.payment_date >= ' . (int) $log_time . '
 					AND ' . $get_logs_sql_ary['WHERE'];
 		}
 
@@ -159,6 +159,38 @@ class transactions implements transactions_interface
 		$this->db->sql_query($sql);
 
 		return (int) $this->db->sql_fetchfield('total_entries');
+	}
+
+	/**
+	 * Returns user information based on the ID of the donor or they email
+	 *
+	 * @param string $type
+	 * @param int    $arg
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function query_donor_user_data($type = 'user', $arg = 1)
+	{
+
+		switch ($type)
+		{
+			case 'user':
+				$sql_where = ' WHERE user_id = ' . (int) $arg;
+				break;
+			case 'email':
+				$sql_where = ' WHERE user_email_hash = ' . crc32(strtolower($arg)) . strlen($arg);
+				break;
+			default:
+				$sql_where = '';
+		}
+
+		$sql = 'SELECT user_id, username
+			FROM ' . USERS_TABLE .
+			$sql_where;
+		$result = $this->db->sql_query($sql);
+
+		return $this->db->sql_fetchrow($result);
 	}
 
 	/**

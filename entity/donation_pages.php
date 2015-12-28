@@ -16,7 +16,7 @@ namespace skouat\ppde\entity;
  * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
  */
-class donation_pages extends main implements donation_pages_interface
+class donation_pages extends main
 {
 	/**
 	 * Data for this entity
@@ -142,7 +142,7 @@ class donation_pages extends main implements donation_pages_interface
 	 *
 	 * @param int $lang
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_lang_id($lang)
@@ -214,7 +214,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Enable bbcode on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_enable_bbcode()
@@ -269,7 +269,7 @@ class donation_pages extends main implements donation_pages_interface
 	 *
 	 * @param string $message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_message($message)
@@ -324,7 +324,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Disable bbcode on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_disable_bbcode()
@@ -337,7 +337,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Enable magic url on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_enable_magic_url()
@@ -350,7 +350,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Disable magic url on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_disable_magic_url()
@@ -363,7 +363,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Enable smilies on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_enable_smilies()
@@ -376,7 +376,7 @@ class donation_pages extends main implements donation_pages_interface
 	/**
 	 * Disable smilies on the message
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function message_disable_smilies()

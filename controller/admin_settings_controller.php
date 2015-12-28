@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                     u_action           Action URL
  * @property \phpbb\user                user               User object
  */
-class admin_settings_controller extends admin_main implements admin_settings_interface
+class admin_settings_controller extends admin_main
 {
 	protected $config;
 	protected $ppde_controller_main;
@@ -70,43 +70,40 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
-			'S_ERROR'                       => $this->check_config((sizeof($errors))),
-			'ERROR_MSG'                     => (sizeof($errors)) ? implode('<br />', $errors) : '',
+			'S_ERROR'                        => $this->check_config((sizeof($errors))),
+			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
 
-			'U_ACTION'                      => $this->u_action,
+			'U_ACTION'                       => $this->u_action,
 
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'               => $this->check_config($this->config['ppde_account_id'], 'string', ''),
-			'PPDE_DEFAULT_CURRENCY'         => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
-			'PPDE_DEFAULT_VALUE'            => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
-			'PPDE_DROPBOX_VALUE'            => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
-
-			'S_PPDE_DROPBOX_ENABLE'         => $this->check_config($this->config['ppde_dropbox_enable']),
-			'S_PPDE_ENABLE'                 => $this->check_config($this->config['ppde_enable']),
-			'S_PPDE_HEADER_LINK'            => $this->check_config($this->config['ppde_header_link']),
+			'PPDE_ACCOUNT_ID'                => $this->check_config($this->config['ppde_account_id'], 'string', ''),
+			'PPDE_DEFAULT_CURRENCY'          => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
+			'PPDE_DEFAULT_VALUE'             => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
+			'PPDE_DROPBOX_VALUE'             => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
+			'S_PPDE_DROPBOX_ENABLE'          => $this->check_config($this->config['ppde_dropbox_enable']),
+			'S_PPDE_ENABLE'                  => $this->check_config($this->config['ppde_enable']),
+			'S_PPDE_HEADER_LINK'             => $this->check_config($this->config['ppde_header_link']),
 
 			// PayPal IPN vars
-			'PPDE_DONORS_GROUP_ID'          => 'select ppde_donors_group_id',
-			'PPDE_IPN_DEFAULT_GROUP'        => $this->check_config($this->config['ppde_ipn_default_group']),
-			'PPDE_SEND_CONFIRMATION'        => 'select ppde_send_confirmation',
-			'S_PPDE_IPN_ENABLE'             => $this->check_config($this->config['ppde_ipn_enable']),
-			'S_PPDE_IPN_LOGGING'            => $this->check_config($this->config['ppde_ipn_logging']),
+			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
+			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
+			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
+			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
+			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'          => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
-
-			'S_PPDE_SANDBOX_ENABLE'         => $this->check_config($this->config['ppde_sandbox_enable']),
-			'S_PPDE_SANDBOX_FOUNDER_ENABLE' => $this->check_config($this->config['ppde_sandbox_founder_enable']),
+			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
+			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
+			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 
 			// Statistics Settings vars
-			'PPDE_RAISED'                   => $this->check_config($this->config['ppde_raised'], 'float', 0),
-			'PPDE_GOAL'                     => $this->check_config($this->config['ppde_goal'], 'float', 0),
-			'PPDE_USED'                     => $this->check_config($this->config['ppde_used'], 'float', 0),
-
-			'S_PPDE_STATS_INDEX_ENABLE'     => $this->check_config($this->config['ppde_stats_index_enable']),
-			'S_PPDE_RAISED_ENABLE'          => $this->check_config($this->config['ppde_raised_enable']),
-			'S_PPDE_GOAL_ENABLE'            => $this->check_config($this->config['ppde_goal_enable']),
-			'S_PPDE_USED_ENABLE'            => $this->check_config($this->config['ppde_used_enable']),
+			'PPDE_RAISED'                    => $this->check_config($this->config['ppde_raised'], 'float', 0),
+			'PPDE_GOAL'                      => $this->check_config($this->config['ppde_goal'], 'float', 0),
+			'PPDE_USED'                      => $this->check_config($this->config['ppde_used'], 'float', 0),
+			'S_PPDE_STATS_INDEX_ENABLE'      => $this->check_config($this->config['ppde_stats_index_enable']),
+			'S_PPDE_RAISED_ENABLE'           => $this->check_config($this->config['ppde_raised_enable']),
+			'S_PPDE_GOAL_ENABLE'             => $this->check_config($this->config['ppde_goal_enable']),
+			'S_PPDE_USED_ENABLE'             => $this->check_config($this->config['ppde_used_enable']),
 		));
 	}
 
@@ -155,11 +152,11 @@ class admin_settings_controller extends admin_main implements admin_settings_int
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
 		// Set options for PayPal IPN
+		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
+		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
+		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
 		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
-		$this->config->set('donation_donors_group_id', $this->request->variable('donation_donors_group_id', 0));
-		$this->config->set('donation_group_as_default', $this->request->variable('donation_group_as_default', false));
-		$this->config->set('donation_send_confirmation', $this->request->variable('donation_send_confirmation', false));
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));

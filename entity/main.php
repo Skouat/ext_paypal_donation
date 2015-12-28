@@ -54,7 +54,7 @@ abstract class main
 	 *
 	 * @param string $run_before_insert
 	 *
-	 * @return donation_pages_interface $this object for chaining calls; load()->set()->save()
+	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function insert($run_before_insert = '')
@@ -99,7 +99,7 @@ abstract class main
 	/**
 	 * Run function before do some alter some data in the database
 	 *
-	 * @param $function_name
+	 * @param string $function_name
 	 *
 	 * @return bool
 	 * @access private
@@ -123,7 +123,7 @@ abstract class main
 	 *
 	 * @param bool $required_fields
 	 *
-	 * @return currency_interface $this object for chaining calls; load()->set()->save()
+	 * @return \skouat\ppde\entity\main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function save($required_fields)
@@ -174,7 +174,7 @@ abstract class main
 	 *
 	 * @param int $id
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_id($id)
@@ -202,7 +202,7 @@ abstract class main
 	 *
 	 * @param int $id
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function load($id)
@@ -239,7 +239,7 @@ abstract class main
 	 *
 	 * @param string $name
 	 *
-	 * @return object $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_name($name)
@@ -342,7 +342,7 @@ abstract class main
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Import each currency page row into an entity
+			// Import each row into an entity
 			$entities[] = $this->import($row, $additional_table_schema);
 		}
 		$this->db->sql_freeresult($result);

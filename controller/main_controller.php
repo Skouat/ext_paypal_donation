@@ -12,7 +12,7 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class main_controller implements main_interface
+class main_controller
 {
 	protected $auth;
 	protected $config;
@@ -128,6 +128,7 @@ class main_controller implements main_interface
 
 	/**
 	 * @return bool
+	 * @access public
 	 */
 	public function can_use_ppde()
 	{
@@ -136,6 +137,9 @@ class main_controller implements main_interface
 
 	/**
 	 * @param string $set_return_args_url
+	 *
+	 * @return null
+	 * @access private
 	 */
 	private function set_return_args_url($set_return_args_url)
 	{
@@ -286,7 +290,7 @@ class main_controller implements main_interface
 	}
 
 	/**
-	 * Check if Sandbox is enable
+	 * Check if Sandbox is enabled
 	 *
 	 * @return bool
 	 * @access public
@@ -488,9 +492,9 @@ class main_controller implements main_interface
 	/**
 	 * Assign statistics percent vars to template
 	 *
-	 * @param        $multiplicand
-	 * @param        $dividend
-	 * @param string $type
+	 * @param integer $multiplicand
+	 * @param integer $dividend
+	 * @param string  $type
 	 *
 	 * @return null
 	 * @access public

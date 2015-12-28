@@ -12,7 +12,7 @@ namespace skouat\ppde\operators;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class donation_pages implements donation_pages_interface
+class donation_pages
 {
 	protected $container;
 	protected $db;

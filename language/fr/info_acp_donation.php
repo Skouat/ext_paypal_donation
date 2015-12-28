@@ -52,83 +52,102 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'                  => 'Vue d’ensemble',
+	'PPDE_OVERVIEW'                          => 'Vue d’ensemble',
 
-	'INFO_CURL'                      => 'cURL',
-	'INFO_FSOCKOPEN'                 => 'Fsockopen',
-	'INFO_DETECTED'                  => 'Détecté',
-	'INFO_NOT_DETECTED'              => 'Non détecté',
+	'INFO_CURL'                              => 'cURL',
+	'INFO_FSOCKOPEN'                         => 'Fsockopen',
+	'INFO_DETECTED'                          => 'Détecté',
+	'INFO_NOT_DETECTED'                      => 'Non détecté',
 
-	'PPDE_INSTALL_DATE'              => 'Date d’installation de <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'           => 'Cette extension ne prend pas en charge le contrôle de version.',
-	'PPDE_NOT_UP_TO_DATE'            => '%s n’est pas à jour',
-	'PPDE_STATS'                     => 'Statistiques des dons',
-	'PPDE_VERSION'                   => 'Version de <strong>%s</strong>',
+	'PPDE_INSTALL_DATE'                      => 'Date d’installation de <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK'                   => 'Cette extension ne prend pas en charge le contrôle de version.',
+	'PPDE_NOT_UP_TO_DATE'                    => '%s n’est pas à jour',
+	'PPDE_STATS'                             => 'Statistiques des dons',
+	'PPDE_VERSION'                           => 'Version de <strong>%s</strong>',
 
-	'STAT_RESET_DATE'                => 'Réinitialiser la date d’installation de l’extension',
-	'STAT_RESET_DATE_EXPLAIN'        => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
-	'STAT_RESET_DATE_CONFIRM'        => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESET_DATE'                        => 'Réinitialiser la date d’installation de l’extension',
+	'STAT_RESET_DATE_EXPLAIN'                => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
+	'STAT_RESET_DATE_CONFIRM'                => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
+	'STAT_RESYNC_DONORSCOUNTS'               => 'Actualiser les compteurs de donateurs',
+	'STAT_RESYNC_DONORSCOUNTS_EXPLAIN'       => 'Actualise tous les compteurs de donateurs. Seulement les donateurs actifs et anonymes seront pris en considération.',
+	'STAT_RESYNC_DONORSCOUNTS_CONFIRM'       => 'Êtes-vous sûr de vouloir actualiser les compteurs de donateurs ?',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS'         => 'Actualiser les compteurs de transactions',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN' => 'Seul les transactions journalisées seront prises en considération.',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_CONFIRM' => 'Êtes-vous sûr de vouloir actualiser les compteurs de transactions ?',
+	'STAT_RETEST_CURL_FSOCK'                 => 'Re-détecter « cURL » et « fsockopen »',
+	'STAT_RETEST_CURL_FSOCK_EXPLAIN'         => 'Permet de re-détecter ces fonctionnalités si la configuration du serveur a été modifiée.',
+	'STAT_RETEST_CURL_FSOCK_CONFIRM'         => 'Êtes-vous sûr de vouloir re-détecter « cURL » et « fsockopen » ?',
 
-	'STAT_RETEST_CURL_FSOCK'         => 'Re-détecter « cURL » et « fsockopen »',
-	'STAT_RETEST_CURL_FSOCK_EXPLAIN' => 'Permet de re-détecter ces fonctionnalités si la configuration du serveur a été modifiée.',
-	'STAT_RETEST_CURL_FSOCK_CONFIRM' => 'Êtes-vous sûr de vouloir re-détecter « cURL » et « fsockopen » ?',
+	'STATS_ANONYMOUS_DONORS_COUNT'           => 'Nombre de donateurs anonymes',
+	'STATS_ANONYMOUS_DONORS_PER_DAY'         => 'Moyenne journalière des donateurs anonymes',
+	'STATS_KNOWN_DONORS_COUNT'               => 'Nombre de donateurs connus',
+	'STATS_KNOWN_DONORS_PER_DAY'             => 'Moyenne journalière des donateurs connus',
+	'STATS_TRANSACTIONS_COUNT'               => 'Nombre de transactions',
+	'STATS_TRANSACTIONS_PER_DAY'             => 'Moyenne journalière des transactions',
 ));
 
 /**
  * mode: settings
  */
 $lang = array_merge($lang, array(
-	'PPDE_SETTINGS'                       => 'Paramètres généraux',
-	'PPDE_SETTINGS_EXPLAIN'               => '',
+	'PPDE_SETTINGS'                        => 'Paramètres généraux',
+	'PPDE_SETTINGS_EXPLAIN'                => '',
 
 	// Global settings
-	'PPDE_LEGEND_GENERAL_SETTINGS'        => 'Paramètres généraux',
-	'PPDE_ENABLE'                         => 'Activer PayPal Donation',
-	'PPDE_ENABLE_EXPLAIN'                 => 'Active ou désactive le MOD PayPal Donation.',
-	'PPDE_HEADER_LINK'                    => 'Afficher le lien « Faire un don » dans l’entête du forum',
-	'PPDE_ACCOUNT_ID'                     => 'ID du compte PayPal',
-	'PPDE_ACCOUNT_ID_EXPLAIN'             => 'Saisir l’adresse e-mail ou l’ID de compte marchand.',
-	'PPDE_DEFAULT_CURRENCY'               => 'Devise par défaut',
-	'PPDE_DEFAULT_CURRENCY_EXPLAIN'       => 'Défini quelle devise sera sélectionnée par défaut.',
-	'PPDE_DEFAULT_VALUE'                  => 'Valeur de don par défaut',
-	'PPDE_DEFAULT_VALUE_EXPLAIN'          => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
-	'PPDE_DROPBOX_ENABLE'                 => 'Activer le menu déroulant',
-	'PPDE_DROPBOX_ENABLE_EXPLAIN'         => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
-	'PPDE_DROPBOX_VALUE'                  => 'Valeurs de don du menu déroulant',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'          => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
+	'PPDE_LEGEND_GENERAL_SETTINGS'         => 'Paramètres généraux',
+	'PPDE_ENABLE'                          => 'Activer PayPal Donation',
+	'PPDE_ENABLE_EXPLAIN'                  => 'Active ou désactive le MOD PayPal Donation.',
+	'PPDE_HEADER_LINK'                     => 'Afficher le lien « Faire un don » dans l’entête du forum',
+	'PPDE_ACCOUNT_ID'                      => 'ID du compte PayPal',
+	'PPDE_ACCOUNT_ID_EXPLAIN'              => 'Saisir l’adresse e-mail ou l’ID de compte marchand.',
+	'PPDE_DEFAULT_CURRENCY'                => 'Devise par défaut',
+	'PPDE_DEFAULT_CURRENCY_EXPLAIN'        => 'Défini quelle devise sera sélectionnée par défaut.',
+	'PPDE_DEFAULT_VALUE'                   => 'Valeur de don par défaut',
+	'PPDE_DEFAULT_VALUE_EXPLAIN'           => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
+	'PPDE_DROPBOX_ENABLE'                  => 'Activer le menu déroulant',
+	'PPDE_DROPBOX_ENABLE_EXPLAIN'          => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
+	'PPDE_DROPBOX_VALUE'                   => 'Valeurs de don du menu déroulant',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
 
 	// PayPal IPN settings
-	'PPDE_LEGEND_IPN_SETTINGS'            => 'Paramètres IPN',
-	'PPDE_IPN_ENABLE'                     => 'Activer IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'             => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.',
-	'PPDE_IPN_LOGGING'                    => 'Activer le journal des erreurs',
-	'PPDE_IPN_LOGGING_EXPLAIN'            => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/ppde_transactions.log</strong>.',
+	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres IPN',
+	'PPDE_LEGEND_IPN_PPDE_IPN_AUTOGROUP'   => 'Groupe automatique',
+	'PPDE_IPN_AG_ENABLE'                   => 'Activer le groupe automatique',
+	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Permet d’ajouter automatiquement les donateurs dans un groupe pré-défini.',
+	'PPDE_IPN_AG_DONORS_GROUP'             => 'Groupe donateurs',
+	'PPDE_IPN_AG_DONORS_GROUP_EXPLAIN'     => 'Sélectionnez le groupe qui accueillera les membres donateurs.',
+	'PPDE_IPN_AG_GROUP_AS_DEFAULT'         => 'Définir comme groupe par défaut',
+	'PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN' => 'Activez cette option pour définir le groupe des donateurs comme groupe par défaut pour les membres ayant fait une donation.',
+	'PPDE_IPN_ENABLE'                      => 'Activer IPN',
+	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.<br />Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaitront ci-dessous.',
+	'PPDE_IPN_LOGGING'                     => 'Activer le journal des erreurs',
+	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/ppde_transactions.log</strong>.',
 
 	// PayPal sandbox settings
-	'PPDE_LEGEND_SANDBOX_SETTINGS'        => 'Paramètres PayPal Sandbox',
-	'PPDE_SANDBOX_ENABLE'                 => 'Tester avec PayPal Sandbox',
-	'PPDE_SANDBOX_ENABLE_EXPLAIN'         => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br />Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
-	'PPDE_SANDBOX_FOUNDER_ENABLE'         => 'Sandbox pour les fondateurs',
-	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN' => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
-	'PPDE_SANDBOX_ADDRESS'                => 'Adresse PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'        => 'Inscrire votre adresse e-mail de vendeur PayPal Sandbox.',
+	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Paramètres PayPal Sandbox',
+	'PPDE_SANDBOX_ENABLE'                  => 'Tester avec PayPal Sandbox',
+	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br />Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
+	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox pour les fondateurs',
+	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
+	'PPDE_SANDBOX_ADDRESS'                 => 'Adresse PayPal Sandbox',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Inscrire votre adresse e-mail de vendeur PayPal Sandbox.',
 
 	// Stats Donation settings
-	'PPDE_LEGEND_STATS_SETTINGS'          => 'Paramètres des statistiques',
-	'PPDE_STATS_INDEX_ENABLE'             => 'Statistiques des dons sur l’index',
-	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'     => 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum.',
-	'PPDE_RAISED'                         => 'Dons recueillis',
-	'PPDE_RAISED_EXPLAIN'                 => 'Inscrire le montant total des dons actuellement reçus.',
-	'PPDE_GOAL'                           => 'Objectif des dons',
-	'PPDE_GOAL_EXPLAIN'                   => 'Inscrire le montant total des dons à atteindre.',
-	'PPDE_USED'                           => 'Dons utilisés',
-	'PPDE_USED_EXPLAIN'                   => 'Inscrire le montant des dons déjà utilisés.',
-	'PPDE_AMOUNT'                         => 'Montant',
+	'PPDE_LEGEND_STATS_SETTINGS'           => 'Paramètres des statistiques',
+	'PPDE_STATS_INDEX_ENABLE'              => 'Statistiques des dons sur l’index',
+	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'      => 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum.',
+	'PPDE_RAISED'                          => 'Dons recueillis',
+	'PPDE_RAISED_EXPLAIN'                  => 'Inscrire le montant total des dons actuellement reçus.',
+	'PPDE_GOAL'                            => 'Objectif des dons',
+	'PPDE_GOAL_EXPLAIN'                    => 'Inscrire le montant total des dons à atteindre.',
+	'PPDE_USED'                            => 'Dons utilisés',
+	'PPDE_USED_EXPLAIN'                    => 'Inscrire le montant des dons déjà utilisés.',
+	'PPDE_AMOUNT'                          => 'Montant',
 	// Note for translator: do not translate the decimal symbol
-	'PPDE_DECIMAL_EXPLAIN'                => 'Utiliser le « . » comme symbole décimal.',
+	'PPDE_DECIMAL_EXPLAIN'                 => 'Utiliser le « . » comme symbole décimal.',
 
-	'PPDE_CURRENCY_ENABLE'                => 'Activer Devise des dons',
-	'PPDE_CURRENCY_ENABLE_EXPLAIN'        => 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons.',
+	'PPDE_CURRENCY_ENABLE'                 => 'Activer Devise des dons',
+	'PPDE_CURRENCY_ENABLE_EXPLAIN'         => 'Activez cette option, pour rendre visible le Code ISO 4217 de la devise défini par défaut dans les statistiques des dons.',
 ));
 
 /**
@@ -257,43 +276,54 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_SORT_PAYMENT_STATUS'   => 'État du paiement',
 	'PPDE_DT_TOTAL_AMOUNT'          => 'Montant total',
 	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'  => '',
-	'PPDE_DT_VERIFIED'              => 'Vérifié',
 	'PPDE_DT_UNVERIFIED'            => 'Non vérifié',
+	'PPDE_DT_VERIFIED'              => 'Vérifié',
 ));
 
 /**
  * logs
  */
 $lang = array_merge($lang, array(
-	//logs
-	'LOG_PPDE_DC_ADDED'         => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
-	'LOG_PPDE_DC_DELETED'       => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
-	'LOG_PPDE_DC_DISABLED'      => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
-	'LOG_PPDE_DC_ENABLED'       => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
-	'LOG_PPDE_DC_MOVE_DOWN'     => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
-	'LOG_PPDE_DC_MOVE_UP'       => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
-	'LOG_PPDE_DC_UPDATED'       => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
-	'LOG_PPDE_DP_ADDED'         => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_DELETED'       => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
-	'LOG_PPDE_DP_UPDATED'       => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
-	'LOG_PPDE_DT_PURGED'        => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
-	'LOG_PPDE_SETTINGS_UPDATED' => '<strong>PayPal Donation : Configuration mise à jour</strong>',
-	'LOG_PPDE_STAT_RESET_DATE'  => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
+	'LOG_PPDE_DC_ADDED'                       => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'                     => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
+	'LOG_PPDE_DC_DISABLED'                    => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
+	'LOG_PPDE_DC_ENABLED'                     => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
+	'LOG_PPDE_DC_MOVE_DOWN'                   => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
+	'LOG_PPDE_DC_MOVE_UP'                     => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
+	'LOG_PPDE_DC_UPDATED'                     => '<strong>PayPal Donation : Devise mise à jour</strong><br />» %s',
+	'LOG_PPDE_DP_ADDED'                       => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_DELETED'                     => '<strong>PayPal Donation : Page des dons supprimée</strong><br />» « %1$s » pour la langue « %2$s »', // ex : « Page des dons validés » pour la langue « Français (vouvoiement) »
+	'LOG_PPDE_DP_UPDATED'                     => '<strong>PayPal Donation : Page de dons mise à jour</strong><br />» « %1$s » pour la langue « %2$s »',
+	'LOG_PPDE_DT_PURGED'                      => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
+	'LOG_PPDE_SETTINGS_UPDATED'               => '<strong>PayPal Donation : Configuration mise à jour</strong>',
+	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
+	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation : Actualisation des compteurs des donateurs</strong>',
+	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation : Actualisation du compteur des transactions</strong>',
+	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation : Re-détection des connexions distantes</strong>',
+));
 
-	// Confirm box
-	'PPDE_DC_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
-	'PPDE_DC_GO_TO_PAGE'        => '%sModifier la devise existante%s',
-	'PPDE_DC_ADDED'             => 'Une devise a été ajoutée.',
-	'PPDE_DC_UPDATED'           => 'Une devise a été mise à jour.',
-	'PPDE_DC_DELETED'           => 'Une devise a été supprimée.',
-	'PPDE_DP_CONFIRM_DELETE'    => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
-	'PPDE_DP_GO_TO_PAGE'        => '%sModifier la page de dons existante%s',
-	'PPDE_DP_ADDED'             => 'Une page de dons pour la langue « %s » a été ajoutée.',
-	'PPDE_DP_DELETED'           => 'Une page de dons pour la langue « %s » a été supprimée.',
-	'PPDE_DP_UPDATED'           => 'Une page de dons pour la langue « %s » a été mise à jour.',
-	'PPDE_SETTINGS_SAVED'       => 'Les paramètres de PayPal Donation ont été sauvegardés.',
+/**
+ * Confirm box
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DC_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_GO_TO_PAGE'     => '%sModifier la devise existante%s',
+	'PPDE_DC_ADDED'          => 'Une devise a été ajoutée.',
+	'PPDE_DC_UPDATED'        => 'Une devise a été mise à jour.',
+	'PPDE_DC_DELETED'        => 'Une devise a été supprimée.',
+	'PPDE_DP_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
+	'PPDE_DP_GO_TO_PAGE'     => '%sModifier la page de dons existante%s',
+	'PPDE_DP_ADDED'          => 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_DELETED'        => 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_UPDATED'        => 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_SETTINGS_SAVED'    => 'Les paramètres de PayPal Donation ont été sauvegardés.',
+));
 
-	// Errors
+/**
+ * Errors
+ */
+$lang = array_merge($lang, array(
+	'EXCEPTION_INVALID_CONFIG_NAME'      => 'Le paramètre de configuration « %s » n’existe pas.',
 	'PPDE_CANNOT_DISABLE_ALL_CURRENCIES' => 'Vous ne pouvez pas désactiver toutes les devises.',
 	'PPDE_DC_EMPTY_NAME'                 => 'Saisissez un nom de devise.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Saisissez un code ISO.',

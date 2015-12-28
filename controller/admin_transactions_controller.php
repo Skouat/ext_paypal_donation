@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                                   u_action          Action URL
  * @property \phpbb\user                              user              User object.
  */
-class admin_transactions_controller extends admin_main implements admin_transactions_interface
+class admin_transactions_controller extends admin_main
 {
 	protected $adm_relative_path;
 	protected $auth;
@@ -34,7 +34,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
 	protected $php_ext;
-	protected $ppde_operator;
+	public $ppde_operator;
 
 	/**
 	 * Constructor
@@ -145,7 +145,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 			// Sorting
 			$limit_days = array(0 => $this->user->lang['ALL_ENTRIES'], 1 => $this->user->lang['1_DAY'], 7 => $this->user->lang['7_DAYS'], 14 => $this->user->lang['2_WEEKS'], 30 => $this->user->lang['1_MONTH'], 90 => $this->user->lang['3_MONTHS'], 180 => $this->user->lang['6_MONTHS'], 365 => $this->user->lang['1_YEAR']);
 			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
-			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ps' => 'txn.payment_status', 't' => 'txn.payment_time');
+			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 			gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
@@ -186,7 +186,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 				$this->template->assign_block_vars('log', array(
 					'TNX_ID'           => $row['txn_id'],
 					'USERNAME'         => $row['username_full'],
-					'DATE'             => $this->user->format_date(strtotime($row['payment_date'])),
+					'DATE'             => $this->user->format_date($row['payment_date']),
 					'ID'               => $row['transaction_id'],
 					'CONFIRMED'        => ($row['confirmed']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
 					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
@@ -254,7 +254,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 
 					'ITEM_NAME'      => $data['item_name'],
 					'ITEM_NUMBER'    => $data['item_number'],
-					'PAYMENT_DATE'   => $this->user->format_date(strtotime($data['payment_date'])),
+					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 					'PAYMENT_STATUS' => $payment_status_ary[strtolower($data['payment_status'])],
 				));
 			}
@@ -284,7 +284,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 	 *                               (too high)
 	 * @access private
 	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_time DESC', $keywords = '')
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
 	{
 		$count_logs = ($log_count !== false);
 
@@ -305,7 +305,7 @@ class admin_transactions_controller extends admin_main implements admin_transact
 	 * @return array $log
 	 * @access private
 	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_time DESC', $keywords = '')
+	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
 	{
 		$this->entry_count = 0;
 		$this->last_page_offset = $offset;
