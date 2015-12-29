@@ -68,17 +68,17 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to return donors list details
+	 * Returns the SQL Query for generation the donors list
 	 *
 	 * @param bool $anonymous
 	 *
-	 * @return string
+	 * @return array
 	 * @access public
 	 */
-	public function build_sql_donorlist_data($anonymous = false)
+	public function get_sql_donorlist_ary($anonymous = false)
 	{
 		// Build main sql request
-		$sql_ary = array(
+		$get_donorlist_sql_ary = array(
 			'SELECT'    => '*, SUM(txn.mc_gross) AS amount, MAX(txn.payment_date) AS date, u.username, u.user_colour',
 			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
 			'LEFT_JOIN' => array(
@@ -92,13 +92,50 @@ class transactions
 
 		if (!$anonymous)
 		{
-			$sql_ary['GROUP_BY'] = 'txn.user_id';
-			$sql_ary['ORDER_BY'] = 'txn.user_id';
-			$sql_ary['WHERE'] = 'txn.user_id <> ' . ANONYMOUS . '
-					AND ' . $sql_ary['WHERE'];
+			$get_donorlist_sql_ary['GROUP_BY'] = 'txn.user_id';
+			$get_donorlist_sql_ary['ORDER_BY'] = 'txn.user_id';
+			$get_donorlist_sql_ary['WHERE'] = 'txn.user_id <> ' . ANONYMOUS . ' AND ' . $get_donorlist_sql_ary['WHERE'];
 		}
+
 		// Return all transactions entities
-		return $this->db->sql_build_query('SELECT', $sql_ary);
+		return $get_donorlist_sql_ary;
+	}
+
+	/**
+	 * SQL Query to return donors list details
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_donorlist_data($sql_donorlist_ary)
+	{
+		// Return all transactions entities
+		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
+	}
+
+	/**
+	 * Returns total entries of selected field
+	 *
+	 * @param array  $count_sql_ary
+	 * @param string $selected_field
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function query_sql_count($count_sql_ary, $selected_field)
+	{
+		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
+
+		if (array_key_exists('GROUP_BY', $count_sql_ary))
+		{
+			$count_sql_ary['SELECT'] = 'COUNT(DISTINCT ' . $count_sql_ary['GROUP_BY'] . ') AS total_entries';
+		}
+		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+
+		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield('total_entries');
 	}
 
 	/**
@@ -174,25 +211,6 @@ class transactions
 		}
 
 		return $sql_keywords;
-	}
-
-	/**
-	 * Returns total entries in the transactions log
-	 *
-	 * @param $count_logs_sql_ary
-	 *
-	 * @return int
-	 * @access public
-	 */
-	public function query_sql_count_logs($count_logs_sql_ary)
-	{
-		$count_logs_sql_ary['SELECT'] = 'COUNT(txn.transaction_id) AS total_entries';
-		unset($count_logs_sql_ary['ORDER_BY']);
-
-		$sql = $this->db->sql_build_query('SELECT', $count_logs_sql_ary);
-		$this->db->sql_query($sql);
-
-		return (int) $this->db->sql_fetchfield('total_entries');
 	}
 
 	/**

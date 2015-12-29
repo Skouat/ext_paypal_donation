@@ -40,6 +40,8 @@ class main_controller
 	private $donation_content_data;
 	/** @var string */
 	private $return_args_url;
+	/** @var string */
+	private $u_action;
 
 	/**
 	 * Constructor
@@ -145,7 +147,47 @@ class main_controller
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		$this->set_return_args_url('donorlist');
+		// Get needed container
+		/** @type \phpbb\pagination $pagination */
+		$pagination = $this->container->get('pagination');
+		/** @type \phpbb\path_helper $path_helper */
+		$path_helper = $this->container->get('path_helper');
+
+		// Set up general vars
+		$default_key = 'd';
+		$start = $this->request->variable('start', 0);
+
+		// Build a relevant pagination_url
+		$params = array();
+
+		// We do not use request_var() here directly to save some calls (not all variables are set)
+		$check_params = array(
+			'sk'    => array('sk', $default_key),
+			'sd'    => array('sd', 'a'),
+		);
+
+		foreach ($check_params as $key => $call)
+		{
+			if (!isset($_REQUEST[$key]))
+			{
+				continue;
+			}
+
+			$param = call_user_func_array('request_var', $call);
+			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
+			$params[] = $param;
+		}
+
+		// Set '$this->u_action'
+		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
+		$this->u_action = reapply_sid($path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
+
+		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary();
+		$count = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
+		$start = $pagination->validate_start($start, $this->config['topics_per_page'], $count);
+
+		$pagination_url = $this->u_action . implode('&amp;', $params);
+		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $count, $this->config['topics_per_page'], $start);
 
 		// adds fields to the table schema needed by entity->import()
 		$additional_table_schema = array(
@@ -155,7 +197,7 @@ class main_controller
 			'item_last_date'   => array('name' => 'date', 'type' => 'string'),
 		);
 
-		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data(), $additional_table_schema);
+		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_donorlist_sql_ary), $additional_table_schema, $this->config['topics_per_page'], $start);
 
 		foreach ($data_ary as $data)
 		{
@@ -168,6 +210,9 @@ class main_controller
 				'PPDE_LAST_PAYMENT_DATE' => $this->user->format_date($data['date']),
 			));
 		}
+
+		// Set "return_args_url" object before sending data to template
+		$this->set_return_args_url('donorlist');
 
 		// Send all data to the template file
 		return $this->send_data_to_template();

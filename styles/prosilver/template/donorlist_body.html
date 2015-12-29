@@ -1,5 +1,17 @@
 <!-- INCLUDE overall_header.html -->
 <h2 class="solo">{L_PPDE_DONORLIST_TITLE}</h2>
+
+<div class="action-bar top">
+	<div class="pagination">
+		{TOTAL_DONORS}
+		<!-- IF .pagination -->
+		<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+		&bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
+	</div>
+</div>
+
 <div class="forumbg forumbg-table">
 	<div class="inner">
 		<table class="table1" cellspacing="1" id="donorlist">
@@ -24,6 +36,17 @@
 			<!-- END donorrow -->
 			</tbody>
 		</table>
+	</div>
+</div>
+
+<div class="action-bar bottom">
+	<div class="pagination">
+		{TOTAL_DONORS}
+		<!-- IF .pagination -->
+		<!-- INCLUDE pagination.html -->
+		<!-- ELSE -->
+		&bull; {PAGE_NUMBER}
+		<!-- ENDIF -->
 	</div>
 </div>
 <!-- INCLUDE overall_footer.html -->

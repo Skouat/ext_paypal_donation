@@ -331,14 +331,17 @@ abstract class main
 	 *
 	 * @param string $sql
 	 * @param array  $additional_table_schema
+	 * @param int    $limit
+	 * @param        $limit_offset
 	 *
 	 * @return array
+	 * @throws \skouat\ppde\exception\invalid_argument
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = array())
+	public function get_data($sql, $additional_table_schema = array(), $limit = 0, $limit_offset = 0)
 	{
 		$entities = array();
-		$result = $this->db->sql_query($sql);
+		$result = $this->limit_query($sql, $limit, $limit_offset);
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -349,6 +352,21 @@ abstract class main
 
 		// Return all page entities
 		return $entities;
+	}
+
+	/**
+	 * Use query limit if requested
+	 *
+	 * @param $sql
+	 * @param $limit
+	 * @param $offset
+	 *
+	 * @return mixed
+	 * @access private
+	 */
+	private function limit_query($sql, $limit, $offset)
+	{
+		return empty($limit) ? $this->db->sql_query($sql) : $this->db->sql_query_limit($sql, $limit, $offset);
 	}
 
 	/**
