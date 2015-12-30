@@ -70,16 +70,16 @@ class transactions
 	/**
 	 * Returns the SQL Query for generation the donors list
 	 *
-	 * @param bool $anonymous
+	 * @param int $max_txn_id
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function get_sql_donorlist_ary($anonymous = false)
+	public function get_sql_donorlist_ary($max_txn_id = 0)
 	{
 		// Build main sql request
-		$get_donorlist_sql_ary = array(
-			'SELECT'    => '*, SUM(txn.mc_gross) AS amount, MAX(txn.payment_date) AS date, u.username, u.user_colour',
+		$donorlist_sql_ary = array(
+			'SELECT'    => 'txn.*, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, u.username, u.user_colour',
 			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
 			'LEFT_JOIN' => array(
 				array(
@@ -87,18 +87,20 @@ class transactions
 					'ON'   => 'u.user_id = txn.user_id',
 				),
 			),
-			'WHERE'     => "txn.payment_status = 'Completed'",
+			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
+							AND txn.payment_status = 'Completed'",
+			'GROUP_BY'  => 'txn.user_id',
+			'ORDER_BY'  => 'txn.transaction_id DESC',
 		);
 
-		if (!$anonymous)
+		if ($max_txn_id)
 		{
-			$get_donorlist_sql_ary['GROUP_BY'] = 'txn.user_id';
-			$get_donorlist_sql_ary['ORDER_BY'] = 'txn.user_id';
-			$get_donorlist_sql_ary['WHERE'] = 'txn.user_id <> ' . ANONYMOUS . ' AND ' . $get_donorlist_sql_ary['WHERE'];
+			$donorlist_sql_ary['WHERE'] = 'txn.transaction_id = ' . $max_txn_id;
+			unset($donorlist_sql_ary['GROUP_BY'], $donorlist_sql_ary['ORDER_BY']);
 		}
 
 		// Return all transactions entities
-		return $get_donorlist_sql_ary;
+		return $donorlist_sql_ary;
 	}
 
 	/**

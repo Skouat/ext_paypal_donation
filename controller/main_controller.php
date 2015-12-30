@@ -162,8 +162,8 @@ class main_controller
 
 		// We do not use request_var() here directly to save some calls (not all variables are set)
 		$check_params = array(
-			'sk'    => array('sk', $default_key),
-			'sd'    => array('sd', 'a'),
+			'sk' => array('sk', $default_key),
+			'sd' => array('sd', 'a'),
 		);
 
 		foreach ($check_params as $key => $call)
@@ -194,20 +194,23 @@ class main_controller
 			'item_username'    => array('name' => 'username', 'type' => 'string'),
 			'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
 			'item_amount'      => array('name' => 'amount', 'type' => 'string'),
-			'item_last_date'   => array('name' => 'date', 'type' => 'string'),
+			'item_max_txn_id'  => array('name' => 'max_txn_id', 'type' => 'integer'),
 		);
 
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_donorlist_sql_ary), $additional_table_schema, $this->config['topics_per_page'], $start);
 
+		// Get default currency data from the database
+		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
+
 		foreach ($data_ary as $data)
 		{
-			// Get default currency data from the database
-			$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
-
+			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary($data['max_txn_id']);
+			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary));
 			$this->template->assign_block_vars('donorrow', array(
-				'PPDE_DONOR_USERNAME'    => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
-				'PPDE_DONATED_AMOUNT'    => $this->get_amount($data['amount'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-				'PPDE_LAST_PAYMENT_DATE' => $this->user->format_date($data['date']),
+				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->get_amount($data['amount'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->get_amount($last_donation_data[0]['mc_gross'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 			));
 		}
 

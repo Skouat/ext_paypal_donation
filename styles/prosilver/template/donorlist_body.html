@@ -18,7 +18,8 @@
 			<thead>
 			<tr>
 				<th class="name">{L_USERNAME}</th>
-				<th class="joined">{L_PPDE_DONORLIST_DONATED_AMOUNT}</th>
+				<th class="joined">{L_PPDE_DONORLIST_TOTAL_DONATION}</th>
+				<th class="joined">{L_PPDE_DONORLIST_LAST_DONATION}</th>
 				<th class="active">{L_PPDE_DONORLIST_LAST_DATE}</th>
 			</tr>
 			</thead>
@@ -26,7 +27,8 @@
 			<!-- BEGIN donorrow -->
 			<tr class="<!-- IF donorrow.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
 				<td>{donorrow.PPDE_DONOR_USERNAME}</td>
-				<td>{donorrow.PPDE_DONATED_AMOUNT}</td>
+				<td>{donorrow.PPDE_LAST_DONATED_AMOUNT}</td>
+				<td>{donorrow.PPDE_TOTAL_DONATED_AMOUNT}</td>
 				<td>{donorrow.PPDE_LAST_PAYMENT_DATE}</td>
 			</tr>
 			<!-- BEGINELSE -->
