@@ -60,6 +60,11 @@ $lang = array_merge($lang, array(
 	'PPDE_DONORLIST_LAST_DONATION'  => 'Dernier don',
 	'PPDE_DONORLIST_LAST_DATE'      => 'Éffectué le',
 	'PPDE_DONORLIST_TOTAL_DONATION' => 'Somme des dons',
+	'PPDE_DONORS'                   => array(
+		0 => '',                  // 0 - Let this language key empty.
+		1 => '%d donateur',       // 1
+		2 => '%d donateurs',      // 2+
+	),
 	'PPDE_NO_DONORS'                => 'Aucun donateur',
 
 	// Statistics
