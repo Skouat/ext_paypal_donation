@@ -156,12 +156,12 @@ class main_controller
 		// Set up general vars
 		$default_key = 'd';
 		$sort_key = $this->request->variable('sk', $default_key);
-		$sort_dir = $this->request->variable('sd', 'a');
+		$sort_dir = $this->request->variable('sd', 'd');
 		$start = $this->request->variable('start', 0);
 
+		// Sorting and order
 		$sort_key_sql = array('a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean');
 
-		// Sorting and order
 		if (!isset($sort_key_sql[$sort_key]))
 		{
 			$sort_key = $default_key;
@@ -169,9 +169,7 @@ class main_controller
 
 		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
 
-		// Build a relevant pagination_url
-		$params = $sort_params = array();
-
+		// Build a relevant pagination_url and sort_url
 		// We do not use request_var() here directly to save some calls (not all variables are set)
 		$check_params = array(
 			'sk'    => array('sk', $default_key),
@@ -179,42 +177,15 @@ class main_controller
 			'start' => array('start', 0),
 		);
 
-		foreach ($check_params as $key => $call)
-		{
-			if (!isset($_REQUEST[$key]))
-			{
-				continue;
-			}
-
-			$param = call_user_func_array('request_var', $call);
-			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
-
-			if ($key != 'start')
-			{
-				$params[] = $param;
-			}
-			if ($key != 'sk' && $key != 'sd')
-			{
-				$sort_params[] = $param;
-			}
-		}
+		$params = $this->check_params($check_params, array('start'));
+		$sort_params = $this->check_params($check_params, array('sk', 'sd'));
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
 		$this->u_action = reapply_sid($path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
-		$sort_url = append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true);
-
-		// if params are empty, adds url delimiter, else add &amp; delimiter
-		if (empty($sort_params))
-		{
-			$sort_url = $sort_url . '?';
-		}
-		else
-		{
-			$sort_url = $sort_url . '&amp;';
-		}
+		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
 		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(false, $order_by);
 		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
@@ -236,9 +207,9 @@ class main_controller
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
 		$this->template->assign_vars(array(
 			'TOTAL_DONORS'    => $this->user->lang('PPDE_DONORS', $total_donors),
-			'U_SORT_AMOUNT'   => $sort_url . 'sk=a&amp;sd=' . (($sort_key == 'a' && $sort_dir == 'a') ? 'd' : 'a'),
-			'U_SORT_DONATED'  => $sort_url . 'sk=d&amp;sd=' . (($sort_key == 'd' && $sort_dir == 'a') ? 'd' : 'a'),
-			'U_SORT_USERNAME' => $sort_url . 'sk=u&amp;sd=' . (($sort_key == 'u' && $sort_dir == 'a') ? 'd' : 'a'),
+			'U_SORT_AMOUNT'   => $sort_url . 'sk=a&amp;sd=' . $this->set_sort_key($sort_key, 'a', $sort_dir),
+			'U_SORT_DONATED'  => $sort_url . 'sk=d&amp;sd=' . $this->set_sort_key($sort_key, 'd', $sort_dir),
+			'U_SORT_USERNAME' => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
 		));
 
 		foreach ($data_ary as $data)
@@ -258,6 +229,64 @@ class main_controller
 
 		// Send all data to the template file
 		return $this->send_data_to_template();
+	}
+
+	/**
+	 * Set the sort key value
+	 *
+	 * @param string $sk
+	 * @param string $sk_comp
+	 * @param string $sd
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_sort_key($sk, $sk_comp, $sd)
+	{
+		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
+	}
+
+	/**
+	 * Simply adds an url or &amp; delimiter to the url when params is empty
+	 *
+	 * @param $url
+	 * @param $params
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_url_delim($url, $params)
+	{
+		return (empty($params)) ? $url . '?' : $url . '&amp;';
+	}
+
+	/**
+	 * @param $params
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function check_params($params_ary, $excluded_keys)
+	{
+		$params = array();
+
+		foreach ($params_ary as $key => $call)
+		{
+			if (!isset($_REQUEST[$key]))
+			{
+				continue;
+			}
+
+			$param = call_user_func_array('request_var', $call);
+			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
+
+			if (!in_array($key, $excluded_keys))
+			{
+				$params[] = $param;
+			}
+		}
+
+		return $params;
 	}
 
 	/**
