@@ -70,12 +70,13 @@ class transactions
 	/**
 	 * Returns the SQL Query for generation the donors list
 	 *
-	 * @param int $max_txn_id
+	 * @param int    $max_txn_id Identifier of the transaction logged in the DB
+	 * @param string $order_by
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function get_sql_donorlist_ary($max_txn_id = 0)
+	public function get_sql_donorlist_ary($max_txn_id = 0, $order_by = '')
 	{
 		// Build main sql request
 		$donorlist_sql_ary = array(
@@ -92,6 +93,11 @@ class transactions
 			'GROUP_BY'  => 'txn.user_id',
 			'ORDER_BY'  => 'txn.transaction_id DESC',
 		);
+
+		if ($order_by)
+		{
+			$donorlist_sql_ary['ORDER_BY'] = $order_by;
+		}
 
 		if ($max_txn_id)
 		{

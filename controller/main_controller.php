@@ -137,10 +137,10 @@ class main_controller
 	public function donorlist_handle()
 	{
 		// When this extension is disabled, redirect users back to the forum index
-		// Else if user is not allowed to use it, disallow access to the extension main page
+		// Else if user is not allowed to view the donors list, disallow access to the extension page
 		if (!$this->use_ipn())
 		{
-			redirect(append_sid("{$this->root_path}index.{$this->php_ext}"));
+			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
 		else if (!$this->can_view_ppde_donorlist())
 		{
@@ -155,15 +155,28 @@ class main_controller
 
 		// Set up general vars
 		$default_key = 'd';
+		$sort_key = $this->request->variable('sk', $default_key);
+		$sort_dir = $this->request->variable('sd', 'a');
 		$start = $this->request->variable('start', 0);
 
+		$sort_key_sql = array('a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean');
+
+		// Sorting and order
+		if (!isset($sort_key_sql[$sort_key]))
+		{
+			$sort_key = $default_key;
+		}
+
+		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
+
 		// Build a relevant pagination_url
-		$params = array();
+		$params = $sort_params = array();
 
 		// We do not use request_var() here directly to save some calls (not all variables are set)
 		$check_params = array(
-			'sk' => array('sk', $default_key),
-			'sd' => array('sd', 'a'),
+			'sk'    => array('sk', $default_key),
+			'sd'    => array('sd', 'a'),
+			'start' => array('start', 0),
 		);
 
 		foreach ($check_params as $key => $call)
@@ -175,18 +188,38 @@ class main_controller
 
 			$param = call_user_func_array('request_var', $call);
 			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
-			$params[] = $param;
+
+			if ($key != 'start')
+			{
+				$params[] = $param;
+			}
+			if ($key != 'sk' && $key != 'sd')
+			{
+				$sort_params[] = $param;
+			}
 		}
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
 		$this->u_action = reapply_sid($path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
 
-		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary();
+		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
+		$sort_url = append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true);
+
+		// if params are empty, adds url delimiter, else add &amp; delimiter
+		if (empty($sort_params))
+		{
+			$sort_url = $sort_url . '?';
+		}
+		else
+		{
+			$sort_url = $sort_url . '&amp;';
+		}
+
+		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(false, $order_by);
 		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
 		$start = $pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
 
-		$pagination_url = $this->u_action . implode('&amp;', $params);
 		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
 
 		// adds fields to the table schema needed by entity->import()
@@ -203,6 +236,9 @@ class main_controller
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
 		$this->template->assign_vars(array(
 			'TOTAL_DONORS'    => $this->user->lang('PPDE_DONORS', $total_donors),
+			'U_SORT_AMOUNT'   => $sort_url . 'sk=a&amp;sd=' . (($sort_key == 'a' && $sort_dir == 'a') ? 'd' : 'a'),
+			'U_SORT_DONATED'  => $sort_url . 'sk=d&amp;sd=' . (($sort_key == 'd' && $sort_dir == 'a') ? 'd' : 'a'),
+			'U_SORT_USERNAME' => $sort_url . 'sk=u&amp;sd=' . (($sort_key == 'u' && $sort_dir == 'a') ? 'd' : 'a'),
 		));
 
 		foreach ($data_ary as $data)
@@ -213,7 +249,7 @@ class main_controller
 				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
 				'PPDE_LAST_DONATED_AMOUNT'  => $this->get_amount(number_format($last_donation_data[0]['mc_gross'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->get_amount(number_format($data['amount'],2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->get_amount(number_format($data['amount'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 			));
 		}
 
