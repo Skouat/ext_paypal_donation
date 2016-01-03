@@ -299,7 +299,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation: Donor counts resynchronised</strong>',
 	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation: Transaction count resynchronised</strong>',
-	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation: Remote connection re-detected</strong>',
+	'LOG_PPDE_STAT_RETEST_REMOTE'             => '<strong>PayPal Donation: Remote connection re-detected</strong>',
 ));
 
 /**
