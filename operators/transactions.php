@@ -149,9 +149,9 @@ class transactions
 	/**
 	 * Returns the SQL Query for displaying simple transactions details
 	 *
-	 * @param $keywords
-	 * @param $sort_by
-	 * @param $log_time
+	 * @param string  $keywords
+	 * @param string  $sort_by
+	 * @param integer $log_time
 	 *
 	 * @return array
 	 * @access public

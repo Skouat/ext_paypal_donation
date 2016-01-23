@@ -357,9 +357,9 @@ abstract class main
 	/**
 	 * Use query limit if requested
 	 *
-	 * @param $sql
-	 * @param $limit
-	 * @param $offset
+	 * @param string  $sql
+	 * @param integer $limit
+	 * @param integer $offset
 	 *
 	 * @return mixed
 	 * @access private

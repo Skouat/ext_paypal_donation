@@ -261,7 +261,8 @@ class main_controller
 	}
 
 	/**
-	 * @param $params
+	 * @param array    $params_ary
+	 * @param string[] $excluded_keys
 	 *
 	 * @return array
 	 * @access private
