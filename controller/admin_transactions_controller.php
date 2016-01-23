@@ -327,7 +327,7 @@ class admin_transactions_controller extends admin_main
 
 		if ($count_logs)
 		{
-			$this->entry_count = $this->ppde_operator->query_sql_count_logs($get_logs_sql_ary);
+			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
 
 			if ($this->entry_count == 0)
 			{

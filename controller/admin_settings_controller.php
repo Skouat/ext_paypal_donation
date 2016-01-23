@@ -87,6 +87,7 @@ class admin_settings_controller extends admin_main
 			// PayPal IPN vars
 			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
 			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
+			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
 			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
 			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
@@ -153,6 +154,7 @@ class admin_settings_controller extends admin_main
 
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
+		$this->config->set('ppde_ipn_donorlist_enable', $this->request->variable('ppde_ipn_donorlist_enable', false));
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
 		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));

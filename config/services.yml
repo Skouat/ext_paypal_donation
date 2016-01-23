@@ -36,8 +36,10 @@ services:
             - @controller.helper
             - @skouat.ppde.entity.currency
             - @skouat.ppde.entity.donation_pages
+            - @skouat.ppde.entity.transactions
             - @skouat.ppde.operator.currency
             - @skouat.ppde.operator.donation_pages
+            - @skouat.ppde.operator.transactions
             - @request
             - @template
             - @user
