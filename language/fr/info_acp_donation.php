@@ -96,7 +96,7 @@ $lang = array_merge($lang, array(
 	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'         => 'Paramètres généraux',
 	'PPDE_ENABLE'                          => 'Activer PayPal Donation',
-	'PPDE_ENABLE_EXPLAIN'                  => 'Active ou désactive le MOD PayPal Donation.',
+	'PPDE_ENABLE_EXPLAIN'                  => 'Active ou désactive l’extension PayPal Donation.',
 	'PPDE_HEADER_LINK'                     => 'Afficher le lien « Faire un don » dans l’entête du forum',
 	'PPDE_ACCOUNT_ID'                      => 'ID du compte PayPal',
 	'PPDE_ACCOUNT_ID_EXPLAIN'              => 'Saisir l’adresse e-mail ou l’ID de compte marchand.',
@@ -110,14 +110,18 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
 
 	// PayPal IPN settings
+	'PPDE_LEGEND_PAYPAL_SETTINGS'          => 'Paramètres PayPal',
 	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres IPN',
-	'PPDE_LEGEND_IPN_PPDE_IPN_AUTOGROUP'   => 'Groupe automatique',
+	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
+	'PPDE_LEGEND_IPN_DONORLIST'            => 'Liste des donateurs',
 	'PPDE_IPN_AG_ENABLE'                   => 'Activer le groupe automatique',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Permet d’ajouter automatiquement les donateurs dans un groupe pré-défini.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Groupe donateurs',
 	'PPDE_IPN_AG_DONORS_GROUP_EXPLAIN'     => 'Sélectionnez le groupe qui accueillera les membres donateurs.',
 	'PPDE_IPN_AG_GROUP_AS_DEFAULT'         => 'Définir comme groupe par défaut',
 	'PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN' => 'Activez cette option pour définir le groupe des donateurs comme groupe par défaut pour les membres ayant fait une donation.',
+	'PPDE_IPN_DL_ENABLE'                   => 'Activer la liste des donateurs',
+	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Permet d’activer la liste des donateurs.',
 	'PPDE_IPN_ENABLE'                      => 'Activer IPN',
 	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.<br />Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaitront ci-dessous.',
 	'PPDE_IPN_LOGGING'                     => 'Activer le journal des erreurs',
@@ -299,7 +303,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
 	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation : Actualisation des compteurs des donateurs</strong>',
 	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation : Actualisation du compteur des transactions</strong>',
-	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation : Re-détection des connexions distantes</strong>',
+	'LOG_PPDE_STAT_RETEST_REMOTE'             => '<strong>PayPal Donation : Re-détection des connexions distantes</strong>',
 ));
 
 /**

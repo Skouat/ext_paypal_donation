@@ -91,15 +91,15 @@ class admin_overview_controller extends admin_main
 			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
 			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_VERSION'              => $this->ext_meta['version'],
-			'TRANSACTIONS_COUNT'        => $this->config['ppde_count_transactions'],
-			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_count_transactions'),
+			'TRANSACTIONS_COUNT'        => $this->config['ppde_transactions_count'],
+			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_transactions_count'),
 
 			'L_PPDE_INSTALL_DATE'       => $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
 			'L_PPDE_VERSION'            => $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
 
 			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
-			'S_FSOCKOPEN'               => $this->config['ppde_curl_detected'],
-			'S_CURL'                    => $this->config['ppde_fsock_detected'],
+			'S_CURL'                    => $this->config['ppde_curl_detected'],
+			'S_FSOCKOPEN'               => $this->config['ppde_fsock_detected'],
 
 			'U_PPDE_MORE_INFORMATION'   => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
 			'U_PPDE_VERSIONCHECK_FORCE' => $this->u_action . '&amp;versioncheck_force=1',
@@ -146,7 +146,7 @@ class admin_overview_controller extends admin_main
 				$confirm = true;
 				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
 				break;
-			case 'curl_fsock':
+			case 'remote':
 				$confirm = true;
 				$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
 				break;
@@ -185,21 +185,21 @@ class admin_overview_controller extends admin_main
 		{
 			case 'date':
 				$this->config->set('ppde_install_date', time() - 1);
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESET_DATE');
-				break;
-			case 'remote':
-				$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
-				$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RETEST_DATE');
-				break;
-			case 'transactions':
-				$this->config->set('ppde_count_transactions', $this->sql_query_update_stats('ppde_count_transactions'), true);
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_TRANSACTIONSCOUNTS');
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 				break;
 			case 'donors':
 				$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
 				$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_STAT_RESYNC_DONORSCOUNTS');
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS');
+				break;
+			case 'remote':
+				$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
+				$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_REMOTE');
+				break;
+			case 'transactions':
+				$this->config->set('ppde_transactions_count', $this->sql_query_update_stats('ppde_transactions_count'), true);
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS');
 				break;
 		}
 	}
@@ -236,7 +236,7 @@ class admin_overview_controller extends admin_main
 	{
 		switch ($type)
 		{
-			case 'ppde_count_transactions':
+			case 'ppde_transactions_count':
 				$sql = $this->make_stats_sql_select('txn_id');
 				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
 

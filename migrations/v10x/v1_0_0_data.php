@@ -31,10 +31,12 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 
 			// IPN Settings
 			array('config.add', array('ppde_ipn_enable', false)),
-			array('config.add', array('ppde_ipn_logging', false)),
 			array('config.add', array('ppde_ipn_autogroup_enable', false)),
+			array('config.add', array('ppde_ipn_donorlist_enable', false)),
 			array('config.add', array('ppde_ipn_group_id', 2)),
 			array('config.add', array('ppde_ipn_group_as_default', false)),
+			array('config.add', array('ppde_ipn_balance', 0)),
+			array('config.add', array('ppde_ipn_logging', false)),
 			array('config.add', array('ppde_curl_detected', false)),
 			array('config.add', array('ppde_fsock_detected', false)),
 
@@ -53,20 +55,22 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_used_enable', false)),
 
 			// Overview Settings
-			array('config.add', array('ppde_transactions_count', 0)),
-			array('config.add', array('ppde_known_donors_count', 0)),
 			array('config.add', array('ppde_anonymous_donors_count', 0)),
+			array('config.add', array('ppde_known_donors_count', 0)),
+			array('config.add', array('ppde_transactions_count', 0)),
 
 			//Misc Settings
 			array('config.add', array('ppde_install_date', time())),
 
 			// add new permissions
-			array('permission.add', array('u_ppde_use', true)),
 			array('permission.add', array('a_ppde_manage', true)),
+			array('permission.add', array('u_ppde_use', true)),
+			array('permission.add', array('u_ppde_view_donorlist', true)),
 
 			//assign permissions to roles
-			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_use'))),
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', array('a_ppde_manage'))),
+			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_use'))),
+			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_view_donorlist'))),
 
 			// add new module
 			array('module.add', array(

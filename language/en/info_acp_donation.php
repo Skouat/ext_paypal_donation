@@ -96,7 +96,7 @@ $lang = array_merge($lang, array(
 	// Global settings
 	'PPDE_LEGEND_GENERAL_SETTINGS'         => 'General Settings',
 	'PPDE_ENABLE'                          => 'Enable PayPal Donation',
-	'PPDE_ENABLE_EXPLAIN'                  => 'Enable or disable the PayPal Donation MOD.',
+	'PPDE_ENABLE_EXPLAIN'                  => 'Enable or disable the PayPal Donation Extension.',
 	'PPDE_HEADER_LINK'                     => 'Display the link “Donations” in the header',
 	'PPDE_ACCOUNT_ID'                      => 'PayPal account ID',
 	'PPDE_ACCOUNT_ID_EXPLAIN'              => 'Enter your PayPal email address or Merchant account ID.',
@@ -110,21 +110,25 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Define the numbers you want to see in the drop-down list.<br />Use <strong>comma</strong> (",") <strong>with no space</strong> to separate each values.',
 
 	// PayPal IPN settings
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'PayPal IPN settings',
-	'PPDE_LEGEND_IPN_PPDE_IPN_AUTOGROUP'   => 'Auto-group',
+	'PPDE_LEGEND_PAYPAL_SETTINGS'          => 'PayPal settings',
+	'PPDE_LEGEND_IPN_SETTINGS'             => 'IPN settings',
+	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto-group',
+	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_IPN_AG_ENABLE'                   => 'Enable Auto Group',
-	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allow to add donors to a predefined group.',
+	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
 	'PPDE_IPN_AG_DONORS_GROUP_EXPLAIN'     => 'Select the group that will host the donor members.',
 	'PPDE_IPN_AG_GROUP_AS_DEFAULT'         => 'Set donors group as default',
 	'PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN' => 'Enable to set the donors group as the default group for users having make a donation.',
+	'PPDE_IPN_DL_ENABLE'                   => 'Enable Donors list',
+	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
 	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
 	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want use Instant Payment Notification of PayPal services.<br />If enabled, all features dependent on PayPal IPN will be available below.',
 	'PPDE_IPN_LOGGING'                     => 'Enable log errors',
 	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Log errors and data from PayPal IPN into <strong>/store/ppde_transactions.log</strong>.',
 
 	// PayPal sandbox settings
-	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'PayPal sandbox settings',
+	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Sandbox settings',
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Enable this option if you want use PayPal Sandbox instead of PayPal services.<br />Useful for developers/testers. All the transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
@@ -299,7 +303,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_STAT_RESET_DATE'                => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS'       => '<strong>PayPal Donation: Donor counts resynchronised</strong>',
 	'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS' => '<strong>PayPal Donation: Transaction count resynchronised</strong>',
-	'LOG_PPDE_STAT_RETEST_CURL_FSOCK'         => '<strong>PayPal Donation: Remote connection re-detected</strong>',
+	'LOG_PPDE_STAT_RETEST_REMOTE'             => '<strong>PayPal Donation: Remote connection re-detected</strong>',
 ));
 
 /**

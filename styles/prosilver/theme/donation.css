@@ -89,6 +89,14 @@ div.donate_value {
     background: url("images/icon_donate.gif") 0 50% no-repeat;
 }
 
+.icon-ppde-header-donorlist {
+    background: url("images/icon_donors.gif") 0 50% no-repeat;
+}
+
 .rtl .icon-ppde-header {
+    background-position: 100% 50%;
+}
+
+.rtl .icon-ppde-header-donorlist {
     background-position: 100% 50%;
 }
