@@ -37,5 +37,11 @@ Develop branch
 ## Styles
 * Prosilver
 
+## Install Extension
+* Download the archive of the extension from here and unpack it. 
+* Copy then the entire contents of the archive to your phpBB forum to /ext/skouat/ppde. 
+* Now go into the admin area of the forum and chose the tab Customize, in the area Manage extensions is you now the extension PayPal Donation displayed under the disable extensions. 
+* Click behind the extension on the link Enable to activate the extension. After you have confirmed the action the extension is available in your forum.
+
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
