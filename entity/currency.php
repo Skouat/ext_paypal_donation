@@ -101,7 +101,7 @@ class currency extends main
 	public function set_symbol($symbol)
 	{
 		// Set the lang_id on our data array
-		$this->data['currency_symbol'] = (string) $symbol;
+		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 
 		return $this;
 	}
@@ -114,7 +114,7 @@ class currency extends main
 	 */
 	public function get_symbol()
 	{
-		return (isset($this->data['currency_symbol'])) ? (string) $this->data['currency_symbol'] : '';
+		return (isset($this->data['currency_symbol'])) ? (string) html_entity_decode($this->data['currency_symbol'], ENT_COMPAT | ENT_HTML5, 'UTF-8') : '';
 	}
 
 	/**

@@ -195,10 +195,13 @@ class admin_currency_controller extends admin_main
 	 */
 	private function submit_data($entity, array $errors)
 	{
-		if ($this->can_submit_data($errors))
+		if (!$entity->get_id())
 		{
 			$this->trigger_error_data_already_exists($entity);
+		}
 
+		if ($this->can_submit_data($errors))
+		{
 			$log_action = $this->add_edit_data($entity, 'set_order');
 			// Log and show user confirmation of the saved item and provide link back to the previous page
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($entity->get_name()));

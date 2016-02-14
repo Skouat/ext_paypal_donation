@@ -112,7 +112,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'U.S. Dollar',
 				'currency_iso_code' => 'USD',
-				'currency_symbol'   => '&#36;', // symbol dollar
+				'currency_symbol'   => '&dollar;',
 				'currency_enable'   => true,
 				'currency_on_left'  => true,
 				'currency_order'    => 1,
@@ -120,7 +120,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Euro',
 				'currency_iso_code' => 'EUR',
-				'currency_symbol'   => '&#8364;', // symbol euro
+				'currency_symbol'   => '&euro;',
 				'currency_enable'   => true,
 				'currency_on_left'  => false,
 				'currency_order'    => 2,
@@ -128,7 +128,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Australian Dollar',
 				'currency_iso_code' => 'AUD',
-				'currency_symbol'   => '&#36;', // symbol $
+				'currency_symbol'   => '&dollar;',
 				'currency_enable'   => true,
 				'currency_on_left'  => true,
 				'currency_order'    => 3,
@@ -136,7 +136,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Canadian Dollar',
 				'currency_iso_code' => 'CAD',
-				'currency_symbol'   => '&#36;', // symbol $
+				'currency_symbol'   => '&dollar;',
 				'currency_enable'   => true,
 				'currency_on_left'  => true,
 				'currency_order'    => 4,
@@ -144,7 +144,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Hong Kong Dollar',
 				'currency_iso_code' => 'HKD',
-				'currency_symbol'   => '&#36;', // symbol $
+				'currency_symbol'   => '&dollar;',
 				'currency_enable'   => true,
 				'currency_on_left'  => true,
 				'currency_order'    => 5,
@@ -152,7 +152,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Pound Sterling',
 				'currency_iso_code' => 'GBP',
-				'currency_symbol'   => '&#163;', // symbol livre sterling
+				'currency_symbol'   => '&pound;',
 				'currency_enable'   => true,
 				'currency_on_left'  => true,
 				'currency_order'    => 6,
@@ -160,7 +160,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array(
 				'currency_name'     => 'Yen',
 				'currency_iso_code' => 'JPY',
-				'currency_symbol'   => '&#165;', // symbol yen
+				'currency_symbol'   => '&yen;',
 				'currency_enable'   => true,
 				'currency_on_left'  => false,
 				'currency_order'    => 7,
