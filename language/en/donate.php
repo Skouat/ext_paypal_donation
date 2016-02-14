@@ -75,7 +75,7 @@ $lang = array_merge($lang, array(
 	'DONATE_GOAL_REACHED'  => 'Our goal donation was reached.',
 	'DONATE_NO_GOAL'       => 'We haven’t defined a donation goal.',
 
-	'DONATE_USED'          => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong>%2$s already received.',
+	'DONATE_USED'          => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
 	'DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All your donations have been used.',
 	'DONATE_NOT_USED'      => 'We haven’t used any donations.',
 
