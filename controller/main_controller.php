@@ -720,13 +720,36 @@ class main_controller
 	}
 
 	/**
-	 * Check if cURL is available
+	 * Do action if it's the first time the extension is accessed
 	 *
-	 * @return bool
+	 * @return null
 	 * @access public
 	 */
-	public function check_curl()
+	public function first_start()
 	{
+		if ($this->config['ppde_first_start'])
+		{
+			$this->set_curl_info();
+			$this->set_remote_detected();
+			$this->config['ppde_first_start'] = false;
+		}
+	}
+
+	/**
+	 * Check if cURL is available
+	 *
+	 * @param bool $check_version
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function check_curl($check_version = false)
+	{
+		if (function_exists('curl_version') && $check_version)
+		{
+			return curl_version();
+		}
+
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
 			$this->get_ext_meta();
@@ -744,6 +767,34 @@ class main_controller
 		}
 
 		return false;
+	}
+
+	/**
+	 * Set config value for cURL version
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_curl_info()
+	{
+		// Get cURL version informations
+		if ($curl_info = $this->check_curl(true))
+		{
+			$this->config->set('ppde_curl_version', $curl_info['version']);
+			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
+		}
+	}
+
+	/**
+	 * Set config value for cURL and fsockopen
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_remote_detected()
+	{
+		$this->config->set('ppde_curl_detected', $this->check_curl());
+		$this->config->set('ppde_fsock_detected', $this->check_fsockopen());
 	}
 
 	/**

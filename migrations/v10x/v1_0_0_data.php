@@ -38,6 +38,8 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_ipn_balance', 0)),
 			array('config.add', array('ppde_ipn_logging', false)),
 			array('config.add', array('ppde_curl_detected', false)),
+			array('config.add', array('ppde_curl_version', '')),
+			array('config.add', array('ppde_curl_ssl_version', '')),
 			array('config.add', array('ppde_fsock_detected', false)),
 
 			// Sandbox Settings
@@ -61,6 +63,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 
 			//Misc Settings
 			array('config.add', array('ppde_install_date', time())),
+			array('config.add', array('ppde_first_start', true)),
 
 			// add new permissions
 			array('permission.add', array('a_ppde_manage', true)),

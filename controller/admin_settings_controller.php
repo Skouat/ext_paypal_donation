@@ -60,6 +60,8 @@ class admin_settings_controller extends admin_main
 	 */
 	public function display_settings()
 	{
+		$this->ppde_controller_main->first_start();
+
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
 
@@ -174,8 +176,8 @@ class admin_settings_controller extends admin_main
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 
 		// Set misc settings
-		$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
-		$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+		$this->ppde_controller_main->set_curl_info();
+		$this->ppde_controller_main->set_remote_detected();
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));

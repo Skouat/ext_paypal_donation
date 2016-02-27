@@ -55,6 +55,7 @@ $lang = array_merge($lang, array(
 	'PPDE_OVERVIEW'                          => 'Overview',
 
 	'INFO_CURL'                              => 'cURL',
+	'INFO_CURL_VERSION'                      => 'cURL version: %1$s<br />SSL version: %2$s',
 	'INFO_FSOCKOPEN'                         => 'Fsockopen',
 	'INFO_DETECTED'                          => 'Detected',
 	'INFO_NOT_DETECTED'                      => 'Not detected',

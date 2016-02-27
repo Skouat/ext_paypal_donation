@@ -73,6 +73,8 @@ class admin_overview_controller extends admin_main
 	 */
 	public function display_overview($action)
 	{
+		$this->ppde_controller_main->first_start();
+
 		$this->do_action($action);
 
 		//Load metadata for this extension
@@ -85,8 +87,8 @@ class admin_overview_controller extends admin_main
 		$this->template->assign_vars(array(
 			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
 			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
-			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
-			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->user->lang('INFO_DETECTED') : $this->user->lang('INFO_NOT_DETECTED'),
+			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->user->lang('INFO_CURL_VERSION', $this->config['ppde_curl_version'], $this->config['ppde_curl_ssl_version']) : $this->user->lang['INFO_NOT_DETECTED'],
+			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->user->lang['INFO_DETECTED'] : $this->user->lang['INFO_NOT_DETECTED'],
 			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
 			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
 			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
@@ -193,8 +195,8 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS');
 				break;
 			case 'remote':
-				$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
-				$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+				$this->ppde_controller_main->set_curl_info();
+				$this->ppde_controller_main->set_remote_detected();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_REMOTE');
 				break;
 			case 'transactions':
