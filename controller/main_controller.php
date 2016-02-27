@@ -423,6 +423,7 @@ class main_controller
 	 * @param int $value
 	 *
 	 * @return int
+	 * @access private
 	 */
 	private function settype_dropbox_int_value($value = 0)
 	{
@@ -604,6 +605,7 @@ class main_controller
 	 * @param bool   $on_left
 	 *
 	 * @return string
+	 * @access private
 	 */
 	private function get_amount($value, $currency, $on_left = true)
 	{
@@ -687,7 +689,7 @@ class main_controller
 	 * @param string  $type
 	 *
 	 * @return null
-	 * @access public
+	 * @access private
 	 */
 	private function assign_vars_stats_percent($multiplicand, $dividend, $type = '')
 	{

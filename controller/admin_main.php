@@ -175,8 +175,7 @@ abstract class admin_main
 	 *
 	 * @param \skouat\ppde\entity\main $entity            The entity object
 	 * @param string                   $field_name        Name of the entity function to call
-	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return
-	 *                                                    value
+	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return value
 	 * @param bool                     $submit_or_preview Form submit or preview status
 	 *
 	 * @return array $errors

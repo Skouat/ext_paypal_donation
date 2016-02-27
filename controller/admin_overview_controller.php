@@ -11,11 +11,11 @@
 namespace skouat\ppde\controller;
 
 /**
- * @property \phpbb\log\log             log          The phpBB log system
- * @property \phpbb\request\request     request      Request object
- * @property \phpbb\template\template   $template    Template object
- * @property string                     u_action     Action URL
- * @property \phpbb\user                user         User object
+ * @property \phpbb\log\log           log          The phpBB log system
+ * @property \phpbb\request\request   request      Request object
+ * @property \phpbb\template\template template     Template object
+ * @property string                   u_action     Action URL
+ * @property \phpbb\user              user         User object
  */
 
 class admin_overview_controller extends admin_main

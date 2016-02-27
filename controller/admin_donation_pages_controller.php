@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property bool                                     preview           State of preview $_POST variable
  * @property \phpbb\request\request                   request           Request object.
  * @property bool                                     submit            State of submit $_POST variable
- * @property \phpbb\template\template                 $template         Template object
+ * @property \phpbb\template\template                 template          Template object
  * @property \phpbb\user                              user              User object.
  */
 class admin_donation_pages_controller extends admin_main

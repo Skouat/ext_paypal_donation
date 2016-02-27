@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string                     lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property \phpbb\request\request     request            Request object
  * @property bool                       submit             State of submit $_POST variable
- * @property \phpbb\template\template   $template          Template object
+ * @property \phpbb\template\template   template           Template object
  * @property string                     u_action           Action URL
  * @property \phpbb\user                user               User object
  */
