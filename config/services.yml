@@ -76,6 +76,7 @@ services:
             - '@config'
             - '@log'
             - '@skouat.ppde.controller'
+            - '@skouat.ppde.controller.admin.transactions'
             - '@request'
             - '@template'
             - '@user'
