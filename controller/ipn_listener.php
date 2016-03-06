@@ -859,7 +859,7 @@ class ipn_listener
 	 * @param float $amount
 	 * @param float $fee
 	 *
-	 * @return float
+	 * @return string
 	 */
 	private function net_amount($amount, $fee)
 	{
@@ -1007,6 +1007,6 @@ class ipn_listener
 		$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_known_donors_count'), true);
 		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
 		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
-		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 }
