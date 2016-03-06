@@ -26,7 +26,6 @@ class admin_overview_controller extends admin_main
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $php_ext;
-	protected $table_ppde_transactions;
 
 	protected $ext_name;
 	protected $ext_meta = array();
@@ -44,11 +43,10 @@ class admin_overview_controller extends admin_main
 	 * @param \phpbb\template\template                              $template                     Template object
 	 * @param \phpbb\user                                           $user                         User object
 	 * @param string                                                $php_ext                      phpEx
-	 * @param string                                                $table_ppde_transactions      Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext, $table_ppde_transactions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;
@@ -60,7 +58,6 @@ class admin_overview_controller extends admin_main
 		$this->template = $template;
 		$this->user = $user;
 		$this->php_ext = $php_ext;
-		$this->table_ppde_transactions = $table_ppde_transactions;
 	}
 
 	/**
