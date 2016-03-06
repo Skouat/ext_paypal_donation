@@ -72,7 +72,6 @@ services:
         class: skouat\ppde\controller\admin_overview_controller
         arguments:
             - '@auth'
-            - '@dbal.conn'
             - '@cache'
             - '@config'
             - '@log'
@@ -81,7 +80,6 @@ services:
             - '@template'
             - '@user'
             - '%core.php_ext%'
-            - '%skouat.ppde.tables.ppde_transactions%'
 
     skouat.ppde.controller.admin.settings:
         class: skouat\ppde\controller\admin_settings_controller
@@ -98,6 +96,7 @@ services:
         class: skouat\ppde\controller\admin_transactions_controller
         arguments:
             - '@auth'
+            - '@dbal.conn'
             - '@config'
             - '@service_container'
             - '@log'
@@ -108,6 +107,7 @@ services:
             - '%core.adm_relative_path%'
             - '%core.root_path%'
             - '%core.php_ext%'
+            - '%skouat.ppde.tables.ppde_transactions%'
 
     skouat.ppde.entity.main:
         class: skouat\ppde\entity\main

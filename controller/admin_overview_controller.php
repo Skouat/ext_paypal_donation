@@ -21,10 +21,10 @@ namespace skouat\ppde\controller;
 class admin_overview_controller extends admin_main
 {
 	protected $auth;
-	protected $db;
 	protected $cache;
 	protected $config;
 	protected $ppde_controller_main;
+	protected $ppde_controller_transactions;
 	protected $php_ext;
 	protected $table_ppde_transactions;
 
@@ -34,28 +34,28 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth                        $auth                    Authentication object
-	 * @param \phpbb\db\driver\driver_interface       $db                      Database object
-	 * @param \phpbb\cache\service                    $cache                   Cache object
-	 * @param \phpbb\config\config                    $config                  Config object
-	 * @param \phpbb\log\log                          $log                     The phpBB log system
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main    Main controller object
-	 * @param \phpbb\request\request                  $request                 Request object
-	 * @param \phpbb\template\template                $template                Template object
-	 * @param \phpbb\user                             $user                    User object
-	 * @param string                                  $php_ext                 phpEx
-	 * @param string                                  $table_ppde_transactions Name of the table used to store data
+	 * @param \phpbb\auth\auth                                      $auth                         Authentication object
+	 * @param \phpbb\cache\service                                  $cache                        Cache object
+	 * @param \phpbb\config\config                                  $config                       Config object
+	 * @param \phpbb\log\log                                        $log                          The phpBB log system
+	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main         Main controller object
+	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
+	 * @param \phpbb\request\request                                $request                      Request object
+	 * @param \phpbb\template\template                              $template                     Template object
+	 * @param \phpbb\user                                           $user                         User object
+	 * @param string                                                $php_ext                      phpEx
+	 * @param string                                                $table_ppde_transactions      Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext, $table_ppde_transactions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
-		$this->db = $db;
 		$this->cache = $cache;
 		$this->config = $config;
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -190,8 +190,8 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 				break;
 			case 'donors':
-				$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
-				$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
+				$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions->sql_query_update_stats('ppde_known_donors_count'), true);
+				$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions->sql_query_update_stats('ppde_anonymous_donors_count'));
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC_DONORSCOUNTS');
 				break;
 			case 'remote':
@@ -200,78 +200,10 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_REMOTE');
 				break;
 			case 'transactions':
-				$this->config->set('ppde_transactions_count', $this->sql_query_update_stats('ppde_transactions_count'), true);
+				$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions->sql_query_update_stats('ppde_transactions_count'), true);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC_TRANSACTIONSCOUNTS');
 				break;
 		}
-	}
-
-	/**
-	 * Returns count result for updating stats
-	 *
-	 * @param string $config_name
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function sql_query_update_stats($config_name)
-	{
-		if (!$this->config->offsetExists($config_name))
-		{
-			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
-		}
-
-		$this->db->sql_query($this->make_stats_sql_update($config_name));
-
-		return (int) $this->db->sql_fetchfield('count_result');
-	}
-
-	/**
-	 * Build SQL query for updating stats
-	 *
-	 * @param string $type
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function make_stats_sql_update($type)
-	{
-		switch ($type)
-		{
-			case 'ppde_transactions_count':
-				$sql = $this->make_stats_sql_select('txn_id');
-				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
-
-				return $sql;
-			case 'ppde_known_donors_count':
-				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
-				 					ON txn.user_id = u.user_id
-								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
-
-				return $sql;
-			case 'ppde_anonymous_donors_count':
-				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
-
-				return $sql;
-			default:
-				return $this->make_stats_sql_select('txn_id');
-		}
-	}
-
-	/**
-	 * Make body of SQL query for stats calculation.
-	 *
-	 * @param string $field_name Name of the field
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function make_stats_sql_select($field_name)
-	{
-		return 'SELECT COUNT(DISTINCT txn.' . $field_name . ') AS count_result
-				FROM ' . $this->table_ppde_transactions . ' txn';
 	}
 
 	/**
