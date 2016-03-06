@@ -121,6 +121,11 @@ class admin_transactions_controller extends admin_main
 				if ($where_sql || $deleteall)
 				{
 					$entity->delete(0, '', $where_sql);
+
+					$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
+					$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
+					$this->config->set('ppde_transactions_count', $this->sql_query_update_stats('ppde_transactions_count'), true);
+
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 				}
 			}
