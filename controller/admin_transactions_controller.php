@@ -26,6 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class admin_transactions_controller extends admin_main
 {
+	public $ppde_operator;
+
 	protected $adm_relative_path;
 	protected $auth;
 	protected $db;
@@ -36,7 +38,6 @@ class admin_transactions_controller extends admin_main
 	protected $phpbb_root_path;
 	protected $php_ext;
 	protected $table_ppde_transactions;
-	public $ppde_operator;
 
 	/**
 	 * Constructor
@@ -211,6 +212,74 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
+	 * Returns count result for updating stats
+	 *
+	 * @param string $config_name
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function sql_query_update_stats($config_name)
+	{
+		if (!$this->config->offsetExists($config_name))
+		{
+			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
+		}
+
+		$this->db->sql_query($this->make_stats_sql_update($config_name));
+
+		return (int) $this->db->sql_fetchfield('count_result');
+	}
+
+	/**
+	 * Build SQL query for updating stats
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function make_stats_sql_update($type)
+	{
+		switch ($type)
+		{
+			case 'ppde_transactions_count':
+				$sql = $this->make_stats_sql_select('txn_id');
+				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
+
+				return $sql;
+			case 'ppde_known_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
+				 					ON txn.user_id = u.user_id
+								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
+
+				return $sql;
+			case 'ppde_anonymous_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
+
+				return $sql;
+			default:
+				return $this->make_stats_sql_select('txn_id');
+		}
+	}
+
+	/**
+	 * Make body of SQL query for stats calculation.
+	 *
+	 * @param string $field_name Name of the field
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function make_stats_sql_select($field_name)
+	{
+		return 'SELECT COUNT(DISTINCT txn.' . $field_name . ') AS count_result
+				FROM ' . $this->table_ppde_transactions . ' txn';
+	}
+
+	/**
 	 * Do action regarding the value of $action
 	 *
 	 * @param $action
@@ -372,73 +441,5 @@ class admin_transactions_controller extends admin_main
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? $this->last_page_offset : 0;
-	}
-
-	/**
-	 * Returns count result for updating stats
-	 *
-	 * @param string $config_name
-	 *
-	 * @return int
-	 * @access public
-	 */
-	public function sql_query_update_stats($config_name)
-	{
-		if (!$this->config->offsetExists($config_name))
-		{
-			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
-		}
-
-		$this->db->sql_query($this->make_stats_sql_update($config_name));
-
-		return (int) $this->db->sql_fetchfield('count_result');
-	}
-
-	/**
-	 * Build SQL query for updating stats
-	 *
-	 * @param string $type
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function make_stats_sql_update($type)
-	{
-		switch ($type)
-		{
-			case 'ppde_transactions_count':
-				$sql = $this->make_stats_sql_select('txn_id');
-				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
-
-				return $sql;
-			case 'ppde_known_donors_count':
-				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
-				 					ON txn.user_id = u.user_id
-								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
-
-				return $sql;
-			case 'ppde_anonymous_donors_count':
-				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
-
-				return $sql;
-			default:
-				return $this->make_stats_sql_select('txn_id');
-		}
-	}
-
-	/**
-	 * Make body of SQL query for stats calculation.
-	 *
-	 * @param string $field_name Name of the field
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function make_stats_sql_select($field_name)
-	{
-		return 'SELECT COUNT(DISTINCT txn.' . $field_name . ') AS count_result
-				FROM ' . $this->table_ppde_transactions . ' txn';
 	}
 }
