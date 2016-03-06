@@ -881,6 +881,7 @@ class ipn_listener
 		if ($this->verified)
 		{
 			$this->donors_group_user_add();
+			$this->update_stats();
 		}
 	}
 
@@ -903,6 +904,19 @@ class ipn_listener
 			// add the user to the donors group and set as default.
 			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
 		}
+	}
+
+	/**
+	 * Updates donors and transactions statistics
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function update_stats()
+	{
+		$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_known_donors_count'), true);
+		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
+		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
 	}
 
 	/**
