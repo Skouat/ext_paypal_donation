@@ -843,7 +843,7 @@ class ipn_listener
 			'mc_currency'       => $this->transaction_data['mc_currency'],
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
-			'net_amount'        => number_format($this->transaction_data['mc_gross'] - $this->transaction_data['mc_fee'], 2),
+			'net_amount'        => $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
 			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
@@ -851,6 +851,19 @@ class ipn_listener
 			'settle_currency'   => $this->transaction_data['settle_currency'],
 			'exchange_rate'     => $this->transaction_data['exchange_rate'],
 		);
+	}
+
+	/**
+	 * Returns the net amount of a PayPal Transaction
+	 *
+	 * @param float $amount
+	 * @param float $fee
+	 *
+	 * @return float
+	 */
+	private function net_amount($amount, $fee)
+	{
+		return number_format((float) $amount - (float) $fee, 2);
 	}
 
 	/**
@@ -904,19 +917,6 @@ class ipn_listener
 			// add the user to the donors group and set as default.
 			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
 		}
-	}
-
-	/**
-	 * Updates donors and transactions statistics
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function update_stats()
-	{
-		$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_known_donors_count'), true);
-		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
-		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
 	}
 
 	/**
@@ -994,5 +994,19 @@ class ipn_listener
 		}
 
 		return true;
+	}
+
+	/**
+	 * Updates donors and transactions statistics
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function update_stats()
+	{
+		$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_known_donors_count'), true);
+		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
+		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
+		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 }
