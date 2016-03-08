@@ -13,33 +13,37 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface                       container         The phpBB log system
- * @property string                                   id_prefix_name    Prefix name for identifier in the URL
- * @property string                                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log                           log               The phpBB log system.
- * @property string                                   module_name       Name of the module currently used
- * @property \phpbb\request\request                   request           Request object.
- * @property bool                                     submit            State of submit $_POST variable
- * @property \phpbb\template\template                 template          Template object
- * @property string                                   u_action          Action URL
- * @property \phpbb\user                              user              User object.
+ * @property ContainerInterface       container         The phpBB log system
+ * @property string                   id_prefix_name    Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log           log               The phpBB log system.
+ * @property string                   module_name       Name of the module currently used
+ * @property \phpbb\request\request   request           Request object.
+ * @property bool                     submit            State of submit $_POST variable
+ * @property \phpbb\template\template template          Template object
+ * @property string                   u_action          Action URL
+ * @property \phpbb\user              user              User object.
  */
 class admin_transactions_controller extends admin_main
 {
+	public $ppde_operator;
+
 	protected $adm_relative_path;
 	protected $auth;
+	protected $db;
 	protected $config;
 	protected $entry_count;
 	protected $last_page_offset;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
 	protected $php_ext;
-	public $ppde_operator;
+	protected $table_ppde_transactions;
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth                    $auth                       Authentication object
+	 * @param \phpbb\db\driver\driver_interface   $db                         Database object
 	 * @param \phpbb\config\config                $config                     Config object
 	 * @param ContainerInterface                  $container
 	 * @param \phpbb\log\log                      $log                        The phpBB log system
@@ -50,12 +54,14 @@ class admin_transactions_controller extends admin_main
 	 * @param string                              $adm_relative_path          phpBB admin relative path
 	 * @param string                              $phpbb_root_path            phpBB root path
 	 * @param string                              $php_ext                    phpEx
+	 * @param string                              $table_ppde_transactions    Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
+		$this->db = $db;
 		$this->config = $config;
 		$this->container = $container;
 		$this->log = $log;
@@ -67,6 +73,7 @@ class admin_transactions_controller extends admin_main
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->table_ppde_transactions = $table_ppde_transactions;
 		parent::__construct(
 			'transactions',
 			'PPDE_DT',
@@ -115,6 +122,11 @@ class admin_transactions_controller extends admin_main
 				if ($where_sql || $deleteall)
 				{
 					$entity->delete(0, '', $where_sql);
+
+					$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
+					$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
+					$this->config->set('ppde_transactions_count', $this->sql_query_update_stats('ppde_transactions_count'), true);
+
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 				}
 			}
@@ -197,6 +209,74 @@ class admin_transactions_controller extends admin_main
 				unset($payment_status_name);
 			}
 		}
+	}
+
+	/**
+	 * Returns count result for updating stats
+	 *
+	 * @param string $config_name
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function sql_query_update_stats($config_name)
+	{
+		if (!$this->config->offsetExists($config_name))
+		{
+			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
+		}
+
+		$this->db->sql_query($this->make_stats_sql_update($config_name));
+
+		return (int) $this->db->sql_fetchfield('count_result');
+	}
+
+	/**
+	 * Build SQL query for updating stats
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function make_stats_sql_update($type)
+	{
+		switch ($type)
+		{
+			case 'ppde_transactions_count':
+				$sql = $this->make_stats_sql_select('txn_id');
+				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
+
+				return $sql;
+			case 'ppde_known_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
+				 					ON txn.user_id = u.user_id
+								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
+
+				return $sql;
+			case 'ppde_anonymous_donors_count':
+				$sql = $this->make_stats_sql_select('payer_id');
+				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
+
+				return $sql;
+			default:
+				return $this->make_stats_sql_select('txn_id');
+		}
+	}
+
+	/**
+	 * Make body of SQL query for stats calculation.
+	 *
+	 * @param string $field_name Name of the field
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function make_stats_sql_select($field_name)
+	{
+		return 'SELECT COUNT(DISTINCT txn.' . $field_name . ') AS count_result
+				FROM ' . $this->table_ppde_transactions . ' txn';
 	}
 
 	/**
