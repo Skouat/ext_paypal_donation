@@ -107,7 +107,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DEFAULT_VALUE_EXPLAIN'           => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
 	'PPDE_DROPBOX_ENABLE'                  => 'Activer le menu déroulant',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'          => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
-	'PPDE_DROPBOX_VALUE'                   => 'Valeurs de dons du menu déroulant',
+	'PPDE_DROPBOX_VALUE'                   => 'Valeurs des dons du menu déroulant',
 	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
 
 	// PayPal IPN settings
