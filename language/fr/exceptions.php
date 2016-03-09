@@ -41,6 +41,6 @@ if (empty($lang) || !is_array($lang))
  */
 $lang = array_merge($lang, array(
 	'EXCEPTION_FIELD_MISSING'    => 'Un champ obligatoire est manquant.',
-	'EXCEPTION_INVALID_ARGUMENT' => 'Argument incorrect spécifié pour « %1$s ». Raison : %2$s',
+	'EXCEPTION_INVALID_ARGUMENT' => 'L’argument spécifié pour « %1$s » est incorrect. Raison : %2$s',
 	'EXCEPTION_OUT_OF_BOUNDS'    => 'Le champ « %1$s » a reçu des données en dehors des limites définies.',
 ));
