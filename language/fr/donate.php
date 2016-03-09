@@ -58,7 +58,7 @@ $lang = array_merge($lang, array(
 	// Donors list
 	'PPDE_DONORLIST_TITLE'          => 'Liste des donateurs',
 	'PPDE_DONORLIST_LAST_DONATION'  => 'Dernier don',
-	'PPDE_DONORLIST_LAST_DATE'      => 'Éffectué le',
+	'PPDE_DONORLIST_LAST_DATE'      => 'Effectué le',
 	'PPDE_DONORLIST_TOTAL_DONATION' => 'Somme des dons',
 	'PPDE_DONORS'                   => array(
 		0 => '',                  // 0 - Let this language key empty.
@@ -91,5 +91,5 @@ $lang = array_merge($lang, array(
 	'NO_CONNECTION_DETECTED'     => 'cURL et fsockopen() n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
 	'INVALID_TRANSACTION_RECORD' => 'Transaction invalide : ID de transaction non trouvé.',
 	'INVALID_RESPONSE_STATUS'    => 'Statut de réponse non valide : ',
-	'UNEXPECTED_RESPONSE'        => 'Réponse inatendue de PayPal.',
+	'UNEXPECTED_RESPONSE'        => 'Réponse inattendue de PayPal.',
 ));
