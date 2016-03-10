@@ -69,12 +69,12 @@ $lang = array_merge($lang, array(
 	'STAT_RESET_DATE'                        => 'Réinitialiser la date d’installation de l’extension',
 	'STAT_RESET_DATE_EXPLAIN'                => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
 	'STAT_RESET_DATE_CONFIRM'                => 'Êtes-vous sûr de vouloir réinitialiser la date d’installation de cette extension ?',
-	'STAT_RESYNC_DONORSCOUNTS'               => 'Actualiser les compteurs de donateurs',
-	'STAT_RESYNC_DONORSCOUNTS_EXPLAIN'       => 'Actualise tous les compteurs de donateurs. Seulement les donateurs actifs et anonymes seront pris en considération.',
-	'STAT_RESYNC_DONORSCOUNTS_CONFIRM'       => 'Êtes-vous sûr de vouloir actualiser les compteurs de donateurs ?',
-	'STAT_RESYNC_TRANSACTIONSCOUNTS'         => 'Actualiser les compteurs de transactions',
-	'STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN' => 'Seul les transactions journalisées seront prises en considération.',
-	'STAT_RESYNC_TRANSACTIONSCOUNTS_CONFIRM' => 'Êtes-vous sûr de vouloir actualiser les compteurs de transactions ?',
+	'STAT_RESYNC_DONORSCOUNTS'               => 'Actualiser les compteurs des donateurs',
+	'STAT_RESYNC_DONORSCOUNTS_EXPLAIN'       => 'Actualise tous les compteurs des donateurs. Seulement les donateurs actifs et anonymes seront pris en considération.',
+	'STAT_RESYNC_DONORSCOUNTS_CONFIRM'       => 'Êtes-vous sûr de vouloir actualiser les compteurs des donateurs ?',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS'         => 'Actualiser les compteurs des transactions',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_EXPLAIN' => 'Seules les transactions journalisées seront prises en considération.',
+	'STAT_RESYNC_TRANSACTIONSCOUNTS_CONFIRM' => 'Êtes-vous sûr de vouloir actualiser les compteurs des transactions ?',
 	'STAT_RETEST_CURL_FSOCK'                 => 'Re-détecter « cURL » et « fsockopen »',
 	'STAT_RETEST_CURL_FSOCK_EXPLAIN'         => 'Permet de re-détecter ces fonctionnalités si la configuration du serveur a été modifiée.',
 	'STAT_RETEST_CURL_FSOCK_CONFIRM'         => 'Êtes-vous sûr de vouloir re-détecter « cURL » et « fsockopen » ?',
@@ -107,7 +107,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DEFAULT_VALUE_EXPLAIN'           => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
 	'PPDE_DROPBOX_ENABLE'                  => 'Activer le menu déroulant',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'          => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
-	'PPDE_DROPBOX_VALUE'                   => 'Valeurs de don du menu déroulant',
+	'PPDE_DROPBOX_VALUE'                   => 'Valeurs des dons du menu déroulant',
 	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br />Séparez chaque valeur par une virgule (",") et sans espace.',
 
 	// PayPal IPN settings
@@ -290,7 +290,7 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	'LOG_PPDE_DC_ADDED'                       => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br />» %s',
-	'LOG_PPDE_DC_DELETED'                     => '<strong>PayPal Donation : Devise supprimées</strong><br />» %s',
+	'LOG_PPDE_DC_DELETED'                     => '<strong>PayPal Donation : Devise supprimée</strong><br />» %s',
 	'LOG_PPDE_DC_DISABLED'                    => '<strong>PayPal Donation : Devise désactivée</strong><br />» %s',
 	'LOG_PPDE_DC_ENABLED'                     => '<strong>PayPal Donation : Devise activée</strong><br />» %s',
 	'LOG_PPDE_DC_MOVE_DOWN'                   => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
