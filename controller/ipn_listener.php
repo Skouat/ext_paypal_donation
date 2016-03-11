@@ -446,7 +446,7 @@ class ipn_listener
 	 */
 	private function check_account_id()
 	{
-		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_account_id'] : $this->config['ppde_sandbox_address'];
+		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 
 		if ($this->only_ascii($account_value))
 		{
