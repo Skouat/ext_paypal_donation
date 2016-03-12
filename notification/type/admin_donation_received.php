@@ -44,7 +44,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 	/**
 	 * {@inheritdoc}
 	 */
-	static public function get_item_id($data)
+	public static function get_item_id($data)
 	{
 		return (int) $data['transaction_id'];
 	}
@@ -52,7 +52,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 	/**
 	 * {@inheritdoc}
 	 */
-	static public function get_item_parent_id($data)
+	public static function get_item_parent_id($data)
 	{
 		// No parent
 		return 0;
