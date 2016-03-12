@@ -218,9 +218,9 @@ class main_controller
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary));
 			$this->template->assign_block_vars('donorrow', array(
 				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
-				'PPDE_LAST_DONATED_AMOUNT'  => $this->get_amount(number_format($last_donation_data[0]['mc_gross'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->currency_on_left(number_format($last_donation_data[0]['mc_gross'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->get_amount(number_format($data['amount'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->currency_on_left(number_format($data['amount'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 			));
 		}
 
@@ -591,7 +591,7 @@ class main_controller
 		}
 		else
 		{
-			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', $this->get_amount((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', $this->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -605,9 +605,9 @@ class main_controller
 	 * @param bool   $on_left
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
-	private function get_amount($value, $currency, $on_left = true)
+	public function currency_on_left($value, $currency, $on_left = true)
 	{
 		return $on_left ? $currency . $value : $value . $currency;
 	}
@@ -629,7 +629,7 @@ class main_controller
 		}
 		else
 		{
-			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -652,11 +652,11 @@ class main_controller
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->user->lang('DONATE_USED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('DONATE_USED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
