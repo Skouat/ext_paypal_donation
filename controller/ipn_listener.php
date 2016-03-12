@@ -21,6 +21,7 @@ class ipn_listener
 {
 	protected $container;
 	protected $config;
+	protected $notification;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $php_ext;
@@ -101,6 +102,7 @@ class ipn_listener
 	 *
 	 * @param \phpbb\config\config                                  $config                             Config object
 	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \phpbb\notification\manager                           $notification                       Notification object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
@@ -111,10 +113,11 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->notification = $notification;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
@@ -796,6 +799,10 @@ class ipn_listener
 		// the item number contains the user_id
 		$this->extract_item_number_data();
 
+		// set username in extra_data property in $entity
+		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$entity->set_username($user_ary['username']);
+
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
@@ -911,6 +918,7 @@ class ipn_listener
 		{
 			$this->donors_group_user_add();
 			$this->update_stats();
+			$this->notify_ppde_admin();
 		}
 	}
 
@@ -1024,5 +1032,31 @@ class ipn_listener
 		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
 		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
 		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+	}
+
+	/**
+	 * Notify users which administer the extension
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function notify_ppde_admin()
+	{
+		// Get default currency value
+		$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
+
+		// Initiate an entity
+		/** @type \skouat\ppde\entity\transactions $entity */
+		$entity = $this->container->get('skouat.ppde.entity.transactions');
+
+		$notification_data = array(
+			'transaction_id' => $entity->get_id(),
+			'user_from'      => $entity->get_user_id(),
+			'payer_email'    => $entity->get_payer_email(),
+			'payer_username' => $entity->get_username(),
+			'amount'         => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+		);
+
+		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
 	}
 }

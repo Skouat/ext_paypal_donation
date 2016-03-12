@@ -91,3 +91,8 @@ $lang = array_merge($lang, array(
 	'INVALID_RESPONSE_STATUS'    => 'Invalid response status: ',
 	'UNEXPECTED_RESPONSE'        => 'Unexpected response from PayPal.',
 ));
+
+$lang = array_merge($lang, array(
+	// Notification
+	'NOTIFICATION_PPDE_DONATION_RECEIVED' => '%1$s has donate « %2$s ».',
+));

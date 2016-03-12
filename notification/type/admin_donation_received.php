@@ -1,0 +1,153 @@
+<?php
+/**
+ *
+ * PayPal Donation extension for the phpBB Forum Software package.
+ *
+ * @copyright (c) 2015 Skouat
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ */
+
+namespace skouat\ppde\notification\type;
+
+/**
+ * PayPal Donation notifications class
+ * This class handles notifications for Admin received donation
+ */
+
+class admin_donation_received extends \phpbb\notification\type\base
+{
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_type()
+	{
+		return 'skouat.ppde.notification.type.admin_donation_received';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static $notification_option = array(
+		'lang'  => 'NOTIFICATION_TYPE_ADMIN_PPDE_DONATION_RECEIVED',
+		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
+	);
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function is_available()
+	{
+		return ($this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable'] == true);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	static public function get_item_id($data)
+	{
+		return (int) $data['transaction_id'];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	static public function get_item_parent_id($data)
+	{
+		// No parent
+		return 0;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function find_users_for_notification($data, $options = array())
+	{
+		$options = array_merge(array(
+			'ignore_users' => array(),
+		), $options);
+
+		// Grab admins that have permission to administer extension.
+		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
+		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : array();
+
+		if (empty($users))
+		{
+			return array();
+		}
+
+		sort($users);
+
+		return $this->check_user_notification_options($users, $options);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_avatar()
+	{
+		return $this->user_loader->get_avatar($this->get_data('user_from'), false, true);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+
+	public function get_title()
+	{
+		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
+		$amount = $this->get_data('amount');
+
+		return $this->user->lang('NOTIFICATION_PPDE_DONATION_RECEIVED', $username, $amount);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_email_template()
+	{
+		return '@skouat_ppde/admin_donation_received';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_email_template_variables()
+	{
+		return array(
+			'PAYER_USERNAME' => $this->get_data('payer_username'),
+			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
+			'AMOUNT'         => $this->get_data('amount'),
+		);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_url()
+	{
+		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function users_to_query()
+	{
+		return array($this->get_data('user_from'));
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function create_insert_array($data, $pre_create_data = array())
+	{
+		$this->set_data('payer_username', $data['payer_username']);
+		$this->set_data('payer_email', $data['payer_email']);
+		$this->set_data('user_from', $data['user_from']);
+		$this->set_data('amount', $data['amount']);
+		$this->set_data('transaction_id', $data['transaction_id']);
+
+		return parent::create_insert_array($data, $pre_create_data);
+	}
+}

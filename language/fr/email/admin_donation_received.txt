@@ -1,0 +1,14 @@
+Subject: Notification de nouveau don - « {SITENAME} »
+
+Bonjour {USERNAME},
+
+Vous avez reçu un don PayPal de {PAYER_USERNAME} ({PAYER_EMAIL}) d’un montant de {AMOUNT}.
+
+-----
+
+Vous recevez cet e-mail car vous avez demandé à être notifié dès réception d’un don.
+Si vous ne souhaitez plus être notifié de la réception d’on, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
+
+{U_NOTIFICATION_SETTINGS}
+
+{EMAIL_SIG}

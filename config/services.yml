@@ -19,6 +19,7 @@ services:
         arguments:
             - '@config'
             - '@service_container'
+            - '@notification_manager'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@request'
@@ -159,3 +160,21 @@ services:
             - '@service_container'
             - '@dbal.conn'
             - '%skouat.ppde.tables.ppde_transactions%'
+
+    skouat.ppde.notification.type.admin_donation_received:
+        class: skouat\ppde\notification\type\admin_donation_received
+        scope: prototype # scope MUST be prototype for this to work!
+        arguments:
+            - @user_loader
+            - @dbal.conn
+            - @cache.driver
+            - @user
+            - @auth
+            - @config
+            - %core.root_path%
+            - %core.php_ext%
+            - %tables.notification_types%
+            - %tables.notifications%
+            - %tables.user_notifications%
+        tags:
+            - { name: notification.type }

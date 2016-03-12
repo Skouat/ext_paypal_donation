@@ -50,6 +50,7 @@ class transactions extends main
 	 * @access protected
 	 */
 	protected $data;
+	protected $extra_data;
 	protected $transactions_log_table;
 
 	/**
@@ -285,6 +286,17 @@ class transactions extends main
 	public function get_user_id()
 	{
 		return (isset($this->data['user_id'])) ? (integer) $this->data['user_id'] : 0;
+	}
+
+	/**
+	 * Get member username
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_username()
+	{
+		return (isset($this->extra_data['username'])) ? (string) $this->extra_data['username'] : '';
 	}
 
 	/**
@@ -655,6 +667,21 @@ class transactions extends main
 	public function set_user_id($user_id)
 	{
 		$this->data['user_id'] = (integer) $user_id;
+
+		return $this;
+	}
+
+	/**
+	 * Set member username
+	 *
+	 * @param string $username
+	 *
+	 * @return transactions $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_username($username)
+	{
+		$this->extra_data['username'] = (string) $username;
 
 		return $this;
 	}
