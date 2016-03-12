@@ -135,7 +135,7 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only by the board founders.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal sandbox address',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Define here your PayPal Sandbox Sellers e-mail address.',
+	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter your Sandbox email address or Sandbox Merchant account ID.',
 
 	// Stats Donation settings
 	'PPDE_LEGEND_STATS_SETTINGS'           => 'Stats donation config',
