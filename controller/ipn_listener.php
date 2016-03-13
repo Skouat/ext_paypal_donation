@@ -371,12 +371,12 @@ class ipn_listener
 			'item_name'         => array('', true), // Equal to: $this->config['sitename']
 			'item_number'       => '', // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
 			'mc_currency'       => '', // Currency
-			'mc_gross'          => 0, // Amt received (before fees)
-			'mc_fee'            => 0, // Amt of fees
+			'mc_gross'          => 0.00, // Amt received (before fees)
+			'mc_fee'            => 0.00, // Amt of fees
 			'payment_date'      => '', // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
 			'payment_status'    => '', // eg: 'Completed'
 			'payment_type'      => '', // Payment type
-			'settle_amount'     => 0, // Amt received after currency conversion (before fees)
+			'settle_amount'     => 0.00, // Amt received after currency conversion (before fees)
 			'settle_currency'   => '', // Currency of 'settle_amount'
 			'exchange_rate'     => '', // Exchange rate used if a currency conversion occurred
 		);
@@ -1042,21 +1042,45 @@ class ipn_listener
 	 */
 	private function notify_ppde_admin()
 	{
-		// Get default currency value
-		$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
-
 		// Initiate an entity
 		/** @type \skouat\ppde\entity\transactions $entity */
 		$entity = $this->container->get('skouat.ppde.entity.transactions');
 
+		// Initiate a currency entity
+		/** @type \skouat\ppde\entity\currency $currency_entity */
+		$currency_entity = $this->container->get('skouat.ppde.entity.currency');
+		// Get currency data
+		$currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
+		$currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
+
 		$notification_data = array(
-			'transaction_id' => $entity->get_id(),
-			'user_from'      => $entity->get_user_id(),
-			'payer_email'    => $entity->get_payer_email(),
+			'net_amount'     => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'mc_gross'       => $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['mc_gross'], 2), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'payer_email'    => $this->transaction_data['payer_email'],
 			'payer_username' => $entity->get_username(),
-			'amount'         => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['settle_amount'], 2), $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']) : '',
+			'transaction_id' => $entity->get_id(),
+			'txn_id'         => $this->transaction_data['txn_id'],
+			'user_from'      => $entity->get_user_id(),
 		);
 
 		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
+	}
+
+	/**
+	 * Get currency data based on currency ISO code
+	 *
+	 * @param \skouat\ppde\entity\currency $entity The currency entity object
+	 * @param string                       $iso_code
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function get_currency_data($entity, $iso_code)
+	{
+		// Retrieve the currency ID for settle
+		$entity->data_exists($entity->build_sql_data_exists($iso_code));
+
+		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
 	}
 }

@@ -96,9 +96,9 @@ class admin_donation_received extends \phpbb\notification\type\base
 	public function get_title()
 	{
 		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
-		$amount = $this->get_data('amount');
+		$mc_gross = $this->get_data('mc_gross');
 
-		return $this->user->lang('NOTIFICATION_PPDE_DONATION_RECEIVED', $username, $amount);
+		return $this->user->lang('NOTIFICATION_PPDE_DONATION_RECEIVED', $username, $mc_gross);
 	}
 
 	/**
@@ -115,9 +115,12 @@ class admin_donation_received extends \phpbb\notification\type\base
 	public function get_email_template_variables()
 	{
 		return array(
+			'MC_GROSS'       => html_entity_decode($this->get_data('mc_gross'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
+			'NET_AMOUNT'     => html_entity_decode($this->get_data('net_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
 			'PAYER_USERNAME' => $this->get_data('payer_username'),
 			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
-			'AMOUNT'         => $this->get_data('amount'),
+			'SETTLE_AMOUNT'  => html_entity_decode($this->get_data('settle_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
+			'TXN_ID'         => $this->get_data('txn_id'),
 		);
 	}
 
@@ -142,11 +145,14 @@ class admin_donation_received extends \phpbb\notification\type\base
 	 */
 	public function create_insert_array($data, $pre_create_data = array())
 	{
+		$this->set_data('mc_gross', $data['mc_gross']);
+		$this->set_data('net_amount', $data['net_amount']);
 		$this->set_data('payer_username', $data['payer_username']);
 		$this->set_data('payer_email', $data['payer_email']);
-		$this->set_data('user_from', $data['user_from']);
-		$this->set_data('amount', $data['amount']);
+		$this->set_data('settle_amount', $data['settle_amount']);
 		$this->set_data('transaction_id', $data['transaction_id']);
+		$this->set_data('txn_id', $data['txn_id']);
+		$this->set_data('user_from', $data['user_from']);
 
 		return parent::create_insert_array($data, $pre_create_data);
 	}

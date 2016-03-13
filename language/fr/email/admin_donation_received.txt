@@ -2,7 +2,19 @@ Subject: Notification de nouveau don - « {SITENAME} »
 
 Bonjour {USERNAME},
 
-Vous avez reçu un don PayPal de {PAYER_USERNAME} ({PAYER_EMAIL}) d’un montant de {AMOUNT}.
+Vous avez reçu un don PayPal.
+
+----------------------------
+ID de transaction : {TXN_ID}
+
+Donateur : {PAYER_USERNAME} ({PAYER_EMAIL})
+
+Montant donné : {MC_GROSS}
+Montant reçu : <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
+
+----------------------------
+
+Consultez le journal des transactions pour connaître les détails de cette transaction.
 
 -----
 

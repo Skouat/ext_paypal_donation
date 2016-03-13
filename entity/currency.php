@@ -68,15 +68,16 @@ class currency extends main
 	/**
 	 * SQL Query to return the ID of selected currency
 	 *
+	 * @param string $iso_code Currency ISO code name
+	 *
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data_exists()
+	public function build_sql_data_exists($iso_code = '')
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
-			WHERE currency_iso_code = '" . $this->db->sql_escape($this->data['currency_iso_code']) . "'
-				AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
+			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ? $iso_code : $this->data['currency_iso_code']) . "'";
 	}
 
 	/**
