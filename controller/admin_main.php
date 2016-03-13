@@ -54,13 +54,13 @@ abstract class admin_main
 	/**
 	 * Parse data to the entity
 	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param bool|string              $run_before_insert Name of the function to call before SQL INSERT
+	 * @param \skouat\ppde\entity\main $entity            The entity object
+	 * @param string                   $run_before_insert Name of the function to call before SQL INSERT
 	 *
 	 * @return string $log_action
 	 * @access public
 	 */
-	public function add_edit_data($entity, $run_before_insert = false)
+	public function add_edit_data($entity, $run_before_insert = '')
 	{
 		if ($entity->get_id())
 		{
