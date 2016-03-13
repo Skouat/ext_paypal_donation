@@ -185,7 +185,6 @@ class admin_transactions_controller extends admin_main
 				'S_SORT_KEY'   => $s_sort_key,
 				'S_SORT_DIR'   => $s_sort_dir,
 				'S_TXN'        => $mode,
-
 				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $start,
 			));
 
@@ -202,7 +201,6 @@ class admin_transactions_controller extends admin_main
 					'ID'               => $row['transaction_id'],
 					'CONFIRMED'        => ($row['confirmed']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
 					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
-
 					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
 					'S_PAYMENT_STATUS' => ($payment_status_name === 'completed') ? false : true,
 				));
@@ -311,38 +309,34 @@ class admin_transactions_controller extends admin_main
 				$payment_status_ary = $this->user->lang['PPDE_DT_PAYMENT_STATUS_VALUES'];
 
 				$this->template->assign_vars(array(
-					'S_CONVERT'      => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
-
-					'TXN_ID'         => $data['txn_id'],
-
 					'BOARD_USERNAME' => $data['username'],
+					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
+					'ITEM_NAME'      => $data['item_name'],
+					'ITEM_NUMBER'    => $data['item_number'],
+					'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
+					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
+					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
+					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 					'PAYER_EMAIL'    => $data['payer_email'],
 					'PAYER_ID'       => $data['payer_id'],
 					'PAYER_STATUS'   => ($data['payer_status']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
-
-					'RECEIVER_EMAIL' => $data['receiver_email'],
-					'RECEIVER_ID'    => $data['receiver_id'],
-
-					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
-					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
-
-					'CONVERT_FROM'   => '-' . $data['net_amount'] . ' ' . $data['mc_currency'],
-					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
-					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-
-					'ITEM_NAME'      => $data['item_name'],
-					'ITEM_NUMBER'    => $data['item_number'],
 					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 					'PAYMENT_STATUS' => $payment_status_ary[strtolower($data['payment_status'])],
+					'RECEIVER_EMAIL' => $data['receiver_email'],
+					'RECEIVER_ID'    => $data['receiver_id'],
+					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
+					'TXN_ID'         => $data['txn_id'],
+
+					'L_PPDE_DT_SETTLE_AMOUNT' => $this->user->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->user->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
+					'S_CONVERT'               => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 				));
 			}
 
 			$this->template->assign_vars(array(
 				'U_ACTION' => $this->u_action,
 				'U_BACK'   => $this->u_action,
-
 				'S_VIEW'   => true,
 			));
 		}
