@@ -879,8 +879,24 @@ class ipn_listener
 	{
 		if ($this->verified && empty($errors))
 		{
+			if ($this->payment_status_is_completed())
+			{
+				$entity->set_id($entity->transaction_exists());
+			}
+
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
+	}
+
+	/**
+	 * Checks if payment_status is completed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function payment_status_is_completed()
+	{
+		return $this->transaction_data['payment_status'] === 'Completed';
 	}
 
 	/**
@@ -927,7 +943,7 @@ class ipn_listener
 	 */
 	private function can_use_autogroup()
 	{
-		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->transaction_data['payment_status'] === 'Completed';
+		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->payment_status_is_completed();
 	}
 
 	/**
