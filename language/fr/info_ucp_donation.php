@@ -40,5 +40,6 @@ if (empty($lang) || !is_array($lang))
  * UCP notification system
  */
 $lang = array_merge($lang, array(
-	'NOTIFICATION_TYPE_ADMIN_PPDE_DONATION_RECEIVED' => 'Quelqu’un a effectué un don.',
+	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED' => 'Quelqu’un a effectué un don.',
+	'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED'       => 'Un don que vous avez effectué a été réceptionné sur le forum.',
 ));

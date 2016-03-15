@@ -15,22 +15,22 @@ namespace skouat\ppde\notification\type;
  * This class handles notifications for Admin received donation
  */
 
-class admin_donation_received extends \phpbb\notification\type\base
+class donor_donation_received extends \phpbb\notification\type\base
 {
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_type()
 	{
-		return 'skouat.ppde.notification.type.admin_donation_received';
+		return 'skouat.ppde.notification.type.donor_donation_received';
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public static $notification_option = array(
-		'lang'  => 'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED',
-		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
+		'lang'  => 'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED',
+		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
 	);
 
 	/**
@@ -38,7 +38,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 	 */
 	public function is_available()
 	{
-		return ($this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable']);
+		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable']);
 	}
 
 	/**
@@ -67,9 +67,9 @@ class admin_donation_received extends \phpbb\notification\type\base
 			'ignore_users' => array(),
 		), $options);
 
-		// Grab admins that have permission to administer extension.
-		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
-		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : array();
+		// Grab members that have permission to use extension.
+		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use', false);
+		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : array();
 
 		if (empty($users))
 		{
@@ -95,10 +95,9 @@ class admin_donation_received extends \phpbb\notification\type\base
 
 	public function get_title()
 	{
-		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
 		$mc_gross = $this->get_data('mc_gross');
 
-		return $this->user->lang('NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED', $username, $mc_gross);
+		return $this->user->lang('NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED', $mc_gross);
 	}
 
 	/**
@@ -106,7 +105,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 	 */
 	public function get_email_template()
 	{
-		return '@skouat_ppde/admin_donation_received';
+		return '@skouat_ppde/donor_donation_received';
 	}
 
 	/**

@@ -19,7 +19,7 @@ Consultez le journal des transactions pour connaître les détails de cette tran
 -----
 
 Vous recevez cet e-mail car vous avez demandé à être notifié dès réception d’un don.
-Si vous ne souhaitez plus être notifié de la réception d’on, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
+Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 
 {U_NOTIFICATION_SETTINGS}
 

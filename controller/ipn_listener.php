@@ -918,7 +918,7 @@ class ipn_listener
 		{
 			$this->donors_group_user_add();
 			$this->update_stats();
-			$this->notify_ppde_admin();
+			$this->send_notification();
 		}
 	}
 
@@ -1035,20 +1035,64 @@ class ipn_listener
 	}
 
 	/**
-	 * Notify users which administer the extension
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function notify_ppde_admin()
+	private function send_notification()
 	{
-		// Initiate an entity
+		// Initiate a transaction entity
 		/** @type \skouat\ppde\entity\transactions $entity */
 		$entity = $this->container->get('skouat.ppde.entity.transactions');
 
 		// Initiate a currency entity
 		/** @type \skouat\ppde\entity\currency $currency_entity */
 		$currency_entity = $this->container->get('skouat.ppde.entity.currency');
+
+		$this->notify_ppde_admin($entity, $currency_entity);
+		$this->notify_ppde_donor($entity, $currency_entity);
+	}
+
+	/**
+	 * Notify users which can use the extension
+	 *
+	 * @param \skouat\ppde\entity\transactions $entity          The transaction entity object
+	 * @param \skouat\ppde\entity\currency     $currency_entity The currency entity object
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function notify_ppde_donor($entity, $currency_entity)
+	{
+		// Get currency data
+		$currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
+		$currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
+
+		$notification_data = array(
+			'net_amount'     => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'mc_gross'       => $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['mc_gross'], 2), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'payer_email'    => $this->transaction_data['payer_email'],
+			'payer_username' => $entity->get_username(),
+			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['settle_amount'], 2), $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']) : '',
+			'transaction_id' => $entity->get_id(),
+			'txn_id'         => $this->transaction_data['txn_id'],
+			'user_from'      => $entity->get_user_id(),
+		);
+
+		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
+	}
+
+	/**
+	 * Notify users which administer the extension
+	 *
+	 * @param \skouat\ppde\entity\transactions $entity          The transaction entity object
+	 * @param \skouat\ppde\entity\currency     $currency_entity The currency entity object
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function notify_ppde_admin($entity, $currency_entity)
+	{
 		// Get currency data
 		$currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
 		$currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());

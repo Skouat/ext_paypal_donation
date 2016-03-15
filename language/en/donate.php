@@ -94,5 +94,6 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Notification
-	'NOTIFICATION_PPDE_DONATION_RECEIVED' => '%1$s has donate « %2$s ».',
+	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donate « %2$s ».',
+	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'The donation for an amount of « %1$s » has been received.',
 ));
