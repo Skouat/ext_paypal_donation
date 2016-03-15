@@ -41,47 +41,45 @@ $lang = array_merge($lang, array(
 	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donors',
 
 	// Index page
-	'PPDE_INDEX_STATISTICS_TITLE' => 'Donation statistics',
+	'PPDE_INDEX_STATISTICS_TITLE'      => 'Donation statistics',
 
 	// Image alternative text
-	'IMG_LOADER'                  => 'loading',
+	'IMG_LOADER'                       => 'loading',
 
 	// Pages
-	'PPDE_DONATION_BUTTON_TITLE' => 'Donate',
-	'PPDE_DONATION_TITLE'        => 'Make a Donation',
-	'PPDE_DONATION_TITLE_HEAD'   => 'Make a Donation to',
-	'PPDE_CANCEL_TITLE'          => 'Donation Canceled',
-	'PPDE_SUCCESS_TITLE'         => 'Donation Successful',
-	'PPDE_CONTACT_PAYPAL'        => 'Connecting to PayPal - Please Wait…',
-	'PPDE_SANDBOX_TITLE'         => 'Test PayPal Donation with PayPal Sandbox',
+	'PPDE_DONATION_BUTTON_TITLE'       => 'Donate',
+	'PPDE_DONATION_TITLE'              => 'Make a Donation',
+	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to',
+	'PPDE_CANCEL_TITLE'                => 'Donation Canceled',
+	'PPDE_SUCCESS_TITLE'               => 'Donation Successful',
+	'PPDE_CONTACT_PAYPAL'              => 'Connecting to PayPal - Please Wait…',
+	'PPDE_SANDBOX_TITLE'               => 'Test PayPal Donation with PayPal Sandbox',
 
 	// Donors list
-	'PPDE_DONORLIST_TITLE'          => 'Donors list',
-	'PPDE_DONORLIST_LAST_DONATION'  => 'Last donation',
-	'PPDE_DONORLIST_LAST_DATE'      => 'Made on',
-	'PPDE_DONORLIST_TOTAL_DONATION' => 'Donation amount',
-	'PPDE_DONORS'                   => array(
-		0 => '',             // 0 - Let this language key empty.
+	'PPDE_DONORLIST_TITLE'             => 'Donors list',
+	'PPDE_DONORLIST_LAST_DONATION'     => 'Last donation',
+	'PPDE_DONORLIST_LAST_DATE'         => 'Made on',
+	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Donation amount',
+	'PPDE_DONORS'                      => array(
+		0 => '',             // 0 - Used for pagination. Let this language key empty.
 		1 => '%d donor',     // 1
 		2 => '%d donors',    // 2+
 	),
-	'PPDE_NO_DONORS'                => 'No donors',
+	'PPDE_NO_DONORS'                   => 'No donors',
 
 	// Statistics
-	'DONATE_RECEIVED'      => 'We received <strong>%s</strong> in donations.',
-	'DONATE_NOT_RECEIVED'  => 'We haven’t received any donations.',
-
-	'DONATE_GOAL_RAISE'    => 'Our goal is to raise <strong>%s</strong>.',
-	'DONATE_GOAL_REACHED'  => 'Our goal donation was reached.',
-	'DONATE_NO_GOAL'       => 'We haven’t defined a donation goal.',
-
-	'DONATE_USED'          => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
-	'DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All your donations have been used.',
-	'DONATE_NOT_USED'      => 'We haven’t used any donations.',
+	'PPDE_DONATE_GOAL_RAISE'           => 'Our goal is to raise <strong>%s</strong>.',
+	'PPDE_DONATE_GOAL_REACHED'         => 'Our goal donation was reached.',
+	'PPDE_DONATE_NO_GOAL'              => 'We haven’t defined a donation goal.',
+	'PPDE_DONATE_NOT_RECEIVED'         => 'We haven’t received any donations.',
+	'PPDE_DONATE_NOT_USED'             => 'We haven’t used any donations.',
+	'PPDE_DONATE_RECEIVED'             => 'We received <strong>%s</strong> in donations.',
+	'PPDE_DONATE_USED'                 => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
+	'PPDE_DONATE_USED_EXCEEDED'        => 'We used <strong>%s</strong>. All your donations have been used.',
 
 	// Viewonline
-	'PPDE_VIEWONLINE'           => 'Viewing Donation page',
-	'PPDE_VIEWONLINE_DONORLIST' => 'Viewing the list of donors',
+	'PPDE_VIEWONLINE'                  => 'Viewing Donation page',
+	'PPDE_VIEWONLINE_DONORLIST'        => 'Viewing the list of donors',
 ));
 
 $lang = array_merge($lang, array(
