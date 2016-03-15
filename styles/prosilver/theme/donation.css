@@ -2,29 +2,21 @@
 ---------------------------------------- */
 
 /* PayPal Button */
-#contactpaypal, #contactpaypal input, #contactpaypal div {
-    background: url("images/paypal_button.png") no-repeat;
-    height: 26px;
-    display: inline-block;
-}
-
 #contactpaypal input {
-    font-size: 14px;
-    font-weight: bold;
-    font-style: italic;
+    background: #fffdf8;
+    background: -moz-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
+    background: -webkit-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
+    background: linear-gradient(to bottom, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffdf8', endColorstr='#ffeed3', GradientType=0);
+    border-radius: 13px;
+    border: 1px solid #ff9933;
+    box-shadow: 0 2px 0 rgba(109, 109, 109, .3);
     color: #294669;
-    background-position: 0 -52px;
-    background-repeat: repeat;
-    border: 0;
-    margin-left: 12px;
-    padding: 0 0 2px;
-}
-
-#contactpaypal div {
-    background-position: 0 -26px;
-    float: right;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
     height: 26px;
-    width: 12px;
+    padding: 0 12px;
 }
 
 /* image loader */
@@ -73,7 +65,6 @@ span.progress {
 /* Text donation stats */
 p.donation_stats {
     margin-top: 10px;
-    font-size: 1.5em;
     text-align: center;
 }
 
