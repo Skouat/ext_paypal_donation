@@ -926,7 +926,13 @@ class ipn_listener
 	 */
 	private function do_actions()
 	{
-		if ($this->verified)
+		// If the transaction is not verified do nothing
+		if (!$this->verified)
+		{
+			return;
+		}
+
+		if ($this->payment_status_is_completed())
 		{
 			$this->donors_group_user_add();
 			$this->update_stats();
