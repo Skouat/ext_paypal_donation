@@ -1,5 +1,6 @@
 imports:
     - { resource: tables.yml }
+    - { resource: notifications.yml }
 
 services:
     skouat.ppde.listener:
@@ -19,6 +20,7 @@ services:
         arguments:
             - '@config'
             - '@service_container'
+            - '@notification_manager'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@request'

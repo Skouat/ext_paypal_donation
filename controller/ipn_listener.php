@@ -21,6 +21,7 @@ class ipn_listener
 {
 	protected $container;
 	protected $config;
+	protected $notification;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $php_ext;
@@ -95,12 +96,25 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
+	/**
+	 * Settle currency data
+	 *
+	 * @var array
+	 */
+	private $currency_settle_data;
+	/**
+	 * Main currency data
+	 *
+	 * @var array
+	 */
+	private $currency_mc_data;
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                                  $config                             Config object
 	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \phpbb\notification\manager                           $notification                       Notification object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
@@ -111,10 +125,11 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->notification = $notification;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
@@ -342,7 +357,7 @@ class ipn_listener
 	/**
 	 * Setup the data list with default values.
 	 *
-	 * @return array
+	 * @return array<string,string|false|array<string|boolean>|double>
 	 * @access private
 	 */
 	private function transaction_vars_list()
@@ -368,12 +383,12 @@ class ipn_listener
 			'item_name'         => array('', true), // Equal to: $this->config['sitename']
 			'item_number'       => '', // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
 			'mc_currency'       => '', // Currency
-			'mc_gross'          => 0, // Amt received (before fees)
-			'mc_fee'            => 0, // Amt of fees
+			'mc_gross'          => 0.00, // Amt received (before fees)
+			'mc_fee'            => 0.00, // Amt of fees
 			'payment_date'      => '', // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
 			'payment_status'    => '', // eg: 'Completed'
 			'payment_type'      => '', // Payment type
-			'settle_amount'     => 0, // Amt received after currency conversion (before fees)
+			'settle_amount'     => 0.00, // Amt received after currency conversion (before fees)
 			'settle_currency'   => '', // Currency of 'settle_amount'
 			'exchange_rate'     => '', // Exchange rate used if a currency conversion occurred
 		);
@@ -796,6 +811,10 @@ class ipn_listener
 		// the item number contains the user_id
 		$this->extract_item_number_data();
 
+		// set username in extra_data property in $entity
+		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$entity->set_username($user_ary['username']);
+
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
@@ -911,6 +930,7 @@ class ipn_listener
 		{
 			$this->donors_group_user_add();
 			$this->update_stats();
+			$this->notify_donation_received();
 		}
 	}
 
@@ -1024,5 +1044,59 @@ class ipn_listener
 		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
 		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
 		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+	}
+
+	/**
+	 * Notify donors and admin when the donation is received
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function notify_donation_received()
+	{
+		// Initiate a transaction entity
+		/** @type \skouat\ppde\entity\transactions $entity */
+		$entity = $this->container->get('skouat.ppde.entity.transactions');
+
+		// Initiate a currency entity
+		/** @type \skouat\ppde\entity\currency $currency_entity */
+		$currency_entity = $this->container->get('skouat.ppde.entity.currency');
+
+		// Set currency data properties
+		$this->currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
+		$this->currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
+
+		$notification_data = array(
+			'net_amount'     => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'mc_gross'       => $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['mc_gross'], 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'payer_email'    => $this->transaction_data['payer_email'],
+			'payer_username' => $entity->get_username(),
+			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['settle_amount'], 2), $this->currency_settle_data[0]['currency_symbol'], (bool) $this->currency_settle_data[0]['currency_on_left']) : '',
+			'transaction_id' => $entity->get_id(),
+			'txn_id'         => $this->transaction_data['txn_id'],
+			'user_from'      => $entity->get_user_id(),
+		);
+
+		// Send admin notification
+		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
+		// Send donor notification
+		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
+	}
+
+	/**
+	 * Get currency data based on currency ISO code
+	 *
+	 * @param \skouat\ppde\entity\currency $entity The currency entity object
+	 * @param string                       $iso_code
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function get_currency_data($entity, $iso_code)
+	{
+		// Retrieve the currency ID for settle
+		$entity->data_exists($entity->build_sql_data_exists($iso_code));
+
+		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
 	}
 }
