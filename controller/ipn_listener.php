@@ -646,7 +646,7 @@ class ipn_listener
 		else if ($this->txn_is_invalid())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error);
+			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error, true);
 		}
 		else
 		{
