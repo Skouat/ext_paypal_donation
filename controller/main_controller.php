@@ -136,9 +136,9 @@ class main_controller
 
 	public function donorlist_handle()
 	{
-		// When this extension is disabled, redirect users back to the forum index
+		// If the donorlist is not enabled, redirect users back to the forum index
 		// Else if user is not allowed to view the donors list, disallow access to the extension page
-		if (!$this->use_ipn())
+		if (!$this->donorlist_is_enabled())
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
@@ -306,6 +306,15 @@ class main_controller
 	public function can_view_ppde_donorlist()
 	{
 		return $this->auth->acl_get('u_ppde_view_donorlist');
+	}
+
+	/**
+	 * @return bool
+	 * @access private
+	 */
+	private function donorlist_is_enabled()
+	{
+		return $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**
