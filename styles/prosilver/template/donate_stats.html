@@ -3,8 +3,10 @@
 <!-- ENDIF -->
 
 <!-- IF S_GOAL_NUMBER -->
-<div class="prog_grey">
-	<div class="prog_green" style="width:{PPDE_GOAL_NUMBER}%;"><span class="progress">{PPDE_GOAL_NUMBER} %</span>
+<div class="progress">
+	<div class="progress-value">{PPDE_GOAL_NUMBER} %</div>
+	<div class="progress-grey">
+		<div class="prog-color {PPDE_CSS_GOAL_NUMBER}" style="width: {PPDE_GOAL_NUMBER}%;"></div>
 	</div>
 </div>
 <!-- ENDIF -->
@@ -19,10 +21,14 @@
 
 	<!-- IF S_USED_NUMBER -->
 </p>
-<div class="prog_grey">
-	<div class="prog_red" style="width:{PPDE_USED_NUMBER}%;"><span class="progress">{PPDE_USED_NUMBER} %</span>
+
+<div class="progress">
+	<div class="progress-value">{PPDE_USED_NUMBER} %</div>
+	<div class="progress-grey">
+		<div class="prog-color {PPDE_CSS_USED_NUMBER}" style="width: {PPDE_USED_NUMBER}%;"></div>
 	</div>
 </div>
+
 <p class="donation_stats">
 	<!-- ENDIF -->
 

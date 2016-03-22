@@ -679,33 +679,113 @@ class main_controller
 	 */
 	private function generate_stats_percent()
 	{
-		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+		if ($this->is_ppde_goal_stats())
 		{
-			$this->assign_vars_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
+			$percent = $this->percent_value((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+			$this->assign_vars_stats_percent($percent, 'GOAL_NUMBER');
+			$this->template->assign_var('PPDE_CSS_GOAL_NUMBER', $this->ppde_css_classname($percent));
 		}
 
-		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+		if ($this->is_ppde_used_stats())
 		{
-			$this->assign_vars_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
+			$percent = $this->percent_value((int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+			$this->assign_vars_stats_percent($percent, 'USED_NUMBER');
+			$this->template->assign_var('PPDE_CSS_USED_NUMBER', $this->ppde_css_classname($percent, true));
 		}
+	}
+
+	/**
+	 * Checks if stats can be displayed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_ppde_goal_stats()
+	{
+		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
+	}
+
+	/**
+	 * Checks if stats can be displayed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_ppde_used_stats()
+	{
+		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
+	}
+
+
+	/**
+	 * Returns percent value
+	 *
+	 * @param integer $multiplicand
+	 * @param integer $dividend
+	 *
+	 * @return float
+	 * @access private
+	 */
+	private function percent_value($multiplicand, $dividend)
+	{
+		return round(($multiplicand * 100) / $dividend, 2);
 	}
 
 	/**
 	 * Assign statistics percent vars to template
 	 *
-	 * @param integer $multiplicand
-	 * @param integer $dividend
-	 * @param string  $type
+	 * @param float  $percent
+	 * @param string $type
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($multiplicand, $dividend, $type = '')
+	private function assign_vars_stats_percent($percent, $type)
 	{
 		$this->template->assign_vars(array(
-			'PPDE_' . $type => round(($multiplicand * 100) / $dividend, 2),
+			'PPDE_' . $type => $percent,
 			'S_' . $type    => !empty($type) ? true : false,
 		));
+	}
+
+	/**
+	 * Returns the CSS class name based on the percent of stats
+	 *
+	 * @param float $value
+	 * @param bool  $reverse
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function ppde_css_classname($value, $reverse = false)
+	{
+		$value = ($reverse && $value < 100) ? 100 - $value : $value;
+
+		switch ($value)
+		{
+			case ($value <= 10):
+				return 'ten';
+			case ($value <= 20):
+				return 'twenty';
+			case ($value <= 30):
+				return 'thirty';
+			case ($value <= 40):
+				return 'forty';
+			case ($value <= 50):
+				return 'fifty';
+			case ($value <= 60):
+				return 'sixty';
+			case ($value <= 70):
+				return 'seventy';
+			case ($value <= 80):
+				return 'eighty';
+			case ($value <= 90):
+				return 'ninety';
+			case ($value < 100):
+				return 'hundred';
+			default:
+				return $reverse ? 'red' : 'green';
+		}
 	}
 
 	/**
