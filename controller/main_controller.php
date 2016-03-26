@@ -759,30 +759,36 @@ class main_controller
 	 */
 	private function ppde_css_classname($value, $reverse = false)
 	{
-		$value = ($reverse && $value < 100) ? 100 - $value : $value;
+		$css_reverse = '';
+
+		if ($reverse && $value < 100)
+		{
+			$value =  100 - $value;
+			$css_reverse = '-reverse';
+		}
 
 		switch ($value)
 		{
 			case ($value <= 10):
-				return 'ten';
+				return 'ten' . $css_reverse;
 			case ($value <= 20):
-				return 'twenty';
+				return 'twenty' . $css_reverse;
 			case ($value <= 30):
-				return 'thirty';
+				return 'thirty' . $css_reverse;
 			case ($value <= 40):
-				return 'forty';
+				return 'forty' . $css_reverse;
 			case ($value <= 50):
-				return 'fifty';
+				return 'fifty' . $css_reverse;
 			case ($value <= 60):
-				return 'sixty';
+				return 'sixty' . $css_reverse;
 			case ($value <= 70):
-				return 'seventy';
+				return 'seventy' . $css_reverse;
 			case ($value <= 80):
-				return 'eighty';
+				return 'eighty' . $css_reverse;
 			case ($value <= 90):
-				return 'ninety';
+				return 'ninety' . $css_reverse;
 			case ($value < 100):
-				return 'hundred';
+				return 'hundred' . $css_reverse;
 			default:
 				return $reverse ? 'red' : 'green';
 		}
