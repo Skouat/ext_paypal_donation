@@ -176,9 +176,6 @@ fieldset.loader {
     background: -webkit-linear-gradient(left, #b8c965 0%, #9fcc6d 100%);
     background: linear-gradient(to right, #b8c965 0%, #9fcc6d 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8c965', endColorstr='#9fcc6d', GradientType=1);
-    box-shadow:
-        inset 0 10px 10px rgba(255, 255, 255, 0.3),
-        inset 0 -10px 10px rgba(0, 0, 0, 0.5);
 }
 
 .hundred {
