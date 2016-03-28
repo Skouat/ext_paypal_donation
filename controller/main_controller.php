@@ -763,7 +763,7 @@ class main_controller
 
 		if ($reverse && $value < 100)
 		{
-			$value =  100 - $value;
+			$value = 100 - $value;
 			$css_reverse = '-reverse';
 		}
 
