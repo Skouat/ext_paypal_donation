@@ -13,13 +13,13 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface         container          The phpBB log system
- * @property string                     lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property \phpbb\request\request     request            Request object
- * @property bool                       submit             State of submit $_POST variable
- * @property \phpbb\template\template   template           Template object
- * @property string                     u_action           Action URL
- * @property \phpbb\user                user               User object
+ * @property ContainerInterface       container          The phpBB log system
+ * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\request\request   request            Request object
+ * @property bool                     submit             State of submit $_POST variable
+ * @property \phpbb\template\template template           Template object
+ * @property string                   u_action           Action URL
+ * @property \phpbb\user              user               User object
  */
 class admin_settings_controller extends admin_main
 {
@@ -93,6 +93,7 @@ class admin_settings_controller extends admin_main
 			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
 			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
+			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
@@ -161,6 +162,7 @@ class admin_settings_controller extends admin_main
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
 		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
 		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
+		$this->config->set('ppde_ipn_notification_enable', $this->request->variable('ppde_ipn_notification_enable', false));
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));

@@ -38,7 +38,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 	 */
 	public function is_available()
 	{
-		return ($this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable']);
+		return ($this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable']);
 	}
 
 	/**

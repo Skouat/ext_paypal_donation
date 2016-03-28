@@ -112,9 +112,10 @@ $lang = array_merge($lang, array(
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_PAYPAL_SETTINGS'          => 'Paramètres PayPal',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres IPN',
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Liste des donateurs',
+	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Système de notification',
+	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres IPN',
 	'PPDE_IPN_AG_ENABLE'                   => 'Activer le groupe automatique',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Permet d’ajouter automatiquement les donateurs dans un groupe pré-défini.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Groupe donateurs',
@@ -127,6 +128,8 @@ $lang = array_merge($lang, array(
 	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser les Notification Instantanée de Paiement.<br />Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaitront ci-dessous.',
 	'PPDE_IPN_LOGGING'                     => 'Activer le journal des erreurs',
 	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le fichier <strong>/store/ppde_transactions.log</strong>.',
+	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Activer les notifications',
+	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Permet de notifier les administrateurs et les donateurs dès qu’un don est reçu.',
 
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Paramètres PayPal Sandbox',

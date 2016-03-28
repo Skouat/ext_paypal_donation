@@ -37,6 +37,7 @@ class v1_0_0_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_ipn_group_as_default', false)),
 			array('config.add', array('ppde_ipn_balance', 0)),
 			array('config.add', array('ppde_ipn_logging', false)),
+			array('config.add', array('ppde_ipn_notification_enable', false)),
 			array('config.add', array('ppde_curl_detected', false)),
 			array('config.add', array('ppde_curl_version', '')),
 			array('config.add', array('ppde_curl_ssl_version', '')),
