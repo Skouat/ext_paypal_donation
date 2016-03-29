@@ -19,6 +19,11 @@
 			"name": "cabot",
 			"homepage": "http://cabotweb.fr",
 			"role": "SushiMaker"
+		},
+		{
+			"name": "mazeltof",
+			"homepage": "http://www.phpbb-fr.com/customise/db/author/mazeltof/",
+			"role": "Sorcerer's Apprentice"
 		}
 	],
 	"require": {
