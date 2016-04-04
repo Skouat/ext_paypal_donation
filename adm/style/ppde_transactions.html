@@ -133,7 +133,7 @@
 		<tr>
 			<td>{log.TNX_ID}</td>
 			<td>{log.USERNAME}</td>
-			<td<!-- IF log.S_CONFIRMED --> style="color:#FF0000;"<!-- ENDIF -->>{log.CONFIRMED}</td>
+			<td<!-- IF log.S_CONFIRMED --> style="color:#FF0000;"<!-- ENDIF -->>{log.CONFIRMED}<!-- IF log.S_TEST_IPN -->&nbsp;({L_PPDE_DT_IPN_TEST})<!-- ENDIF --></td>
 			<td<!-- IF log.S_PAYMENT_STATUS --> style="color:#FF0000;"<!-- ENDIF -->>{log.PAYMENT_STATUS}</td>
 			<td style="text-align: center;">{log.DATE}</td>
 			<!-- IF S_CLEARLOGS -->

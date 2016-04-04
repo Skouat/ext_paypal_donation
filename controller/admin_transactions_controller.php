@@ -156,8 +156,8 @@ class admin_transactions_controller extends admin_main
 
 			// Sorting
 			$limit_days = array(0 => $this->user->lang['ALL_ENTRIES'], 1 => $this->user->lang['1_DAY'], 7 => $this->user->lang['7_DAYS'], 14 => $this->user->lang['2_WEEKS'], 30 => $this->user->lang['1_MONTH'], 90 => $this->user->lang['3_MONTHS'], 180 => $this->user->lang['6_MONTHS'], 365 => $this->user->lang['1_YEAR']);
-			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
-			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
+			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ipn_test' => $this->user->lang['PPDE_DT_SORT_IPN_TYPE'],'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
+			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 			gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
@@ -199,6 +199,7 @@ class admin_transactions_controller extends admin_main
 					'USERNAME'         => $row['username_full'],
 					'DATE'             => $this->user->format_date($row['payment_date']),
 					'ID'               => $row['transaction_id'],
+					'S_TEST_IPN'       => $row['test_ipn'],
 					'CONFIRMED'        => ($row['confirmed']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
 					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
 					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
