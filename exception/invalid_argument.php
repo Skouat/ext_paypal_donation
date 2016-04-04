@@ -12,7 +12,7 @@
 namespace skouat\ppde\exception;
 
 /**
- * InvalidArgument exception
+ * Invalid Argument exception
  */
 class invalid_argument extends base
 {

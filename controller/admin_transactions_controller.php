@@ -156,7 +156,7 @@ class admin_transactions_controller extends admin_main
 
 			// Sorting
 			$limit_days = array(0 => $this->user->lang['ALL_ENTRIES'], 1 => $this->user->lang['1_DAY'], 7 => $this->user->lang['7_DAYS'], 14 => $this->user->lang['2_WEEKS'], 30 => $this->user->lang['1_MONTH'], 90 => $this->user->lang['3_MONTHS'], 180 => $this->user->lang['6_MONTHS'], 365 => $this->user->lang['1_YEAR']);
-			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ipn_test' => $this->user->lang['PPDE_DT_SORT_IPN_TYPE'],'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
+			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ipn_test' => $this->user->lang['PPDE_DT_SORT_IPN_TYPE'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
 			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
@@ -329,9 +329,9 @@ class admin_transactions_controller extends admin_main
 					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
 					'TXN_ID'         => $data['txn_id'],
 
-					'L_PPDE_DT_SETTLE_AMOUNT' => $this->user->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+					'L_PPDE_DT_SETTLE_AMOUNT'         => $this->user->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->user->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-					'S_CONVERT'               => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
+					'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 				));
 			}
 
