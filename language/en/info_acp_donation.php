@@ -226,28 +226,6 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TXN_ID'                => 'Transaction ID',
 	'PPDE_DT_USERNAME'              => 'Donor name',
 
-	/**
-	 * TRANSLATORS PLEASE NOTE
-	 * The line below has a special note.
-	 * "## For translate:" followed by one "Don't" and one "Yes"
-	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
-	 */
-
-	## For translate:					Don't					Yes
-	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
-										'canceled_reversal' => 'Canceled Reversal',
-										'completed'         => 'Completed',
-										'created'           => 'Created',
-										'denied'            => 'Denied',
-										'expired'           => 'Expired',
-										'failed'            => 'Failed',
-										'pending'           => 'Pending',
-										'refunded'          => 'Refunded',
-										'reversed'          => 'Reversed',
-										'processed'         => 'Processed',
-										'voided'            => 'Voided',
-	),
-
 	// Display transactions
 	'PPDE_DT_BOARD_USERNAME'        => 'Donors',
 	'PPDE_DT_CONVERT_FROM'          => 'Conversion from',
@@ -278,6 +256,35 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'  => '',
 	'PPDE_DT_UNVERIFIED'            => 'Not verified',
 	'PPDE_DT_VERIFIED'              => 'Verified',
+));
+
+/**
+ * mode: transactions
+ * Info: language keys are prefixed with 'PPDE_DT_' for 'PPDE_DONATION_TRANSACTION_'
+ * Info: This array is out of the previous because there is an issue with Transifex platform
+ */
+$lang = array_merge($lang, array(
+	/**
+	 * TRANSLATORS PLEASE NOTE
+	 * The line below has a special note.
+	 * "## For translate:" followed by one "Don't" and one "Yes"
+	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
+	 */
+
+	## For translate:					Don't					Yes
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+										'canceled_reversal' => 'Canceled Reversal',
+										'completed'         => 'Completed',
+										'created'           => 'Created',
+										'denied'            => 'Denied',
+										'expired'           => 'Expired',
+										'failed'            => 'Failed',
+										'pending'           => 'Pending',
+										'refunded'          => 'Refunded',
+										'reversed'          => 'Reversed',
+										'processed'         => 'Processed',
+										'voided'            => 'Voided',
+	),
 ));
 
 /**

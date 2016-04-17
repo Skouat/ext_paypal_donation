@@ -226,28 +226,6 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TXN_ID'                => 'Numéro de transaction',
 	'PPDE_DT_USERNAME'              => 'Nom du donateur',
 
-	/**
-	 * TRANSLATORS PLEASE NOTE
-	 * The line below has a special note.
-	 * "## For translate:" followed by one "Don't" and one "Yes"
-	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
-	 */
-
-	## For translate:					Don't					Yes
-	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
-										'canceled_reversal' => 'Annulation invalidée',
-										'completed'         => 'Effectué',
-										'created'           => 'Créé',
-										'denied'            => 'Rejeté',
-										'expired'           => 'Expiré',
-										'failed'            => 'Échoué',
-										'pending'           => 'En attente',
-										'refunded'          => 'Remboursé',
-										'reversed'          => 'Annulé',
-										'processed'         => 'Accepté',
-										'voided'            => 'Annulé',
-	),
-
 	// Display transactions
 	'PPDE_DT_BOARD_USERNAME'        => 'Donateur',
 	'PPDE_DT_CONVERT_FROM'          => 'Conversion de',
@@ -278,6 +256,35 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TOTAL_AMOUNT_EXPLAIN'  => '',
 	'PPDE_DT_UNVERIFIED'            => 'Non vérifié',
 	'PPDE_DT_VERIFIED'              => 'Vérifié',
+));
+
+/**
+ * mode: transactions
+ * Info: language keys are prefixed with 'PPDE_DT_' for 'PPDE_DONATION_TRANSACTION_'
+ * Info: This array is out of the previous because there is an issue with Transifex platform
+ */
+$lang = array_merge($lang, array(
+	/**
+	 * TRANSLATORS PLEASE NOTE
+	 * The line below has a special note.
+	 * "## For translate:" followed by one "Don't" and one "Yes"
+	 * "Don't" means do not change this column, and "Yes" means you can translate this column.
+	 */
+
+	## For translate:					Don't					Yes
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+										'canceled_reversal' => 'Annulation invalidée',
+										'completed'         => 'Effectué',
+										'created'           => 'Créé',
+										'denied'            => 'Rejeté',
+										'expired'           => 'Expiré',
+										'failed'            => 'Échoué',
+										'pending'           => 'En attente',
+										'refunded'          => 'Remboursé',
+										'reversed'          => 'Annulé',
+										'processed'         => 'Accepté',
+										'voided'            => 'Annulé',
+	),
 ));
 
 /**
