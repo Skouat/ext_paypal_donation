@@ -53,7 +53,7 @@ class ext extends \phpbb\extension\base
 		{
 			case '': // Empty means nothing has run yet
 				// Enable notifications
-				return $this->notification_handler('enable', array('skouat.ppde.notification.type.donation_received'));
+				return $this->notification_handler('enable', $this->notification_types());
 			default:
 				// Run parent enable step method
 				return parent::enable_step($old_state);
@@ -74,7 +74,7 @@ class ext extends \phpbb\extension\base
 		{
 			case '': // Empty means nothing has run yet
 				// Disable notifications
-				return $this->notification_handler('enable', array('skouat.ppde.notification.type.donation_received'));
+				return $this->notification_handler('disable', $this->notification_types());
 			default:
 				// Run parent disable step method
 				return parent::disable_step($old_state);
@@ -95,7 +95,7 @@ class ext extends \phpbb\extension\base
 		{
 			case '': // Empty means nothing has run yet
 				// Purge notifications
-				return $this->notification_handler('enable', array('skouat.ppde.notification.type.donation_received'));
+				return $this->notification_handler('purge', $this->notification_types());
 			default:
 				// Run parent purge step method
 				return parent::purge_step($old_state);
@@ -126,5 +126,19 @@ class ext extends \phpbb\extension\base
 		}
 
 		return 'notifications';
+	}
+
+	/**
+	 * Returns the list of notification types
+	 *
+	 * @return array
+	 * @access protected
+	 */
+	protected function notification_types()
+	{
+		return array(
+			'skouat.ppde.notification.type.admin_donation_received',
+			'skouat.ppde.notification.type.donor_donation_received',
+		);
 	}
 }
