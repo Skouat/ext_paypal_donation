@@ -89,7 +89,8 @@ class transactions
 				),
 			),
 			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
-							AND txn.payment_status = 'Completed'",
+							AND txn.payment_status = 'Completed'
+							AND txn.test_ipn = 0",
 			'GROUP_BY'  => 'txn.user_id',
 			'ORDER_BY'  => 'txn.transaction_id DESC',
 		);
@@ -111,6 +112,8 @@ class transactions
 
 	/**
 	 * SQL Query to return donors list details
+	 *
+	 * @param array $sql_donorlist_ary
 	 *
 	 * @return string
 	 * @access public

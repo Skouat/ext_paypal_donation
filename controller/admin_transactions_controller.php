@@ -27,17 +27,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class admin_transactions_controller extends admin_main
 {
 	public $ppde_operator;
-
 	protected $adm_relative_path;
 	protected $auth;
 	protected $db;
 	protected $config;
 	protected $entry_count;
 	protected $last_page_offset;
+	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
-	protected $php_ext;
 	protected $table_ppde_transactions;
+	private $is_ipn_test = false;
+	private $suffix_ipn;
 
 	/**
 	 * Constructor
@@ -122,11 +123,8 @@ class admin_transactions_controller extends admin_main
 				if ($where_sql || $deleteall)
 				{
 					$entity->delete(0, '', $where_sql);
-
-					$this->config->set('ppde_known_donors_count', $this->sql_query_update_stats('ppde_known_donors_count'), true);
-					$this->config->set('ppde_anonymous_donors_count', $this->sql_query_update_stats('ppde_anonymous_donors_count'));
-					$this->config->set('ppde_transactions_count', $this->sql_query_update_stats('ppde_transactions_count'), true);
-
+					$this->update_stats();
+					$this->update_stats(true);
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 				}
 			}
@@ -210,15 +208,65 @@ class admin_transactions_controller extends admin_main
 		}
 	}
 
+
+	/**
+	 * @param bool $ipn_stats
+	 */
+	public function update_stats($ipn_stats = false)
+	{
+		$this->set_ipn_test_properties($ipn_stats);
+		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_known_donors_count' . $this->suffix_ipn), true);
+		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_anonymous_donors_count' . $this->suffix_ipn));
+		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_transactions_count' . $this->suffix_ipn), true);
+	}
+
+	/**
+	 * Sets properties related to ipn tests
+	 *
+	 * @param bool $ipn_stats
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_ipn_test_properties($ipn_stats)
+	{
+		$this->set_ipn_test($ipn_stats);
+		$this->set_suffix_ipn();
+	}
+
+	/**
+	 * Sets the property $this->is_ipn_test
+	 *
+	 * @param $ipn_test
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function set_ipn_test($ipn_test)
+	{
+		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
+	}
+
+	/**
+	 * Sets the property $this->suffix_ipn
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function set_suffix_ipn()
+	{
+		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
+	}
+
 	/**
 	 * Returns count result for updating stats
 	 *
 	 * @param string $config_name
 	 *
 	 * @return int
-	 * @access public
+	 * @access private
 	 */
-	public function sql_query_update_stats($config_name)
+	private function sql_query_update_stats($config_name)
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
@@ -243,20 +291,23 @@ class admin_transactions_controller extends admin_main
 		switch ($type)
 		{
 			case 'ppde_transactions_count':
+			case 'ppde_transactions_count_ipn':
 				$sql = $this->make_stats_sql_select('txn_id');
-				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed'";
+				$sql .= " WHERE confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $this->is_ipn_test;
 
 				return $sql;
 			case 'ppde_known_donors_count':
+			case 'ppde_known_donors_count_ipn':
 				$sql = $this->make_stats_sql_select('payer_id');
 				$sql .= ' LEFT JOIN ' . USERS_TABLE . ' u
 				 					ON txn.user_id = u.user_id
-								WHERE u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER;
+								WHERE (u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ") AND txn.test_ipn = " . (int) $this->is_ipn_test;
 
 				return $sql;
 			case 'ppde_anonymous_donors_count':
+			case 'ppde_anonymous_donors_count_ipn':
 				$sql = $this->make_stats_sql_select('payer_id');
-				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS;
+				$sql .= ' WHERE txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . (int) $this->is_ipn_test;
 
 				return $sql;
 			default:
@@ -423,7 +474,7 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return integer
 	 */
 	public function get_log_count()
 	{
@@ -431,10 +482,26 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return integer
 	 */
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? $this->last_page_offset : 0;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function get_is_ipn_test()
+	{
+		return ($this->is_ipn_test) ? $this->is_ipn_test : false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_suffix_ipn()
+	{
+		return ($this->suffix_ipn) ? $this->suffix_ipn : '';
 	}
 }

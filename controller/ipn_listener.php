@@ -934,9 +934,16 @@ class ipn_listener
 
 		if ($this->payment_status_is_completed())
 		{
-			$this->donors_group_user_add();
-			$this->update_stats();
-			$this->notify_donation_received();
+			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
+			$this->update_raised_amount();
+
+			// If the transaction is not a IPN test do additional actions
+			if (!$this->transaction_data['test_ipn'])
+			{
+				$this->donors_group_user_add();
+				$this->notify_donation_received();
+			}
 		}
 	}
 
@@ -1039,17 +1046,15 @@ class ipn_listener
 	}
 
 	/**
-	 * Updates donors and transactions statistics
+	 * Updates the amount of donation raised
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function update_stats()
+	private function update_raised_amount()
 	{
-		$this->config->set('ppde_known_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_known_donors_count'), true);
-		$this->config->set('ppde_anonymous_donors_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_anonymous_donors_count'));
-		$this->config->set('ppde_transactions_count', $this->ppde_controller_transactions_admin->sql_query_update_stats('ppde_transactions_count'), true);
-		$this->config->set('ppde_raised', (float) $this->config['ppde_raised'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
+		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 
 	/**
