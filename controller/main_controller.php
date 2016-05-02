@@ -100,19 +100,13 @@ class main_controller
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
 		$this->set_return_args_url($this->request->variable('return', 'body'));
 
 		// Prepare message for display
 		if ($this->get_donation_content_data($this->return_args_url))
 		{
-			$entity->get_vars();
-			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
-				$this->donation_content_data[0]['page_content'],
-				$this->donation_content_data[0]['page_content_bbcode_uid'],
-				$this->donation_content_data[0]['page_content_bbcode_bitfield'],
-				$this->donation_content_data[0]['page_content_bbcode_options']
-			));
+			$this->ppde_entity_donation_pages->get_vars();
+			$this->donation_body = $this->ppde_entity_donation_pages->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
 		$this->template->assign_vars(array(
