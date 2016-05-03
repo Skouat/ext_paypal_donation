@@ -405,7 +405,7 @@ class transactions
 	 */
 	private function sql_select_stats_main($field_name)
 	{
-		return $sql_ary = array(
+		return array(
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
 			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
 		);
