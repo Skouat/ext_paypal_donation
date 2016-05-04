@@ -111,11 +111,10 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Define the numbers you want to see in the drop-down list.<br />Use <strong>comma</strong> (",") <strong>with no space</strong> to separate each values.',
 
 	// PayPal IPN settings
-	'PPDE_LEGEND_PAYPAL_SETTINGS'          => 'PayPal settings',
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto-group',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'IPN settings',
+	'PPDE_LEGEND_IPN_SETTINGS'             => 'PayPal IPN settings',
 	'PPDE_IPN_AG_ENABLE'                   => 'Enable Auto Group',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
