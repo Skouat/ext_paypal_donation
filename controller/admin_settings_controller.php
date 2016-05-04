@@ -14,7 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @property ContainerInterface       container          The phpBB log system
+ * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                   module_name        Name of the module currently used
  * @property \phpbb\request\request   request            Request object
  * @property bool                     submit             State of submit $_POST variable
  * @property \phpbb\template\template template           Template object
@@ -49,7 +51,11 @@ class admin_settings_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		$this->lang_key_prefix = 'PPDE_SETTINGS';
+		parent::__construct(
+			'settings',
+			'PPDE_SETTINGS',
+			''
+		);
 	}
 
 	/**

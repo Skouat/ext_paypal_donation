@@ -11,11 +11,14 @@
 namespace skouat\ppde\controller;
 
 /**
- * @property \phpbb\log\log           log          The phpBB log system
- * @property \phpbb\request\request   request      Request object
- * @property \phpbb\template\template template     Template object
- * @property string                   u_action     Action URL
- * @property \phpbb\user              user         User object
+ * @property string                   id_prefix_name     Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log           log                The phpBB log system
+ * @property string                   module_name        Name of the module currently used
+ * @property \phpbb\request\request   request            Request object
+ * @property \phpbb\template\template template           Template object
+ * @property string                   u_action           Action URL
+ * @property \phpbb\user              user               User object
  */
 
 class admin_overview_controller extends admin_main
@@ -58,6 +61,11 @@ class admin_overview_controller extends admin_main
 		$this->template = $template;
 		$this->user = $user;
 		$this->php_ext = $php_ext;
+		parent::__construct(
+			'overview',
+			'PPDE_',
+			''
+		);
 	}
 
 	/**
