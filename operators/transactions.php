@@ -89,7 +89,8 @@ class transactions
 				),
 			),
 			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
-							AND txn.payment_status = 'Completed'",
+							AND txn.payment_status = 'Completed'
+							AND txn.test_ipn = 0",
 			'GROUP_BY'  => 'txn.user_id',
 			'ORDER_BY'  => 'txn.transaction_id DESC',
 		);
@@ -111,6 +112,8 @@ class transactions
 
 	/**
 	 * SQL Query to return donors list details
+	 *
+	 * @param array $sql_donorlist_ary
 	 *
 	 * @return string
 	 * @access public
@@ -349,5 +352,62 @@ class transactions
 		}
 
 		return ' WHERE ' . $this->db->sql_in_set('transaction_id', $sql_in);
+	}
+
+	/**
+	 * Build SQL query for updating stats
+	 *
+	 * @param string $type
+	 * @param bool   $test_ipn
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function sql_build_update_stats($type, $test_ipn)
+	{
+		switch ($type)
+		{
+			case 'ppde_transactions_count':
+			case 'ppde_transactions_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('txn_id');
+				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
+				break;
+			case 'ppde_known_donors_count':
+			case 'ppde_known_donors_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('payer_id');
+				$sql_ary{'LEFT_JOIN'} = array(
+					array(
+						'FROM' => array(USERS_TABLE => 'u'),
+						'ON'   => 'txn.user_id = u.user_id',
+					),
+				);
+				$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . (int) $test_ipn;
+				break;
+			case 'ppde_anonymous_donors_count':
+			case 'ppde_anonymous_donors_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('payer_id');
+				$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . (int) $test_ipn;
+				break;
+			default:
+				$sql_ary = $this->sql_select_stats_main('txn_id');
+		}
+
+		return $this->db->sql_build_query('SELECT', $sql_ary);
+	}
+
+	/**
+	 * Make body of SQL query for stats calculation.
+	 *
+	 * @param string $field_name Name of the field
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function sql_select_stats_main($field_name)
+	{
+		return array(
+			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
+			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+		);
 	}
 }

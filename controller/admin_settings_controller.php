@@ -98,7 +98,7 @@ class admin_settings_controller extends admin_main
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
-			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
+			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable'], 'boolean', true),
 
 			// Statistics Settings vars
 			'PPDE_RAISED'                    => $this->check_config($this->config['ppde_raised'], 'float', 0),
@@ -166,7 +166,7 @@ class admin_settings_controller extends admin_main
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
-		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', false));
+		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
