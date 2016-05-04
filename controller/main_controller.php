@@ -480,7 +480,7 @@ class main_controller
 	 */
 	public function use_sandbox()
 	{
-		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && ((!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']));
 	}
 
 	/**
