@@ -2,7 +2,7 @@
 ---------------------------------------- */
 
 /* PayPal Button */
-#contactpaypal input {
+#paypalbutton input {
     background: #fffdf8;
     background: -moz-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
     background: -o-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
