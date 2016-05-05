@@ -60,11 +60,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DONORLIST_LAST_DONATION'     => 'Last donation',
 	'PPDE_DONORLIST_LAST_DATE'         => 'Made on',
 	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Donation amount',
-	'PPDE_DONORS'                      => array(
-		0 => '',             // 0 - Used for pagination. Let this language key empty.
-		1 => '%d donor',     // 1
-		2 => '%d donors',    // 2+
-	),
+
 	'PPDE_NO_DONORS'                   => 'No donors',
 
 	// Statistics
@@ -80,6 +76,17 @@ $lang = array_merge($lang, array(
 	// Viewonline
 	'PPDE_VIEWONLINE'                  => 'Viewing Donation page',
 	'PPDE_VIEWONLINE_DONORLIST'        => 'Viewing the list of donors',
+));
+
+/**
+ * Info: This array is out of the previous because there is an issue with Transifex platform
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DONORS' => array(
+		'0' => '',          // 0 - Used for pagination. Let this language key empty.
+		'1' => '%d donor',  // 1
+		'2' => '%d donors', // 2+
+	),
 ));
 
 $lang = array_merge($lang, array(

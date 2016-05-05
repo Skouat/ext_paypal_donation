@@ -60,11 +60,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DONORLIST_LAST_DONATION'     => 'Dernier don',
 	'PPDE_DONORLIST_LAST_DATE'         => 'Effectué le',
 	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Somme des dons',
-	'PPDE_DONORS'                      => array(
-		0 => '',                  // 0 - Used for pagination. Let this language key empty.
-		1 => '%d donateur',       // 1
-		2 => '%d donateurs',      // 2+
-	),
+
 	'PPDE_NO_DONORS'                   => 'Aucun donateur',
 
 	// Statistics
@@ -82,6 +78,17 @@ $lang = array_merge($lang, array(
 	'PPDE_VIEWONLINE_DONORLIST'        => 'Consulte la liste des donateurs',
 ));
 
+/**
+ * Info: This array is out of the previous because there is an issue with Transifex platform
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DONORS' => array(
+		0 => '',             // 0 - Used for pagination. Let this language key empty.
+		1 => '%d donateur',  // 1
+		2 => '%d donateurs', // 2+
+	),
+));
+
 $lang = array_merge($lang, array(
 	// Error
 	'CURL_ERROR'                 => 'Erreur cURL :',
@@ -93,7 +100,7 @@ $lang = array_merge($lang, array(
 ));
 
 $lang = array_merge($lang, array(
-	// notification
+	// Notification
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ));
