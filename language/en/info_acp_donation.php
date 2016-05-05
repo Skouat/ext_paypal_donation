@@ -277,17 +277,17 @@ $lang = array_merge($lang, array(
 
 	## For translate:					Don't					Yes
 	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
-		'canceled_reversal' => 'Canceled Reversal',
-		'completed'         => 'Completed',
-		'created'           => 'Created',
-		'denied'            => 'Denied',
-		'expired'           => 'Expired',
-		'failed'            => 'Failed',
-		'pending'           => 'Pending',
-		'refunded'          => 'Refunded',
-		'reversed'          => 'Reversed',
-		'processed'         => 'Processed',
-		'voided'            => 'Voided',
+										'canceled_reversal' => 'Canceled Reversal',
+										'completed'         => 'Completed',
+										'created'           => 'Created',
+										'denied'            => 'Denied',
+										'expired'           => 'Expired',
+										'failed'            => 'Failed',
+										'pending'           => 'Pending',
+										'refunded'          => 'Refunded',
+										'reversed'          => 'Reversed',
+										'processed'         => 'Processed',
+										'voided'            => 'Voided',
 	),
 ));
 

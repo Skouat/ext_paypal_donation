@@ -43,9 +43,6 @@ $lang = array_merge($lang, array(
 	// Index page
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Donation statistics',
 
-	// Image alternative text
-	'IMG_LOADER'                       => 'loading',
-
 	// Pages
 	'PPDE_DONATION_BUTTON_TITLE'       => 'Donate',
 	'PPDE_DONATION_TITLE'              => 'Make a Donation',
@@ -83,9 +80,9 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	'PPDE_DONORS' => array(
-		'0' => '',          // 0 - Used for pagination. Let this language key empty.
-		'1' => '%d donor',  // 1
-		'2' => '%d donors', // 2+
+		0 => '',          // 0 - Used for pagination. Let this language key empty.
+		1 => '%d donor',  // 1
+		2 => '%d donors', // 2+
 	),
 ));
 

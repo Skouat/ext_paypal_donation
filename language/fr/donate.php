@@ -43,9 +43,6 @@ $lang = array_merge($lang, array(
 	// Index page
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Statistiques des dons',
 
-	// Image alternative text
-	'IMG_LOADER'                       => 'chargement',
-
 	// Pages
 	'PPDE_DONATION_BUTTON_TITLE'       => 'Faire un don',
 	'PPDE_DONATION_TITLE'              => 'Faire un don',
