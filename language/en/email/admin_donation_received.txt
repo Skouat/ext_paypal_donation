@@ -10,7 +10,7 @@ Transaction ID: {TXN_ID}
 Donor: {PAYER_USERNAME} ({PAYER_EMAIL})
 
 Amount donated: {MC_GROSS}
-Amount received: <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSEIF -->{NET_AMOUNT}<!-- ENDIF -->
+Amount received: <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
 
 ----------------------------
 
