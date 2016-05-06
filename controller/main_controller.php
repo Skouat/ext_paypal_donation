@@ -36,8 +36,6 @@ class main_controller
 	protected $ext_name;
 	/** @var string */
 	private $donation_body;
-	/** @var array */
-	private $donation_content_data;
 	/** @var string */
 	private $return_args_url;
 	/** @var string */
@@ -49,8 +47,7 @@ class main_controller
 	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
-	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension
-	 *                                                                            manager
+	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
 	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
@@ -307,7 +304,7 @@ class main_controller
 	 */
 	private function donorlist_is_enabled()
 	{
-		return $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_donorlist_enable'];
+		return $this->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**
@@ -349,9 +346,9 @@ class main_controller
 	 */
 	private function get_donation_content_data($return_args_url)
 	{
-		return $this->donation_content_data =
-			$this->ppde_entity_donation_pages->get_data(
-				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url));
+		return $this->ppde_entity_donation_pages->get_data(
+				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
+		);
 	}
 
 	/**
@@ -376,7 +373,6 @@ class main_controller
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
 				'CURRENCY_NAME'      => $currency_item['currency_name'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-
 				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
 			));
 		}
@@ -472,25 +468,46 @@ class main_controller
 	}
 
 	/**
-	 * Check if Sandbox is enabled
+	 * Check if Sandbox is enabled based on config value
 	 *
 	 * @return bool
 	 * @access public
 	 */
 	public function use_sandbox()
 	{
-		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && ((!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']));
+		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && $this->is_sandbox_founder_enable();
 	}
 
 	/**
-	 * Check if IPN is enabled
+	 * Check if Sandbox could be use by founders based on config value
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_sandbox_founder_enable()
+	{
+		return (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
+	}
+
+	/**
+	 * Check if IPN is enabled based on config value
 	 *
 	 * @return bool
 	 * @access public
 	 */
 	public function use_ipn()
 	{
-		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && (!empty($this->config['ppde_curl_detected']) || !empty($this->config['ppde_fsockopen_detected']));
+		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_remote_detected();
+	}
+	/**
+	 * Check if remote is detected based on config value
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_remote_detected()
+	{
+		return !empty($this->config['ppde_curl_detected']) || !empty($this->config['ppde_fsockopen_detected']);
 	}
 
 	/**

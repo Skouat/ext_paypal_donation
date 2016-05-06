@@ -267,4 +267,20 @@ abstract class admin_main
 			'U_ACTION' => $this->u_action,
 		));
 	}
+
+	/**
+	 * Set error output vars for display in the template
+	 *
+	 * @param array $errors
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function s_error_assign_template_vars($errors)
+	{
+		$this->template->assign_vars(array(
+			'S_ERROR'   => (sizeof($errors)) ? true : false,
+			'ERROR_MSG' => (sizeof($errors)) ? implode('<br />', $errors) : '',
+		));
+	}
 }

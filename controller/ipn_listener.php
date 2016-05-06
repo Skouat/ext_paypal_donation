@@ -206,7 +206,7 @@ class ipn_listener
 	 * @param bool $fsock
 	 * @param bool $none
 	 *
-	 * @return array
+	 * @return null
 	 * @access private
 	 */
 	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
@@ -216,8 +216,6 @@ class ipn_listener
 			'fsock' => (bool) $fsock,
 			'none'  => (bool) $none,
 		);
-
-		return $this->curl_fsock;
 	}
 
 	/**
@@ -363,34 +361,31 @@ class ipn_listener
 	private function transaction_vars_list()
 	{
 		return array(
-			'receiver_id'       => '', // Secure Merchant Account ID
-			'receiver_email'    => '', // Merchant e-mail address
-			'residence_country' => '', // Merchant country code
-			'business'          => '', // Primary merchant e-mail address
-
-			'confirmed'         => false, // used to check if the payment is confirmed
-			'test_ipn'          => false, // used when transaction come from Sandbox platform
-			'txn_id'            => '', // Transaction ID
-			'txn_type'          => '', // Transaction type - Should be: 'send_money'
-			'parent_txn_id'     => '', // Transaction ID
-
-			'payer_email'       => '', // PayPal sender email address
-			'payer_id'          => '', // PayPal sender ID
-			'payer_status'      => 'unverified', // PayPal sender status (verified, unverified?)
+			'business'          => '',              // Primary merchant e-mail address
+			'confirmed'         => false,           // used to check if the payment is confirmed
+			'exchange_rate'     => '',              // Exchange rate used if a currency conversion occurred
 			'first_name'        => array('', true), // First name of sender
-			'last_name'         => array('', true), // Last name of sender
-
 			'item_name'         => array('', true), // Equal to: $this->config['sitename']
-			'item_number'       => '', // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-			'mc_currency'       => '', // Currency
-			'mc_gross'          => 0.00, // Amt received (before fees)
-			'mc_fee'            => 0.00, // Amt of fees
-			'payment_date'      => '', // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
-			'payment_status'    => '', // eg: 'Completed'
-			'payment_type'      => '', // Payment type
-			'settle_amount'     => 0.00, // Amt received after currency conversion (before fees)
-			'settle_currency'   => '', // Currency of 'settle_amount'
-			'exchange_rate'     => '', // Exchange rate used if a currency conversion occurred
+			'item_number'       => '',              // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+			'last_name'         => array('', true), // Last name of sender
+			'mc_currency'       => '',              // Currency
+			'mc_gross'          => 0.00,            // Amt received (before fees)
+			'mc_fee'            => 0.00,            // Amt of fees
+			'parent_txn_id'     => '',              // Transaction ID
+			'payer_email'       => '',              // PayPal sender email address
+			'payer_id'          => '',              // PayPal sender ID
+			'payer_status'      => 'unverified',    // PayPal sender status (verified, unverified?)
+			'payment_date'      => '',              // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
+			'payment_status'    => '',              // eg: 'Completed'
+			'payment_type'      => '',              // Payment type
+			'receiver_id'       => '',              // Secure Merchant Account ID
+			'receiver_email'    => '',              // Merchant e-mail address
+			'residence_country' => '',              // Merchant country code
+			'settle_amount'     => 0.00,            // Amt received after currency conversion (before fees)
+			'settle_currency'   => '',              // Currency of 'settle_amount'
+			'test_ipn'          => false,           // used when transaction come from Sandbox platform
+			'txn_id'            => '',              // Transaction ID
+			'txn_type'          => '',              // Transaction type - Should be: 'send_money'
 		);
 	}
 
@@ -842,33 +837,33 @@ class ipn_listener
 	private function build_data_ary()
 	{
 		return array(
-			'receiver_id'       => $this->transaction_data['receiver_id'],
-			'receiver_email'    => $this->transaction_data['receiver_email'],
-			'residence_country' => $this->transaction_data['residence_country'],
 			'business'          => $this->transaction_data['business'],
 			'confirmed'         => (bool) $this->transaction_data['confirmed'],
-			'test_ipn'          => $this->transaction_data['test_ipn'],
-			'txn_id'            => $this->transaction_data['txn_id'],
-			'txn_type'          => $this->transaction_data['txn_type'],
-			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
-			'payer_email'       => $this->transaction_data['payer_email'],
-			'payer_id'          => $this->transaction_data['payer_id'],
-			'payer_status'      => $this->transaction_data['payer_status'],
+			'exchange_rate'     => $this->transaction_data['exchange_rate'],
 			'first_name'        => $this->transaction_data['first_name'],
-			'last_name'         => $this->transaction_data['last_name'],
-			'user_id'           => (int) $this->transaction_data['user_id'],
 			'item_name'         => $this->transaction_data['item_name'],
 			'item_number'       => $this->transaction_data['item_number'],
+			'last_name'         => $this->transaction_data['last_name'],
 			'mc_currency'       => $this->transaction_data['mc_currency'],
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
 			'net_amount'        => $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
+			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
+			'payer_email'       => $this->transaction_data['payer_email'],
+			'payer_id'          => $this->transaction_data['payer_id'],
+			'payer_status'      => $this->transaction_data['payer_status'],
 			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
+			'receiver_id'       => $this->transaction_data['receiver_id'],
+			'receiver_email'    => $this->transaction_data['receiver_email'],
+			'residence_country' => $this->transaction_data['residence_country'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
-			'exchange_rate'     => $this->transaction_data['exchange_rate'],
+			'test_ipn'          => $this->transaction_data['test_ipn'],
+			'txn_id'            => $this->transaction_data['txn_id'],
+			'txn_type'          => $this->transaction_data['txn_type'],
+			'user_id'           => (int) $this->transaction_data['user_id'],
 		);
 	}
 

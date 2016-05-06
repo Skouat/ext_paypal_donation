@@ -77,12 +77,9 @@ class admin_settings_controller extends admin_main
 		$this->submit_settings();
 
 		// Set output vars for display in the template
+		$this->s_error_assign_template_vars($errors);
+		$this->u_action_assign_template_vars();
 		$this->template->assign_vars(array(
-			'S_ERROR'                        => $this->check_config((sizeof($errors))),
-			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
-			'U_ACTION'                       => $this->u_action,
-
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'                => $this->check_config($this->config['ppde_account_id'], 'string', ''),
 			'PPDE_DEFAULT_CURRENCY'          => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),

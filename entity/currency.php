@@ -11,10 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
- * @property \phpbb\user                          user               phpBB User object
- * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
+ * @property \phpbb\user                       user               phpBB User object
+ * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class currency extends main
 {
@@ -81,6 +81,28 @@ class currency extends main
 	}
 
 	/**
+	 * Get the order number of the currency
+	 *
+	 * @return int Order identifier
+	 * @access public
+	 */
+	public function get_currency_order()
+	{
+		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+	}
+
+	/**
+	 * Get Currency status
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function get_currency_position()
+	{
+		return (isset($this->data['currency_on_left'])) ? (bool) $this->data['currency_on_left'] : false;
+	}
+
+	/**
 	 * Get Currency ISO code
 	 *
 	 * @return string ISO code name
@@ -89,22 +111,6 @@ class currency extends main
 	public function get_iso_code()
 	{
 		return (isset($this->data['currency_iso_code'])) ? (string) $this->data['currency_iso_code'] : '';
-	}
-
-	/**
-	 * Set Currency symbol
-	 *
-	 * @param string $symbol
-	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_symbol($symbol)
-	{
-		// Set the lang_id on our data array
-		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-
-		return $this;
 	}
 
 	/**
@@ -119,17 +125,17 @@ class currency extends main
 	}
 
 	/**
-	 * Set Currency ISO code name
+	 * Set Currency status
 	 *
-	 * @param string $iso_code
+	 * @param bool $on_left
 	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
+	 * @return bool
 	 * @access public
 	 */
-	public function set_iso_code($iso_code)
+	public function set_currency_position($on_left)
 	{
-		// Set the lang_id on our data array
-		$this->data['currency_iso_code'] = (string) $iso_code;
+		// Set the item type on our data array
+		$this->data['currency_on_left'] = (bool) $on_left;
 
 		return $this;
 	}
@@ -151,41 +157,35 @@ class currency extends main
 	}
 
 	/**
-	 * Get Currency status
+	 * Set Currency ISO code name
 	 *
-	 * @return bool
+	 * @param string $iso_code
+	 *
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function get_currency_position()
+	public function set_iso_code($iso_code)
 	{
-		return (isset($this->data['currency_on_left'])) ? (bool) $this->data['currency_on_left'] : false;
-	}
-
-	/**
-	 * Set Currency status
-	 *
-	 * @param bool $on_left
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function set_currency_position($on_left)
-	{
-		// Set the item type on our data array
-		$this->data['currency_on_left'] = (bool) $on_left;
+		// Set the lang_id on our data array
+		$this->data['currency_iso_code'] = (string) $iso_code;
 
 		return $this;
 	}
 
 	/**
-	 * Get the order number of the currency
+	 * Set Currency symbol
 	 *
-	 * @return int Order identifier
+	 * @param string $symbol
+	 *
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function get_currency_order()
+	public function set_symbol($symbol)
 	{
-		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+		// Set the lang_id on our data array
+		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
+
+		return $this;
 	}
 
 	/**

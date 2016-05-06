@@ -137,7 +137,7 @@
 			<td<!-- IF log.S_PAYMENT_STATUS --> style="color:#FF0000;"<!-- ENDIF -->>{log.PAYMENT_STATUS}</td>
 			<td style="text-align: center;">{log.DATE}</td>
 			<!-- IF S_CLEARLOGS -->
-			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" /></td>
+			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" title="{log.ID}" /></td>
 			<!-- ENDIF -->
 		</tr>
 		<!-- END log -->

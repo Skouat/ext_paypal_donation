@@ -125,7 +125,6 @@ class admin_currency_controller extends admin_main
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_ADD'        => true,
-
 			'U_ADD_ACTION' => $this->u_action . '&amp;action=add',
 			'U_BACK'       => $this->u_action,
 		));
@@ -170,10 +169,8 @@ class admin_currency_controller extends admin_main
 		$this->submit_data($entity, $errors);
 
 		// Set output vars for display in the template
+		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars(array(
-			'S_ERROR'           => (sizeof($errors)) ? true : false,
-			'ERROR_MSG'         => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
 			'CURRENCY_NAME'     => $entity->get_name(),
 			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
 			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
@@ -244,7 +241,6 @@ class admin_currency_controller extends admin_main
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_EDIT'        => true,
-
 			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $currency_id,
 			'U_BACK'        => $this->u_action,
 		));
@@ -316,7 +312,8 @@ class admin_currency_controller extends admin_main
 			trigger_error($this->user->lang['PPDE_CANNOT_DISABLE_ALL_CURRENCIES'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		// Load selected currency
+		// Initiate an entity and load data
+		/** @type \skouat\ppde\entity\currency $entity */
 		$entity = $this->get_container_entity();
 		$entity->load($currency_id);
 
@@ -332,7 +329,7 @@ class admin_currency_controller extends admin_main
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text' => $this->user->lang[($action == 'enable') ? 'DISABLE' : 'ENABLE'],
+				'text' => $this->user->lang[strtoupper($action)],
 			));
 		}
 	}

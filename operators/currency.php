@@ -178,7 +178,7 @@ class currency
 
 		if ($action == 'disable')
 		{
-			$sql_ary['WHERE'] = 'currency_enable = 1';
+			$sql_ary['WHERE'] = 'c.currency_enable = 1';
 		}
 
 		$this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
