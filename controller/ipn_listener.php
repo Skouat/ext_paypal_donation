@@ -488,7 +488,7 @@ class ipn_listener
 		// Grab the post data form and set in an array to be used in the URI to PayPal
 		foreach ($this->get_post_data() as $key => $value)
 		{
-			$encoded = urlencode(stripslashes($value));
+			$encoded = urlencode($value);
 			$values[] = $key . '=' . $encoded;
 
 			$this->transaction_data[$key] = $value;
