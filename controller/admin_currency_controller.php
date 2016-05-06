@@ -318,7 +318,7 @@ class admin_currency_controller extends admin_main
 		$entity->load($currency_id);
 
 		// Set the new status for this currency
-		$entity->set_currency_enable(($action == 'enable') ? 1 : 0);
+		$entity->set_currency_enable(($action == 'enable') ? true : false);
 
 		// Save data to the database
 		$entity->save($entity->check_required_field());
