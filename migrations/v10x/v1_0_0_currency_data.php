@@ -14,7 +14,7 @@ class v1_0_0_currency_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v10x\v1_0_0_data');
+		return array('\skouat\ppde\migrations\v10x\v1_0_0_schema');
 	}
 
 	public function update_data()

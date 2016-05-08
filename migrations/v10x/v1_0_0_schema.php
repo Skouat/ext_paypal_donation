@@ -12,6 +12,11 @@ namespace skouat\ppde\migrations\v10x;
 
 class v1_0_0_schema extends \phpbb\db\migration\migration
 {
+	public static function depends_on()
+	{
+		return array('\phpbb\db\migration\data\v31x\v310');
+	}
+
 	/**
 	 * Add the table schema to the database:
 	 *
