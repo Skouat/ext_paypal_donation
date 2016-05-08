@@ -113,7 +113,7 @@ class listener implements EventSubscriberInterface
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = array(
 			'ext_name' => 'skouat/ppde',
-			'lang_set' => 'donate',
+			'lang_set' => array('donate', 'exceptions'),
 		);
 		$event['lang_set_ext'] = $lang_set_ext;
 	}

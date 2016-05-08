@@ -91,29 +91,16 @@ abstract class admin_main
 	 * @param \skouat\ppde\entity\main $entity The entity object
 	 * @param array                    $data_ary
 	 *
-	 * @return array
 	 * @access public
 	 */
 	public function set_entity_data($entity, $data_ary)
 	{
-		$errors = array();
-
 		foreach ($data_ary as $entity_function => $data)
 		{
-			try
-			{
-				// Calling the set_$entity_function on the entity and passing it $currency_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
+			// Calling the set_$entity_function on the entity and passing it $currency_data
+			call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
 		}
 		unset($data_ary, $entity_function, $data);
-
-		return $errors;
 	}
 
 	/**

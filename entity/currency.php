@@ -203,7 +203,6 @@ class currency extends main
 	 * Set Currency order number
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @throws \skouat\ppde\exception\out_of_bounds
 	 * @access protected
 	 */
 	protected function set_order()
@@ -217,7 +216,7 @@ class currency extends main
 		*/
 		if ($order < 0 || $order > 16777215)
 		{
-			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
+			$this->display_warning_message('EXCEPTION_OUT_OF_BOUNDS', 'currency_order');
 		}
 
 		$this->data['currency_order'] = $order;
@@ -251,7 +250,7 @@ class currency extends main
 		if ($this->get_currency_enable())
 		{
 			// Return an error if the currency is enabled
-			trigger_error($this->user->lang['PPDE_DISABLE_BEFORE_DELETION'] . adm_back_link($this->u_action), E_USER_WARNING);
+			$this->display_warning_message('PPDE_DISABLE_BEFORE_DELETION');
 		}
 	}
 

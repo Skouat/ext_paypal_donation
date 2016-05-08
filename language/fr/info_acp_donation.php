@@ -334,7 +334,6 @@ $lang = array_merge($lang, array(
  * Errors
  */
 $lang = array_merge($lang, array(
-	'EXCEPTION_INVALID_CONFIG_NAME'      => 'Le paramètre de configuration « %s » n’existe pas.',
 	'PPDE_CANNOT_DISABLE_ALL_CURRENCIES' => 'Vous ne pouvez pas désactiver toutes les devises.',
 	'PPDE_DC_EMPTY_NAME'                 => 'Saisissez un nom de devise.',
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Saisissez un code ISO.',

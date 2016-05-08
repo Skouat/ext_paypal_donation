@@ -40,7 +40,8 @@ if (empty($lang) || !is_array($lang))
  * logs
  */
 $lang = array_merge($lang, array(
-	'EXCEPTION_FIELD_MISSING'    => 'Un champ obligatoire est manquant.',
-	'EXCEPTION_INVALID_ARGUMENT' => 'L’argument spécifié pour « %1$s » est incorrect. Raison : %2$s',
-	'EXCEPTION_OUT_OF_BOUNDS'    => 'Le champ « %1$s » a reçu des données en dehors des limites définies.',
+	'EXCEPTION_INVALID_CONFIG_NAME' => 'Le paramètre de configuration « %s » n’existe pas.',
+	'EXCEPTION_INVALID_FIELD'       => 'Le champ « %s » n’existe pas.',
+	'EXCEPTION_INVALID_ARGUMENT'    => 'L’argument spécifié pour « %1$s » est incorrect. Raison : %2$s',
+	'EXCEPTION_OUT_OF_BOUNDS'       => 'Le champ « %1$s » a reçu des données en dehors des limites définies.',
 ));

@@ -200,11 +200,11 @@ class admin_donation_pages_controller extends admin_main
 		$this->submit = $this->request->is_set_post('submit');
 		$this->preview = $this->request->is_set_post('preview');
 
-		// Load posting language file for the BBCode editor
-		$this->user->add_lang('posting');
-
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
+
+		// Load posting language file for the BBCode editor
+		$this->user->add_lang('posting');
 
 		$message_parse_options = array_merge(
 			$this->get_message_parse_options($entity, $data, 'bbcode'),
@@ -215,15 +215,7 @@ class admin_donation_pages_controller extends admin_main
 		// Set the message parse options in the entity
 		foreach ($message_parse_options as $function => $enabled)
 		{
-			try
-			{
-				call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
+			call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
 		}
 
 		unset($message_parse_options);
@@ -234,7 +226,7 @@ class admin_donation_pages_controller extends admin_main
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		);
-		$errors = array_merge($errors, $this->set_entity_data($entity, $item_fields));
+		$this->set_entity_data($entity, $item_fields);
 
 		// Check some settings before loading and submitting form
 		$errors = array_merge($errors,

@@ -813,9 +813,9 @@ class ipn_listener
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
-		$errors = $this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
+		$this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
 
-		$this->submit_data($entity, $errors);
+		$this->submit_data($entity);
 	}
 
 	/**
@@ -884,14 +884,13 @@ class ipn_listener
 	 *  Submit data to the database
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
-	 * @param array                            $errors
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity, $errors)
+	private function submit_data($entity)
 	{
-		if ($this->verified && empty($errors))
+		if ($this->verified)
 		{
 			if ($this->payment_status_is_completed())
 			{

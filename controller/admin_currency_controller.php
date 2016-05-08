@@ -155,7 +155,8 @@ class admin_currency_controller extends admin_main
 			'currency_position' => $data['currency_on_left'],
 			'currency_enable'   => $data['currency_enable'],
 		);
-		$errors = array_merge($errors, $this->set_entity_data($entity, $item_fields));
+
+		$this->set_entity_data($entity, $item_fields);
 
 		// Check some settings before submitting data
 		$errors = array_merge($errors,
