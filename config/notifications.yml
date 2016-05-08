@@ -1,0 +1,36 @@
+services:
+    skouat.ppde.notification.type.admin_donation_received:
+        class: skouat\ppde\notification\type\admin_donation_received
+        scope: prototype # scope MUST be prototype for this to work!
+        arguments:
+            - '@user_loader'
+            - '@dbal.conn'
+            - '@cache.driver'
+            - '@user'
+            - '@auth'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%tables.notification_types%'
+            - '%tables.notifications%'
+            - '%tables.user_notifications%'
+        tags:
+            - { name: notification.type }
+
+    skouat.ppde.notification.type.donor_donation_received:
+        class: skouat\ppde\notification\type\donor_donation_received
+        scope: prototype # scope MUST be prototype for this to work!
+        arguments:
+            - '@user_loader'
+            - '@dbal.conn'
+            - '@cache.driver'
+            - '@user'
+            - '@auth'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%tables.notification_types%'
+            - '%tables.notifications%'
+            - '%tables.user_notifications%'
+        tags:
+            - { name: notification.type }

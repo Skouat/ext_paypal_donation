@@ -1,4 +1,4 @@
 parameters:
-    skouat.ppde.tables.ppde_currency: %core.table_prefix%ppde_currency
-    skouat.ppde.tables.ppde_donation_pages: %core.table_prefix%ppde_donation_pages
-    skouat.ppde.tables.ppde_transactions: %core.table_prefix%ppde_txn_log
+    skouat.ppde.tables.ppde_currency: '%core.table_prefix%ppde_currency'
+    skouat.ppde.tables.ppde_donation_pages: '%core.table_prefix%ppde_donation_pages'
+    skouat.ppde.tables.ppde_transactions: '%core.table_prefix%ppde_txn_log'

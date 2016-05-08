@@ -36,12 +36,10 @@
 			</div>
 			<fieldset class="submit-buttons">
 				{S_HIDDEN_FIELDS}
-				<div id="contactpaypal">
-					<input type="submit" onclick="JavaScript:document.getElementById('contactpaypal').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{L_PPDE_DONATION_BUTTON_TITLE}"><div></div>
+				<div id="paypalbutton">
+					<input type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{L_PPDE_DONATION_BUTTON_TITLE}">
 				</div>
-			</fieldset>
-			<fieldset id="processingpaypal" class="loader submit-buttons">
-				{IMG_LOADER}<input type="submit" class="button1" name="submit" value="{L_PPDE_CONTACT_PAYPAL}" />
+				<div id="processingpaypal" class="spinner loading">{L_PPDE_CONTACT_PAYPAL}</div>
 			</fieldset>
 		</form>
 	</div>

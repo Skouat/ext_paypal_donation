@@ -68,11 +68,93 @@ class transactions
 	}
 
 	/**
+	 * Returns the SQL Query for generation the donors list
+	 *
+	 * @param int    $max_txn_id Identifier of the transaction logged in the DB
+	 * @param string $order_by
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_sql_donorlist_ary($max_txn_id = 0, $order_by = '')
+	{
+		// Build main sql request
+		$donorlist_sql_ary = array(
+			'SELECT'    => 'txn.*, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, u.username, u.user_colour',
+			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
+			'LEFT_JOIN' => array(
+				array(
+					'FROM' => array(USERS_TABLE => 'u'),
+					'ON'   => 'u.user_id = txn.user_id',
+				),
+			),
+			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
+							AND txn.payment_status = 'Completed'
+							AND txn.test_ipn = 0",
+			'GROUP_BY'  => 'txn.user_id',
+			'ORDER_BY'  => 'txn.transaction_id DESC',
+		);
+
+		if ($order_by)
+		{
+			$donorlist_sql_ary['ORDER_BY'] = $order_by;
+		}
+
+		if ($max_txn_id)
+		{
+			$donorlist_sql_ary['WHERE'] = 'txn.transaction_id = ' . $max_txn_id;
+			unset($donorlist_sql_ary['GROUP_BY'], $donorlist_sql_ary['ORDER_BY']);
+		}
+
+		// Return all transactions entities
+		return $donorlist_sql_ary;
+	}
+
+	/**
+	 * SQL Query to return donors list details
+	 *
+	 * @param array $sql_donorlist_ary
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function build_sql_donorlist_data($sql_donorlist_ary)
+	{
+		// Return all transactions entities
+		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
+	}
+
+	/**
+	 * Returns total entries of selected field
+	 *
+	 * @param array  $count_sql_ary
+	 * @param string $selected_field
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function query_sql_count($count_sql_ary, $selected_field)
+	{
+		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
+
+		if (array_key_exists('GROUP_BY', $count_sql_ary))
+		{
+			$count_sql_ary['SELECT'] = 'COUNT(DISTINCT ' . $count_sql_ary['GROUP_BY'] . ') AS total_entries';
+		}
+		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+
+		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+		$this->db->sql_query($sql);
+
+		return (int) $this->db->sql_fetchfield('total_entries');
+	}
+
+	/**
 	 * Returns the SQL Query for displaying simple transactions details
 	 *
-	 * @param $keywords
-	 * @param $sort_by
-	 * @param $log_time
+	 * @param string  $keywords
+	 * @param string  $sort_by
+	 * @param integer $log_time
 	 *
 	 * @return array
 	 * @access public
@@ -87,7 +169,7 @@ class transactions
 		}
 
 		$get_logs_sql_ary = array(
-			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.confirmed, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
+			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.test_ipn, txn.confirmed, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
 			'FROM'     => array(
 				$this->ppde_transactions_log_table => 'txn',
 				USERS_TABLE                        => 'u',
@@ -140,25 +222,6 @@ class transactions
 		}
 
 		return $sql_keywords;
-	}
-
-	/**
-	 * Returns total entries in the transactions log
-	 *
-	 * @param $count_logs_sql_ary
-	 *
-	 * @return int
-	 * @access public
-	 */
-	public function query_sql_count_logs($count_logs_sql_ary)
-	{
-		$count_logs_sql_ary['SELECT'] = 'COUNT(txn.transaction_id) AS total_entries';
-		unset($count_logs_sql_ary['ORDER_BY']);
-
-		$sql = $this->db->sql_build_query('SELECT', $count_logs_sql_ary);
-		$this->db->sql_query($sql);
-
-		return (int) $this->db->sql_fetchfield('total_entries');
 	}
 
 	/**
@@ -217,6 +280,7 @@ class transactions
 			$log[$i] = array(
 				'transaction_id' => $row['transaction_id'],
 				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
+				'test_ipn'       => $row['test_ipn'],
 				'confirmed'      => $row['confirmed'],
 				'payment_status' => $row['payment_status'],
 				'payment_date'   => $row['payment_date'],
@@ -288,5 +352,62 @@ class transactions
 		}
 
 		return ' WHERE ' . $this->db->sql_in_set('transaction_id', $sql_in);
+	}
+
+	/**
+	 * Build SQL query for updating stats
+	 *
+	 * @param string $type
+	 * @param bool   $test_ipn
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function sql_build_update_stats($type, $test_ipn)
+	{
+		switch ($type)
+		{
+			case 'ppde_transactions_count':
+			case 'ppde_transactions_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('txn_id');
+				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
+				break;
+			case 'ppde_known_donors_count':
+			case 'ppde_known_donors_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('payer_id');
+				$sql_ary{'LEFT_JOIN'} = array(
+					array(
+						'FROM' => array(USERS_TABLE => 'u'),
+						'ON'   => 'txn.user_id = u.user_id',
+					),
+				);
+				$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . (int) $test_ipn;
+				break;
+			case 'ppde_anonymous_donors_count':
+			case 'ppde_anonymous_donors_count_ipn':
+				$sql_ary = $this->sql_select_stats_main('payer_id');
+				$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . (int) $test_ipn;
+				break;
+			default:
+				$sql_ary = $this->sql_select_stats_main('txn_id');
+		}
+
+		return $this->db->sql_build_query('SELECT', $sql_ary);
+	}
+
+	/**
+	 * Make body of SQL query for stats calculation.
+	 *
+	 * @param string $field_name Name of the field
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function sql_select_stats_main($field_name)
+	{
+		return array(
+			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
+			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+		);
 	}
 }

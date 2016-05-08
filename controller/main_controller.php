@@ -21,8 +21,10 @@ class main_controller
 	protected $helper;
 	protected $ppde_entity_currency;
 	protected $ppde_entity_donation_pages;
+	protected $ppde_entity_transactions;
 	protected $ppde_operator_currency;
 	protected $ppde_operator_donation_pages;
+	protected $ppde_operator_transactions;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -34,10 +36,10 @@ class main_controller
 	protected $ext_name;
 	/** @var string */
 	private $donation_body;
-	/** @var array */
-	private $donation_content_data;
 	/** @var string */
 	private $return_args_url;
+	/** @var string */
+	private $u_action;
 
 	/**
 	 * Constructor
@@ -45,13 +47,14 @@ class main_controller
 	 * @param \phpbb\auth\auth                      $auth                         Auth object
 	 * @param \phpbb\config\config                  $config                       Config object
 	 * @param ContainerInterface                    $container                    Service container interface
-	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension
-	 *                                                                            manager
+	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
 	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
 	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
+	 * @param \skouat\ppde\entity\transactions      $ppde_entity_transactions     Transactions log entity object
 	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Donation pages operator object
+	 * @param \skouat\ppde\operators\transactions   $ppde_operator_transactions   Transactions log operator object
 	 * @param \phpbb\request\request                $request                      Request object
 	 * @param \phpbb\template\template              $template                     Template object
 	 * @param \phpbb\user                           $user                         User object
@@ -61,7 +64,7 @@ class main_controller
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\entity\transactions $ppde_entity_transactions, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -70,8 +73,10 @@ class main_controller
 		$this->helper = $helper;
 		$this->ppde_entity_currency = $ppde_entity_currency;
 		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
+		$this->ppde_entity_transactions = $ppde_entity_transactions;
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
+		$this->ppde_operator_transactions = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -92,25 +97,18 @@ class main_controller
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		$entity = $this->container->get('skouat.ppde.entity.donation_pages');
 		$this->set_return_args_url($this->request->variable('return', 'body'));
 
 		// Prepare message for display
 		if ($this->get_donation_content_data($this->return_args_url))
 		{
-			$entity->get_vars();
-			$this->donation_body = $entity->replace_template_vars($entity->get_message_for_display(
-				$this->donation_content_data[0]['page_content'],
-				$this->donation_content_data[0]['page_content_bbcode_uid'],
-				$this->donation_content_data[0]['page_content_bbcode_bitfield'],
-				$this->donation_content_data[0]['page_content_bbcode_options']
-			));
+			$this->ppde_entity_donation_pages->get_vars();
+			$this->donation_body = $this->ppde_entity_donation_pages->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
 		$this->template->assign_vars(array(
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'DONATION_BODY'      => $this->donation_body,
-			'IMG_LOADER'         => '<img src="' . $this->root_path . '../ext/skouat/ppde/images/loader.gif' . '" />',
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
 
@@ -126,6 +124,162 @@ class main_controller
 		return $this->send_data_to_template();
 	}
 
+	public function donorlist_handle()
+	{
+		// If the donorlist is not enabled, redirect users back to the forum index
+		// Else if user is not allowed to view the donors list, disallow access to the extension page
+		if (!$this->donorlist_is_enabled())
+		{
+			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
+		}
+		else if (!$this->can_view_ppde_donorlist())
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+
+		// Get needed container
+		/** @type \phpbb\pagination $pagination */
+		$pagination = $this->container->get('pagination');
+		/** @type \phpbb\path_helper $path_helper */
+		$path_helper = $this->container->get('path_helper');
+
+		// Set up general vars
+		$default_key = 'd';
+		$sort_key = $this->request->variable('sk', $default_key);
+		$sort_dir = $this->request->variable('sd', 'd');
+		$start = $this->request->variable('start', 0);
+
+		// Sorting and order
+		$sort_key_sql = array('a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean');
+
+		if (!isset($sort_key_sql[$sort_key]))
+		{
+			$sort_key = $default_key;
+		}
+
+		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
+
+		// Build a relevant pagination_url and sort_url
+		// We do not use request_var() here directly to save some calls (not all variables are set)
+		$check_params = array(
+			'sk'    => array('sk', $default_key),
+			'sd'    => array('sd', 'a'),
+			'start' => array('start', 0),
+		);
+
+		$params = $this->check_params($check_params, array('start'));
+		$sort_params = $this->check_params($check_params, array('sk', 'sd'));
+
+		// Set '$this->u_action'
+		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
+		$this->u_action = reapply_sid($path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
+
+		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
+		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
+
+		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(false, $order_by);
+		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
+		$start = $pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
+
+		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
+
+		// adds fields to the table schema needed by entity->import()
+		$additional_table_schema = array(
+			'item_username'    => array('name' => 'username', 'type' => 'string'),
+			'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
+			'item_amount'      => array('name' => 'amount', 'type' => 'float'),
+			'item_max_txn_id'  => array('name' => 'max_txn_id', 'type' => 'integer'),
+		);
+
+		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_donorlist_sql_ary), $additional_table_schema, $this->config['topics_per_page'], $start);
+
+		// Get default currency data from the database
+		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
+		$this->template->assign_vars(array(
+			'TOTAL_DONORS'    => $this->user->lang('PPDE_DONORS', $total_donors),
+			'U_SORT_AMOUNT'   => $sort_url . 'sk=a&amp;sd=' . $this->set_sort_key($sort_key, 'a', $sort_dir),
+			'U_SORT_DONATED'  => $sort_url . 'sk=d&amp;sd=' . $this->set_sort_key($sort_key, 'd', $sort_dir),
+			'U_SORT_USERNAME' => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
+		));
+
+		foreach ($data_ary as $data)
+		{
+			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary($data['max_txn_id']);
+			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary));
+			$this->template->assign_block_vars('donorrow', array(
+				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->currency_on_left(number_format($last_donation_data[0]['mc_gross'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->currency_on_left(number_format($data['amount'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+			));
+		}
+
+		// Set "return_args_url" object before sending data to template
+		$this->set_return_args_url('donorlist');
+
+		// Send all data to the template file
+		return $this->send_data_to_template();
+	}
+
+	/**
+	 * Set the sort key value
+	 *
+	 * @param string $sk
+	 * @param string $sk_comp
+	 * @param string $sd
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_sort_key($sk, $sk_comp, $sd)
+	{
+		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
+	}
+
+	/**
+	 * Simply adds an url or &amp; delimiter to the url when params is empty
+	 *
+	 * @param $url
+	 * @param $params
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_url_delim($url, $params)
+	{
+		return (empty($params)) ? $url . '?' : $url . '&amp;';
+	}
+
+	/**
+	 * @param array    $params_ary
+	 * @param string[] $excluded_keys
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function check_params($params_ary, $excluded_keys)
+	{
+		$params = array();
+
+		foreach ($params_ary as $key => $call)
+		{
+			if (!isset($_REQUEST[$key]))
+			{
+				continue;
+			}
+
+			$param = call_user_func_array('request_var', $call);
+			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
+
+			if (!in_array($key, $excluded_keys))
+			{
+				$params[] = $param;
+			}
+		}
+
+		return $params;
+	}
+
 	/**
 	 * @return bool
 	 * @access public
@@ -133,6 +287,24 @@ class main_controller
 	public function can_use_ppde()
 	{
 		return $this->auth->acl_get('u_ppde_use');
+	}
+
+	/**
+	 * @return bool
+	 * @access public
+	 */
+	public function can_view_ppde_donorlist()
+	{
+		return $this->auth->acl_get('u_ppde_view_donorlist');
+	}
+
+	/**
+	 * @return bool
+	 * @access private
+	 */
+	private function donorlist_is_enabled()
+	{
+		return $this->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**
@@ -152,6 +324,12 @@ class main_controller
 				));
 				$this->return_args_url = $set_return_args_url;
 				break;
+			case 'donorlist':
+				$this->template->assign_vars(array(
+					'L_PPDE_DONORLIST_TITLE' => $this->user->lang['PPDE_DONORLIST_TITLE'],
+				));
+				$this->return_args_url = $set_return_args_url;
+				break;
 			default:
 				$this->return_args_url = 'body';
 		}
@@ -168,9 +346,9 @@ class main_controller
 	 */
 	private function get_donation_content_data($return_args_url)
 	{
-		return $this->donation_content_data =
-			$this->ppde_entity_donation_pages->get_data(
-				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url));
+		return $this->ppde_entity_donation_pages->get_data(
+				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
+		);
 	}
 
 	/**
@@ -195,7 +373,6 @@ class main_controller
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
 				'CURRENCY_NAME'      => $currency_item['currency_name'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-
 				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
 			));
 		}
@@ -244,6 +421,7 @@ class main_controller
 	 * @param int $value
 	 *
 	 * @return int
+	 * @access private
 	 */
 	private function settype_dropbox_int_value($value = 0)
 	{
@@ -290,14 +468,46 @@ class main_controller
 	}
 
 	/**
-	 * Check if Sandbox is enabled
+	 * Check if Sandbox is enabled based on config value
 	 *
 	 * @return bool
 	 * @access public
 	 */
 	public function use_sandbox()
 	{
-		return !empty($this->config['ppde_sandbox_enable']) && (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER) || empty($this->config['ppde_sandbox_founder_enable']));
+		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && $this->is_sandbox_founder_enable();
+	}
+
+	/**
+	 * Check if Sandbox could be use by founders based on config value
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_sandbox_founder_enable()
+	{
+		return (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
+	}
+
+	/**
+	 * Check if IPN is enabled based on config value
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function use_ipn()
+	{
+		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_remote_detected();
+	}
+	/**
+	 * Check if remote is detected based on config value
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_remote_detected()
+	{
+		return !empty($this->config['ppde_curl_detected']) || !empty($this->config['ppde_fsockopen_detected']);
 	}
 
 	/**
@@ -392,15 +602,15 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
-			$l_ppde_goal = $this->user->lang['DONATE_NO_GOAL'];
+			$l_ppde_goal = $this->user->lang['PPDE_DONATE_NO_GOAL'];
 		}
 		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_goal = $this->user->lang['DONATE_GOAL_REACHED'];
+			$l_ppde_goal = $this->user->lang['PPDE_DONATE_GOAL_REACHED'];
 		}
 		else
 		{
-			$l_ppde_goal = $this->user->lang('DONATE_GOAL_RAISE', $this->get_amount((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->user->lang('PPDE_DONATE_GOAL_RAISE', $this->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -414,8 +624,9 @@ class main_controller
 	 * @param bool   $on_left
 	 *
 	 * @return string
+	 * @access public
 	 */
-	private function get_amount($value, $currency, $on_left = true)
+	public function currency_on_left($value, $currency, $on_left = true)
 	{
 		return $on_left ? $currency . $value : $value . $currency;
 	}
@@ -433,11 +644,11 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
-			$l_ppde_raised = $this->user->lang['DONATE_NOT_RECEIVED'];
+			$l_ppde_raised = $this->user->lang['PPDE_DONATE_NOT_RECEIVED'];
 		}
 		else
 		{
-			$l_ppde_raised = $this->user->lang('DONATE_RECEIVED', $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->user->lang('PPDE_DONATE_RECEIVED', $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -456,15 +667,15 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{
-			$l_ppde_used = $this->user->lang['DONATE_NOT_USED'];
+			$l_ppde_used = $this->user->lang['PPDE_DONATE_NOT_USED'];
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->user->lang('DONATE_USED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->get_amount((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->user->lang('DONATE_USED_EXCEEDED', $this->get_amount((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED_EXCEEDED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
@@ -478,33 +689,119 @@ class main_controller
 	 */
 	private function generate_stats_percent()
 	{
-		if ($this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0)
+		if ($this->is_ppde_goal_stats())
 		{
-			$this->assign_vars_stats_percent((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal'], 'GOAL_NUMBER');
+			$percent = $this->percent_value((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+			$this->assign_vars_stats_percent($percent, 'GOAL_NUMBER');
+			$this->template->assign_var('PPDE_CSS_GOAL_NUMBER', $this->ppde_css_classname($percent));
 		}
 
-		if ($this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0)
+		if ($this->is_ppde_used_stats())
 		{
-			$this->assign_vars_stats_percent((int) $this->config['ppde_used'], (int) $this->config['ppde_raised'], 'USED_NUMBER');
+			$percent = $this->percent_value((int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+			$this->assign_vars_stats_percent($percent, 'USED_NUMBER');
+			$this->template->assign_var('PPDE_CSS_USED_NUMBER', $this->ppde_css_classname($percent, true));
 		}
+	}
+
+	/**
+	 * Checks if stats can be displayed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_ppde_goal_stats()
+	{
+		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
+	}
+
+	/**
+	 * Checks if stats can be displayed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_ppde_used_stats()
+	{
+		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
+	}
+
+
+	/**
+	 * Returns percent value
+	 *
+	 * @param integer $multiplicand
+	 * @param integer $dividend
+	 *
+	 * @return float
+	 * @access private
+	 */
+	private function percent_value($multiplicand, $dividend)
+	{
+		return round(($multiplicand * 100) / $dividend, 2);
 	}
 
 	/**
 	 * Assign statistics percent vars to template
 	 *
-	 * @param integer $multiplicand
-	 * @param integer $dividend
-	 * @param string  $type
+	 * @param float  $percent
+	 * @param string $type
 	 *
 	 * @return null
-	 * @access public
+	 * @access private
 	 */
-	private function assign_vars_stats_percent($multiplicand, $dividend, $type = '')
+	private function assign_vars_stats_percent($percent, $type)
 	{
 		$this->template->assign_vars(array(
-			'PPDE_' . $type => round(($multiplicand * 100) / $dividend, 2),
+			'PPDE_' . $type => $percent,
 			'S_' . $type    => !empty($type) ? true : false,
 		));
+	}
+
+	/**
+	 * Returns the CSS class name based on the percent of stats
+	 *
+	 * @param float $value
+	 * @param bool  $reverse
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function ppde_css_classname($value, $reverse = false)
+	{
+		$css_reverse = '';
+
+		if ($reverse && $value < 100)
+		{
+			$value = 100 - $value;
+			$css_reverse = '-reverse';
+		}
+
+		switch ($value)
+		{
+			case ($value <= 10):
+				return 'ten' . $css_reverse;
+			case ($value <= 20):
+				return 'twenty' . $css_reverse;
+			case ($value <= 30):
+				return 'thirty' . $css_reverse;
+			case ($value <= 40):
+				return 'forty' . $css_reverse;
+			case ($value <= 50):
+				return 'fifty' . $css_reverse;
+			case ($value <= 60):
+				return 'sixty' . $css_reverse;
+			case ($value <= 70):
+				return 'seventy' . $css_reverse;
+			case ($value <= 80):
+				return 'eighty' . $css_reverse;
+			case ($value <= 90):
+				return 'ninety' . $css_reverse;
+			case ($value < 100):
+				return 'hundred' . $css_reverse;
+			default:
+				return $reverse ? 'red' : 'green';
+		}
 	}
 
 	/**
@@ -520,19 +817,44 @@ class main_controller
 			case 'cancel':
 			case 'success':
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
+			case 'donorlist':
+				return $this->helper->render('donorlist_body.html', $this->user->lang('PPDE_DONORLIST_TITLE'));
 			default:
 				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
 		}
 	}
 
 	/**
-	 * Check if cURL is available
+	 * Do action if it's the first time the extension is accessed
 	 *
-	 * @return bool
+	 * @return null
 	 * @access public
 	 */
-	public function check_curl()
+	public function first_start()
 	{
+		if ($this->config['ppde_first_start'])
+		{
+			$this->set_curl_info();
+			$this->set_remote_detected();
+			$this->config['ppde_first_start'] = false;
+		}
+	}
+
+	/**
+	 * Check if cURL is available
+	 *
+	 * @param bool $check_version
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function check_curl($check_version = false)
+	{
+		if (function_exists('curl_version') && $check_version)
+		{
+			return curl_version();
+		}
+
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
 			$this->get_ext_meta();
@@ -550,6 +872,34 @@ class main_controller
 		}
 
 		return false;
+	}
+
+	/**
+	 * Set config value for cURL version
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_curl_info()
+	{
+		// Get cURL version informations
+		if ($curl_info = $this->check_curl(true))
+		{
+			$this->config->set('ppde_curl_version', $curl_info['version']);
+			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
+		}
+	}
+
+	/**
+	 * Set config value for cURL and fsockopen
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_remote_detected()
+	{
+		$this->config->set('ppde_curl_detected', $this->check_curl());
+		$this->config->set('ppde_fsock_detected', $this->check_fsockopen());
 	}
 
 	/**

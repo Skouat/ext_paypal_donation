@@ -13,33 +13,38 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface                       container         The phpBB log system
- * @property string                                   id_prefix_name    Prefix name for identifier in the URL
- * @property string                                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log                           log               The phpBB log system.
- * @property string                                   module_name       Name of the module currently used
- * @property \phpbb\request\request                   request           Request object.
- * @property bool                                     submit            State of submit $_POST variable
- * @property \phpbb\template\template                 $template         Template object
- * @property string                                   u_action          Action URL
- * @property \phpbb\user                              user              User object.
+ * @property ContainerInterface       container         The phpBB log system
+ * @property string                   id_prefix_name    Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log           log               The phpBB log system.
+ * @property string                   module_name       Name of the module currently used
+ * @property \phpbb\request\request   request           Request object.
+ * @property bool                     submit            State of submit $_POST variable
+ * @property \phpbb\template\template template          Template object
+ * @property string                   u_action          Action URL
+ * @property \phpbb\user              user              User object.
  */
 class admin_transactions_controller extends admin_main
 {
+	public $ppde_operator;
 	protected $adm_relative_path;
 	protected $auth;
+	protected $db;
 	protected $config;
 	protected $entry_count;
 	protected $last_page_offset;
+	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
-	protected $php_ext;
-	public $ppde_operator;
+	protected $table_ppde_transactions;
+	private $is_ipn_test = false;
+	private $suffix_ipn;
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth                    $auth                       Authentication object
+	 * @param \phpbb\db\driver\driver_interface   $db                         Database object
 	 * @param \phpbb\config\config                $config                     Config object
 	 * @param ContainerInterface                  $container
 	 * @param \phpbb\log\log                      $log                        The phpBB log system
@@ -50,12 +55,14 @@ class admin_transactions_controller extends admin_main
 	 * @param string                              $adm_relative_path          phpBB admin relative path
 	 * @param string                              $phpbb_root_path            phpBB root path
 	 * @param string                              $php_ext                    phpEx
+	 * @param string                              $table_ppde_transactions    Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
+		$this->db = $db;
 		$this->config = $config;
 		$this->container = $container;
 		$this->log = $log;
@@ -67,6 +74,7 @@ class admin_transactions_controller extends admin_main
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->table_ppde_transactions = $table_ppde_transactions;
 		parent::__construct(
 			'transactions',
 			'PPDE_DT',
@@ -115,6 +123,8 @@ class admin_transactions_controller extends admin_main
 				if ($where_sql || $deleteall)
 				{
 					$entity->delete(0, '', $where_sql);
+					$this->update_stats();
+					$this->update_stats(true);
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 				}
 			}
@@ -144,8 +154,8 @@ class admin_transactions_controller extends admin_main
 
 			// Sorting
 			$limit_days = array(0 => $this->user->lang['ALL_ENTRIES'], 1 => $this->user->lang['1_DAY'], 7 => $this->user->lang['7_DAYS'], 14 => $this->user->lang['2_WEEKS'], 30 => $this->user->lang['1_MONTH'], 90 => $this->user->lang['3_MONTHS'], 180 => $this->user->lang['6_MONTHS'], 365 => $this->user->lang['1_YEAR']);
-			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
-			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
+			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ipn_test' => $this->user->lang['PPDE_DT_SORT_IPN_TYPE'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
+			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 			gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
@@ -173,7 +183,6 @@ class admin_transactions_controller extends admin_main
 				'S_SORT_KEY'   => $s_sort_key,
 				'S_SORT_DIR'   => $s_sort_dir,
 				'S_TXN'        => $mode,
-
 				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $start,
 			));
 
@@ -188,15 +197,85 @@ class admin_transactions_controller extends admin_main
 					'USERNAME'         => $row['username_full'],
 					'DATE'             => $this->user->format_date($row['payment_date']),
 					'ID'               => $row['transaction_id'],
+					'S_TEST_IPN'       => $row['test_ipn'],
 					'CONFIRMED'        => ($row['confirmed']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
 					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
-
 					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
 					'S_PAYMENT_STATUS' => ($payment_status_name === 'completed') ? false : true,
 				));
 				unset($payment_status_name);
 			}
 		}
+	}
+
+
+	/**
+	 * @param bool $ipn_stats
+	 */
+	public function update_stats($ipn_stats = false)
+	{
+		$this->set_ipn_test_properties($ipn_stats);
+		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_anonymous_donors_count' . $this->suffix_ipn));
+		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_known_donors_count' . $this->suffix_ipn), true);
+		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_transactions_count' . $this->suffix_ipn), true);
+	}
+
+	/**
+	 * Sets properties related to ipn tests
+	 *
+	 * @param bool $ipn_stats
+	 *
+	 * @return null
+	 * @access public
+	 */
+	public function set_ipn_test_properties($ipn_stats)
+	{
+		$this->set_ipn_test($ipn_stats);
+		$this->set_suffix_ipn();
+	}
+
+	/**
+	 * Sets the property $this->is_ipn_test
+	 *
+	 * @param $ipn_test
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function set_ipn_test($ipn_test)
+	{
+		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
+	}
+
+	/**
+	 * Sets the property $this->suffix_ipn
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function set_suffix_ipn()
+	{
+		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
+	}
+
+	/**
+	 * Returns count result for updating stats
+	 *
+	 * @param string $config_name
+	 *
+	 * @return int
+	 * @access private
+	 */
+	private function sql_query_update_stats($config_name)
+	{
+		if (!$this->config->offsetExists($config_name))
+		{
+			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
+		}
+
+		$this->db->sql_query($this->ppde_operator->sql_build_update_stats($config_name, $this->is_ipn_test));
+
+		return (int) $this->db->sql_fetchfield('count_result');
 	}
 
 	/**
@@ -231,38 +310,34 @@ class admin_transactions_controller extends admin_main
 				$payment_status_ary = $this->user->lang['PPDE_DT_PAYMENT_STATUS_VALUES'];
 
 				$this->template->assign_vars(array(
-					'S_CONVERT'      => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
-
-					'TXN_ID'         => $data['txn_id'],
-
 					'BOARD_USERNAME' => $data['username'],
+					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
+					'ITEM_NAME'      => $data['item_name'],
+					'ITEM_NUMBER'    => $data['item_number'],
+					'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
+					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
+					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
+					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 					'PAYER_EMAIL'    => $data['payer_email'],
 					'PAYER_ID'       => $data['payer_id'],
 					'PAYER_STATUS'   => ($data['payer_status']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
-
-					'RECEIVER_EMAIL' => $data['receiver_email'],
-					'RECEIVER_ID'    => $data['receiver_id'],
-
-					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
-					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
-
-					'CONVERT_FROM'   => '-' . $data['net_amount'] . ' ' . $data['mc_currency'],
-					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
-					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-
-					'ITEM_NAME'      => $data['item_name'],
-					'ITEM_NUMBER'    => $data['item_number'],
 					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 					'PAYMENT_STATUS' => $payment_status_ary[strtolower($data['payment_status'])],
+					'RECEIVER_EMAIL' => $data['receiver_email'],
+					'RECEIVER_ID'    => $data['receiver_id'],
+					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
+					'TXN_ID'         => $data['txn_id'],
+
+					'L_PPDE_DT_SETTLE_AMOUNT'         => $this->user->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->user->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
+					'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 				));
 			}
 
 			$this->template->assign_vars(array(
 				'U_ACTION' => $this->u_action,
 				'U_BACK'   => $this->u_action,
-
 				'S_VIEW'   => true,
 			));
 		}
@@ -327,7 +402,7 @@ class admin_transactions_controller extends admin_main
 
 		if ($count_logs)
 		{
-			$this->entry_count = $this->ppde_operator->query_sql_count_logs($get_logs_sql_ary);
+			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
 
 			if ($this->entry_count == 0)
 			{
@@ -348,7 +423,7 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return integer
 	 */
 	public function get_log_count()
 	{
@@ -356,10 +431,26 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return integer
 	 */
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? $this->last_page_offset : 0;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function get_is_ipn_test()
+	{
+		return ($this->is_ipn_test) ? $this->is_ipn_test : false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_suffix_ipn()
+	{
+		return ($this->suffix_ipn) ? $this->suffix_ipn : '';
 	}
 }

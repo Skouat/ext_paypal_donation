@@ -1,158 +1,163 @@
 imports:
     - { resource: tables.yml }
+    - { resource: notifications.yml }
 
 services:
     skouat.ppde.listener:
         class: skouat\ppde\event\listener
         arguments:
-            - @config
-            - @controller.helper
-            - @skouat.ppde.controller
-            - @template
-            - @user
-            - %core.php_ext%
+            - '@config'
+            - '@controller.helper'
+            - '@skouat.ppde.controller'
+            - '@template'
+            - '@user'
+            - '%core.php_ext%'
         tags:
             - { name: event.listener }
 
     skouat.ppde.ipn_listener:
         class: skouat\ppde\controller\ipn_listener
         arguments:
-            - @config
-            - @service_container
-            - @skouat.ppde.controller
-            - @skouat.ppde.controller.admin.transactions
-            - @request
-            - @user
-            - %core.root_path%
-            - %core.php_ext%
+            - '@config'
+            - '@service_container'
+            - '@notification_manager'
+            - '@skouat.ppde.controller'
+            - '@skouat.ppde.controller.admin.transactions'
+            - '@request'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
-            - @auth
-            - @config
-            - @service_container
-            - @ext.manager
-            - @controller.helper
-            - @skouat.ppde.entity.currency
-            - @skouat.ppde.entity.donation_pages
-            - @skouat.ppde.operator.currency
-            - @skouat.ppde.operator.donation_pages
-            - @request
-            - @template
-            - @user
-            - %core.root_path%
-            - %core.php_ext%
+            - '@auth'
+            - '@config'
+            - '@service_container'
+            - '@ext.manager'
+            - '@controller.helper'
+            - '@skouat.ppde.entity.currency'
+            - '@skouat.ppde.entity.donation_pages'
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.currency'
+            - '@skouat.ppde.operator.donation_pages'
+            - '@skouat.ppde.operator.transactions'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
-            - @service_container
-            - @log
-            - @skouat.ppde.operator.currency
-            - @request
-            - @template
-            - @user
+            - '@service_container'
+            - '@log'
+            - '@skouat.ppde.operator.currency'
+            - '@request'
+            - '@template'
+            - '@user'
 
     skouat.ppde.controller.admin.donation_pages:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
-            - @service_container
-            - @log
-            - @skouat.ppde.operator.donation_pages
-            - @request
-            - @template
-            - @user
-            - %core.root_path%
-            - %core.php_ext%
+            - '@service_container'
+            - '@log'
+            - '@skouat.ppde.operator.donation_pages'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     skouat.ppde.controller.admin.overview:
         class: skouat\ppde\controller\admin_overview_controller
         arguments:
-            - @auth
-            - @dbal.conn
-            - @cache
-            - @config
-            - @log
-            - @skouat.ppde.controller
-            - @request
-            - @template
-            - @user
-            - %core.php_ext%
-            - %skouat.ppde.tables.ppde_transactions%
+            - '@auth'
+            - '@cache'
+            - '@config'
+            - '@log'
+            - '@skouat.ppde.controller'
+            - '@skouat.ppde.controller.admin.transactions'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.php_ext%'
 
     skouat.ppde.controller.admin.settings:
         class: skouat\ppde\controller\admin_settings_controller
         arguments:
-            - @config
-            - @service_container
-            - @skouat.ppde.controller
-            - @skouat.ppde.operator.currency
-            - @request
-            - @template
-            - @user
+            - '@config'
+            - '@service_container'
+            - '@skouat.ppde.controller'
+            - '@skouat.ppde.operator.currency'
+            - '@request'
+            - '@template'
+            - '@user'
 
     skouat.ppde.controller.admin.transactions:
         class: skouat\ppde\controller\admin_transactions_controller
         arguments:
-            - @auth
-            - @config
-            - @service_container
-            - @log
-            - @skouat.ppde.operator.transactions
-            - @request
-            - @template
-            - @user
-            - %core.adm_relative_path%
-            - %core.root_path%
-            - %core.php_ext%
+            - '@auth'
+            - '@dbal.conn'
+            - '@config'
+            - '@service_container'
+            - '@log'
+            - '@skouat.ppde.operator.transactions'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '%core.adm_relative_path%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%skouat.ppde.tables.ppde_transactions%'
 
     skouat.ppde.entity.main:
         class: skouat\ppde\entity\main
         arguments:
-            - @dbal.conn
-            - @user
+            - '@dbal.conn'
+            - '@user'
 
     skouat.ppde.entity.currency:
         class: skouat\ppde\entity\currency
         arguments:
-            - @dbal.conn
-            - @user
-            - %skouat.ppde.tables.ppde_currency%
+            - '@dbal.conn'
+            - '@user'
+            - '%skouat.ppde.tables.ppde_currency%'
 
     skouat.ppde.entity.donation_pages:
         class: skouat\ppde\entity\donation_pages
         arguments:
-            - @config
-            - @dbal.conn
-            - @user
-            - %skouat.ppde.tables.ppde_donation_pages%
+            - '@config'
+            - '@dbal.conn'
+            - '@user'
+            - '%skouat.ppde.tables.ppde_donation_pages%'
 
     skouat.ppde.entity.transactions:
         class: skouat\ppde\entity\transactions
         arguments:
-            - @dbal.conn
-            - @user
-            - %skouat.ppde.tables.ppde_transactions%
+            - '@dbal.conn'
+            - '@user'
+            - '%skouat.ppde.tables.ppde_transactions%'
 
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency
         arguments:
-            - @cache.driver
-            - @service_container
-            - @dbal.conn
-            - %skouat.ppde.tables.ppde_currency%
+            - '@cache.driver'
+            - '@service_container'
+            - '@dbal.conn'
+            - '%skouat.ppde.tables.ppde_currency%'
 
     skouat.ppde.operator.donation_pages:
         class: skouat\ppde\operators\donation_pages
         arguments:
-            - @service_container
-            - @dbal.conn
-            - %skouat.ppde.tables.ppde_donation_pages%
+            - '@service_container'
+            - '@dbal.conn'
+            - '%skouat.ppde.tables.ppde_donation_pages%'
 
     skouat.ppde.operator.transactions:
         class: skouat\ppde\operators\transactions
         arguments:
-            - @service_container
-            - @dbal.conn
-            - %skouat.ppde.tables.ppde_transactions%
+            - '@service_container'
+            - '@dbal.conn'
+            - '%skouat.ppde.tables.ppde_transactions%'

@@ -20,8 +20,26 @@ source_file = language/en/info_acp_donation.php
 source_lang = en
 type = PHP_ARRAY
 
+[ppde.info_ucp_donation_php]
+file_filter = language/<lang>/info_ucp_donation.php
+source_file = language/en/info_ucp_donation.php
+source_lang = en
+type = PHP_ARRAY
+
 [ppde.permissions_donation_php]
 file_filter = language/<lang>/permissions_donation.php
 source_file = language/en/permissions_donation.php
 source_lang = en
 type = PHP_ARRAY
+
+[ppde.email_admin_donation_received_txt]
+file_filter = language/<lang>/email/admin_donation_received.txt
+source_file = language/en/email/admin_donation_received.txt
+source_lang = en
+type = TXT
+
+[ppde.email_donor_donation_received_txt]
+file_filter = language/<lang>/email/donor_donation_received.txt
+source_file = language/en/email/donor_donation_received.txt
+source_lang = en
+type = TXT

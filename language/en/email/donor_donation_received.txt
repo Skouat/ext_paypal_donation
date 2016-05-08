@@ -1,0 +1,23 @@
+Subject: New donation notification  - "{SITENAME}"
+
+Hello {USERNAME},
+
+Your donation to "{SITE NAME}" was received.
+
+Information about your donation:
+
+----------------------------
+Transaction ID: {TXN_ID}
+
+Sender: {PAYER_USERNAME} ({PAYER_EMAIL})
+
+Amount donated: {MC_GROSS}
+Amount received by "{SITE NAME}": <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
+
+----------------------------
+
+If you no longer wish to be notified when you make a donation, please update your notification settings here:
+
+{U_NOTIFICATION_SETTINGS}
+
+{EMAIL_SIG}

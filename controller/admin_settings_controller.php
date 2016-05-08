@@ -13,13 +13,15 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface         container          The phpBB log system
- * @property string                     lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property \phpbb\request\request     request            Request object
- * @property bool                       submit             State of submit $_POST variable
- * @property \phpbb\template\template   $template          Template object
- * @property string                     u_action           Action URL
- * @property \phpbb\user                user               User object
+ * @property ContainerInterface       container          The phpBB log system
+ * @property string                   id_prefix_name     Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                   module_name        Name of the module currently used
+ * @property \phpbb\request\request   request            Request object
+ * @property bool                     submit             State of submit $_POST variable
+ * @property \phpbb\template\template template           Template object
+ * @property string                   u_action           Action URL
+ * @property \phpbb\user              user               User object
  */
 class admin_settings_controller extends admin_main
 {
@@ -49,7 +51,11 @@ class admin_settings_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		$this->lang_key_prefix = 'PPDE_SETTINGS';
+		parent::__construct(
+			'settings',
+			'PPDE_SETTINGS',
+			''
+		);
 	}
 
 	/**
@@ -60,6 +66,8 @@ class admin_settings_controller extends admin_main
 	 */
 	public function display_settings()
 	{
+		$this->ppde_controller_main->first_start();
+
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
 
@@ -69,12 +77,9 @@ class admin_settings_controller extends admin_main
 		$this->submit_settings();
 
 		// Set output vars for display in the template
+		$this->s_error_assign_template_vars($errors);
+		$this->u_action_assign_template_vars();
 		$this->template->assign_vars(array(
-			'S_ERROR'                        => $this->check_config((sizeof($errors))),
-			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
-			'U_ACTION'                       => $this->u_action,
-
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'                => $this->check_config($this->config['ppde_account_id'], 'string', ''),
 			'PPDE_DEFAULT_CURRENCY'          => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
@@ -87,14 +92,16 @@ class admin_settings_controller extends admin_main
 			// PayPal IPN vars
 			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
 			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
+			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
 			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
 			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
+			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
 			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
-			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
+			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable'], 'boolean', true),
 
 			// Statistics Settings vars
 			'PPDE_RAISED'                    => $this->check_config($this->config['ppde_raised'], 'float', 0),
@@ -153,14 +160,16 @@ class admin_settings_controller extends admin_main
 
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
+		$this->config->set('ppde_ipn_donorlist_enable', $this->request->variable('ppde_ipn_donorlist_enable', false));
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
 		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
 		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
+		$this->config->set('ppde_ipn_notification_enable', $this->request->variable('ppde_ipn_notification_enable', false));
 
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
-		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', false));
+		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
@@ -172,8 +181,8 @@ class admin_settings_controller extends admin_main
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 
 		// Set misc settings
-		$this->config->set('ppde_curl_detected', $this->ppde_controller_main->check_curl());
-		$this->config->set('ppde_fsock_detected', $this->ppde_controller_main->check_fsockopen());
+		$this->ppde_controller_main->set_curl_info();
+		$this->ppde_controller_main->set_remote_detected();
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));

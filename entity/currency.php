@@ -11,10 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
- * @property \phpbb\user                          user               phpBB User object
- * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
+ * @property \phpbb\user                       user               phpBB User object
+ * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class currency extends main
 {
@@ -68,15 +68,38 @@ class currency extends main
 	/**
 	 * SQL Query to return the ID of selected currency
 	 *
+	 * @param string $iso_code Currency ISO code name
+	 *
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data_exists()
+	public function build_sql_data_exists($iso_code = '')
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
-			WHERE currency_iso_code = '" . $this->db->sql_escape($this->data['currency_iso_code']) . "'
-				AND currency_symbol = '" . $this->db->sql_escape($this->data['currency_symbol']) . "'";
+			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ? $iso_code : $this->data['currency_iso_code']) . "'";
+	}
+
+	/**
+	 * Get the order number of the currency
+	 *
+	 * @return int Order identifier
+	 * @access public
+	 */
+	public function get_currency_order()
+	{
+		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+	}
+
+	/**
+	 * Get Currency status
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function get_currency_position()
+	{
+		return (isset($this->data['currency_on_left'])) ? (bool) $this->data['currency_on_left'] : false;
 	}
 
 	/**
@@ -91,22 +114,6 @@ class currency extends main
 	}
 
 	/**
-	 * Set Currency symbol
-	 *
-	 * @param string $symbol
-	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_symbol($symbol)
-	{
-		// Set the lang_id on our data array
-		$this->data['currency_symbol'] = (string) $symbol;
-
-		return $this;
-	}
-
-	/**
 	 * Get Currency Symbol
 	 *
 	 * @return string Currency symbol
@@ -114,21 +121,21 @@ class currency extends main
 	 */
 	public function get_symbol()
 	{
-		return (isset($this->data['currency_symbol'])) ? (string) $this->data['currency_symbol'] : '';
+		return (isset($this->data['currency_symbol'])) ? (string) html_entity_decode($this->data['currency_symbol'], ENT_COMPAT | ENT_HTML5, 'UTF-8') : '';
 	}
 
 	/**
-	 * Set Currency ISO code name
+	 * Set Currency status
 	 *
-	 * @param string $iso_code
+	 * @param bool $on_left
 	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
+	 * @return bool
 	 * @access public
 	 */
-	public function set_iso_code($iso_code)
+	public function set_currency_position($on_left)
 	{
-		// Set the lang_id on our data array
-		$this->data['currency_iso_code'] = (string) $iso_code;
+		// Set the item type on our data array
+		$this->data['currency_on_left'] = (bool) $on_left;
 
 		return $this;
 	}
@@ -150,41 +157,35 @@ class currency extends main
 	}
 
 	/**
-	 * Get Currency status
+	 * Set Currency ISO code name
 	 *
-	 * @return bool
+	 * @param string $iso_code
+	 *
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function get_currency_position()
+	public function set_iso_code($iso_code)
 	{
-		return (isset($this->data['currency_on_left'])) ? (bool) $this->data['currency_on_left'] : false;
-	}
-
-	/**
-	 * Set Currency status
-	 *
-	 * @param bool $on_left
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function set_currency_position($on_left)
-	{
-		// Set the item type on our data array
-		$this->data['currency_on_left'] = (bool) $on_left;
+		// Set the lang_id on our data array
+		$this->data['currency_iso_code'] = (string) $iso_code;
 
 		return $this;
 	}
 
 	/**
-	 * Get the order number of the currency
+	 * Set Currency symbol
 	 *
-	 * @return int Order identifier
+	 * @param string $symbol
+	 *
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function get_currency_order()
+	public function set_symbol($symbol)
 	{
-		return (isset($this->data['currency_order'])) ? (int) $this->data['currency_order'] : 0;
+		// Set the lang_id on our data array
+		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
+
+		return $this;
 	}
 
 	/**
@@ -202,7 +203,6 @@ class currency extends main
 	 * Set Currency order number
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @throws \skouat\ppde\exception\out_of_bounds
 	 * @access protected
 	 */
 	protected function set_order()
@@ -216,7 +216,7 @@ class currency extends main
 		*/
 		if ($order < 0 || $order > 16777215)
 		{
-			throw new \skouat\ppde\exception\out_of_bounds('currency_order');
+			$this->display_warning_message('EXCEPTION_OUT_OF_BOUNDS', 'currency_order');
 		}
 
 		$this->data['currency_order'] = $order;
@@ -250,7 +250,7 @@ class currency extends main
 		if ($this->get_currency_enable())
 		{
 			// Return an error if the currency is enabled
-			trigger_error($this->user->lang['PPDE_DISABLE_BEFORE_DELETION'] . adm_back_link($this->u_action), E_USER_WARNING);
+			$this->display_warning_message('PPDE_DISABLE_BEFORE_DELETION');
 		}
 	}
 

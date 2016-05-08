@@ -11,10 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
- * @property \phpbb\user                          user               phpBB User object
- * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
+ * @property \phpbb\user                       user               phpBB User object
+ * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class donation_pages extends main
 {

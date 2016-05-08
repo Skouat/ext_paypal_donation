@@ -93,8 +93,10 @@ class listener implements EventSubscriberInterface
 	public function add_page_header_link()
 	{
 		$this->template->assign_vars(array(
-			'S_PPDE_LINK_ENABLED' => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
-			'U_PPDE_DONATE'       => $this->controller_helper->route('skouat_ppde_donate'),
+			'S_PPDE_LINK_ENABLED'           => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
+			'S_PPDE_LINK_DONORLIST_ENABLED' => $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'] ? true : false,
+			'U_PPDE_DONATE'                 => $this->controller_helper->route('skouat_ppde_donate'),
+			'U_PPDE_DONORLIST'              => $this->controller_helper->route('skouat_ppde_donorlist'),
 		));
 	}
 
@@ -111,7 +113,7 @@ class listener implements EventSubscriberInterface
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = array(
 			'ext_name' => 'skouat/ppde',
-			'lang_set' => 'donate',
+			'lang_set' => array('donate', 'exceptions'),
 		);
 		$event['lang_set_ext'] = $lang_set_ext;
 	}
@@ -133,6 +135,12 @@ class listener implements EventSubscriberInterface
 				$event['location'] = $this->user->lang('PPDE_VIEWONLINE');
 				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donate');
 			}
+
+			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donorlist') === 0)
+			{
+				$event['location'] = $this->user->lang('PPDE_VIEWONLINE_DONORLIST');
+				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donorlist');
+			}
 		}
 	}
 
@@ -152,8 +160,9 @@ class listener implements EventSubscriberInterface
 
 		$permissions = $event['permissions'];
 		$permissions = array_merge($permissions, array(
-			'a_ppde_manage' => array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'),
-			'u_ppde_use'    => array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'),
+			'a_ppde_manage'         => array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'),
+			'u_ppde_use'            => array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'),
+			'u_ppde_view_donorlist' => array('lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde'),
 		));
 		$event['permissions'] = $permissions;
 	}

@@ -11,10 +11,10 @@
 namespace skouat\ppde\entity;
 
 /**
- * @property \phpbb\db\driver\driver_interface    db                 phpBB Database object
- * @property \phpbb\user                          user               phpBB User object
- * @property string                               lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                               lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
+ * @property \phpbb\user                       user               phpBB User object
+ * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class transactions extends main
 {
@@ -50,6 +50,7 @@ class transactions extends main
 	 * @access protected
 	 */
 	protected $data;
+	protected $extra_data;
 	protected $transactions_log_table;
 
 	/**
@@ -107,19 +108,19 @@ class transactions extends main
 	}
 
 	/**
-	 * Check the txn_id exist from the database for this transaction
+	 * Checks if the txn_id exists for this transaction
 	 *
-	 * @return int $this->data['txn_id'] Transaction identifier; 0 if the transaction doesn't exist
+	 * @return int $this->data['transaction_id'] Transaction identifier; 0 if the transaction doesn't exist
 	 * @access public
 	 */
 	public function transaction_exists()
 	{
-		$sql = 'SELECT txn_id
+		$sql = 'SELECT transaction_id
 			FROM ' . $this->transactions_log_table . "
 			WHERE txn_id = '" . $this->db->sql_escape($this->data['txn_id']) . "'";
 		$this->db->sql_query($sql);
 
-		return $this->db->sql_fetchfield('txn_id');
+		return $this->db->sql_fetchfield('transaction_id');
 	}
 
 	/**
@@ -285,6 +286,17 @@ class transactions extends main
 	public function get_user_id()
 	{
 		return (isset($this->data['user_id'])) ? (integer) $this->data['user_id'] : 0;
+	}
+
+	/**
+	 * Get member username
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_username()
+	{
+		return (isset($this->extra_data['username'])) ? (string) $this->extra_data['username'] : '';
 	}
 
 	/**
@@ -655,6 +667,21 @@ class transactions extends main
 	public function set_user_id($user_id)
 	{
 		$this->data['user_id'] = (integer) $user_id;
+
+		return $this;
+	}
+
+	/**
+	 * Set member username
+	 *
+	 * @param string $username
+	 *
+	 * @return transactions $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_username($username)
+	{
+		$this->extra_data['username'] = (string) $username;
 
 		return $this;
 	}

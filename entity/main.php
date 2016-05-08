@@ -62,7 +62,7 @@ abstract class main
 		if (!empty($this->data[$this->table_schema['item_id']['name']]))
 		{
 			// The page already exists
-			$this->display_error_message($this->lang_key_prefix . '_EXIST');
+			$this->display_warning_message($this->lang_key_prefix . '_EXIST');
 		}
 
 		// Run some stuff before insert data in database
@@ -82,7 +82,7 @@ abstract class main
 	}
 
 	/**
-	 * Display Error message
+	 * Display a user warning message
 	 *
 	 * @param string $lang_key
 	 * @param string $args
@@ -90,10 +90,21 @@ abstract class main
 	 * @return null
 	 * @access protected
 	 */
-	protected function display_error_message($lang_key, $args = '')
+	protected function display_warning_message($lang_key, $args = '')
 	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . adm_back_link($this->u_action);
+		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . $this->adm_back_link_exists();
 		trigger_error($message, E_USER_WARNING);
+	}
+
+	/**
+	 * Checks if the adm_back_link function is loaded
+	 *
+	 * @return string
+	 * @access protected
+	 */
+	protected function adm_back_link_exists()
+	{
+		return (function_exists('adm_back_link')) ? adm_back_link($this->u_action) : '';
 	}
 
 	/**
@@ -131,7 +142,7 @@ abstract class main
 		if ($required_fields)
 		{
 			// The page already exists
-			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		$sql = 'UPDATE ' . $this->table_name . '
@@ -217,7 +228,7 @@ abstract class main
 		if ($this->data === false)
 		{
 			// A item does not exist
-			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		return $this;
@@ -301,7 +312,7 @@ abstract class main
 		if ($this->disallow_deletion($id) && empty($sql_where))
 		{
 			// The item selected does not exists
-			$this->display_error_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		$this->run_function_before_action($action_before_delete);
@@ -331,14 +342,16 @@ abstract class main
 	 *
 	 * @param string $sql
 	 * @param array  $additional_table_schema
+	 * @param int    $limit
+	 * @param        $limit_offset
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = array())
+	public function get_data($sql, $additional_table_schema = array(), $limit = 0, $limit_offset = 0)
 	{
 		$entities = array();
-		$result = $this->db->sql_query($sql);
+		$result = $this->limit_query($sql, $limit, $limit_offset);
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -352,6 +365,21 @@ abstract class main
 	}
 
 	/**
+	 * Use query limit if requested
+	 *
+	 * @param string  $sql
+	 * @param integer $limit
+	 * @param integer $offset
+	 *
+	 * @return mixed
+	 * @access private
+	 */
+	private function limit_query($sql, $limit, $offset)
+	{
+		return empty($limit) ? $this->db->sql_query($sql) : $this->db->sql_query_limit($sql, $limit, $offset);
+	}
+
+	/**
 	 * Import and validate data
 	 *
 	 * Used when the data is already loaded externally.
@@ -362,7 +390,6 @@ abstract class main
 	 * @param array  $additional_table_schema
 	 *
 	 * @return object $this->data object
-	 * @throws \skouat\ppde\exception\invalid_argument
 	 * @access public
 	 */
 	public function import($data, $additional_table_schema = array())
@@ -379,7 +406,7 @@ abstract class main
 			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field['name']]))
 			{
-				throw new \skouat\ppde\exception\invalid_argument(array($field['name'], 'FIELD_MISSING'));
+				$this->display_warning_message('EXCEPTION_INVALID_FIELD', $field['name']);
 			}
 
 			// settype passes values by reference

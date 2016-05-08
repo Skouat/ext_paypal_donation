@@ -1,0 +1,23 @@
+Subject: Notification de nouveau don - « {SITENAME} »
+
+Bonjour {USERNAME},
+
+Votre don, à l’attention de « {SITENAME} » a bien été reçu.
+
+Informations concernant votre don :
+
+----------------------------
+ID de transaction : {TXN_ID}
+
+Compte émetteur : {PAYER_USERNAME} ({PAYER_EMAIL})
+
+Montant donné : {MC_GROSS}
+Montant reçu par « {SITENAME} » : <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
+
+----------------------------
+
+Si vous ne souhaitez plus être notifié lorsque vous émettez un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
+
+{U_NOTIFICATION_SETTINGS}
+
+{EMAIL_SIG}

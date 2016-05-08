@@ -18,6 +18,7 @@ if (empty($lang) || !is_array($lang))
 	$lang = array();
 }
 
+
 // DEVELOPERS PLEASE NOTE
 //
 // All language files should use UTF-8 as their encoding and the files must not contain a BOM.
@@ -34,11 +35,11 @@ if (empty($lang) || !is_array($lang))
 // ’ « » “ ” …
 //
 
-// Adding the permissions
-$lang = array_merge($lang, array(
-	'ACL_CAT_PPDE' => 'PayPal Donation',
 
-	'ACL_A_PPDE_MANAGE'         => 'Can manage PayPal Donation extension',
-	'ACL_U_PPDE_USE'            => 'Can make a donation',
-	'ACL_U_PPDE_VIEW_DONORLIST' => 'Can view the list of donors',
+/**
+ * UCP notification system
+ */
+$lang = array_merge($lang, array(
+	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED' => 'Someone makes a donation',
+	'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED'       => 'A donation you made was received on the forum',
 ));

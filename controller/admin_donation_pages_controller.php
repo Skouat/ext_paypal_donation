@@ -13,16 +13,16 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface                       container         The phpBB log system
- * @property string                                   id_prefix_name    Prefix name for identifier in the URL
- * @property string                                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log                           log               The phpBB log system.
- * @property string                                   module_name       Name of the module currently used
- * @property bool                                     preview           State of preview $_POST variable
- * @property \phpbb\request\request                   request           Request object.
- * @property bool                                     submit            State of submit $_POST variable
- * @property \phpbb\template\template                 $template         Template object
- * @property \phpbb\user                              user              User object.
+ * @property ContainerInterface       container         The phpBB log system
+ * @property string                   id_prefix_name    Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log           log               The phpBB log system.
+ * @property string                   module_name       Name of the module currently used
+ * @property bool                     preview           State of preview $_POST variable
+ * @property \phpbb\request\request   request           Request object.
+ * @property bool                     submit            State of submit $_POST variable
+ * @property \phpbb\template\template template          Template object
+ * @property \phpbb\user              user              User object.
  */
 class admin_donation_pages_controller extends admin_main
 {
@@ -96,7 +96,6 @@ class admin_donation_pages_controller extends admin_main
 				$this->template->assign_block_vars('ppde_langs.dp_list', array(
 					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($data['page_title'])],
 					'DONATION_PAGE_LANG'  => (string) $lang,
-
 					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 				));
@@ -105,7 +104,7 @@ class admin_donation_pages_controller extends admin_main
 		}
 		unset($entry, $langs, $lang);
 
-	$this->u_action_assign_template_vars();
+		$this->u_action_assign_template_vars();
 	}
 
 	/**
@@ -161,7 +160,6 @@ class admin_donation_pages_controller extends admin_main
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_ADD_DONATION_PAGE' => true,
-
 			'U_ADD_ACTION'        => $this->u_action . '&amp;action=add',
 			'U_BACK'              => $this->u_action,
 		));
@@ -202,11 +200,11 @@ class admin_donation_pages_controller extends admin_main
 		$this->submit = $this->request->is_set_post('submit');
 		$this->preview = $this->request->is_set_post('preview');
 
-		// Load posting language file for the BBCode editor
-		$this->user->add_lang('posting');
-
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
+
+		// Load posting language file for the BBCode editor
+		$this->user->add_lang('posting');
 
 		$message_parse_options = array_merge(
 			$this->get_message_parse_options($entity, $data, 'bbcode'),
@@ -217,15 +215,7 @@ class admin_donation_pages_controller extends admin_main
 		// Set the message parse options in the entity
 		foreach ($message_parse_options as $function => $enabled)
 		{
-			try
-			{
-				call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
+			call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
 		}
 
 		unset($message_parse_options);
@@ -236,7 +226,7 @@ class admin_donation_pages_controller extends admin_main
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		);
-		$errors = array_merge($errors, $this->set_entity_data($entity, $item_fields));
+		$this->set_entity_data($entity, $item_fields);
 
 		// Check some settings before loading and submitting form
 		$errors = array_merge($errors,
@@ -256,36 +246,63 @@ class admin_donation_pages_controller extends admin_main
 		$this->submit_data($entity, $errors);
 
 		// Set output vars for display in the template
+		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars(array(
-			'S_ERROR'                        => (sizeof($errors)) ? true : false,
-			'ERROR_MSG'                      => (sizeof($errors)) ? implode('<br />', $errors) : '',
-
+			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 			'L_DONATION_PAGES_TITLE'         => $this->user->lang[strtoupper($entity->get_name())],
 			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang[strtoupper($entity->get_name()) . '_EXPLAIN'],
-			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 
-			'S_BBCODE_DISABLE_CHECKED'       => !$entity->message_bbcode_enabled(),
-			'S_SMILIES_DISABLE_CHECKED'      => !$entity->message_smilies_enabled(),
-			'S_MAGIC_URL_DISABLE_CHECKED'    => !$entity->message_magic_url_enabled(),
+			'S_BBCODE_DISABLE_CHECKED'    => !$entity->message_bbcode_enabled(),
+			'S_MAGIC_URL_DISABLE_CHECKED' => !$entity->message_magic_url_enabled(),
+			'S_SMILIES_DISABLE_CHECKED'   => !$entity->message_smilies_enabled(),
 
-			'BBCODE_STATUS'                  => $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
-			'SMILIES_STATUS'                 => $this->user->lang['SMILIES_ARE_ON'],
-			'IMG_STATUS'                     => $this->user->lang['IMAGES_ARE_ON'],
-			'FLASH_STATUS'                   => $this->user->lang['FLASH_IS_ON'],
-			'URL_STATUS'                     => $this->user->lang['URL_IS_ON'],
+			'BBCODE_STATUS'  => $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
+			'FLASH_STATUS'   => $this->user->lang['FLASH_IS_ON'],
+			'IMG_STATUS'     => $this->user->lang['IMAGES_ARE_ON'],
+			'SMILIES_STATUS' => $this->user->lang['SMILIES_ARE_ON'],
+			'URL_STATUS'     => $this->user->lang['URL_IS_ON'],
 
-			'S_BBCODE_ALLOWED'               => true,
-			'S_SMILIES_ALLOWED'              => true,
-			'S_BBCODE_IMG'                   => true,
-			'S_BBCODE_FLASH'                 => true,
-			'S_LINKS_ALLOWED'                => true,
-			'S_HIDDEN_FIELDS'                => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '" />',
+			'S_BBCODE_ALLOWED'  => true,
+			'S_BBCODE_FLASH'    => true,
+			'S_BBCODE_IMG'      => true,
+			'S_LINKS_ALLOWED'   => true,
+			'S_SMILIES_ALLOWED' => true,
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '" />',
 		));
 
-		// Assigning custom bbcodes
-		include_once($this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+		// Display custom bbcodes and smilies
+		$this->include_custom_bbcodes($entity->message_bbcode_enabled());
+		$this->include_smileys($entity->message_smilies_enabled());
+	}
 
-		display_custom_bbcodes();
+	/**
+	 * @param $bbcode_enabled
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function include_custom_bbcodes($bbcode_enabled)
+	{
+		if ($bbcode_enabled)
+		{
+			include_once($this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+			display_custom_bbcodes();
+		}
+	}
+
+	/**
+	 * @param $smilies_enabled
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function include_smileys($smilies_enabled)
+	{
+		if ($smilies_enabled)
+		{
+			include_once($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			generate_smilies('inline', 0);
+		}
 	}
 
 	/**
@@ -317,9 +334,8 @@ class admin_donation_pages_controller extends admin_main
 		{
 			// Set output vars for display in the template
 			$this->template->assign_vars(array(
-				'S_PPDE_DP_PREVIEW' => $this->preview,
-
 				'PPDE_DP_PREVIEW'   => $entity->replace_template_vars($entity->get_message_for_display()),
+				'S_PPDE_DP_PREVIEW' => $this->preview,
 			));
 		}
 	}
@@ -423,7 +439,6 @@ class admin_donation_pages_controller extends admin_main
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_EDIT_DONATION_PAGE' => true,
-
 			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $page_id,
 			'U_BACK'               => $this->u_action,
 		));

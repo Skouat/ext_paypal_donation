@@ -37,37 +37,53 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	// Header
-	'PPDE_HEADER_LINK_TITLE'      => 'Faire un don',
+	'PPDE_HEADER_LINK_TITLE'           => 'Faire un don',
+	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donateurs',
 
 	// Index page
-	'PPDE_INDEX_STATISTICS_TITLE' => 'Statistiques des dons',
-
-	// Image alternative text
-	'IMG_LOADER'                  => 'chargement',
+	'PPDE_INDEX_STATISTICS_TITLE'      => 'Statistiques des dons',
 
 	// Pages
-	'PPDE_DONATION_BUTTON_TITLE'  => 'Faire un don',
-	'PPDE_DONATION_TITLE'         => 'Faire un don',
-	'PPDE_DONATION_TITLE_HEAD'    => 'Faire un don pour',
-	'PPDE_CANCEL_TITLE'           => 'Dons annulés',
-	'PPDE_SUCCESS_TITLE'          => 'Dons validés',
-	'PPDE_CONTACT_PAYPAL'         => 'Connexion à PayPal - Veuillez patienter…',
-	'PPDE_SANDBOX_TITLE'          => 'Tester PayPal Donation avec PayPal Sandbox',
+	'PPDE_DONATION_BUTTON_TITLE'       => 'Faire un don',
+	'PPDE_DONATION_TITLE'              => 'Faire un don',
+	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour',
+	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
+	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
+	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal - Veuillez patienter…',
+	'PPDE_SANDBOX_TITLE'               => 'Tester PayPal Donation avec PayPal Sandbox',
+
+	// Donors list
+	'PPDE_DONORLIST_TITLE'             => 'Liste des donateurs',
+	'PPDE_DONORLIST_LAST_DONATION'     => 'Dernier don',
+	'PPDE_DONORLIST_LAST_DATE'         => 'Effectué le',
+	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Somme des dons',
+
+	'PPDE_NO_DONORS'                   => 'Aucun donateur',
 
 	// Statistics
-	'DONATE_RECEIVED'             => 'Nous avons reçu <strong>%s</strong> de dons.',
-	'DONATE_NOT_RECEIVED'         => 'Nous n’avons pas encore reçu de dons.',
-
-	'DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%s</strong>.',
-	'DONATE_GOAL_REACHED'         => 'L’objectif de don a été atteint.',
-	'DONATE_NO_GOAL'              => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
-
-	'DONATE_USED'                 => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
-	'DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
-	'DONATE_NOT_USED'             => 'Les dons n’ont pas été utilisés.',
+	'PPDE_DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%s</strong>.',
+	'PPDE_DONATE_GOAL_REACHED'         => 'L’objectif de don a été atteint.',
+	'PPDE_DONATE_NO_GOAL'              => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
+	'PPDE_DONATE_NOT_RECEIVED'         => 'Nous n’avons pas encore reçu de dons.',
+	'PPDE_DONATE_NOT_USED'             => 'Les dons n’ont pas été utilisés.',
+	'PPDE_DONATE_RECEIVED'             => 'Nous avons reçu <strong>%s</strong> de dons.',
+	'PPDE_DONATE_USED'                 => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
+	'PPDE_DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
 
 	// Viewonline
-	'PPDE_VIEWONLINE'             => 'Consulte la page des dons',
+	'PPDE_VIEWONLINE'                  => 'Consulte la page des dons',
+	'PPDE_VIEWONLINE_DONORLIST'        => 'Consulte la liste des donateurs',
+));
+
+/**
+ * Info: This array is out of the previous because there is an issue with Transifex platform
+ */
+$lang = array_merge($lang, array(
+	'PPDE_DONORS' => array(
+		0 => '',             // 0 - Used for pagination. Let this language key empty.
+		1 => '%d donateur',  // 1
+		2 => '%d donateurs', // 2+
+	),
 ));
 
 $lang = array_merge($lang, array(
@@ -77,5 +93,11 @@ $lang = array_merge($lang, array(
 	'NO_CONNECTION_DETECTED'     => 'cURL et fsockopen() n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
 	'INVALID_TRANSACTION_RECORD' => 'Transaction invalide : ID de transaction non trouvé.',
 	'INVALID_RESPONSE_STATUS'    => 'Statut de réponse non valide : ',
-	'UNEXPECTED_RESPONSE'        => 'Réponse inatendue de PayPal.',
+	'UNEXPECTED_RESPONSE'        => 'Réponse inattendue de PayPal.',
+));
+
+$lang = array_merge($lang, array(
+	// Notification
+	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
+	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ));

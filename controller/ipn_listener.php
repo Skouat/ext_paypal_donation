@@ -21,6 +21,7 @@ class ipn_listener
 {
 	protected $container;
 	protected $config;
+	protected $notification;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $php_ext;
@@ -95,12 +96,25 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
+	/**
+	 * Settle currency data
+	 *
+	 * @var array
+	 */
+	private $currency_settle_data;
+	/**
+	 * Main currency data
+	 *
+	 * @var array
+	 */
+	private $currency_mc_data;
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                                  $config                             Config object
 	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \phpbb\notification\manager                           $notification                       Notification object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
@@ -111,10 +125,11 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->notification = $notification;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
@@ -191,7 +206,7 @@ class ipn_listener
 	 * @param bool $fsock
 	 * @param bool $none
 	 *
-	 * @return array
+	 * @return null
 	 * @access private
 	 */
 	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
@@ -201,8 +216,6 @@ class ipn_listener
 			'fsock' => (bool) $fsock,
 			'none'  => (bool) $none,
 		);
-
-		return $this->curl_fsock;
 	}
 
 	/**
@@ -342,40 +355,37 @@ class ipn_listener
 	/**
 	 * Setup the data list with default values.
 	 *
-	 * @return array
+	 * @return array<string,string|false|array<string|boolean>|double>
 	 * @access private
 	 */
 	private function transaction_vars_list()
 	{
 		return array(
-			'receiver_id'       => '', // Secure Merchant Account ID
-			'receiver_email'    => '', // Merchant e-mail address
-			'residence_country' => '', // Merchant country code
-			'business'          => '', // Primary merchant e-mail address
-
-			'confirmed'         => false, // used to check if the payment is confirmed
-			'test_ipn'          => false, // used when transaction come from Sandbox platform
-			'txn_id'            => '', // Transaction ID
-			'txn_type'          => '', // Transaction type - Should be: 'send_money'
-			'parent_txn_id'     => '', // Transaction ID
-
-			'payer_email'       => '', // PayPal sender email address
-			'payer_id'          => '', // PayPal sender ID
-			'payer_status'      => 'unverified', // PayPal sender status (verified, unverified?)
+			'business'          => '',              // Primary merchant e-mail address
+			'confirmed'         => false,           // used to check if the payment is confirmed
+			'exchange_rate'     => '',              // Exchange rate used if a currency conversion occurred
 			'first_name'        => array('', true), // First name of sender
-			'last_name'         => array('', true), // Last name of sender
-
 			'item_name'         => array('', true), // Equal to: $this->config['sitename']
-			'item_number'       => '', // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-			'mc_currency'       => '', // Currency
-			'mc_gross'          => 0, // Amt received (before fees)
-			'mc_fee'            => 0, // Amt of fees
-			'payment_date'      => '', // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
-			'payment_status'    => '', // eg: 'Completed'
-			'payment_type'      => '', // Payment type
-			'settle_amount'     => 0, // Amt received after currency conversion (before fees)
-			'settle_currency'   => '', // Currency of 'settle_amount'
-			'exchange_rate'     => '', // Exchange rate used if a currency conversion occurred
+			'item_number'       => '',              // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+			'last_name'         => array('', true), // Last name of sender
+			'mc_currency'       => '',              // Currency
+			'mc_gross'          => 0.00,            // Amt received (before fees)
+			'mc_fee'            => 0.00,            // Amt of fees
+			'parent_txn_id'     => '',              // Transaction ID
+			'payer_email'       => '',              // PayPal sender email address
+			'payer_id'          => '',              // PayPal sender ID
+			'payer_status'      => 'unverified',    // PayPal sender status (verified, unverified?)
+			'payment_date'      => '',              // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
+			'payment_status'    => '',              // eg: 'Completed'
+			'payment_type'      => '',              // Payment type
+			'receiver_id'       => '',              // Secure Merchant Account ID
+			'receiver_email'    => '',              // Merchant e-mail address
+			'residence_country' => '',              // Merchant country code
+			'settle_amount'     => 0.00,            // Amt received after currency conversion (before fees)
+			'settle_currency'   => '',              // Currency of 'settle_amount'
+			'test_ipn'          => false,           // used when transaction come from Sandbox platform
+			'txn_id'            => '',              // Transaction ID
+			'txn_type'          => '',              // Transaction type - Should be: 'send_money'
 		);
 	}
 
@@ -446,7 +456,7 @@ class ipn_listener
 	 */
 	private function check_account_id()
 	{
-		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_account_id'] : $this->config['ppde_sandbox_address'];
+		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 
 		if ($this->only_ascii($account_value))
 		{
@@ -473,7 +483,7 @@ class ipn_listener
 		// Grab the post data form and set in an array to be used in the URI to PayPal
 		foreach ($this->get_post_data() as $key => $value)
 		{
-			$encoded = urlencode(stripslashes($value));
+			$encoded = urlencode($value);
 			$values[] = $key . '=' . $encoded;
 
 			$this->transaction_data[$key] = $value;
@@ -631,7 +641,7 @@ class ipn_listener
 		else if ($this->txn_is_invalid())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error);
+			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error, true);
 		}
 		else
 		{
@@ -796,12 +806,16 @@ class ipn_listener
 		// the item number contains the user_id
 		$this->extract_item_number_data();
 
+		// set username in extra_data property in $entity
+		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$entity->set_username($user_ary['username']);
+
 		// list the data to be thrown into the database
 		$data = $this->build_data_ary();
 
-		$errors = $this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
+		$this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
 
-		$this->submit_data($entity, $errors);
+		$this->submit_data($entity);
 	}
 
 	/**
@@ -823,51 +837,79 @@ class ipn_listener
 	private function build_data_ary()
 	{
 		return array(
-			'receiver_id'       => $this->transaction_data['receiver_id'],
-			'receiver_email'    => $this->transaction_data['receiver_email'],
-			'residence_country' => $this->transaction_data['residence_country'],
 			'business'          => $this->transaction_data['business'],
 			'confirmed'         => (bool) $this->transaction_data['confirmed'],
-			'test_ipn'          => $this->transaction_data['test_ipn'],
-			'txn_id'            => $this->transaction_data['txn_id'],
-			'txn_type'          => $this->transaction_data['txn_type'],
+			'exchange_rate'     => $this->transaction_data['exchange_rate'],
+			'first_name'        => $this->transaction_data['first_name'],
+			'item_name'         => $this->transaction_data['item_name'],
+			'item_number'       => $this->transaction_data['item_number'],
+			'last_name'         => $this->transaction_data['last_name'],
+			'mc_currency'       => $this->transaction_data['mc_currency'],
+			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
+			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
+			'net_amount'        => $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
 			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
 			'payer_email'       => $this->transaction_data['payer_email'],
 			'payer_id'          => $this->transaction_data['payer_id'],
 			'payer_status'      => $this->transaction_data['payer_status'],
-			'first_name'        => $this->transaction_data['first_name'],
-			'last_name'         => $this->transaction_data['last_name'],
-			'user_id'           => (int) $this->transaction_data['user_id'],
-			'item_name'         => $this->transaction_data['item_name'],
-			'item_number'       => $this->transaction_data['item_number'],
-			'mc_currency'       => $this->transaction_data['mc_currency'],
-			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
-			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
-			'net_amount'        => number_format($this->transaction_data['mc_gross'] - $this->transaction_data['mc_fee'], 2),
 			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
+			'receiver_id'       => $this->transaction_data['receiver_id'],
+			'receiver_email'    => $this->transaction_data['receiver_email'],
+			'residence_country' => $this->transaction_data['residence_country'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
-			'exchange_rate'     => $this->transaction_data['exchange_rate'],
+			'test_ipn'          => $this->transaction_data['test_ipn'],
+			'txn_id'            => $this->transaction_data['txn_id'],
+			'txn_type'          => $this->transaction_data['txn_type'],
+			'user_id'           => (int) $this->transaction_data['user_id'],
 		);
+	}
+
+	/**
+	 * Returns the net amount of a PayPal Transaction
+	 *
+	 * @param float $amount
+	 * @param float $fee
+	 *
+	 * @return string
+	 */
+	private function net_amount($amount, $fee)
+	{
+		return number_format((float) $amount - (float) $fee, 2);
 	}
 
 	/**
 	 *  Submit data to the database
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
-	 * @param array                            $errors
 	 *
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity, $errors)
+	private function submit_data($entity)
 	{
-		if ($this->verified && empty($errors))
+		if ($this->verified)
 		{
+			if ($this->payment_status_is_completed())
+			{
+				$entity->set_id($entity->transaction_exists());
+			}
+
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
+	}
+
+	/**
+	 * Checks if payment_status is completed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function payment_status_is_completed()
+	{
+		return $this->transaction_data['payment_status'] === 'Completed';
 	}
 
 	/**
@@ -878,9 +920,24 @@ class ipn_listener
 	 */
 	private function do_actions()
 	{
-		if ($this->verified)
+		// If the transaction is not verified do nothing
+		if (!$this->verified)
 		{
-			$this->donors_group_user_add();
+			return;
+		}
+
+		if ($this->payment_status_is_completed())
+		{
+			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
+			$this->update_raised_amount();
+
+			// If the transaction is not a IPN test do additional actions
+			if (!$this->transaction_data['test_ipn'])
+			{
+				$this->donors_group_user_add();
+				$this->notify_donation_received();
+			}
 		}
 	}
 
@@ -913,7 +970,7 @@ class ipn_listener
 	 */
 	private function can_use_autogroup()
 	{
-		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->transaction_data['payment_status'] === 'Completed';
+		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->payment_status_is_completed();
 	}
 
 	/**
@@ -980,5 +1037,71 @@ class ipn_listener
 		}
 
 		return true;
+	}
+
+	/**
+	 * Updates the amount of donation raised
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function update_raised_amount()
+	{
+		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
+		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+	}
+
+	/**
+	 * Notify donors and admin when the donation is received
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function notify_donation_received()
+	{
+		// Initiate a transaction entity
+		/** @type \skouat\ppde\entity\transactions $entity */
+		$entity = $this->container->get('skouat.ppde.entity.transactions');
+
+		// Initiate a currency entity
+		/** @type \skouat\ppde\entity\currency $currency_entity */
+		$currency_entity = $this->container->get('skouat.ppde.entity.currency');
+
+		// Set currency data properties
+		$this->currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
+		$this->currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
+
+		$notification_data = array(
+			'net_amount'     => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'mc_gross'       => $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['mc_gross'], 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'payer_email'    => $this->transaction_data['payer_email'],
+			'payer_username' => $entity->get_username(),
+			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['settle_amount'], 2), $this->currency_settle_data[0]['currency_symbol'], (bool) $this->currency_settle_data[0]['currency_on_left']) : '',
+			'transaction_id' => $entity->get_id(),
+			'txn_id'         => $this->transaction_data['txn_id'],
+			'user_from'      => $entity->get_user_id(),
+		);
+
+		// Send admin notification
+		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
+		// Send donor notification
+		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
+	}
+
+	/**
+	 * Get currency data based on currency ISO code
+	 *
+	 * @param \skouat\ppde\entity\currency $entity The currency entity object
+	 * @param string                       $iso_code
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function get_currency_data($entity, $iso_code)
+	{
+		// Retrieve the currency ID for settle
+		$entity->data_exists($entity->build_sql_data_exists($iso_code));
+
+		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
 	}
 }

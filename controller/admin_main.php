@@ -54,8 +54,8 @@ abstract class admin_main
 	/**
 	 * Parse data to the entity
 	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param string                   $run_before_insert
+	 * @param \skouat\ppde\entity\main $entity            The entity object
+	 * @param string                   $run_before_insert Name of the function to call before SQL INSERT
 	 *
 	 * @return string $log_action
 	 * @access public
@@ -91,29 +91,16 @@ abstract class admin_main
 	 * @param \skouat\ppde\entity\main $entity The entity object
 	 * @param array                    $data_ary
 	 *
-	 * @return array
 	 * @access public
 	 */
 	public function set_entity_data($entity, $data_ary)
 	{
-		$errors = array();
-
 		foreach ($data_ary as $entity_function => $data)
 		{
-			try
-			{
-				// Calling the set_$entity_function on the entity and passing it $currency_data
-				call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
-			}
-			catch (\skouat\ppde\exception\base $e)
-			{
-				// Catch exceptions and add them to errors array
-				$errors[] = $e->get_message($this->user);
-			}
+			// Calling the set_$entity_function on the entity and passing it $currency_data
+			call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
 		}
 		unset($data_ary, $entity_function, $data);
-
-		return $errors;
 	}
 
 	/**
@@ -175,8 +162,7 @@ abstract class admin_main
 	 *
 	 * @param \skouat\ppde\entity\main $entity            The entity object
 	 * @param string                   $field_name        Name of the entity function to call
-	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return
-	 *                                                    value
+	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return value
 	 * @param bool                     $submit_or_preview Form submit or preview status
 	 *
 	 * @return array $errors
@@ -266,6 +252,22 @@ abstract class admin_main
 	{
 		$this->template->assign_vars(array(
 			'U_ACTION' => $this->u_action,
+		));
+	}
+
+	/**
+	 * Set error output vars for display in the template
+	 *
+	 * @param array $errors
+	 *
+	 * @return null
+	 * @access protected
+	 */
+	protected function s_error_assign_template_vars($errors)
+	{
+		$this->template->assign_vars(array(
+			'S_ERROR'   => (sizeof($errors)) ? true : false,
+			'ERROR_MSG' => (sizeof($errors)) ? implode('<br />', $errors) : '',
 		));
 	}
 }
