@@ -8,13 +8,13 @@
  *
  */
 
-namespace skouat\ppde\migrations\v10x;
+namespace skouat\ppde\migrations\v31x;
 
-class v1_0_0_data extends \phpbb\db\migration\migration
+class v310_m2_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v10x\v1_0_0_schema');
+		return array('\skouat\ppde\migrations\v31x\v310_m1_schema');
 	}
 
 	public function update_data()
