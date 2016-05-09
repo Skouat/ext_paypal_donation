@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "An extension which allows you to add a PayPal donation page on your phpBB board",
     "homepage": "http://skouat.github.io/ext_paypal_donation",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "keywords": [
         "phpbb",
         "extension",
