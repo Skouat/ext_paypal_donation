@@ -15,10 +15,10 @@ namespace skouat\ppde\controller;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-define('ASCII_RANGE', '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-
 class ipn_listener
 {
+	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
 	protected $container;
 	protected $config;
 	protected $notification;
@@ -437,7 +437,7 @@ class ipn_listener
 	private function only_ascii($value)
 	{
 		// we ensure that the txn_id (transaction ID) contains only ASCII chars...
-		$pos = strspn($value, ASCII_RANGE);
+		$pos = strspn($value, self::ASCII_RANGE);
 		$len = strlen($value);
 
 		if ($pos != $len)
