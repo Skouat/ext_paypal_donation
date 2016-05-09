@@ -26,7 +26,7 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 		return !$this->db_tools->sql_table_exists($this->table_prefix . 'donation_item');
 	}
 
-	static public function depends_on()
+	public static function depends_on()
 	{
 		return array('\skouat\ppde\migrations\v30x\v300_m1_converter_data');
 	}
