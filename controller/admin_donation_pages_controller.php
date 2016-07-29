@@ -285,7 +285,7 @@ class admin_donation_pages_controller extends admin_main
 	{
 		if ($bbcode_enabled)
 		{
-			include_once($this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+			$this->include_function('display_custom_bbcodes', $this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
 			display_custom_bbcodes();
 		}
 	}
@@ -300,8 +300,25 @@ class admin_donation_pages_controller extends admin_main
 	{
 		if ($smilies_enabled)
 		{
-			include_once($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			$this->include_function('generate_smilies', $this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
 			generate_smilies('inline', 0);
+		}
+	}
+
+	/**
+	 * Includes the file that contains the function, if not loaded.
+	 *
+	 * @param $function_name     string Name of the function to test
+	 * @param $function_filepath string Path of the file that containing the function
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function include_function($function_name, $function_filepath)
+	{
+		if (function_exists($function_name))
+		{
+			include($function_filepath);
 		}
 	}
 
