@@ -316,7 +316,7 @@ class admin_donation_pages_controller extends admin_main
 	 */
 	private function include_function($function_name, $function_filepath)
 	{
-		if (function_exists($function_name))
+		if (!function_exists($function_name))
 		{
 			include($function_filepath);
 		}
