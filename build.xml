@@ -13,16 +13,18 @@
 		Remove some unnecessary files/directories
 		${dir}/ is the folder of your extension, e.g. ext/nickvergessen/newspage/
 		-->
+		<delete dir="${dir}/.tx" />
 		<delete dir="${dir}/tests" />
 		<delete dir="${dir}/travis" />
-		<delete dir="${dir}/.tx" />
 
+		<delete file="${dir}/.tx/config" />
 		<delete file="${dir}/.gitignore" />
 		<delete file="${dir}/.gitattributes" />
 		<delete file="${dir}/.travis.yml" />
 		<delete file="${dir}/build.xml" />
 		<delete file="${dir}/composer.lock" />
 		<delete file="${dir}/phpunit.xml.dist" />
+		<delete file="${dir}/CHANGELOG.md" />
 		<delete file="${dir}/README.md" />
 	</target>
 
