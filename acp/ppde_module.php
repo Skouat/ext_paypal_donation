@@ -172,8 +172,8 @@ class ppde_module
 						// Move a currency
 						$admin_currency_controller->move_currency($currency_id, $action);
 						break;
-					case 'enable':
-					case 'disable':
+					case 'activate':
+					case 'deactivate':
 						// Enable/disable a currency
 						$admin_currency_controller->enable_currency($currency_id, $action);
 						break;

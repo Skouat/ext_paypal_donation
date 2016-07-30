@@ -13,16 +13,16 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface                 container         Service container interface
- * @property string                             id_prefix_name    Prefix name for identifier in the URL
- * @property string                             lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log                     log               The phpBB log system
- * @property string                             module_name       Name of the module currently used
- * @property \phpbb\request\request             request           Request object
- * @property bool                               submit            State of submit $_POST variable
- * @property \phpbb\template\template           template          Template object
- * @property string                             u_action          Action URL
- * @property \phpbb\user                        user              User object
+ * @property ContainerInterface       container         Service container interface
+ * @property string                   id_prefix_name    Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\log\log           log               The phpBB log system
+ * @property string                   module_name       Name of the module currently used
+ * @property \phpbb\request\request   request           Request object
+ * @property bool                     submit            State of submit $_POST variable
+ * @property \phpbb\template\template template          Template object
+ * @property string                   u_action          Action URL
+ * @property \phpbb\user              user              User object
  */
 class admin_currency_controller extends admin_main
 {
@@ -76,7 +76,7 @@ class admin_currency_controller extends admin_main
 		foreach ($data_ary as $data)
 		{
 			$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
-			$enable_value = (!$data['currency_enable']) ? 'enable' : 'disable';
+			$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
 
 			$this->template->assign_block_vars('currency', array(
 				'CURRENCY_NAME'    => $data['currency_name'],
@@ -308,7 +308,7 @@ class admin_currency_controller extends admin_main
 		}
 
 		// Return an error if it's the last enabled currency
-		if ($this->ppde_operator->last_currency_enabled($action) && ($action == 'disable'))
+		if ($this->ppde_operator->last_currency_enabled($action) && ($action == 'deactivate'))
 		{
 			trigger_error($this->user->lang['PPDE_CANNOT_DISABLE_ALL_CURRENCIES'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
@@ -319,18 +319,19 @@ class admin_currency_controller extends admin_main
 		$entity->load($currency_id);
 
 		// Set the new status for this currency
-		$entity->set_currency_enable(($action == 'enable') ? true : false);
+		$entity->set_currency_enable(($action == 'activate') ? true : false);
 
 		// Save data to the database
 		$entity->save($entity->check_required_field());
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), array($entity->get_name()));
 
-		if ($this->request->is_ajax() && ($action == 'enable' || $action == 'disable'))
+		if ($this->request->is_ajax() && ($action == 'activate' || $action == 'deactivate'))
 		{
+			$action_lang = ($action == 'activate') ? 'DISABLE' : 'ENABLE';
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text' => $this->user->lang[strtoupper($action)],
+				'text' => $this->user->lang[$action_lang],
 			));
 		}
 	}

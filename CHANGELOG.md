@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.0.2
-
+- Fix: Disabling of currency is enhanced by usage of AJAX, but change is not reflected directly
 - Fix: Use `is_set()` method in `$request` instead of use `!isset()` on Super Global
 - Fix: Donation statistics on index are displayed even if there is no content
 - Fix: Missing CSRF check on delete process
