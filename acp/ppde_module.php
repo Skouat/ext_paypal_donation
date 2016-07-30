@@ -25,7 +25,7 @@ class ppde_module
 	 */
 	public function main($id, $mode)
 	{
-		global $phpbb_container, $request;
+		global $phpbb_container, $request, $user;
 
 		// Requests
 		$action = $request->variable('action', '');
@@ -107,8 +107,22 @@ class ppde_module
 						// Return to stop execution of this script
 						return;
 					case 'delete':
-						// Delete a donation page
-						$admin_donation_pages_controller->delete_donation_page($page_id);
+						// Use a confirm box routine when deleting a donation page
+						if (confirm_box(true))
+						{
+							// Delete a donation page
+							$admin_donation_pages_controller->delete_donation_page($page_id);
+						}
+						else
+						{
+							// Request confirmation from the user to delete the donation page
+							confirm_box(false, $user->lang('PPDE_DP_CONFIRM_DELETE'), build_hidden_fields(array(
+								'autogroups_id' => $page_id,
+								'mode'          => $mode,
+								'action'        => $action,
+							)));
+						}
+
 						break;
 				}
 
@@ -164,8 +178,21 @@ class ppde_module
 						$admin_currency_controller->enable_currency($currency_id, $action);
 						break;
 					case 'delete':
-						// Delete a donation page
-						$admin_currency_controller->delete_currency($currency_id);
+						// Use a confirm box routine when deleting a currency
+						if (confirm_box(true))
+						{
+							// Delete a currency
+							$admin_currency_controller->delete_currency($currency_id);
+						}
+						else
+						{
+							// Request confirmation from the user to delete the currency
+							confirm_box(false, $user->lang('PPDE_DC_CONFIRM_DELETE'), build_hidden_fields(array(
+								'autogroups_id' => $currency_id,
+								'mode'          => $mode,
+								'action'        => $action,
+							)));
+						}
 						break;
 				}
 				// Display module main page

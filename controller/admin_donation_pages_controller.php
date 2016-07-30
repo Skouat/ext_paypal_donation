@@ -135,7 +135,7 @@ class admin_donation_pages_controller extends admin_main
 	public function add_donation_page()
 	{
 		// Add form key
-		add_form_key('add_edit_' . $this->module_name);
+		add_form_key('add_edit_donation_pages');
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */
@@ -429,7 +429,7 @@ class admin_donation_pages_controller extends admin_main
 	public function edit_donation_page($page_id)
 	{
 		// Add form key
-		add_form_key('add_edit_' . $this->module_name);
+		add_form_key('add_edit_donation_pages');
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */
