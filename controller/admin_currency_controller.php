@@ -191,7 +191,7 @@ class admin_currency_controller extends admin_main
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors)
 	{
 		if (!$entity->get_id())
 		{

@@ -888,7 +888,7 @@ class ipn_listener
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity)
+	private function submit_data(\skouat\ppde\entity\transactions $entity)
 	{
 		if ($this->verified)
 		{
@@ -1097,7 +1097,7 @@ class ipn_listener
 	 * @return array
 	 * @access private
 	 */
-	private function get_currency_data($entity, $iso_code)
+	private function get_currency_data(\skouat\ppde\entity\currency $entity, $iso_code)
 	{
 		// Retrieve the currency ID for settle
 		$entity->data_exists($entity->build_sql_data_exists($iso_code));
