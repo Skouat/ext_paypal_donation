@@ -3,7 +3,7 @@
 .travis.yml     export-ignore
 build.xml       export-ignore
 composer.lock   export-ignore
-CHANGEGLOG.md   export-ignore
+CHANGELOG.md    export-ignore
 phpunit.xml.*   export-ignore
 README.md       export-ignore
 .tx/            export-ignore
