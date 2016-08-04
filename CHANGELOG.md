@@ -7,6 +7,8 @@
 - Fix: Missing CSRF check on delete process
 - Fix: Remove use of `include_once()`
 - Fix: Wrong value on xHTML `<input>` `disabled` attribute
+- Change: Add the type of parameter into the method declaration (Thanks ErnadoO)
+- Change: Hide/Show ACP IPN Features using jQuery (Thanks cabot)
 
 ## 1.0.1 - 2016-05-09
 
