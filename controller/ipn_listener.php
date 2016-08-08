@@ -247,7 +247,7 @@ class ipn_listener
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
 		$backtrace = '';
-		if ($this->ppde_controller_main->use_sandbox())
+		if ($this->ipn_use_sandbox())
 		{
 			$backtrace = get_backtrace();
 			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
@@ -456,7 +456,7 @@ class ipn_listener
 	 */
 	private function check_account_id()
 	{
-		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 
 		if ($this->only_ascii($account_value))
 		{
@@ -1103,5 +1103,16 @@ class ipn_listener
 		$entity->data_exists($entity->build_sql_data_exists($iso_code));
 
 		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
+	}
+
+	/**
+	 * Check if Sandbox is enabled based on config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function ipn_use_sandbox()
+	{
+		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
 }
