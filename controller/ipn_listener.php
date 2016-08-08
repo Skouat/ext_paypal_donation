@@ -892,11 +892,9 @@ class ipn_listener
 	{
 		if ($this->verified)
 		{
-			if ($this->payment_status_is_completed())
-			{
-				$entity->set_id($entity->transaction_exists());
-			}
-
+			// load the ID of the transaction in the entity
+			$entity->set_id($entity->transaction_exists());
+			// Add or edit transaction data
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
 	}
