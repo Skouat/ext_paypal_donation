@@ -247,7 +247,7 @@ class ipn_listener
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
 		$backtrace = '';
-		if ($this->ppde_controller_main->use_sandbox())
+		if ($this->ipn_use_sandbox())
 		{
 			$backtrace = get_backtrace();
 			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
@@ -456,7 +456,7 @@ class ipn_listener
 	 */
 	private function check_account_id()
 	{
-		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 
 		if ($this->only_ascii($account_value))
 		{
@@ -888,15 +888,13 @@ class ipn_listener
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity)
+	private function submit_data(\skouat\ppde\entity\transactions $entity)
 	{
 		if ($this->verified)
 		{
-			if ($this->payment_status_is_completed())
-			{
-				$entity->set_id($entity->transaction_exists());
-			}
-
+			// load the ID of the transaction in the entity
+			$entity->set_id($entity->transaction_exists());
+			// Add or edit transaction data
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
 		}
 	}
@@ -1097,11 +1095,22 @@ class ipn_listener
 	 * @return array
 	 * @access private
 	 */
-	private function get_currency_data($entity, $iso_code)
+	private function get_currency_data(\skouat\ppde\entity\currency $entity, $iso_code)
 	{
 		// Retrieve the currency ID for settle
 		$entity->data_exists($entity->build_sql_data_exists($iso_code));
 
 		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
+	}
+
+	/**
+	 * Check if Sandbox is enabled based on config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function ipn_use_sandbox()
+	{
+		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
 }

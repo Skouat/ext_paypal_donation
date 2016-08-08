@@ -176,7 +176,7 @@ class currency
 			'FROM'   => array($this->ppde_currency_table => 'c'),
 		);
 
-		if ($action == 'disable')
+		if ($action == 'deactivate')
 		{
 			$sql_ary['WHERE'] = 'c.currency_enable = 1';
 		}

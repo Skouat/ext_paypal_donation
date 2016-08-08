@@ -263,7 +263,7 @@ class main_controller
 
 		foreach ($params_ary as $key => $call)
 		{
-			if (!isset($_REQUEST[$key]))
+			if (!$this->request->is_set($key))
 			{
 				continue;
 			}

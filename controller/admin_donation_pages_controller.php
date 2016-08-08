@@ -135,7 +135,7 @@ class admin_donation_pages_controller extends admin_main
 	public function add_donation_page()
 	{
 		// Add form key
-		add_form_key('add_edit_' . $this->module_name);
+		add_form_key('add_edit_donation_pages');
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */
@@ -194,7 +194,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return null
 	 * @access private
 	 */
-	private function add_edit_donation_page_data($entity, $data)
+	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -285,7 +285,7 @@ class admin_donation_pages_controller extends admin_main
 	{
 		if ($bbcode_enabled)
 		{
-			include_once($this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+			$this->include_function('display_custom_bbcodes', $this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
 			display_custom_bbcodes();
 		}
 	}
@@ -300,8 +300,25 @@ class admin_donation_pages_controller extends admin_main
 	{
 		if ($smilies_enabled)
 		{
-			include_once($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			$this->include_function('generate_smilies', $this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
 			generate_smilies('inline', 0);
+		}
+	}
+
+	/**
+	 * Includes the file that contains the function, if not loaded.
+	 *
+	 * @param $function_name     string Name of the function to test
+	 * @param $function_filepath string Path of the file that containing the function
+	 *
+	 * @return null
+	 * @access private
+	 */
+	private function include_function($function_name, $function_filepath)
+	{
+		if (!function_exists($function_name))
+		{
+			include($function_filepath);
 		}
 	}
 
@@ -315,7 +332,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function get_message_parse_options($entity, $data, $type)
+	private function get_message_parse_options(\skouat\ppde\entity\donation_pages $entity, $data, $type)
 	{
 		return array($type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func(array($entity, 'message_' . $type . '_enabled')));
 	}
@@ -328,7 +345,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @access private
 	 */
-	private function assign_preview_template_vars($entity, $errors)
+	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors)
 	{
 		if ($this->preview && empty($errors))
 		{
@@ -369,7 +386,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return null
 	 * @access private
 	 */
-	private function submit_data($entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors)
 	{
 		if ($this->can_submit_data($errors))
 		{
@@ -412,7 +429,7 @@ class admin_donation_pages_controller extends admin_main
 	public function edit_donation_page($page_id)
 	{
 		// Add form key
-		add_form_key('add_edit_' . $this->module_name);
+		add_form_key('add_edit_donation_pages');
 
 		// Initiate a page donation entity
 		/** @type \skouat\ppde\entity\donation_pages $entity */

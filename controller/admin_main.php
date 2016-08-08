@@ -60,7 +60,7 @@ abstract class admin_main
 	 * @return string $log_action
 	 * @access public
 	 */
-	public function add_edit_data($entity, $run_before_insert = '')
+	public function add_edit_data(\skouat\ppde\entity\main $entity, $run_before_insert = '')
 	{
 		if ($entity->get_id())
 		{
@@ -93,7 +93,7 @@ abstract class admin_main
 	 *
 	 * @access public
 	 */
-	public function set_entity_data($entity, $data_ary)
+	public function set_entity_data(\skouat\ppde\entity\main $entity, $data_ary)
 	{
 		foreach ($data_ary as $entity_function => $data)
 		{
@@ -134,7 +134,7 @@ abstract class admin_main
 	 *
 	 * @access protected
 	 */
-	protected function trigger_error_data_already_exists($entity)
+	protected function trigger_error_data_already_exists(\skouat\ppde\entity\main $entity)
 	{
 		if ($this->is_added_data_exists($entity))
 		{
@@ -168,7 +168,7 @@ abstract class admin_main
 	 * @return array $errors
 	 * @access protected
 	 */
-	protected function is_empty_data($entity, $field_name, $value_cmp, $submit_or_preview = false)
+	protected function is_empty_data(\skouat\ppde\entity\main $entity, $field_name, $value_cmp, $submit_or_preview = false)
 	{
 		$errors = array();
 
