@@ -930,7 +930,7 @@ class main_controller
 		// If they've specified an extension, let's load the metadata manager and validate it.
 		if ($this->ext_name)
 		{
-			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->user, $this->root_path);
+			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->template, $this->root_path);
 
 			try
 			{
