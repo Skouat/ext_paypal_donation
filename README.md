@@ -7,9 +7,9 @@ This extension add a PayPal Donation page on your site.
 * PayPal IPN
     * Auto group
     * Donors list
-    * Send PM to founders
-    * Statistics
-    * Transaction log
+    * Notifications system
+    * Statistics auto update
+    * Transactions log
 * Safely test this extension with PayPal Sandbox.
 * Displaying Statistics donation on the Donation page and on the bottom of the forum index page
     * Progress bar
@@ -21,7 +21,7 @@ This extension add a PayPal Donation page on your site.
     * You can use BBcode.
     * Multi-language customization available through the ACP
     * You can use predefined variables.
-* Automatic redirection to the forum after a successfull/cancelled donation.
+* Automatic redirection to the forum after a successful/cancelled donation.
 * Define and suggest a default donation value, or use a drop-down list.
 * Admin and user permissions can be set through `ACP -> Permissions`.
 * All options are manageable from ACP.
@@ -47,8 +47,8 @@ This extension add a PayPal Donation page on your site.
 
 ## Translations
 
-* Translations should be added on the [Transifex](https://www.transifex.com/skouat/ppde/) repository.
-* Request a translator access by opening a ticket on the [Issue tracker](https://github.com/Skouat/ext_paypal_donation/issues/).
+* Translations should be added on the [Transifex](https://www.transifex.com/skouat/ppde-develop/) repository.
+* Feel free to [join](https://www.transifex.com/signup/?join_project=ppde-develop) the translation team, and read this [Quick User Guide](/.tx/README.md)
 
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
