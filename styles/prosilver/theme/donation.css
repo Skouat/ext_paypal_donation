@@ -349,12 +349,3 @@ div.donate_value {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
-/* icon */
-.icon-ppde-header {
-    background-image: url("images/icon_donate.gif");
-}
-
-.icon-ppde-header-donorlist {
-    background-image: url("images/icon_donors.gif");
-}
