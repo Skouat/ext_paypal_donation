@@ -34,7 +34,7 @@
     "extra": {
         "display-name": "PayPal Donation",
         "soft-require": {
-            "phpbb/phpbb": ">=3.2.0@dev,<3.2.0@dev"
+            "phpbb/phpbb": ">=3.2.0@dev,<3.3.0@dev"
         },
         "version-check": {
             "host": "skouat.github.io",
