@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.3 - 2016-08-08
+Fix: Donors list displays a HTML bullet near of pagination when there is no donors
+
 ## 1.0.2 - 2016-08-08
 - Fix: Disabling of currency is enhanced by usage of AJAX, but change is not reflected directly
 - Fix: Duplicate entries in Transaction Log when status returned by PayPal is different from "completed"

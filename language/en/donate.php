@@ -80,7 +80,6 @@ $lang = array_merge($lang, array(
  */
 $lang = array_merge($lang, array(
 	'PPDE_DONORS' => array(
-		0 => '',          // 0 - Used for pagination. Let this language key empty.
 		1 => '%d donor',  // 1
 		2 => '%d donors', // 2+
 	),
