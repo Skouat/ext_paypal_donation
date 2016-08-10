@@ -2,6 +2,7 @@
 
 ## 1.0.3 - 2016-08-08
 Fix: Donors list displays a HTML bullet near of pagination when there is no donors
+Change: PPDE links moved before the link "FAQ" in the header navbar 
 
 ## 1.0.2 - 2016-08-08
 - Fix: Disabling of currency is enhanced by usage of AJAX, but change is not reflected directly
