@@ -33,6 +33,22 @@ class admin_donation_received extends \phpbb\notification\type\base
 		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
 	);
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	public function set_config(\phpbb\config\config $config)
+	{
+		$this->config = $config;
+	}
+
+	public function set_user_loader(\phpbb\user_loader $user_loader)
+	{
+		$this->user_loader = $user_loader;
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -98,7 +114,7 @@ class admin_donation_received extends \phpbb\notification\type\base
 		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
 		$mc_gross = $this->get_data('mc_gross');
 
-		return $this->user->lang('NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED', $username, $mc_gross);
+		return $this->language->lang('NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED', $username, $mc_gross);
 	}
 
 	/**
@@ -154,6 +170,6 @@ class admin_donation_received extends \phpbb\notification\type\base
 		$this->set_data('txn_id', $data['txn_id']);
 		$this->set_data('user_from', $data['user_from']);
 
-		return parent::create_insert_array($data, $pre_create_data);
+		parent::create_insert_array($data, $pre_create_data);
 	}
 }

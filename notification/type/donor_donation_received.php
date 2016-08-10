@@ -33,6 +33,22 @@ class donor_donation_received extends \phpbb\notification\type\base
 		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
 	);
 
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	public function set_config(\phpbb\config\config $config)
+	{
+		$this->config = $config;
+	}
+
+	public function set_user_loader(\phpbb\user_loader $user_loader)
+	{
+		$this->user_loader = $user_loader;
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
@@ -97,7 +113,7 @@ class donor_donation_received extends \phpbb\notification\type\base
 	{
 		$mc_gross = $this->get_data('mc_gross');
 
-		return $this->user->lang('NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED', $mc_gross);
+		return $this->language->lang('NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED', $mc_gross);
 	}
 
 	/**
@@ -153,6 +169,6 @@ class donor_donation_received extends \phpbb\notification\type\base
 		$this->set_data('txn_id', $data['txn_id']);
 		$this->set_data('user_from', $data['user_from']);
 
-		return parent::create_insert_array($data, $pre_create_data);
+		parent::create_insert_array($data, $pre_create_data);
 	}
 }
