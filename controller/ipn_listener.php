@@ -21,13 +21,13 @@ class ipn_listener
 
 	protected $container;
 	protected $config;
+	protected $language;
 	protected $notification;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $php_ext;
 	protected $request;
 	protected $root_path;
-	protected $user;
 	/**
 	 * Args from PayPal notify return URL
 	 *
@@ -114,26 +114,26 @@ class ipn_listener
 	 *
 	 * @param \phpbb\config\config                                  $config                             Config object
 	 * @param ContainerInterface                                    $container                          Service container interface
+	 * @param \phpbb\language\language                              $language                           Language user object
 	 * @param \phpbb\notification\manager                           $notification                       Notification object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
-	 * @param \phpbb\user                                           $user                               User object
 	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container,\phpbb\language\language $language, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->language = $language;
 		$this->notification = $notification;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
-		$this->user = $user;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -150,7 +150,7 @@ class ipn_listener
 		if ($this->get_curl_fsock() == 'none')
 		{
 			$this->config->set('ppde_ipn_enable', false);
-			$this->log_error($this->user->lang['NO_CONNECTION_DETECTED'], true, true, E_USER_WARNING);
+			$this->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
 		}
 
 		// Check the transaction returned by PayPal
@@ -292,7 +292,7 @@ class ipn_listener
 		{
 			// The minimum required checks are not met
 			// So we force to log collected data in /store/ppde_transactions.log
-			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], true, true, E_USER_NOTICE, $this->transaction_data);
+			$this->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
@@ -310,7 +310,7 @@ class ipn_listener
 
 		if (strpos($this->response_status, '200') === false)
 		{
-			$this->log_error($this->user->lang['INVALID_RESPONSE_STATUS'], $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
+			$this->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
 		}
 
 		return $this->check_response();
@@ -415,7 +415,7 @@ class ipn_listener
 	{
 		if (empty($this->transaction_data['txn_id']))
 		{
-			$this->log_error($this->user->lang['INVALID_TRANSACTION_RECORD'], $this->use_log_error, true, E_USER_NOTICE, $this->transaction_data);
+			$this->log_error($this->language->lang('INVALID_TRANSACTION_RECORD'), $this->use_log_error, true, E_USER_NOTICE, $this->transaction_data);
 		}
 		else
 		{
@@ -512,7 +512,7 @@ class ipn_listener
 		}
 		else
 		{
-			$this->log_error($this->user->lang['NO_CONNECTION_DETECTED'], $this->use_log_error, true, E_USER_ERROR, $this->transaction_data);
+			$this->log_error($this->language->lang('NO_CONNECTION_DETECTED'), $this->use_log_error, true, E_USER_ERROR, $this->transaction_data);
 		}
 	}
 
@@ -551,7 +551,7 @@ class ipn_listener
 		if (curl_errno($ch) != 0)
 		{
 			// cURL error
-			$this->log_error($this->user->lang['CURL_ERROR'] . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->use_log_error);
+			$this->log_error($this->language->lang('CURL_ERROR') . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->use_log_error);
 			curl_close($ch);
 		}
 		else
@@ -596,7 +596,7 @@ class ipn_listener
 
 		if (!$fp)
 		{
-			$this->log_error($this->user->lang['FSOCK_ERROR'] . $errno . ' (' . $errstr . ')', $this->use_log_error);
+			$this->log_error($this->language->lang('FSOCK_ERROR') . $errno . ' (' . $errstr . ')', $this->use_log_error);
 		}
 		else
 		{
@@ -647,7 +647,7 @@ class ipn_listener
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
 			$this->log_error("DEBUG OTHER:\n" . $this->get_text_report(), $this->use_log_error);
-			$this->log_error($this->user->lang['UNEXPECTED_RESPONSE'], $this->use_log_error, true);
+			$this->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->use_log_error, true);
 		}
 
 		return $this->verified;

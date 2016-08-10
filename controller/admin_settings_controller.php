@@ -13,9 +13,10 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface       container          The phpBB log system
+ * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\language\language language           Language user object
  * @property string                   module_name        Name of the module currently used
  * @property \phpbb\request\request   request            Request object
  * @property bool                     submit             State of submit $_POST variable
@@ -34,6 +35,7 @@ class admin_settings_controller extends admin_main
 	 *
 	 * @param \phpbb\config\config                    $config                 Config object
 	 * @param ContainerInterface                      $container              Service container interface
+	 * @param \phpbb\language\language                $language               Language user object
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main   Main controller object
 	 * @param \skouat\ppde\operators\currency         $ppde_operator_currency Operator object
 	 * @param \phpbb\request\request                  $request                Request object
@@ -42,10 +44,11 @@ class admin_settings_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->language = $language;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->request = $request;
@@ -138,7 +141,7 @@ class admin_settings_controller extends admin_main
 
 			// Option settings have been updated and logged
 			// Confirm this to the user and provide link back to previous page
-			trigger_error($this->user->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
+			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
 		}
 	}
 
@@ -248,7 +251,7 @@ class admin_settings_controller extends admin_main
 	{
 		if (empty($settings) && $depend_on == true)
 		{
-			trigger_error($this->user->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		return $settings;

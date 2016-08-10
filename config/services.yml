@@ -8,9 +8,9 @@ services:
         arguments:
             - '@config'
             - '@controller.helper'
+            - '@language'
             - '@skouat.ppde.controller'
             - '@template'
-            - '@user'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }
@@ -36,6 +36,7 @@ services:
             - '@service_container'
             - '@ext.manager'
             - '@controller.helper'
+            - '@language'
             - '@skouat.ppde.entity.currency'
             - '@skouat.ppde.entity.donation_pages'
             - '@skouat.ppde.entity.transactions'
@@ -52,6 +53,7 @@ services:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
             - '@service_container'
+            - '@language'
             - '@log'
             - '@skouat.ppde.operator.currency'
             - '@request'
@@ -62,6 +64,7 @@ services:
         class: skouat\ppde\controller\admin_donation_pages_controller
         arguments:
             - '@service_container'
+            - '@language'
             - '@log'
             - '@skouat.ppde.operator.donation_pages'
             - '@request'
@@ -76,6 +79,7 @@ services:
             - '@auth'
             - '@cache'
             - '@config'
+            - '@language'
             - '@log'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
@@ -89,6 +93,7 @@ services:
         arguments:
             - '@config'
             - '@service_container'
+            - '@language'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.operator.currency'
             - '@request'
@@ -102,6 +107,7 @@ services:
             - '@dbal.conn'
             - '@config'
             - '@service_container'
+            - '@language'
             - '@log'
             - '@skouat.ppde.operator.transactions'
             - '@request'
@@ -130,6 +136,7 @@ services:
         arguments:
             - '@config'
             - '@dbal.conn'
+            - '@language'
             - '@user'
             - '%skouat.ppde.tables.ppde_donation_pages%'
 

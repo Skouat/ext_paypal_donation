@@ -13,9 +13,10 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface       container         The phpBB log system
+ * @property ContainerInterface       container         Service container interface
  * @property string                   id_prefix_name    Prefix name for identifier in the URL
  * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
+ * @property \phpbb\language\language language          Language user object
  * @property \phpbb\log\log           log               The phpBB log system.
  * @property string                   module_name       Name of the module currently used
  * @property bool                     preview           State of preview $_POST variable
@@ -35,6 +36,7 @@ class admin_donation_pages_controller extends admin_main
 	 * Constructor
 	 *
 	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param \phpbb\language\language              $language                     Language user object
 	 * @param \phpbb\log\log                        $log                          The phpBB log system
 	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Operator object
 	 * @param \phpbb\request\request                $request                      Request object
@@ -45,9 +47,10 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
+	public function __construct(ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->container = $container;
+		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_operator = $ppde_operator_donation_pages;
 		$this->request = $request;
@@ -94,7 +97,7 @@ class admin_donation_pages_controller extends admin_main
 				}
 
 				$this->template->assign_block_vars('ppde_langs.dp_list', array(
-					'DONATION_PAGE_TITLE' => $this->user->lang[strtoupper($data['page_title'])],
+					'DONATION_PAGE_TITLE' => $this->language->lang(strtoupper($data['page_title'])),
 					'DONATION_PAGE_LANG'  => (string) $lang,
 					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
@@ -204,7 +207,7 @@ class admin_donation_pages_controller extends admin_main
 		$errors = array();
 
 		// Load posting language file for the BBCode editor
-		$this->user->add_lang('posting');
+		$this->language->add_lang('posting');
 
 		$message_parse_options = array_merge(
 			$this->get_message_parse_options($entity, $data, 'bbcode'),
@@ -249,18 +252,18 @@ class admin_donation_pages_controller extends admin_main
 		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars(array(
 			'DONATION_BODY'                  => $entity->get_message_for_edit(),
-			'L_DONATION_PAGES_TITLE'         => $this->user->lang[strtoupper($entity->get_name())],
-			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->user->lang[strtoupper($entity->get_name()) . '_EXPLAIN'],
+			'L_DONATION_PAGES_TITLE'         => $this->language->lang(strtoupper($entity->get_name())),
+			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->language->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
 
 			'S_BBCODE_DISABLE_CHECKED'    => !$entity->message_bbcode_enabled(),
 			'S_MAGIC_URL_DISABLE_CHECKED' => !$entity->message_magic_url_enabled(),
 			'S_SMILIES_DISABLE_CHECKED'   => !$entity->message_smilies_enabled(),
 
-			'BBCODE_STATUS'  => $this->user->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
-			'FLASH_STATUS'   => $this->user->lang['FLASH_IS_ON'],
-			'IMG_STATUS'     => $this->user->lang['IMAGES_ARE_ON'],
-			'SMILIES_STATUS' => $this->user->lang['SMILIES_ARE_ON'],
-			'URL_STATUS'     => $this->user->lang['URL_IS_ON'],
+			'BBCODE_STATUS'  => $this->language->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
+			'FLASH_STATUS'   => $this->language->lang('FLASH_IS_ON'),
+			'IMG_STATUS'     => $this->language->lang('IMAGES_ARE_ON'),
+			'SMILIES_STATUS' => $this->language->lang('SMILIES_ARE_ON'),
+			'URL_STATUS'     => $this->language->lang('URL_IS_ON'),
 
 			'S_BBCODE_ALLOWED'  => true,
 			'S_BBCODE_FLASH'    => true,
@@ -397,8 +400,8 @@ class admin_donation_pages_controller extends admin_main
 
 			$log_action = $this->add_edit_data($entity);
 			// Log and show user confirmation of the saved item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
-			trigger_error($this->user->lang($this->lang_key_prefix . '_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
 		}
 	}
 
@@ -482,10 +485,10 @@ class admin_donation_pages_controller extends admin_main
 		$entity->delete($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->user->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
-		$message = $this->user->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);
+		$message = $this->language->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);
 		$this->ajax_delete_result_message($message);
 	}
 }

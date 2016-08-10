@@ -13,16 +13,17 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface       container         Service container interface
- * @property string                   id_prefix_name    Prefix name for identifier in the URL
- * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log           log               The phpBB log system
- * @property string                   module_name       Name of the module currently used
- * @property \phpbb\request\request   request           Request object
- * @property bool                     submit            State of submit $_POST variable
- * @property \phpbb\template\template template          Template object
- * @property string                   u_action          Action URL
- * @property \phpbb\user              user              User object
+ * @property ContainerInterface       container          Service container interface
+ * @property string                   id_prefix_name     Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\language\language language           Language user object
+ * @property \phpbb\log\log           log                The phpBB log system
+ * @property string                   module_name        Name of the module currently used
+ * @property \phpbb\request\request   request            Request object
+ * @property bool                     submit             State of submit $_POST variable
+ * @property \phpbb\template\template template           Template object
+ * @property string                   u_action           Action URL
+ * @property \phpbb\user              user               User object
  */
 class admin_currency_controller extends admin_main
 {
@@ -32,6 +33,7 @@ class admin_currency_controller extends admin_main
 	 * Constructor
 	 *
 	 * @param ContainerInterface              $container              Service container interface
+	 * @param \phpbb\language\language        $language               Language user object
 	 * @param \phpbb\log\log                  $log                    The phpBB log system
 	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Operator object
 	 * @param \phpbb\request\request          $request                Request object
@@ -40,9 +42,10 @@ class admin_currency_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->container = $container;
+		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_operator = $ppde_operator_currency;
 		$this->request = $request;
@@ -85,7 +88,7 @@ class admin_currency_controller extends admin_main
 				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'L_ENABLE_DISABLE' => $this->user->lang[$enable_lang],
+				'L_ENABLE_DISABLE' => $this->language->lang($enable_lang),
 				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 			));
@@ -203,7 +206,7 @@ class admin_currency_controller extends admin_main
 			$log_action = $this->add_edit_data($entity, 'set_order');
 			// Log and show user confirmation of the saved item and provide link back to the previous page
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($entity->get_name()));
-			trigger_error($this->user->lang[$this->lang_key_prefix . '_' . strtoupper($log_action)] . adm_back_link($this->u_action));
+			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 		}
 	}
 
@@ -304,13 +307,13 @@ class admin_currency_controller extends admin_main
 		// Return an error if no currency
 		if (!$currency_id)
 		{
-			trigger_error($this->user->lang[$this->lang_key_prefix . '_NO_CURRENCY'] . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->language->lang($this->lang_key_prefix . '_NO_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Return an error if it's the last enabled currency
 		if ($this->ppde_operator->last_currency_enabled($action) && ($action == 'deactivate'))
 		{
-			trigger_error($this->user->lang['PPDE_CANNOT_DISABLE_ALL_CURRENCIES'] . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->language->lang('PPDE_CANNOT_DISABLE_ALL_CURRENCIES') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Initiate an entity and load data
@@ -331,7 +334,7 @@ class admin_currency_controller extends admin_main
 			$action_lang = ($action == 'activate') ? 'DISABLE' : 'ENABLE';
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'text' => $this->user->lang[$action_lang],
+				'text' => $this->language->lang($action_lang),
 			));
 		}
 	}
@@ -354,6 +357,6 @@ class admin_currency_controller extends admin_main
 
 		// Log the action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));
-		trigger_error($this->user->lang[$this->lang_key_prefix . '_DELETED'] . adm_back_link($this->u_action));
+		trigger_error($this->language->lang($this->lang_key_prefix . '_DELETED') . adm_back_link($this->u_action));
 	}
 }

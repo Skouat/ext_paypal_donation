@@ -35,6 +35,7 @@ class donation_pages extends main
 	protected $dp_vars;
 
 	protected $config;
+	protected $language;
 	protected $donation_pages_table;
 
 	/**
@@ -42,15 +43,17 @@ class donation_pages extends main
 	 *
 	 * @param \phpbb\config\config              $config     Config object
 	 * @param \phpbb\db\driver\driver_interface $db         Database object
+	 * @param \phpbb\language\language          $language   Language user object
 	 * @param \phpbb\user                       $user       User object
 	 * @param string                            $table_name Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, $table_name)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\language\language $language, \phpbb\user $user, $table_name)
 	{
 		$this->config = $config;
 		$this->db = $db;
+		$this->language = $language;
 		$this->user = $user;
 		$this->donation_pages_table = $table_name;
 		parent::__construct(
@@ -122,7 +125,7 @@ class donation_pages extends main
 		//Add language entries for displaying the vars
 		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
 		{
-			$this->dp_vars[$i]['name'] = $this->user->lang[$this->lang_key_prefix . '_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1)];
+			$this->dp_vars[$i]['name'] = $this->language->lang($this->lang_key_prefix . '_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1));
 		}
 	}
 

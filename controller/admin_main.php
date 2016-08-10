@@ -18,6 +18,8 @@ abstract class admin_main
 	protected $id_prefix_name;
 	/** @var string */
 	protected $lang_key_prefix;
+	/** @var \phpbb\language\language */
+	protected $language;
 	/** @var \phpbb\log\log */
 	protected $log;
 	/** @var string */
@@ -139,9 +141,9 @@ abstract class admin_main
 		if ($this->is_added_data_exists($entity))
 		{
 			// Show user warning for an already exist page and provide link back to the edit page
-			$message = $this->user->lang[$this->lang_key_prefix . '_EXISTS'];
+			$message = $this->language->lang($this->lang_key_prefix . '_EXISTS');
 			$message .= '<br /><br />';
-			$message .= $this->user->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
+			$message .= $this->language->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
 			trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 	}
@@ -174,7 +176,7 @@ abstract class admin_main
 
 		if (call_user_func(array($entity, 'get_' . $field_name)) == $value_cmp && $submit_or_preview)
 		{
-			$errors[] = $this->user->lang[$this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name)];
+			$errors[] = $this->language->lang($this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name));
 		}
 
 		return $errors;
@@ -191,7 +193,7 @@ abstract class admin_main
 	 */
 	protected function is_invalid_form($form_name, $submit_or_preview = false)
 	{
-		return (!check_form_key($form_name) && $submit_or_preview) ? array($this->user->lang['FORM_INVALID']) : array();
+		return (!check_form_key($form_name) && $submit_or_preview) ? array($this->language->lang('FORM_INVALID')) : array();
 	}
 
 	/**
@@ -222,7 +224,7 @@ abstract class admin_main
 		{
 			$json_response = new \phpbb\json_response;
 			$json_response->send(array(
-				'MESSAGE_TITLE' => $this->user->lang['INFORMATION'],
+				'MESSAGE_TITLE' => $this->language->lang('INFORMATION'),
 				'MESSAGE_TEXT'  => $message,
 				'REFRESH_DATA'  => array(
 					'time' => 3

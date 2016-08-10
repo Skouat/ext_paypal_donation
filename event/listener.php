@@ -19,9 +19,9 @@ class listener implements EventSubscriberInterface
 {
 	protected $config;
 	protected $controller_helper;
+	protected $language;
 	protected $ppde_controller_main;
 	protected $template;
-	protected $user;
 	protected $php_ext;
 
 	/**
@@ -29,21 +29,21 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param \phpbb\config\config                    $config               Config object
 	 * @param \phpbb\controller\helper                $controller_helper    Controller helper object
+	 * @param \phpbb\language\language                $language             Language user object
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Donation pages main controller object
 	 * @param \phpbb\template\template                $template             Template object
-	 * @param \phpbb\user                             $user                 User object
 	 * @param string                                  $php_ext              phpEx
 	 *
 	 * @return \skouat\ppde\event\listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template, $php_ext)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;
+		$this->language = $language;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->template = $template;
-		$this->user = $user;
 		$this->php_ext = $php_ext;
 	}
 
@@ -132,13 +132,13 @@ class listener implements EventSubscriberInterface
 		{
 			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donate') === 0)
 			{
-				$event['location'] = $this->user->lang('PPDE_VIEWONLINE');
+				$event['location'] = $this->language->lang('PPDE_VIEWONLINE');
 				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donate');
 			}
 
 			if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/donorlist') === 0)
 			{
-				$event['location'] = $this->user->lang('PPDE_VIEWONLINE_DONORLIST');
+				$event['location'] = $this->language->lang('PPDE_VIEWONLINE_DONORLIST');
 				$event['location_url'] = $this->controller_helper->route('skouat_ppde_donorlist');
 			}
 		}

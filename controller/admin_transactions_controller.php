@@ -13,16 +13,17 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface       container         The phpBB log system
- * @property string                   id_prefix_name    Prefix name for identifier in the URL
- * @property string                   lang_key_prefix   Prefix for the messages thrown by exceptions
- * @property \phpbb\log\log           log               The phpBB log system.
- * @property string                   module_name       Name of the module currently used
- * @property \phpbb\request\request   request           Request object.
- * @property bool                     submit            State of submit $_POST variable
- * @property \phpbb\template\template template          Template object
- * @property string                   u_action          Action URL
- * @property \phpbb\user              user              User object.
+ * @property ContainerInterface       container          The phpBB log system
+ * @property string                   id_prefix_name     Prefix name for identifier in the URL
+ * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\language\language language           Language user object
+ * @property \phpbb\log\log           log                The phpBB log system.
+ * @property string                   module_name        Name of the module currently used
+ * @property \phpbb\request\request   request            Request object.
+ * @property bool                     submit             State of submit $_POST variable
+ * @property \phpbb\template\template template           Template object
+ * @property string                   u_action           Action URL
+ * @property \phpbb\user              user               User object.
  */
 class admin_transactions_controller extends admin_main
 {
@@ -46,7 +47,8 @@ class admin_transactions_controller extends admin_main
 	 * @param \phpbb\auth\auth                    $auth                       Authentication object
 	 * @param \phpbb\db\driver\driver_interface   $db                         Database object
 	 * @param \phpbb\config\config                $config                     Config object
-	 * @param ContainerInterface                  $container
+	 * @param ContainerInterface                  $container                  Service container interface
+	 * @param \phpbb\language\language            $language                   Language user object
 	 * @param \phpbb\log\log                      $log                        The phpBB log system
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transactions Operator object
 	 * @param \phpbb\request\request              $request                    Request object
@@ -59,12 +61,13 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_ppde_transactions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->db = $db;
 		$this->config = $config;
 		$this->container = $container;
+		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
@@ -130,7 +133,7 @@ class admin_transactions_controller extends admin_main
 			}
 			else
 			{
-				confirm_box(false, $this->user->lang['CONFIRM_OPERATION'], build_hidden_fields(array(
+				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
 						'start'     => $start,
 						'delmarked' => $deletemark,
 						'delall'    => $deleteall,
@@ -153,8 +156,8 @@ class admin_transactions_controller extends admin_main
 			$pagination = $this->container->get('pagination');
 
 			// Sorting
-			$limit_days = array(0 => $this->user->lang['ALL_ENTRIES'], 1 => $this->user->lang['1_DAY'], 7 => $this->user->lang['7_DAYS'], 14 => $this->user->lang['2_WEEKS'], 30 => $this->user->lang['1_MONTH'], 90 => $this->user->lang['3_MONTHS'], 180 => $this->user->lang['6_MONTHS'], 365 => $this->user->lang['1_YEAR']);
-			$sort_by_text = array('txn' => $this->user->lang['PPDE_DT_SORT_TXN_ID'], 'u' => $this->user->lang['PPDE_DT_SORT_DONORS'], 'ipn' => $this->user->lang['PPDE_DT_SORT_IPN_STATUS'], 'ipn_test' => $this->user->lang['PPDE_DT_SORT_IPN_TYPE'], 'ps' => $this->user->lang['PPDE_DT_SORT_PAYMENT_STATUS'], 't' => $this->user->lang['SORT_DATE']);
+			$limit_days = array(0 => $this->language->lang('ALL_ENTRIES'), 1 => $this->language->lang('1_DAY'), 7 => $this->language->lang('7_DAYS'), 14 => $this->language->lang('2_WEEKS'), 30 => $this->language->lang('1_MONTH'), 90 => $this->language->lang('3_MONTHS'), 180 => $this->language->lang('6_MONTHS'), 365 => $this->language->lang('1_YEAR'));
+			$sort_by_text = array('txn' => $this->language->lang('PPDE_DT_SORT_TXN_ID'), 'u' => $this->language->lang('PPDE_DT_SORT_DONORS'), 'ipn' => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'), 'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'), 'ps' => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'), 't' => $this->language->lang('SORT_DATE'));
 			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
@@ -189,7 +192,7 @@ class admin_transactions_controller extends admin_main
 			foreach ($log_data as $row)
 			{
 				// Initiate vars to retrieve the 'payment_status' translation from the language key
-				$payment_status_ary = $this->user->lang['PPDE_DT_PAYMENT_STATUS_VALUES'];
+				$payment_status_ary = $this->language->lang('PPDE_DT_PAYMENT_STATUS_VALUES');
 				$payment_status_name = strtolower($row['payment_status']);
 
 				$this->template->assign_block_vars('log', array(
@@ -198,7 +201,7 @@ class admin_transactions_controller extends admin_main
 					'DATE'             => $this->user->format_date($row['payment_date']),
 					'ID'               => $row['transaction_id'],
 					'S_TEST_IPN'       => $row['test_ipn'],
-					'CONFIRMED'        => ($row['confirmed']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
+					'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
 					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
 					'S_PAYMENT_STATUS' => ($payment_status_name === 'completed') ? false : true,
@@ -270,7 +273,7 @@ class admin_transactions_controller extends admin_main
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
-			trigger_error($this->user->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
+			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
 		$this->db->sql_query($this->ppde_operator->sql_build_update_stats($config_name, $this->is_ipn_test));
@@ -307,7 +310,7 @@ class admin_transactions_controller extends admin_main
 			foreach ($data_ary as $data)
 			{
 				// Initiate vars to retrieve the 'payment_status' translation from the language key
-				$payment_status_ary = $this->user->lang['PPDE_DT_PAYMENT_STATUS_VALUES'];
+				$payment_status_ary = $this->language->lang('PPDE_DT_PAYMENT_STATUS_VALUES');
 
 				$this->template->assign_vars(array(
 					'BOARD_USERNAME' => $data['username'],
@@ -321,7 +324,7 @@ class admin_transactions_controller extends admin_main
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 					'PAYER_EMAIL'    => $data['payer_email'],
 					'PAYER_ID'       => $data['payer_id'],
-					'PAYER_STATUS'   => ($data['payer_status']) ? $this->user->lang['PPDE_DT_VERIFIED'] : $this->user->lang['PPDE_DT_UNVERIFIED'],
+					'PAYER_STATUS'   => ($data['payer_status']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 					'PAYMENT_STATUS' => $payment_status_ary[strtolower($data['payment_status'])],
 					'RECEIVER_EMAIL' => $data['receiver_email'],
@@ -329,8 +332,8 @@ class admin_transactions_controller extends admin_main
 					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
 					'TXN_ID'         => $data['txn_id'],
 
-					'L_PPDE_DT_SETTLE_AMOUNT'         => $this->user->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
-					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->user->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
+					'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 					'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 				));
 			}
@@ -355,8 +358,7 @@ class admin_transactions_controller extends admin_main
 	 * @param string $sort_by      SQL order option, e.g. 'l.log_time DESC'
 	 * @param string $keywords     Will only return log entries that have the keywords in log_operation or log_data
 	 *
-	 * @return int Returns the offset of the last valid page, if the specified offset was invalid
-	 *                               (too high)
+	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
 	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')

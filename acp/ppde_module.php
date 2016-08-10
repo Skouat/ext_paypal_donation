@@ -25,7 +25,7 @@ class ppde_module
 	 */
 	public function main($id, $mode)
 	{
-		global $phpbb_container, $request, $user;
+		global $language, $phpbb_container, $request;
 
 		// Requests
 		$action = $request->variable('action', '');
@@ -116,7 +116,7 @@ class ppde_module
 						else
 						{
 							// Request confirmation from the user to delete the donation page
-							confirm_box(false, $user->lang('PPDE_DP_CONFIRM_DELETE'), build_hidden_fields(array(
+							confirm_box(false, $language->lang('PPDE_DP_CONFIRM_DELETE'), build_hidden_fields(array(
 								'autogroups_id' => $page_id,
 								'mode'          => $mode,
 								'action'        => $action,
@@ -187,7 +187,7 @@ class ppde_module
 						else
 						{
 							// Request confirmation from the user to delete the currency
-							confirm_box(false, $user->lang('PPDE_DC_CONFIRM_DELETE'), build_hidden_fields(array(
+							confirm_box(false, $language->lang('PPDE_DC_CONFIRM_DELETE'), build_hidden_fields(array(
 								'autogroups_id' => $currency_id,
 								'mode'          => $mode,
 								'action'        => $action,

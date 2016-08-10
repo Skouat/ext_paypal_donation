@@ -19,6 +19,7 @@ class main_controller
 	protected $container;
 	protected $extension_manager;
 	protected $helper;
+	protected $language;
 	protected $ppde_entity_currency;
 	protected $ppde_entity_donation_pages;
 	protected $ppde_entity_transactions;
@@ -49,6 +50,7 @@ class main_controller
 	 * @param ContainerInterface                    $container                    Service container interface
 	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension manager
 	 * @param \phpbb\controller\helper              $helper                       Controller helper object
+	 * @param \phpbb\language\language              $language                     Language user object
 	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
 	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   Donation pages entity object
 	 * @param \skouat\ppde\entity\transactions      $ppde_entity_transactions     Transactions log entity object
@@ -64,13 +66,14 @@ class main_controller
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\entity\transactions $ppde_entity_transactions, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \phpbb\language\language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, \skouat\ppde\entity\transactions $ppde_entity_transactions, \skouat\ppde\operators\currency $ppde_operator_currency, \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->extension_manager = $extension_manager;
 		$this->helper = $helper;
+		$this->language = $language;
 		$this->ppde_entity_currency = $ppde_entity_currency;
 		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
 		$this->ppde_entity_transactions = $ppde_entity_transactions;
@@ -196,7 +199,7 @@ class main_controller
 		// Get default currency data from the database
 		$default_currency_data = $this->get_default_currency_data($this->config['ppde_default_currency']);
 		$this->template->assign_vars(array(
-			'TOTAL_DONORS'    => $this->user->lang('PPDE_DONORS', $total_donors),
+			'TOTAL_DONORS'    => $this->language->lang('PPDE_DONORS', $total_donors),
 			'U_SORT_AMOUNT'   => $sort_url . 'sk=a&amp;sd=' . $this->set_sort_key($sort_key, 'a', $sort_dir),
 			'U_SORT_DONATED'  => $sort_url . 'sk=d&amp;sd=' . $this->set_sort_key($sort_key, 'd', $sort_dir),
 			'U_SORT_USERNAME' => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
@@ -320,13 +323,13 @@ class main_controller
 			case 'cancel':
 			case 'success':
 				$this->template->assign_vars(array(
-					'L_PPDE_DONATION_TITLE' => $this->user->lang['PPDE_' . strtoupper($set_return_args_url) . '_TITLE'],
+					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
 				));
 				$this->return_args_url = $set_return_args_url;
 				break;
 			case 'donorlist':
 				$this->template->assign_vars(array(
-					'L_PPDE_DONORLIST_TITLE' => $this->user->lang['PPDE_DONORLIST_TITLE'],
+					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
 				));
 				$this->return_args_url = $set_return_args_url;
 				break;
@@ -444,7 +447,7 @@ class main_controller
 		return build_hidden_fields(array(
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
-			'item_name'     => $this->user->lang['PPDE_DONATION_TITLE_HEAD'] . ' ' . $this->config['sitename'],
+			'item_name'     => $this->language->lang('PPDE_DONATION_TITLE_HEAD') . ' ' . $this->config['sitename'],
 			'no_shipping'   => 1,
 			'return'        => $this->generate_paypal_return_url('success'),
 			'notify_url'    => $this->generate_paypal_notify_return_url(),
@@ -602,15 +605,15 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
-			$l_ppde_goal = $this->user->lang['PPDE_DONATE_NO_GOAL'];
+			$l_ppde_goal = $this->language->lang('PPDE_DONATE_NO_GOAL');
 		}
 		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_goal = $this->user->lang['PPDE_DONATE_GOAL_REACHED'];
+			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_REACHED');
 		}
 		else
 		{
-			$l_ppde_goal = $this->user->lang('PPDE_DONATE_GOAL_RAISE', $this->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -644,11 +647,11 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
-			$l_ppde_raised = $this->user->lang['PPDE_DONATE_NOT_RECEIVED'];
+			$l_ppde_raised = $this->language->lang('PPDE_DONATE_NOT_RECEIVED');
 		}
 		else
 		{
-			$l_ppde_raised = $this->user->lang('PPDE_DONATE_RECEIVED', $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -667,15 +670,15 @@ class main_controller
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{
-			$l_ppde_used = $this->user->lang['PPDE_DONATE_NOT_USED'];
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_NOT_USED');
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED_EXCEEDED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
@@ -816,11 +819,11 @@ class main_controller
 		{
 			case 'cancel':
 			case 'success':
-				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
+				return $this->helper->render('donate_body.html', $this->language->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
 			case 'donorlist':
-				return $this->helper->render('donorlist_body.html', $this->user->lang('PPDE_DONORLIST_TITLE'));
+				return $this->helper->render('donorlist_body.html', $this->language->lang('PPDE_DONORLIST_TITLE'));
 			default:
-				return $this->helper->render('donate_body.html', $this->user->lang('PPDE_DONATION_TITLE'));
+				return $this->helper->render('donate_body.html', $this->language->lang('PPDE_DONATION_TITLE'));
 		}
 	}
 

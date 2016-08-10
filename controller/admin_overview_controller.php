@@ -13,6 +13,7 @@ namespace skouat\ppde\controller;
 /**
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property \phpbb\language\language language           Language user object
  * @property \phpbb\log\log           log                The phpBB log system
  * @property string                   module_name        Name of the module currently used
  * @property \phpbb\request\request   request            Request object
@@ -39,6 +40,7 @@ class admin_overview_controller extends admin_main
 	 * @param \phpbb\auth\auth                                      $auth                         Authentication object
 	 * @param \phpbb\cache\service                                  $cache                        Cache object
 	 * @param \phpbb\config\config                                  $config                       Config object
+	 * @param \phpbb\language\language                              $language                     Language user object
 	 * @param \phpbb\log\log                                        $log                          The phpBB log system
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main         Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
@@ -49,11 +51,12 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->cache = $cache;
 		$this->config = $config;
+		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
@@ -92,12 +95,12 @@ class admin_overview_controller extends admin_main
 		$this->template->assign_vars(array(
 			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
 			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
-			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->user->lang('INFO_CURL_VERSION', $this->config['ppde_curl_version'], $this->config['ppde_curl_ssl_version']) : $this->user->lang['INFO_NOT_DETECTED'],
-			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->user->lang['INFO_DETECTED'] : $this->user->lang['INFO_NOT_DETECTED'],
+			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->language->lang('INFO_CURL_VERSION', $this->config['ppde_curl_version'], $this->config['ppde_curl_ssl_version']) : $this->language->lang('INFO_NOT_DETECTED'),
+			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->language->lang('INFO_DETECTED') : $this->language->lang('INFO_NOT_DETECTED'),
 			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
 			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
-			'L_PPDE_INSTALL_DATE'       => $this->user->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
-			'L_PPDE_VERSION'            => $this->user->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_INSTALL_DATE'       => $this->language->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_VERSION'            => $this->language->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
 			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_VERSION'              => $this->ext_meta['version'],
 			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
@@ -183,7 +186,7 @@ class admin_overview_controller extends admin_main
 
 		if ($confirm)
 		{
-			confirm_box(false, $this->user->lang[$confirm_lang], build_hidden_fields(array(
+			confirm_box(false, $this->language->lang($confirm_lang), build_hidden_fields(array(
 				'action' => $action,
 			)));
 		}
@@ -199,7 +202,7 @@ class admin_overview_controller extends admin_main
 	{
 		if (!$this->auth->acl_get('a_ppde_manage'))
 		{
-			trigger_error($this->user->lang['NO_AUTH_OPERATION'] . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		switch ($action)
@@ -236,7 +239,7 @@ class admin_overview_controller extends admin_main
 		{
 			if (!isset($this->ext_meta['extra']['version-check']))
 			{
-				throw new \RuntimeException($this->user->lang('PPDE_NO_VERSIONCHECK'), 1);
+				throw new \RuntimeException($this->language->lang('PPDE_NO_VERSIONCHECK'), 1);
 			}
 
 			$version_check = $this->ext_meta['extra']['version-check'];
@@ -252,14 +255,14 @@ class admin_overview_controller extends admin_main
 			$this->template->assign_vars(array(
 				'S_UP_TO_DATE'   => empty($s_up_to_date),
 				'S_VERSIONCHECK' => true,
-				'UP_TO_DATE_MSG' => $this->user->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
+				'UP_TO_DATE_MSG' => $this->language->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
 			));
 		}
 		catch (\RuntimeException $e)
 		{
 			$this->template->assign_vars(array(
 				'S_VERSIONCHECK_STATUS'    => $e->getCode(),
-				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->user->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
+				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->language->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
 			));
 		}
 	}
