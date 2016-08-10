@@ -1,7 +1,7 @@
 services:
     skouat.ppde.notification.type.admin_donation_received:
         class: skouat\ppde\notification\type\admin_donation_received
-        scope: prototype # scope MUST be prototype for this to work!
+        shared: false # service MUST not be shared for this to work!
         arguments:
             - '@dbal.conn'
             - '@language'
@@ -15,7 +15,7 @@ services:
 
     skouat.ppde.notification.type.donor_donation_received:
         class: skouat\ppde\notification\type\donor_donation_received
-        scope: prototype # scope MUST be prototype for this to work!
+        shared: false # service MUST not be shared for this to work!
         arguments:
             - '@dbal.conn'
             - '@language'
