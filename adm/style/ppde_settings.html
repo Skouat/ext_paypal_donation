@@ -169,13 +169,5 @@
 		{S_FORM_TOKEN}
 	</fieldset>
 </form>
-<script>
-	// <![CDATA[
-	document.onreadystatechange = function() {
-		$('input[name=ppde_ipn_enable]').on('click init_toggle', function() {
-			$('.ppde_toggle').toggle($('#ppde_ipn_enable').prop('checked'));
-		}).trigger('init_toggle');
-	};
-	// ]]>
-</script>
+<!-- INCLUDEJS @skouat_ppde/ppde_adm.js -->
 <!-- INCLUDE overall_footer.html -->
