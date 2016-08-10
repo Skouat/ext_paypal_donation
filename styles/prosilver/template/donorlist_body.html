@@ -3,11 +3,11 @@
 
 <div class="action-bar top">
 	<div class="pagination">
-		{TOTAL_DONORS}
+		<!-- IF .donorrow -->{TOTAL_DONORS}<!-- ENDIF -->
 		<!-- IF .pagination -->
 		<!-- INCLUDE pagination.html -->
 		<!-- ELSE -->
-		&bull; {PAGE_NUMBER}
+		<!-- IF .donorrow -->&bull; <!-- ENDIF -->{PAGE_NUMBER}
 		<!-- ENDIF -->
 	</div>
 </div>
@@ -43,11 +43,11 @@
 
 <div class="action-bar bottom">
 	<div class="pagination">
-		{TOTAL_DONORS}
+		<!-- IF .donorrow -->{TOTAL_DONORS}<!-- ENDIF -->
 		<!-- IF .pagination -->
 		<!-- INCLUDE pagination.html -->
 		<!-- ELSE -->
-		&bull; {PAGE_NUMBER}
+		<!-- IF .donorrow -->&bull; <!-- ENDIF -->{PAGE_NUMBER}
 		<!-- ENDIF -->
 	</div>
 </div>
