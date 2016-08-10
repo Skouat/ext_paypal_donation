@@ -191,10 +191,6 @@ class admin_transactions_controller extends admin_main
 
 			foreach ($log_data as $row)
 			{
-				// Initiate vars to retrieve the 'payment_status' translation from the language key
-				$payment_status_ary = $this->language->lang('PPDE_DT_PAYMENT_STATUS_VALUES');
-				$payment_status_name = strtolower($row['payment_status']);
-
 				$this->template->assign_block_vars('log', array(
 					'TNX_ID'           => $row['txn_id'],
 					'USERNAME'         => $row['username_full'],
@@ -202,11 +198,10 @@ class admin_transactions_controller extends admin_main
 					'ID'               => $row['transaction_id'],
 					'S_TEST_IPN'       => $row['test_ipn'],
 					'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-					'PAYMENT_STATUS'   => $payment_status_ary[$payment_status_name],
+					'PAYMENT_STATUS'   => $this->language->lang_array(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
 					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
-					'S_PAYMENT_STATUS' => ($payment_status_name === 'completed') ? false : true,
+					'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? false : true,
 				));
-				unset($payment_status_name);
 			}
 		}
 	}
