@@ -4,6 +4,7 @@ services:
         arguments:
             - '@config'
             - '@service_container'
+            - '@language'
             - '@notification_manager'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
