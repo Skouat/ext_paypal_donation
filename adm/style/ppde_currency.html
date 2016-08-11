@@ -1,14 +1,14 @@
 <!-- INCLUDE overall_header.html -->
 
-<h1>{L_PPDE_DC_CONFIG}</h1>
-<p>{L_PPDE_DC_CONFIG_EXPLAIN}</p>
+<h1>{{ lang('PPDE_DC_CONFIG') }}</h1>
+<p>{{ lang('PPDE_DC_CONFIG_EXPLAIN') }}</p>
 
 <!-- IF S_ADD or S_EDIT -->
-<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {L_BACK}</a>
+<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {{ lang('BACK') }}</a>
 
 <!-- IF S_ERROR -->
 <div class="errorbox">
-	<h3>{L_WARNING}</h3>
+	<h3>{{ lang('WARNING') }}</h3>
 
 	<p>{ERROR_MSG}</p>
 </div>
@@ -16,30 +16,30 @@
 
 <form id="add_edit_currency" method="post" action="<!-- IF S_ADD -->{U_ADD_ACTION}<!-- ELSE -->{U_EDIT_ACTION}<!-- ENDIF -->">
 	<fieldset>
-		<legend>{L_GENERAL_OPTIONS}</legend>
+		<legend>{{ lang('GENERAL_OPTIONS') }}</legend>
 		<dl>
-			<dt><label for="currency_name">{L_PPDE_DC_NAME}{L_COLON}</label><br /><span>{L_PPDE_DC_NAME_EXPLAIN}</span></dt>
+			<dt><label for="currency_name">{{ lang('PPDE_DC_NAME') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DC_NAME_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_name" name="currency_name" type="text" class="text medium" value="{CURRENCY_NAME}" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_iso_code">{L_PPDE_DC_ISO_CODE}{L_COLON}</label><br /><span>{L_PPDE_DC_ISO_CODE_EXPLAIN}</span></dt>
+			<dt><label for="currency_iso_code">{{ lang('PPDE_DC_ISO_CODE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DC_ISO_CODE_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_iso_code" name="currency_iso_code" type="text" class="text medium" value="{CURRENCY_ISO_CODE}" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_symbol">{L_PPDE_DC_SYMBOL}{L_COLON}</label><br /><span>{L_PPDE_DC_SYMBOL_EXPLAIN}</span></dt>
+			<dt><label for="currency_symbol">{{ lang('PPDE_DC_SYMBOL') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DC_SYMBOL_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_symbol" name="currency_symbol" type="text" class="text medium" value="{CURRENCY_SYMBOL}" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_on_left">{L_PPDE_DC_POSITION}{L_COLON}</label><br /><span>{L_PPDE_DC_POSITION_EXPLAIN}</span></dt>
-			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"<!-- IF CURRENCY_POS --> checked="checked"<!-- ENDIF --> /> {L_PPDE_DC_POSITION_LEFT}</label>
-				<label><input name="currency_on_left" type="radio" class="radio" value="0"<!-- IF not CURRENCY_POS --> checked="checked"<!-- ENDIF --> /> {L_PPDE_DC_POSITION_RIGHT}</label></dd>
+			<dt><label for="currency_on_left">{{ lang('PPDE_DC_POSITION') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DC_POSITION_EXPLAIN') }}</span></dt>
+			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"<!-- IF CURRENCY_POS --> checked="checked"<!-- ENDIF --> /> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
+				<label><input name="currency_on_left" type="radio" class="radio" value="0"<!-- IF not CURRENCY_POS --> checked="checked"<!-- ENDIF --> /> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label></dd>
 		</dl>
 		<hr />
 		<div id="itemoptions">
 			<dl>
-				<dt><label for="currency_enable">{L_PPDE_DC_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_DC_ENABLE_EXPLAIN}</span></dt>
-				<dd><label><input id="currency_enable" name="currency_enable" type="radio" class="radio" value="1"<!-- IF CURRENCY_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-					<label><input name="currency_enable" type="radio" class="radio" value="0"<!-- IF not CURRENCY_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+				<dt><label for="currency_enable">{{ lang('PPDE_DC_ENABLE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DC_ENABLE_EXPLAIN') }}</span></dt>
+				<dd><label><input id="currency_enable" name="currency_enable" type="radio" class="radio" value="1"<!-- IF CURRENCY_ENABLE --> checked="checked"<!-- ENDIF --> /> {{ lang('YES') }}</label>
+					<label><input name="currency_enable" type="radio" class="radio" value="0"<!-- IF not CURRENCY_ENABLE --> checked="checked"<!-- ENDIF --> /> {{ lang('NO') }}</label></dd>
 			</dl>
 		</div>
 	</fieldset>
@@ -47,8 +47,8 @@
 	<fieldset>
 		<p class="submit-buttons">
 			{S_HIDDEN_FIELDS}
-			<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-			<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
 			{S_FORM_TOKEN}
 		</p>
 	</fieldset>
@@ -58,8 +58,8 @@
 	<table class="table1 zebra-table">
 		<thead>
 			<tr>
-				<th colspan="1">{L_PPDE_DC_NAME}</th>
-				<th colspan="2">{L_OPTIONS}</th>
+				<th colspan="1">{{ lang('PPDE_DC_NAME') }}</th>
+				<th colspan="2">{{ lang('OPTIONS') }}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -78,7 +78,7 @@
 			</tr>
 		<!-- BEGINELSE -->
 			<tr class="row2">
-				<td style="text-align: center;" colspan="3">{L_ACP_NO_ITEMS}</td>
+				<td style="text-align: center;" colspan="3">{{ lang('ACP_NO_ITEMS') }}</td>
 			</tr>
 		<!-- END currency -->
 		</tbody>
@@ -88,7 +88,7 @@
 
 	<fieldset class="quick">
 		<input type="hidden" name="action" value="add" />
-		<input class="button2" name="add" type="submit" value="{L_PPDE_DC_CREATE_CURRENCY}" />
+		<input class="button2" name="add" type="submit" value="{{ lang('PPDE_DC_CREATE_CURRENCY') }}" />
 		{S_FORM_TOKEN}
 	</fieldset>
 </form>

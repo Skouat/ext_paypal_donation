@@ -1,5 +1,5 @@
 <!-- INCLUDE overall_header.html -->
-<h2 class="solo">{L_PPDE_DONORLIST_TITLE}</h2>
+<h2 class="solo">{{ lang('PPDE_DONORLIST_TITLE') }}</h2>
 
 <div class="action-bar top">
 	<div class="pagination">
@@ -17,10 +17,10 @@
 		<table class="table1" cellspacing="1" id="donorlist">
 			<thead>
 			<tr>
-				<th class="name"><a href="{U_SORT_USERNAME}">{L_USERNAME}</a></th>
-				<th class="joined"><a href="{U_SORT_AMOUNT}">{L_PPDE_DONORLIST_TOTAL_DONATION}</a></th>
-				<th class="joined">{L_PPDE_DONORLIST_LAST_DONATION}</th>
-				<th class="active"><a href="{U_SORT_DONATED}">{L_PPDE_DONORLIST_LAST_DATE}</a></th>
+				<th class="name"><a href="{U_SORT_USERNAME}">{{ lang('USERNAME') }}</a></th>
+				<th class="joined"><a href="{U_SORT_AMOUNT}">{{ lang('PPDE_DONORLIST_TOTAL_DONATION') }}</a></th>
+				<th class="joined">{{ lang('PPDE_DONORLIST_LAST_DONATION') }}</th>
+				<th class="active"><a href="{U_SORT_DONATED}">{{ lang('PPDE_DONORLIST_LAST_DATE') }}</a></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -33,7 +33,7 @@
 			</tr>
 			<!-- BEGINELSE -->
 			<tr class="bg1">
-				<td colspan="5">{L_PPDE_NO_DONORS}</td>
+				<td colspan="5">{{ lang('PPDE_NO_DONORS') }}</td>
 			</tr>
 			<!-- END donorrow -->
 			</tbody>

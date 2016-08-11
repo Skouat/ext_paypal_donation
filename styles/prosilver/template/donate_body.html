@@ -1,7 +1,7 @@
 <!-- INCLUDE overall_header.html -->
 
 <!-- IF S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' -->
-	<h2>{SITENAME} :: {L_PPDE_DONATION_TITLE}</h2>
+	<h2>{SITENAME} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
 	<!-- IF DONATION_BODY -->
 	<div class="panel">
 		{DONATION_BODY}
@@ -9,9 +9,9 @@
 	<!-- ENDIF -->
 <!-- ELSE -->
 	<!-- IF S_SANDBOX -->
-		<h2>{L_PPDE_SANDBOX_TITLE}</h2>
+		<h2>{{ lang('PPDE_SANDBOX_TITLE') }}</h2>
 	<!-- ELSE -->
-		<h2>{L_PPDE_DONATION_TITLE_HEAD} {SITENAME}</h2>
+		<h2>{{ lang('PPDE_DONATION_TITLE_HEAD') }} {SITENAME}</h2>
 	<!-- ENDIF -->
 
 	<!-- IF DONATION_BODY -->
@@ -37,9 +37,9 @@
 			<fieldset class="submit-buttons">
 				{S_HIDDEN_FIELDS}
 				<div id="paypalbutton">
-					<input type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{L_PPDE_DONATION_BUTTON_TITLE}">
+					<input type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{{ lang('PPDE_DONATION_BUTTON_TITLE') }}">
 				</div>
-				<div id="processingpaypal" class="spinner loading">{L_PPDE_CONTACT_PAYPAL}</div>
+				<div id="processingpaypal" class="spinner loading">{{ lang('PPDE_CONTACT_PAYPAL') }}</div>
 			</fieldset>
 		</form>
 	</div>

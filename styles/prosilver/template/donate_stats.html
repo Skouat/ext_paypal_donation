@@ -1,7 +1,7 @@
 <!-- IF PPDE_STATS_INDEX_ENABLE -->
-<h3>{L_PPDE_INDEX_STATISTICS_TITLE}<!-- IF U_PPDE_DONATE --> &bull; <a href="{U_PPDE_DONATE}">{L_PPDE_HEADER_LINK_TITLE}</a><!-- ENDIF --></h3>
+<h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}<!-- IF U_PPDE_DONATE --> &bull; <a href="{U_PPDE_DONATE}">{{ lang('PPDE_HEADER_LINK_TITLE') }}</a><!-- ENDIF --></h3>
 <!-- ELSE -->
-<h3>{L_PPDE_INDEX_STATISTICS_TITLE}</h3>
+<h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
 <!-- ENDIF -->
 
 <!-- IF S_GOAL_NUMBER -->
@@ -15,10 +15,10 @@
 
 <p class="donation_stats">
 	<!-- IF PPDE_RAISED_ENABLE -->
-	{L_PPDE_RAISED}<!-- IF PPDE_USED_ENABLE --><br /><!-- ENDIF -->
+	{{ lang('PPDE_RAISED') }}<!-- IF PPDE_USED_ENABLE --><br /><!-- ENDIF -->
 	<!-- ENDIF -->
 	<!-- IF PPDE_GOAL_ENABLE -->
-	{L_PPDE_GOAL}<br />
+	{{ lang('PPDE_GOAL') }}<br />
 	<!-- ENDIF -->
 
 	<!-- IF S_USED_NUMBER -->
@@ -35,6 +35,6 @@
 	<!-- ENDIF -->
 
 	<!-- IF PPDE_USED_ENABLE -->
-	{L_PPDE_USED}
+	{{ lang('PPDE_USED') }}
 	<!-- ENDIF -->
 </p>
