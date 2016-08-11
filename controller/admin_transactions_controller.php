@@ -304,9 +304,6 @@ class admin_transactions_controller extends admin_main
 
 			foreach ($data_ary as $data)
 			{
-				// Initiate vars to retrieve the 'payment_status' translation from the language key
-				$payment_status_ary = $this->language->lang('PPDE_DT_PAYMENT_STATUS_VALUES');
-
 				$this->template->assign_vars(array(
 					'BOARD_USERNAME' => $data['username'],
 					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
@@ -319,9 +316,9 @@ class admin_transactions_controller extends admin_main
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 					'PAYER_EMAIL'    => $data['payer_email'],
 					'PAYER_ID'       => $data['payer_id'],
-					'PAYER_STATUS'   => ($data['payer_status']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+					'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
-					'PAYMENT_STATUS' => $payment_status_ary[strtolower($data['payment_status'])],
+					'PAYMENT_STATUS' => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status']))),
 					'RECEIVER_EMAIL' => $data['receiver_email'],
 					'RECEIVER_ID'    => $data['receiver_id'],
 					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
