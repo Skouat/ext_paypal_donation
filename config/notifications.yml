@@ -2,27 +2,19 @@ services:
     skouat.ppde.notification.type.admin_donation_received:
         class: skouat\ppde\notification\type\admin_donation_received
         shared: false # service MUST not be shared for this to work!
-        arguments:
-            - '@dbal.conn'
-            - '@language'
-            - '@user'
-            - '@auth'
-            - '%core.root_path%'
-            - '%core.php_ext%'
-            - '%tables.user_notifications%'
+        parent: notification.type.base
+        calls:
+            - [set_user_loader, ['@user_loader']]
+            - [set_config, ['@config']]
         tags:
             - { name: notification.type }
 
     skouat.ppde.notification.type.donor_donation_received:
         class: skouat\ppde\notification\type\donor_donation_received
         shared: false # service MUST not be shared for this to work!
-        arguments:
-            - '@dbal.conn'
-            - '@language'
-            - '@user'
-            - '@auth'
-            - '%core.root_path%'
-            - '%core.php_ext%'
-            - '%tables.user_notifications%'
+        parent: notification.type.base
+        calls:
+             - [set_user_loader, ['@user_loader']]
+             - [set_config, ['@config']]
         tags:
             - { name: notification.type }
