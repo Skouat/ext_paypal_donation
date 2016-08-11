@@ -9,7 +9,6 @@ services:
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@request'
-            - '@user'
             - '%core.root_path%'
             - '%core.php_ext%'
 
