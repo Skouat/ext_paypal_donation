@@ -21,28 +21,31 @@ class listener implements EventSubscriberInterface
 	protected $controller_helper;
 	protected $language;
 	protected $ppde_controller_main;
+	protected $ppde_controller_display_stats;
 	protected $template;
 	protected $php_ext;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\controller\helper                $controller_helper    Controller helper object
-	 * @param \phpbb\language\language                $language             Language user object
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Donation pages main controller object
-	 * @param \phpbb\template\template                $template             Template object
-	 * @param string                                  $php_ext              phpEx
+	 * @param \phpbb\config\config                       $config                           Config object
+	 * @param \phpbb\controller\helper                   $controller_helper                Controller helper object
+	 * @param \phpbb\language\language                   $language                         Language user object
+	 * @param \skouat\ppde\controller\main_controller    $ppde_controller_main             PPDE main controller object
+	 * @param \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats    Display stats controller object
+	 * @param \phpbb\template\template                   $template                         Template object
+	 * @param string                                     $php_ext                          phpEx
 	 *
 	 * @return \skouat\ppde\event\listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats, \phpbb\template\template $template, $php_ext)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;
 		$this->language = $language;
 		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
 		$this->template = $template;
 		$this->php_ext = $php_ext;
 	}
@@ -80,7 +83,7 @@ class listener implements EventSubscriberInterface
 			));
 
 			//Assign statistics vars to the template
-			$this->ppde_controller_main->display_stats();
+			$this->ppde_controller_display_stats->display_stats();
 		}
 	}
 

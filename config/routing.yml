@@ -1,9 +1,9 @@
 skouat_ppde_donate:
     path: /donate
-    defaults: { _controller: skouat.ppde.controller:handle }
+    defaults: { _controller: skouat.ppde.controller.main.donate:handle }
 skouat_ppde_donorlist:
     path: /donorlist
-    defaults: { _controller: skouat.ppde.controller:donorlist_handle }
+    defaults: { _controller: skouat.ppde.controller.main.donorlist:handle }
 skouat_ppde_ipn_listener:
     path: /ipn-listener
     defaults: { _controller: skouat.ppde.ipn_listener:handle }
