@@ -25,6 +25,7 @@ class ipn_listener
 	protected $notification;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
+	protected $ppde_ipn_log;
 	protected $php_ext;
 	protected $request;
 	protected $root_path;
@@ -84,13 +85,6 @@ class ipn_listener
 	 */
 	private $u_paypal = '';
 	/**
-	 * If true, the error are logged into /store/ppde_transactions.log.
-	 * If false, error aren't logged. Default false.
-	 *
-	 * @var boolean
-	 */
-	private $use_log_error = false;
-	/**
 	 * Transaction status
 	 *
 	 * @var boolean
@@ -118,6 +112,7 @@ class ipn_listener
 	 * @param \phpbb\notification\manager                           $notification                       Notification object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
@@ -125,7 +120,7 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \phpbb\request\request $request, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
@@ -133,6 +128,7 @@ class ipn_listener
 		$this->notification = $notification;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
+		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
@@ -141,7 +137,7 @@ class ipn_listener
 	public function handle()
 	{
 		// Set IPN logging
-		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
+		$this->ppde_ipn_log->set_use_log_error((bool) $this->config['ppde_ipn_logging']);
 
 		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
 		$this->is_curl_fsock_detected();
@@ -150,7 +146,7 @@ class ipn_listener
 		if ($this->get_curl_fsock() == 'none')
 		{
 			$this->config->set('ppde_ipn_enable', false);
-			$this->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
+			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
 		}
 
 		// Check the transaction returned by PayPal
@@ -231,53 +227,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Log error messages
-	 *
-	 * @param string $message
-	 * @param bool   $log_in_file
-	 * @param bool   $exit
-	 * @param int    $error_type
-	 * @param array  $args
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
-	{
-		$error_timestamp = date('d-M-Y H:i:s Z');
-
-		$backtrace = '';
-		if ($this->ipn_use_sandbox())
-		{
-			$backtrace = get_backtrace();
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
-		}
-
-		$message = str_replace('<br />', ';', $message);
-
-		if (sizeof($args))
-		{
-			$message .= "\n[args]\n";
-			foreach ($args as $key => $value)
-			{
-				$value = urlencode($value);
-				$message .= $key . ' = ' . $value . ";\n";
-			}
-			unset($value);
-		}
-
-		if ($log_in_file)
-		{
-			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transactions.log');
-		}
-
-		if ($exit)
-		{
-			trigger_error($message, $error_type);
-		}
-	}
-
-	/**
 	 * Post Data back to PayPal to validate the authenticity of the transaction.
 	 *
 	 * @return bool
@@ -292,7 +241,7 @@ class ipn_listener
 		{
 			// The minimum required checks are not met
 			// So we force to log collected data in /store/ppde_transactions.log
-			$this->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), true, true, E_USER_NOTICE, $this->transaction_data);
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
@@ -310,7 +259,7 @@ class ipn_listener
 
 		if (strpos($this->response_status, '200') === false)
 		{
-			$this->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->use_log_error, true, E_USER_NOTICE, array($this->response_status));
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->response_status));
 		}
 
 		return $this->check_response();
@@ -415,7 +364,7 @@ class ipn_listener
 	{
 		if (empty($this->transaction_data['txn_id']))
 		{
-			$this->log_error($this->language->lang('INVALID_TRANSACTION_RECORD'), $this->use_log_error, true, E_USER_NOTICE, $this->transaction_data);
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TRANSACTION_RECORD'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
 		}
 		else
 		{
@@ -512,7 +461,7 @@ class ipn_listener
 		}
 		else
 		{
-			$this->log_error($this->language->lang('NO_CONNECTION_DETECTED'), $this->use_log_error, true, E_USER_ERROR, $this->transaction_data);
+			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_ERROR, $this->transaction_data);
 		}
 	}
 
@@ -541,7 +490,7 @@ class ipn_listener
 		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
 
-		if ($this->use_log_error)
+		if ($this->ppde_ipn_log->is_use_log_error())
 		{
 			curl_setopt($ch, CURLOPT_HEADER, true);
 			curl_setopt($ch, CURLINFO_HEADER_OUT, true);
@@ -551,7 +500,7 @@ class ipn_listener
 		if (curl_errno($ch) != 0)
 		{
 			// cURL error
-			$this->log_error($this->language->lang('CURL_ERROR') . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->use_log_error);
+			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR') . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->ppde_ipn_log->is_use_log_error());
 			curl_close($ch);
 		}
 		else
@@ -596,7 +545,7 @@ class ipn_listener
 
 		if (!$fp)
 		{
-			$this->log_error($this->language->lang('FSOCK_ERROR') . $errno . ' (' . $errstr . ')', $this->use_log_error);
+			$this->ppde_ipn_log->log_error($this->language->lang('FSOCK_ERROR') . $errno . ' (' . $errstr . ')', $this->ppde_ipn_log->is_use_log_error());
 		}
 		else
 		{
@@ -633,21 +582,24 @@ class ipn_listener
 	 */
 	private function check_response()
 	{
+		// Prepare data to include in report
+		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->get_curl_fsock(), $this->report_response, $this->response_status, $this->transaction_data);
+
 		if ($this->txn_is_verified())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = true;
-			$this->log_error("DEBUG VERIFIED:\n" . $this->get_text_report(), $this->use_log_error);
+			$this->ppde_ipn_log->log_error("DEBUG VERIFIED:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error());
 		}
 		else if ($this->txn_is_invalid())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error("DEBUG INVALID:\n" . $this->get_text_report(), $this->use_log_error, true);
+			$this->ppde_ipn_log->log_error("DEBUG INVALID:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error(), true);
 		}
 		else
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->log_error("DEBUG OTHER:\n" . $this->get_text_report(), $this->use_log_error);
-			$this->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->use_log_error, true);
+			$this->ppde_ipn_log->log_error("DEBUG OTHER:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error());
+			$this->ppde_ipn_log->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->ppde_ipn_log->is_use_log_error(), true);
 		}
 
 		return $this->verified;
@@ -688,97 +640,6 @@ class ipn_listener
 	private function is_fsock_strpos($arg)
 	{
 		return $this->curl_fsock['fsock'] && strpos($this->response, $arg) !== false;
-	}
-
-	/**
-	 * Get Text Report
-	 *
-	 * Returns a report of the IPN transaction in plain text format. This is
-	 * useful in emails to order processors and system administrators. Override
-	 * this method in your own class to customize the report.
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function get_text_report()
-	{
-		$r = '';
-
-		// Date and POST url
-		$this->text_report_insert_line($r);
-		$r .= "\n[" . date('m/d/Y g:i A') . '] - ' . $this->u_paypal . ' ( ' . $this->get_curl_fsock() . " )\n";
-
-		// HTTP Response
-		$this->text_report_insert_line($r);
-		$r .= "\n" . $this->get_report_response() . "\n";
-		$r .= "\n" . $this->get_response_status() . "\n";
-		$this->text_report_insert_line($r);
-
-		// POST vars
-		$r .= "\n";
-		$this->text_report_insert_args($r);
-		$r .= "\n\n";
-
-		return $r;
-	}
-
-	/**
-	 * Insert hyphens line in the text report
-	 *
-	 * @param string $r
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function text_report_insert_line(&$r = '')
-	{
-		for ($i = 0; $i < 80; $i++)
-		{
-			$r .= '-';
-		}
-	}
-
-	/**
-	 * Get Response
-	 *
-	 * Returns the entire response from PayPal as a string including all the
-	 * HTTP headers.
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function get_report_response()
-	{
-		return $this->report_response;
-	}
-
-	/**
-	 * Get Response Status
-	 *
-	 * Return the HTTP Code from PayPal
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function get_response_status()
-	{
-		return $this->response_status;
-	}
-
-	/**
-	 * Insert $this->transaction_data args int the text report
-	 *
-	 * @param string $r
-	 *
-	 * @return null
-	 * @access private
-	 */
-	private function text_report_insert_args(&$r = '')
-	{
-		foreach ($this->transaction_data as $key => $value)
-		{
-			$r .= str_pad($key, 25) . $value . "\n";
-		}
 	}
 
 	/**

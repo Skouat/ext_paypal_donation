@@ -8,9 +8,17 @@ services:
             - '@notification_manager'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
+            - '@skouat.ppde.ipn_log'
             - '@request'
             - '%core.root_path%'
             - '%core.php_ext%'
+
+    skouat.ppde.ipn_log:
+        class: skouat\ppde\controller\ipn_log
+        arguments:
+            - '@config'
+            - '@skouat.ppde.controller'
+            - '%core.root_path%'
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
