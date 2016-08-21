@@ -71,11 +71,11 @@ class ipn_log
 	/**
 	 * Set the property
 	 *
-	 * @param $remote_uri
-	 * @param $remote_type
-	 * @param $remote_report_response
-	 * @param $remote_response_status
-	 * @param $remote_data
+	 * @param string $remote_uri
+	 * @param string $remote_type
+	 * @param string $remote_report_response
+	 * @param string $remote_response_status
+	 * @param array  $remote_data
 	 *
 	 * @return null
 	 * @access public
