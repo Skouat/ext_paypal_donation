@@ -934,7 +934,7 @@ class ipn_listener
 			 * Event that is triggered when a transaction has been successfully completed
 			 *
 			 * @event skouat.ppde.do_actions_completed_before
-			 * @var	array	transaction_data	Array containing transaction data
+			 * @var	array   transaction_data    Array containing transaction data
 			 * @since 1.0.3
 			 */
 			$vars = array(
@@ -983,10 +983,10 @@ class ipn_listener
 			 * Event to modify data before a user is added to the donors group
 			 *
 			 * @event skouat.ppde.donors_group_user_add_before
-			 * @var	int		group_id		The ID of the group to which the user will be added
-			 * @var int		payer_id		The ID of the user who will we added to the group
-			 * @var string	payer_username	The user name
-			 * @var bool	default_group	Whether or not the group should be made default for the user
+			 * @var	int     group_id        The ID of the group to which the user will be added
+			 * @var int     payer_id        The ID of the user who will we added to the group
+			 * @var string  payer_username  The user name
+			 * @var bool    default_group   Whether or not the group should be made default for the user
 			 * @since 1.0.3
 			 */
 			$vars = array(
