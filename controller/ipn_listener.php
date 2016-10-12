@@ -120,6 +120,7 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\user                                           $user                               User object
+	 * @param \phpbb\event\dispatcher_interface $dispatcher         $dispatcher                         Dispatcher object
 	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
 	 *
