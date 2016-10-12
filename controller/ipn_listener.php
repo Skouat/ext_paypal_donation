@@ -967,35 +967,38 @@ class ipn_listener
 	private function donors_group_user_add()
 	{
 		// we add the user to the donors group
-		if ($this->can_use_autogroup())
+		$can_use_autogroup = $this->can_use_autogroup();
+		$group_id = (int) $this->config['ppde_ipn_group_id'];
+		$payer_id = (int) $this->payer_data['user_id'];
+		$payer_username = $this->payer_data['username'];
+		$default_group = $this->config['ppde_ipn_group_as_default'];
+
+		/**
+		 * Event to modify data before a user is added to the donors group
+		 *
+		 * @event skouat.ppde.donors_group_user_add_before
+		 * @var bool    can_use_autogroup	Whether or not to add the user to the group
+		 * @var	int     group_id            The ID of the group to which the user will be added
+		 * @var int     payer_id            The ID of the user who will we added to the group
+		 * @var string  payer_username      The user name
+		 * @var bool    default_group       Whether or not the group should be made default for the user
+		 * @since 1.0.3
+		 */
+		$vars = array(
+			'can_use_autogroup',
+			'group_id',
+			'payer_id',
+			'payer_username',
+			'default_group',
+		);
+		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
+
+		if ($can_use_autogroup)
 		{
 			if (!function_exists('group_user_add'))
 			{
 				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 			}
-
-			$group_id = (int) $this->config['ppde_ipn_group_id'];
-			$payer_id = (int) $this->payer_data['user_id'];
-			$payer_username = $this->payer_data['username'];
-			$default_group = $this->config['ppde_ipn_group_as_default'];
-
-			/**
-			 * Event to modify data before a user is added to the donors group
-			 *
-			 * @event skouat.ppde.donors_group_user_add_before
-			 * @var	int     group_id        The ID of the group to which the user will be added
-			 * @var int     payer_id        The ID of the user who will we added to the group
-			 * @var string  payer_username  The user name
-			 * @var bool    default_group   Whether or not the group should be made default for the user
-			 * @since 1.0.3
-			 */
-			$vars = array(
-				'group_id',
-				'payer_id',
-				'payer_username',
-				'default_group',
-			);
-			extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
 
 			// add the user to the donors group and set as default.
 			group_user_add($group_id, array($payer_id), array($payer_username), get_group_name($group_id), $default_group);
