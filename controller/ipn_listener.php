@@ -26,6 +26,7 @@ class ipn_listener
 	protected $ppde_controller_transactions_admin;
 	protected $php_ext;
 	protected $request;
+	protected $dispatcher;
 	protected $root_path;
 	protected $user;
 	/**
@@ -119,13 +120,14 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\user                                           $user                               User object
+	 * @param \phpbb\event\dispatcher_interface $dispatcher         $dispatcher                         Dispatcher object
 	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, \phpbb\event\dispatcher_interface $dispatcher, $root_path, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
@@ -134,6 +136,7 @@ class ipn_listener
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
 		$this->user = $user;
+		$this->dispatcher = $dispatcher;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -926,6 +929,23 @@ class ipn_listener
 
 		if ($this->payment_status_is_completed())
 		{
+			$transaction_data = $this->transaction_data;
+
+			/**
+			 * Event that is triggered when a transaction has been successfully completed
+			 *
+			 * @event skouat.ppde.do_actions_completed_before
+			 * @var array   transaction_data    Array containing transaction data
+			 * @since 1.0.3
+			 */
+			$vars = array(
+				'transaction_data',
+			);
+			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+
+			$this->transaction_data = $transaction_data;
+			unset($transaction_data);
+
 			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
 			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
@@ -948,7 +968,33 @@ class ipn_listener
 	private function donors_group_user_add()
 	{
 		// we add the user to the donors group
-		if ($this->can_use_autogroup())
+		$can_use_autogroup = $this->can_use_autogroup();
+		$group_id = (int) $this->config['ppde_ipn_group_id'];
+		$payer_id = (int) $this->payer_data['user_id'];
+		$payer_username = $this->payer_data['username'];
+		$default_group = $this->config['ppde_ipn_group_as_default'];
+
+		/**
+		 * Event to modify data before a user is added to the donors group
+		 *
+		 * @event skouat.ppde.donors_group_user_add_before
+		 * @var bool    can_use_autogroup   Whether or not to add the user to the group
+		 * @var int     group_id            The ID of the group to which the user will be added
+		 * @var int     payer_id            The ID of the user who will we added to the group
+		 * @var string  payer_username      The user name
+		 * @var bool    default_group       Whether or not the group should be made default for the user
+		 * @since 1.0.3
+		 */
+		$vars = array(
+			'can_use_autogroup',
+			'group_id',
+			'payer_id',
+			'payer_username',
+			'default_group',
+		);
+		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
+
+		if ($can_use_autogroup)
 		{
 			if (!function_exists('group_user_add'))
 			{
@@ -956,7 +1002,7 @@ class ipn_listener
 			}
 
 			// add the user to the donors group and set as default.
-			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
+			group_user_add($group_id, array($payer_id), array($payer_username), get_group_name($group_id), $default_group);
 		}
 	}
 
