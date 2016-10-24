@@ -41,7 +41,6 @@ if (empty($lang) || !is_array($lang))
  */
 $lang = array_merge($lang, array(
 	'EXCEPTION_INVALID_CONFIG_NAME' => 'The config name “%s” does not exist.',
-	'EXCEPTION_INVALID_FIELD'       => 'The “%s” field does not exist',
-	'EXCEPTION_INVALID_ARGUMENT'    => 'Invalid argument specified for `%1$s`. Reason: %2$s',
+	'EXCEPTION_INVALID_FIELD'       => 'The “%s” field does not exist.',
 	'EXCEPTION_OUT_OF_BOUNDS'       => 'The field `%1$s` received data beyond its bounds',
 ));
