@@ -28,10 +28,11 @@ This extension add a PayPal Donation page on your site.
 
 ### Quick Install
 
-1. Unpack the downloaded release and copy files to the `ext/skouat/ppde` directory.
-2. Navigate in the ACP to `Customise -> Manage extensions`.
-3. Look for `PayPal Donation` under the Disabled Extensions list, and click its `Enable` link.
-4. Set up and configure PayPal Donation by navigating in the ACP to `Extensions -> PayPal Donation`.
+1. [Download the latest validated release](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/)
+2. Unpack the downloaded release and copy it to the `ext` directory of your phpBB board.
+3. Navigate in the ACP to `Customise -> Manage extensions`.
+4. Look for `PayPal Donation` under the Disabled Extensions list, and click its `Enable` link.
+5. Set up and configure PayPal Donation by navigating in the ACP to `Extensions -> PayPal Donation`.
 
 ## Uninstall
 
@@ -42,8 +43,8 @@ This extension add a PayPal Donation page on your site.
 ## Support
 
 * **Important: Only official release versions validated by the phpBB Extensions Team should be installed on a live forum. Pre-release (beta, RC) versions downloaded from this repository are only to be used for testing on offline/development forums and are not officially supported.**
-* Report bugs and other issues in the [Issue Tracker](https://github.com/Skouat/ext_paypal_donation/issues).
-* Support requests should be posted and discussed in the [PayPal Donation topic at phpBB.com](https://www.phpbb.com/community/viewtopic.php?f=456&t=2358616).
+* Report bugs and other issues to the [PPDE Support Forum at phpBB.com](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/) or [GitHub Issue Tracker](https://github.com/Skouat/ext_paypal_donation/issues).
+* Support requests should be posted and discussed in the [PPDE Support Forum at phpBB.com](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/).
 
 ## Translations
 
