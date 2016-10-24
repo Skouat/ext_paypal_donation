@@ -86,8 +86,8 @@ class admin_currency_controller extends admin_main
 				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'L_ENABLE_DISABLE' => $this->user->lang[$enable_lang],
-				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
+				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
 			));
 		}
 		unset($data_ary, $page);
@@ -258,6 +258,13 @@ class admin_currency_controller extends admin_main
 	 */
 	public function move_currency($currency_id, $direction)
 	{
+		// Before moving the currency, with check the link hash.
+		// If the hash, is invalid we return an error.
+		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_move'))
+		{
+			trigger_error($this->user->lang['PPDE_DC_INVALID_HASH'] . adm_back_link($this->u_action), E_USER_WARNING);
+		};
+
 		// Initiate an entity and load data
 		/** @type \skouat\ppde\entity\currency $entity */
 		$entity = $this->get_container_entity();

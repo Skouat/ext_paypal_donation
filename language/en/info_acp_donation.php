@@ -339,6 +339,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Enter an ISO code.',
 	'PPDE_DC_EMPTY_SYMBOL'               => 'Enter a symbol.',
 	'PPDE_DC_EXISTS'                     => 'This currency already exists.',
+	'PPDE_DC_INVALID_HASH'               => 'The link is corrupted. The hash is invalid.',
 	'PPDE_DC_NO_CURRENCY'                => 'No currency found.',
 	'PPDE_DP_EMPTY_LANG_ID'              => 'No language selected.',
 	'PPDE_DP_EMPTY_NAME'                 => 'The selected donation page does not exist.',
