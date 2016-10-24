@@ -154,7 +154,7 @@ class admin_settings_controller extends admin_main
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
-		$this->config->set('ppde_dropbox_value', $this->clean_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100')));
+		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
@@ -190,30 +190,47 @@ class admin_settings_controller extends admin_main
 	}
 
 	/**
-	 * Clean items list to conserve only numeric values
+	 * Rebuild items list to conserve only numeric values
 	 *
 	 * @param string $config_value
+	 * @param string $added_value
 	 *
 	 * @return string
 	 * @access private
 	 */
-	private function clean_items_list($config_value)
+	private function rebuild_items_list($config_value, $added_value = '')
 	{
 		$items_list = explode(',', $config_value);
 		$merge_items = array();
 
+		$this->add_int_data_in_array($merge_items, $added_value);
+
 		foreach ($items_list as $item)
 		{
-			if (settype($item, 'integer') && $item != 0)
-			{
-				$merge_items[] = $item;
-			}
+			$this->add_int_data_in_array($merge_items, $item);
 		}
 		unset($items_list, $item);
 
 		natsort($merge_items);
 
 		return $this->check_config(implode(',', array_unique($merge_items)), 'string', '');
+	}
+
+	/**
+	 * Add integer data in an array()
+	 *
+	 * @param $array
+	 * @param $var
+	 * @param $type
+	 *
+	 * @return  void
+	 */
+	private function add_int_data_in_array(&$array, $var)
+	{
+		if (settype($var, 'integer') && $var != 0)
+		{
+			$array[] = $var;
+		}
 	}
 
 	/**

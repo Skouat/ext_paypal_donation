@@ -110,7 +110,7 @@ class main_controller
 			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
-			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
+			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
 			'S_PPDE_FORM_ACTION' => $this->get_paypal_url(),
@@ -382,10 +382,12 @@ class main_controller
 	/**
 	 * Build pull down menu options of available currency value
 	 *
+	 * @param int $default_value
+	 *
 	 * @return string List of currency value set in ACP for dropdown menu
 	 * @access private
 	 */
-	private function build_currency_value_select_menu()
+	private function build_currency_value_select_menu($default_value = 0)
 	{
 		$list_donation_value = '';
 
@@ -396,7 +398,8 @@ class main_controller
 			foreach ($donation_ary_value as $value)
 			{
 				$int_value = $this->settype_dropbox_int_value($value);
-				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '">' . $int_value . '</option>' : '';
+				$selected = ($int_value == $default_value) && ($default_value != 0) ? ' selected="selected"' : '';
+				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '"' . $selected . '>' . $int_value . '</option>' : '';
 			}
 			unset($value);
 		}
