@@ -61,7 +61,7 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Display the general settings a user can configure for this extension
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_settings()
@@ -117,7 +117,7 @@ class admin_settings_controller extends admin_main
 	/**
 	 * The form submitting if 'submit' is true
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function submit_settings()
@@ -145,7 +145,7 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Set the options a user can configure
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_settings()
@@ -219,11 +219,11 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Add integer data in an array()
 	 *
-	 * @param $array
-	 * @param $var
-	 * @param $type
+	 * @param array $array
+	 * @param int   $var
 	 *
-	 * @return  void
+	 * @return void
+	 * @access private
 	 */
 	private function add_int_data_in_array(&$array, $var)
 	{

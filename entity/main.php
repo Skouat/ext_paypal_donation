@@ -87,7 +87,7 @@ abstract class main
 	 * @param string $lang_key
 	 * @param string $args
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function display_warning_message($lang_key, $args = '')
@@ -266,7 +266,7 @@ abstract class main
 	 *
 	 * @param string $u_action Custom form action
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_page_url($u_action)

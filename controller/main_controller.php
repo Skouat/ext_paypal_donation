@@ -310,7 +310,7 @@ class main_controller
 	/**
 	 * @param string $set_return_args_url
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_return_args_url($set_return_args_url)
@@ -356,7 +356,7 @@ class main_controller
 	 *
 	 * @param int $config_value Currency identifier; default: 0
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function build_currency_select_menu($config_value = 0)
@@ -554,7 +554,7 @@ class main_controller
 	/**
 	 * Assign statistics vars to the template
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_stats()
@@ -687,7 +687,7 @@ class main_controller
 	/**
 	 * Generate statistics percent for display
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function generate_stats_percent()
@@ -750,7 +750,7 @@ class main_controller
 	 * @param float  $percent
 	 * @param string $type
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function assign_vars_stats_percent($percent, $type)
@@ -830,7 +830,7 @@ class main_controller
 	/**
 	 * Do action if it's the first time the extension is accessed
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function first_start()
@@ -880,7 +880,7 @@ class main_controller
 	/**
 	 * Set config value for cURL version
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_curl_info()
@@ -896,7 +896,7 @@ class main_controller
 	/**
 	 * Set config value for cURL and fsockopen
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_remote_detected()
@@ -908,7 +908,7 @@ class main_controller
 	/**
 	 * Get extension metadata
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function get_ext_meta()
@@ -951,7 +951,7 @@ class main_controller
 	/**
 	 * Retrieve the extension name
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function retrieve_ext_name()

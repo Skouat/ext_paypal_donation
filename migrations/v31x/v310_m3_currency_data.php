@@ -28,7 +28,7 @@ class v310_m3_currency_data extends \phpbb\db\migration\migration
 	/**
 	 * Add initial currency data to the database
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function add_ppde_currency_data()

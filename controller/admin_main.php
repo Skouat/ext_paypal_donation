@@ -108,7 +108,7 @@ abstract class admin_main
 	 *
 	 * @param string $u_action Custom form action
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_page_url($u_action)
@@ -213,7 +213,7 @@ abstract class admin_main
 	 *
 	 * @param string $message Text message to show to the user
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function ajax_delete_result_message($message = '')
@@ -245,7 +245,7 @@ abstract class admin_main
 	/**
 	 * Set u_action output vars for display in the template
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function u_action_assign_template_vars()
@@ -260,7 +260,7 @@ abstract class admin_main
 	 *
 	 * @param array $errors
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function s_error_assign_template_vars($errors)

@@ -89,7 +89,7 @@ class admin_transactions_controller extends admin_main
 	 * @param string $mode   Module categorie
 	 * @param string $action Action name
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_transactions($id, $mode, $action)
@@ -225,7 +225,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @param bool $ipn_stats
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_ipn_test_properties($ipn_stats)
@@ -239,7 +239,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @param $ipn_test
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_ipn_test($ipn_test)
@@ -250,7 +250,7 @@ class admin_transactions_controller extends admin_main
 	/**
 	 * Sets the property $this->suffix_ipn
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_suffix_ipn()
@@ -283,7 +283,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @param $action
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function do_action($action)

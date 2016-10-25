@@ -120,7 +120,7 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\user                                           $user                               User object
-	 * @param \phpbb\event\dispatcher_interface $dispatcher         $dispatcher                         Dispatcher object
+	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
 	 *
@@ -173,7 +173,7 @@ class ipn_listener
 	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
 	 * If both are not available we use default value of the property 'use_curl'.
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function is_curl_fsock_detected()
@@ -191,7 +191,7 @@ class ipn_listener
 	 * @param bool   $fsock
 	 * @param bool   $none
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
@@ -209,7 +209,7 @@ class ipn_listener
 	 * @param bool $fsock
 	 * @param bool $none
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
@@ -242,7 +242,7 @@ class ipn_listener
 	 * @param int    $error_type
 	 * @param array  $args
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
@@ -474,7 +474,7 @@ class ipn_listener
 	/**
 	 * Get all args for construct the return URI
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_args_return_uri()
@@ -500,7 +500,7 @@ class ipn_listener
 	 * Select the appropriate method to communicate with PayPal
 	 * In first, we use cURL. If it is not available we try with fsockopen()
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function initiate_paypal_connection()
@@ -529,7 +529,7 @@ class ipn_listener
 	 *
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function curl_post($encoded_data)
@@ -578,7 +578,7 @@ class ipn_listener
 	 *
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function fsock_post($encoded_data)
@@ -730,7 +730,7 @@ class ipn_listener
 	 *
 	 * @param string $r
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function text_report_insert_line(&$r = '')
@@ -773,7 +773,7 @@ class ipn_listener
 	 *
 	 * @param string $r
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function text_report_insert_args(&$r = '')
@@ -824,7 +824,7 @@ class ipn_listener
 	/**
 	 * Retrieve user_id from item_number args
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function extract_item_number_data()
@@ -888,7 +888,7 @@ class ipn_listener
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function submit_data(\skouat\ppde\entity\transactions $entity)
@@ -916,7 +916,7 @@ class ipn_listener
 	/**
 	 * Do actions if the transaction is verified
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function do_actions()
@@ -962,7 +962,7 @@ class ipn_listener
 	/**
 	 * Add donor to the donors group
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function donors_group_user_add()
@@ -1086,7 +1086,7 @@ class ipn_listener
 	/**
 	 * Updates the amount of donation raised
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function update_raised_amount()
@@ -1098,7 +1098,7 @@ class ipn_listener
 	/**
 	 * Notify donors and admin when the donation is received
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function notify_donation_received()

@@ -65,7 +65,7 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * Display the pages
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_donation_pages()
@@ -114,7 +114,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @param array   $lang
 	 * @param integer $current
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function assign_langs_template_vars($lang, $current = 0)
@@ -129,7 +129,7 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * Add a donation page
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function add_donation_page()
@@ -170,7 +170,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @param integer $current ID of the language assigned to the donation page
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function create_language_options($current)
@@ -191,7 +191,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
 	 * @param array                              $data   The form data to be processed
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data)
@@ -278,7 +278,7 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * @param $bbcode_enabled
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function include_custom_bbcodes($bbcode_enabled)
@@ -293,7 +293,7 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * @param $smilies_enabled
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function include_smileys($smilies_enabled)
@@ -311,7 +311,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @param $function_name     string Name of the function to test
 	 * @param $function_filepath string Path of the file that containing the function
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function include_function($function_name, $function_filepath)
@@ -362,7 +362,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @param array $vars
 	 *
-	 * @return null
+	 * @return void
 	 * @access   private
 	 */
 	private function assign_predefined_block_vars($vars)
@@ -383,7 +383,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
 	 * @param array                              $errors
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors)
@@ -407,7 +407,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @param array $langs
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function get_lang_local_name($langs)
@@ -423,7 +423,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @param int $page_id Donation page identifier
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function edit_donation_page($page_id)
@@ -466,7 +466,7 @@ class admin_donation_pages_controller extends admin_main
 	 *
 	 * @param int $page_id The donation page identifier to delete
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function delete_donation_page($page_id)

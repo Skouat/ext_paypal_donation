@@ -68,7 +68,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Load data for donations statistics
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function load_index_data()
@@ -87,7 +87,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Create a URL to the donation pages controller file for the header linklist
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function add_page_header_link()
@@ -105,7 +105,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param object $event The event object
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function load_language_on_setup($event)
@@ -123,7 +123,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param object $event The event object
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function viewonline_page($event)
@@ -149,7 +149,7 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @param object $event The event object
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function add_permissions($event)
