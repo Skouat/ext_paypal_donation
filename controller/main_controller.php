@@ -106,8 +106,9 @@ class main_controller
 			$this->donation_body = $this->ppde_entity_donation_pages->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
+		$this->build_currency_select_menu($this->config['ppde_default_currency']);
+
 		$this->template->assign_vars(array(
-			'DEFAULT_CURRENCY'   => $this->build_currency_select_menu($this->config['ppde_default_currency']),
 			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
