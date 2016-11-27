@@ -8,7 +8,7 @@
 <div class="progress">
 	<div class="progress-value">{PPDE_GOAL_NUMBER} %</div>
 	<div class="progress-grey">
-		<div class="prog-color {PPDE_CSS_GOAL_NUMBER}" style="width: {PPDE_GOAL_NUMBER}%;"></div>
+		<div class="prog-color {PPDE_CSS_GOAL_NUMBER}" style="width: <!-- IF PPDE_GOAL_NUMBER > 100 -->100<!-- ELSE -->{PPDE_GOAL_NUMBER}<!-- ENDIF -->%;"></div>
 	</div>
 </div>
 <!-- ENDIF -->
