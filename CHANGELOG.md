@@ -1,12 +1,17 @@
 # Changelog
 
-## 1.0.3 - 2016-10-25
+## 1.0.3 - 2016-12-06
 - Add: Add extension events. More information in `/docs/events.md` (Thanks kasimi)
 - Add: The default donation value becomes the default value in the dropdown list. If it's not present, the value is added to the dropdown list.
 - Change: PPDE links moved before the link "FAQ" in the header navbar
+- Change: Remove unnecessary input and label attributes.
+- Change: Move PayPal IPN Features on its own ACP module
+- Change: Donation statistics display float value
 - Fix: Protect the move actions with hash
 - Fix: Donors list displays a HTML bullet near of pagination when there is no donors
 - Fix: Remove unused language keys
+- Fix: Fix HTML tags in ACP transactions log
+- Fix: Method without return statement
 
 ## 1.0.2 - 2016-08-08
 - Fix: Disabling of currency is enhanced by usage of AJAX, but change is not reflected directly
