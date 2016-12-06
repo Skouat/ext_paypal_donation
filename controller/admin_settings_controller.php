@@ -108,7 +108,7 @@ class admin_settings_controller extends admin_main
 		$this->submit = $this->request->is_set_post('submit');
 
 		// Test if the submitted form is valid
-		$errors = $this->is_invalid_form('ppde_settings', $this->submit);
+		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
 
 		if ($this->can_submit_data($errors))
 		{

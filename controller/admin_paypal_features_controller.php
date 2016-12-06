@@ -31,12 +31,12 @@ class admin_paypal_features_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config                 Config object
-	 * @param ContainerInterface                      $container              Service container interface
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main   Main controller object
-	 * @param \phpbb\request\request                  $request                Request object
-	 * @param \phpbb\template\template                $template               Template object
-	 * @param \phpbb\user                             $user                   User object
+	 * @param \phpbb\config\config                    $config               Config object
+	 * @param ContainerInterface                      $container            Service container interface
+	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
+	 * @param \phpbb\request\request                  $request              Request object
+	 * @param \phpbb\template\template                $template             Template object
+	 * @param \phpbb\user                             $user                 User object
 	 *
 	 * @access public
 	 */
@@ -66,7 +66,7 @@ class admin_paypal_features_controller extends admin_main
 		$this->ppde_controller_main->first_start();
 
 		// Define the name of the form for use as a form key
-		add_form_key('ppde_settings');
+		add_form_key('ppde_paypal_features');
 
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
@@ -104,7 +104,7 @@ class admin_paypal_features_controller extends admin_main
 		$this->submit = $this->request->is_set_post('submit');
 
 		// Test if the submitted form is valid
-		$errors = $this->is_invalid_form('ppde_settings', $this->submit);
+		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
 
 		if ($this->can_submit_data($errors))
 		{
