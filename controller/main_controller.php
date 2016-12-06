@@ -696,14 +696,14 @@ class main_controller
 	{
 		if ($this->is_ppde_goal_stats())
 		{
-			$percent = $this->percent_value((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+			$percent = $this->percent_value((float) $this->config['ppde_raised'], (float) $this->config['ppde_goal']);
 			$this->assign_vars_stats_percent($percent, 'GOAL_NUMBER');
 			$this->template->assign_var('PPDE_CSS_GOAL_NUMBER', $this->ppde_css_classname($percent));
 		}
 
 		if ($this->is_ppde_used_stats())
 		{
-			$percent = $this->percent_value((int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+			$percent = $this->percent_value((float) $this->config['ppde_used'], (float) $this->config['ppde_raised']);
 			$this->assign_vars_stats_percent($percent, 'USED_NUMBER');
 			$this->template->assign_var('PPDE_CSS_USED_NUMBER', $this->ppde_css_classname($percent, true));
 		}
@@ -735,8 +735,8 @@ class main_controller
 	/**
 	 * Returns percent value
 	 *
-	 * @param integer $multiplicand
-	 * @param integer $dividend
+	 * @param float $multiplicand
+	 * @param float $dividend
 	 *
 	 * @return float
 	 * @access private
