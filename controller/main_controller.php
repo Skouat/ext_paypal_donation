@@ -503,6 +503,7 @@ class main_controller
 	{
 		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_remote_detected();
 	}
+
 	/**
 	 * Check if remote is detected based on config value
 	 *
@@ -614,7 +615,7 @@ class main_controller
 		}
 		else
 		{
-			$l_ppde_goal = $this->user->lang('PPDE_DONATE_GOAL_RAISE', $this->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->user->lang('PPDE_DONATE_GOAL_RAISE', $this->currency_on_left((float) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -623,16 +624,16 @@ class main_controller
 	/**
 	 * Put the currency on the left or on the right of the amount
 	 *
-	 * @param int    $value
-	 * @param string $currency
-	 * @param bool   $on_left
+	 * @param int|float $value
+	 * @param string    $currency
+	 * @param bool      $on_left
 	 *
 	 * @return string
 	 * @access public
 	 */
 	public function currency_on_left($value, $currency, $on_left = true)
 	{
-		return $on_left ? $currency . $value : $value . $currency;
+		return $on_left ? $currency . round($value, 2) : round($value, 2) . $currency;
 	}
 
 	/**
@@ -652,7 +653,7 @@ class main_controller
 		}
 		else
 		{
-			$l_ppde_raised = $this->user->lang('PPDE_DONATE_RECEIVED', $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->user->lang('PPDE_DONATE_RECEIVED', $this->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -675,11 +676,11 @@ class main_controller
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED', $this->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left), $this->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED_EXCEEDED', $this->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->user->lang('PPDE_DONATE_USED_EXCEEDED', $this->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
@@ -742,23 +743,26 @@ class main_controller
 	 */
 	private function percent_value($multiplicand, $dividend)
 	{
-		return round(($multiplicand * 100) / $dividend, 2);
+		return ($multiplicand * 100) / $dividend;
 	}
 
 	/**
 	 * Assign statistics percent vars to template
 	 *
 	 * @param float  $percent
-	 * @param string $type
+	 * @param string $varname
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($percent, $type)
+	private function assign_vars_stats_percent($percent, $varname)
 	{
+		// Force $varname to be in upper case
+		$varname = strtoupper($varname);
+
 		$this->template->assign_vars(array(
-			'PPDE_' . $type => $percent,
-			'S_' . $type    => !empty($type) ? true : false,
+			'PPDE_' . $varname => ($percent < 100) ? round($percent, 2) : round($percent, 0),
+			'S_' . $varname    => true,
 		));
 	}
 
