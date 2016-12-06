@@ -13,6 +13,7 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * @property \phpbb\config\config     config             Config object
  * @property ContainerInterface       container          The phpBB log system
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
@@ -25,9 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class admin_settings_controller extends admin_main
 {
-	protected $config;
 	protected $ppde_controller_main;
-	protected $ppde_operator_currency;
 
 	/**
 	 * Constructor
@@ -35,19 +34,17 @@ class admin_settings_controller extends admin_main
 	 * @param \phpbb\config\config                    $config                 Config object
 	 * @param ContainerInterface                      $container              Service container interface
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main   Main controller object
-	 * @param \skouat\ppde\operators\currency         $ppde_operator_currency Operator object
 	 * @param \phpbb\request\request                  $request                Request object
 	 * @param \phpbb\template\template                $template               Template object
 	 * @param \phpbb\user                             $user                   User object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->ppde_controller_main = $ppde_controller_main;
-		$this->ppde_operator_currency = $ppde_operator_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -88,20 +85,6 @@ class admin_settings_controller extends admin_main
 			'S_PPDE_DROPBOX_ENABLE'          => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'                  => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'             => $this->check_config($this->config['ppde_header_link']),
-
-			// PayPal IPN vars
-			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
-			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
-			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
-			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
-			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
-			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
-			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
-
-			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
-			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
-			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 
 			// Statistics Settings vars
 			'PPDE_RAISED'                    => $this->check_config($this->config['ppde_raised'], 'float', 0),
@@ -158,19 +141,6 @@ class admin_settings_controller extends admin_main
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
-		// Set options for PayPal IPN
-		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
-		$this->config->set('ppde_ipn_donorlist_enable', $this->request->variable('ppde_ipn_donorlist_enable', false));
-		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
-		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
-		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
-		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
-		$this->config->set('ppde_ipn_notification_enable', $this->request->variable('ppde_ipn_notification_enable', false));
-
-		// Set options for Sandbox Settings
-		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
-		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
-
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
 		$this->config->set('ppde_raised_enable', $this->request->variable('ppde_raised_enable', false));
@@ -186,7 +156,6 @@ class admin_settings_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
-		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
 	}
 
 	/**
@@ -231,56 +200,5 @@ class admin_settings_controller extends admin_main
 		{
 			$array[] = $var;
 		}
-	}
-
-	/**
-	 * Check if a config value is true
-	 *
-	 * @param mixed  $config Config value
-	 * @param string $type   (see settype())
-	 * @param mixed  $default
-	 *
-	 * @return mixed
-	 * @access private
-	 */
-	private function check_config($config, $type = 'boolean', $default = '')
-	{
-		// We're using settype to enforce data types
-		settype($config, $type);
-		settype($default, $type);
-
-		return $config ? $config : $default;
-	}
-
-	/**
-	 * Check if settings is required
-	 *
-	 * @param $settings
-	 * @param $depend_on
-	 *
-	 * @return mixed
-	 * @access private
-	 */
-	private function required_settings($settings, $depend_on)
-	{
-		if (empty($settings) && $depend_on == true)
-		{
-			trigger_error($this->user->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
-		return $settings;
-	}
-
-	/**
-	 * Check if a settings depend on another.
-	 *
-	 * @param $config_name
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function depend_on($config_name)
-	{
-		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 }

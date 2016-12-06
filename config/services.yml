@@ -91,7 +91,16 @@ services:
             - '@config'
             - '@service_container'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.operator.currency'
+            - '@request'
+            - '@template'
+            - '@user'
+
+    skouat.ppde.controller.admin.paypal_features:
+        class: skouat\ppde\controller\admin_paypal_features_controller
+        arguments:
+            - '@config'
+            - '@service_container'
+            - '@skouat.ppde.controller'
             - '@request'
             - '@template'
             - '@user'

@@ -34,6 +34,7 @@ class ppde_module
 
 		switch ($mode)
 		{
+			case 'paypal_features':
 			case 'overview':
 			case 'settings':
 			case 'transactions':
@@ -56,6 +57,11 @@ class ppde_module
 						// Load the display overview handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
 						$admin_controller->display_overview($action);
+						break;
+					case 'paypal_features':
+						// Load the display options handle in the admin controller
+						/** @type \skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
+						$admin_controller->display_settings();
 						break;
 					case 'settings':
 						// Load the display options handle in the admin controller

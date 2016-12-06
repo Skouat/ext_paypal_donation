@@ -12,6 +12,8 @@ namespace skouat\ppde\controller;
 
 abstract class admin_main
 {
+	/** @var object \phpbb\config\config */
+	protected $config;
 	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
 	protected $container;
 	/** @var string */
@@ -269,5 +271,55 @@ abstract class admin_main
 			'S_ERROR'   => (sizeof($errors)) ? true : false,
 			'ERROR_MSG' => (sizeof($errors)) ? implode('<br />', $errors) : '',
 		));
+	}
+
+	/**
+	 * Check if a config value is true
+	 *
+	 * @param mixed  $config Config value
+	 * @param string $type   (see settype())
+	 * @param mixed  $default
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function check_config($config, $type = 'boolean', $default = '')
+	{
+		// We're using settype to enforce data types
+		settype($config, $type);
+		settype($default, $type);
+
+		return $config ? $config : $default;
+	}
+	/**
+	 * Check if settings is required
+	 *
+	 * @param $settings
+	 * @param $depend_on
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function required_settings($settings, $depend_on)
+	{
+		if (empty($settings) && $depend_on == true)
+		{
+			trigger_error($this->user->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Check if a settings depend on another.
+	 *
+	 * @param $config_name
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	protected function depend_on($config_name)
+	{
+		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 }

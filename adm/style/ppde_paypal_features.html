@@ -1,0 +1,88 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{L_PPDE_PAYPAL_FEATURES}</h1>
+
+<p>{L_PPDE_PAYPAL_FEATURES_EXPLAIN}</p>
+
+<!-- IF S_ERROR -->
+<div class="errorbox">
+	<h3>{L_WARNING}</h3>
+
+	<p>{ERROR_MSG}</p>
+</div>
+<!-- ENDIF -->
+
+<form id="ppde_settings" method="post" action="{U_ACTION}">
+
+	<fieldset>
+		<legend>{L_PPDE_LEGEND_IPN_SETTINGS}</legend>
+		<dl>
+			<dt><label for="ppde_ipn_enable">{L_PPDE_IPN_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_IPN_ENABLE_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_ipn_enable" name="ppde_ipn_enable" value="1"<!-- IF S_PPDE_IPN_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_ipn_enable" value="0"<!-- IF not S_PPDE_IPN_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+		<fieldset class="ppde_toggle"<!-- IF not S_PPDE_IPN_ENABLE --> style="display: none;"<!-- ENDIF -->>
+			<legend>{L_PPDE_LEGEND_IPN_AUTOGROUP}</legend>
+			<dl>
+				<dt><label for="ppde_ipn_autogroup_enable">{L_PPDE_IPN_AG_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_IPN_AG_ENABLE_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_ipn_autogroup_enable" name="ppde_ipn_autogroup_enable" value="1"<!-- IF S_PPDE_IPN_AG_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_ipn_autogroup_enable" value="0"<!-- IF not S_PPDE_IPN_AG_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_ipn_group_id">{L_PPDE_IPN_AG_DONORS_GROUP}{L_COLON}</label><br /><span>{L_PPDE_IPN_AG_DONORS_GROUP_EXPLAIN}</span></dt>
+				<dd><select id="ppde_ipn_group_id" name="ppde_ipn_group_id">{S_PPDE_IPN_GROUP_OPTIONS}</select></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_ipn_group_as_default">{L_PPDE_IPN_AG_GROUP_AS_DEFAULT}{L_COLON}</label><br /><span>{L_PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_ipn_group_as_default" name="ppde_ipn_group_as_default" value="1"<!-- IF S_PPDE_IPN_AG_GROUP_AS_DEFAULT --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_ipn_group_as_default" value="0"<!-- IF not S_PPDE_IPN_AG_GROUP_AS_DEFAULT --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="ppde_toggle"<!-- IF not S_PPDE_IPN_ENABLE --> style="display: none;"<!-- ENDIF -->>
+			<legend>{L_PPDE_LEGEND_IPN_DONORLIST}</legend>
+			<dl>
+				<dt><label for="ppde_ipn_donorlist_enable">{L_PPDE_IPN_DL_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_IPN_DL_ENABLE_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_ipn_donorlist_enable" name="ppde_ipn_donorlist_enable" value="1"<!-- IF S_PPDE_IPN_DL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_ipn_donorlist_enable" value="0"<!-- IF not S_PPDE_IPN_DL_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="ppde_toggle"<!-- IF not S_PPDE_IPN_ENABLE --> style="display: none;"<!-- ENDIF -->>
+			<legend>{L_PPDE_LEGEND_IPN_NOTIFICATION}</legend>
+			<dl>
+				<dt><label for="ppde_ipn_notification_enable">{L_PPDE_IPN_NOTIFICATION_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_ipn_notification_enable" name="ppde_ipn_notification_enable" value="1"<!-- IF S_PPDE_IPN_NOTIFICATION_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_ipn_notification_enable" value="0"<!-- IF not S_PPDE_IPN_NOTIFICATION_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+		</fieldset>
+		<fieldset class="ppde_toggle"<!-- IF not S_PPDE_IPN_ENABLE --> style="display: none;"<!-- ENDIF -->>
+			<legend>{L_PPDE_LEGEND_SANDBOX_SETTINGS}</legend>
+			<dl>
+				<dt><label for="ppde_sandbox_enable">{L_PPDE_SANDBOX_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ENABLE_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_sandbox_enable" name="ppde_sandbox_enable" value="1"<!-- IF S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_sandbox_enable" value="0"<!-- IF not S_PPDE_SANDBOX_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_founder_enable">{L_PPDE_SANDBOX_FOUNDER_ENABLE}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"<!-- IF S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+					<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"<!-- IF not S_PPDE_SANDBOX_FOUNDER_ENABLE --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_address">{L_PPDE_SANDBOX_ADDRESS}{L_COLON}</label><br /><span>{L_PPDE_SANDBOX_ADDRESS_EXPLAIN}</span></dt>
+				<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="255" value="{PPDE_SANDBOX_ADDRESS}" /></dd>
+			</dl>
+		</fieldset>
+		<dl>
+			<dt><label for="ppde_ipn_logging">{L_PPDE_IPN_LOGGING}{L_COLON}</label><br /><span>{L_PPDE_IPN_LOGGING_EXPLAIN}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_ipn_logging" name="ppde_ipn_logging" value="1"<!-- IF S_PPDE_IPN_LOGGING --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="ppde_ipn_logging" value="0"<!-- IF not S_PPDE_IPN_LOGGING --> checked="checked"<!-- ENDIF --> /> {L_NO}</label></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+<!-- INCLUDEJS @skouat_ppde/ppde_adm.js -->
+<!-- INCLUDE overall_footer.html -->
