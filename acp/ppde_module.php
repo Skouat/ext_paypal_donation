@@ -25,7 +25,13 @@ class ppde_module
 	 */
 	public function main($id, $mode)
 	{
-		global $language, $phpbb_container, $request;
+		global $phpbb_container;
+
+		/** @type \phpbb\language\language $language Language object */
+		$language = $phpbb_container->get('language');
+
+		/** @type \phpbb\request\request $request Request object */
+		$request = $phpbb_container->get('request');
 
 		// Requests
 		$action = $request->variable('action', '');
