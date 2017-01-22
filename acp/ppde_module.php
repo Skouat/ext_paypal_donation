@@ -31,7 +31,7 @@ class ppde_module
 		$request = $phpbb_container->get('request');
 
 		/** @type \phpbb\user $user User object */
-		$request = $phpbb_container->get('user');
+		$user = $phpbb_container->get('user');
 
 		// Requests
 		$action = $request->variable('action', '');
