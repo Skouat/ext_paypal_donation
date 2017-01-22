@@ -13,7 +13,6 @@
 
 namespace skouat\ppde\controller;
 
-use phpbb\db\migrator_output_handler_interface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ipn_listener
@@ -160,7 +159,6 @@ class ipn_listener
 		$this->php_ext = $php_ext;
 
 		$this->root_path = $this->path_helper->get_phpbb_root_path();
-		$this->output_handler = new \phpbb\db\null_migrator_output_handler();
 	}
 
 	public function handle()
@@ -296,7 +294,7 @@ class ipn_listener
 		{
 			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->log_path_filename));
 
-			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), migrator_output_handler_interface::VERBOSITY_DEBUG);
+			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace));
 		}
 
 		if ($exit)
@@ -308,9 +306,9 @@ class ipn_listener
 	/**
 	 * Set the output handler.
 	 *
-	 * @param migrator_output_handler_interface $handler The output handler
+	 * @param \skouat\ppde\output_handler\log_wrapper_output_handler $handler The output handler
 	 */
-	public function set_output_handler(migrator_output_handler_interface $handler)
+	public function set_output_handler(\skouat\ppde\output_handler\log_wrapper_output_handler $handler)
 	{
 		$this->output_handler = $handler;
 	}

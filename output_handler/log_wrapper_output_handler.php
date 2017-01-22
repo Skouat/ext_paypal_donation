@@ -10,9 +10,7 @@
 
 namespace skouat\ppde\output_handler;
 
-use phpbb\db\migrator_output_handler_interface;
-
-class log_wrapper_output_handler implements migrator_output_handler_interface
+class log_wrapper_output_handler
 {
 	/**
 	 * Log file handle
@@ -75,7 +73,7 @@ class log_wrapper_output_handler implements migrator_output_handler_interface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function write($message, $verbosity)
+	public function write($message)
 	{
 		if ($this->file_handle !== false)
 		{
