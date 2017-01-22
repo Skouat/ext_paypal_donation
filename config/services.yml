@@ -21,12 +21,12 @@ services:
             - '@config'
             - '@service_container'
             - '@notification_manager'
+            - '@path_helper'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@request'
             - '@user'
             - '@dispatcher'
-            - '%core.root_path%'
             - '%core.php_ext%'
 
     skouat.ppde.controller:

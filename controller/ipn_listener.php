@@ -13,22 +13,26 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\db\migrator_output_handler_interface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ipn_listener
 {
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-	protected $container;
+	/**
+	 * Services properties declaration
+	 */
 	protected $config;
+	protected $container;
+	protected $dispatcher;
 	protected $notification;
+	protected $path_helper;
+	protected $php_ext;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
-	protected $php_ext;
 	protected $request;
-	protected $dispatcher;
-	protected $root_path;
 	protected $user;
+
 	/**
 	 * Args from PayPal notify return URL
 	 *
@@ -42,10 +46,31 @@ class ipn_listener
 								'fsock' => false,
 								'none'  => true);
 	/**
+	 * Main currency data
+	 *
+	 * @var array
+	 */
+	private $currency_mc_data;
+	/**
+	 * Settle currency data
+	 *
+	 * @var array
+	 */
+	private $currency_settle_data;
+	/**
+	 * @var string
+	 */
+	private $log_path_filename;
+	/**
+	 * The output handler. A null handler is configured by default.
+	 *
+	 * @var \skouat\ppde\output_handler\log_wrapper_output_handler
+	 */
+	public $output_handler;
+	/**
 	 * @var array|boolean
 	 */
 	private $payer_data;
-
 	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
@@ -64,6 +89,12 @@ class ipn_listener
 	 * @var string
 	 */
 	private $response_status = '';
+	/**
+	 * phpBB root path
+	 *
+	 * @var string
+	 */
+	private $root_path;
 	/**
 	 * The amount of time, in seconds, to wait for the PayPal server to respond
 	 * before timing out. Default 30 seconds.
@@ -97,18 +128,6 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
-	/**
-	 * Settle currency data
-	 *
-	 * @var array
-	 */
-	private $currency_settle_data;
-	/**
-	 * Main currency data
-	 *
-	 * @var array
-	 */
-	private $currency_mc_data;
 
 	/**
 	 * Constructor
@@ -116,35 +135,39 @@ class ipn_listener
 	 * @param \phpbb\config\config                                  $config                             Config object
 	 * @param ContainerInterface                                    $container                          Service container interface
 	 * @param \phpbb\notification\manager                           $notification                       Notification object
+	 * @param \phpbb\path_helper                                    $path_helper                        Path helper object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\user                                           $user                               User object
 	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
-	 * @param string                                                $root_path                          phpBB root path
 	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, \phpbb\event\dispatcher_interface $dispatcher, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \phpbb\request\request $request, \phpbb\user $user, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->notification = $notification;
+		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->request = $request;
 		$this->user = $user;
 		$this->dispatcher = $dispatcher;
-		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+
+		$this->root_path = $this->path_helper->get_phpbb_root_path();
+		$this->output_handler = new \phpbb\db\null_migrator_output_handler();
 	}
 
 	public function handle()
 	{
 		// Set IPN logging
 		$this->use_log_error = (bool) $this->config['ppde_ipn_logging'];
+		$this->log_path_filename = $this->path_helper->get_phpbb_root_path() . 'store/ext/ppde/ppde_tx_' . time() . '.log';
 
 		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
 		$this->is_curl_fsock_detected();
@@ -271,13 +294,25 @@ class ipn_listener
 
 		if ($log_in_file)
 		{
-			error_log(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), 3, $this->root_path . 'store/ppde_transactions.log');
+			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->log_path_filename));
+
+			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace), migrator_output_handler_interface::VERBOSITY_DEBUG);
 		}
 
 		if ($exit)
 		{
 			trigger_error($message, $error_type);
 		}
+	}
+
+	/**
+	 * Set the output handler.
+	 *
+	 * @param migrator_output_handler_interface $handler The output handler
+	 */
+	public function set_output_handler(migrator_output_handler_interface $handler)
+	{
+		$this->output_handler = $handler;
 	}
 
 	/**

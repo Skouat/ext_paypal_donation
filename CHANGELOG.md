@@ -7,6 +7,7 @@
 - Change: Remove unnecessary input and label attributes.
 - Change: Move PayPal IPN Features on its own ACP module
 - Change: Donation statistics display float value
+- Change: Use a unique filename for the transaction logfile
 - Fix: Protect the move actions with hash
 - Fix: Donors list displays a HTML bullet near of pagination when there is no donors
 - Fix: Remove unused language keys
