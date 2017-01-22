@@ -13,6 +13,7 @@
 - Fix: Remove unused language keys
 - Fix: Fix HTML tags in ACP transactions log
 - Fix: Method without return statement
+- Fix: Check the PHP version before activating the extension
 - Code enhancement
 
 ## 1.0.2 - 2016-08-08
