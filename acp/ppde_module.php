@@ -25,7 +25,13 @@ class ppde_module
 	 */
 	public function main($id, $mode)
 	{
-		global $phpbb_container, $request, $user;
+		global $phpbb_container;
+
+		/** @type \phpbb\request\request $request Request object */
+		$request = $phpbb_container->get('request');
+
+		/** @type \phpbb\user $user User object */
+		$request = $phpbb_container->get('user');
 
 		// Requests
 		$action = $request->variable('action', '');
