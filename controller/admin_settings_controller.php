@@ -32,13 +32,13 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config                 Config object
-	 * @param ContainerInterface                      $container              Service container interface
-	 * @param \phpbb\language\language                $language               Language user object
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main   Main controller object
-	 * @param \phpbb\request\request                  $request                Request object
-	 * @param \phpbb\template\template                $template               Template object
-	 * @param \phpbb\user                             $user                   User object
+	 * @param \phpbb\config\config                    $config               Config object
+	 * @param ContainerInterface                      $container            Service container interface
+	 * @param \phpbb\language\language                $language             Language user object
+	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
+	 * @param \phpbb\request\request                  $request              Request object
+	 * @param \phpbb\template\template                $template             Template object
+	 * @param \phpbb\user                             $user                 User object
 	 *
 	 * @access public
 	 */
@@ -81,22 +81,22 @@ class admin_settings_controller extends admin_main
 		$this->u_action_assign_template_vars();
 		$this->template->assign_vars(array(
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'                => $this->check_config($this->config['ppde_account_id'], 'string', ''),
-			'PPDE_DEFAULT_CURRENCY'          => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
-			'PPDE_DEFAULT_VALUE'             => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
-			'PPDE_DROPBOX_VALUE'             => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
-			'S_PPDE_DROPBOX_ENABLE'          => $this->check_config($this->config['ppde_dropbox_enable']),
-			'S_PPDE_ENABLE'                  => $this->check_config($this->config['ppde_enable']),
-			'S_PPDE_HEADER_LINK'             => $this->check_config($this->config['ppde_header_link']),
+			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
+			'PPDE_DEFAULT_CURRENCY'     => $this->container->get('skouat.ppde.controller')->build_currency_select_menu($this->config['ppde_default_currency']),
+			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
+			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
+			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
+			'S_PPDE_ENABLE'             => $this->check_config($this->config['ppde_enable']),
+			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
 
 			// Statistics Settings vars
-			'PPDE_RAISED'                    => $this->check_config($this->config['ppde_raised'], 'float', 0),
-			'PPDE_GOAL'                      => $this->check_config($this->config['ppde_goal'], 'float', 0),
-			'PPDE_USED'                      => $this->check_config($this->config['ppde_used'], 'float', 0),
-			'S_PPDE_STATS_INDEX_ENABLE'      => $this->check_config($this->config['ppde_stats_index_enable']),
-			'S_PPDE_RAISED_ENABLE'           => $this->check_config($this->config['ppde_raised_enable']),
-			'S_PPDE_GOAL_ENABLE'             => $this->check_config($this->config['ppde_goal_enable']),
-			'S_PPDE_USED_ENABLE'             => $this->check_config($this->config['ppde_used_enable']),
+			'PPDE_RAISED'               => $this->check_config($this->config['ppde_raised'], 'float', 0),
+			'PPDE_GOAL'                 => $this->check_config($this->config['ppde_goal'], 'float', 0),
+			'PPDE_USED'                 => $this->check_config($this->config['ppde_used'], 'float', 0),
+			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
+			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
+			'S_PPDE_GOAL_ENABLE'        => $this->check_config($this->config['ppde_goal_enable']),
+			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
 		));
 	}
 

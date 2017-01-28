@@ -63,23 +63,23 @@ class ppde_module
 						// Load the display overview handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
 						$admin_controller->display_overview($action);
-						break;
+					break;
 					case 'paypal_features':
 						// Load the display options handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
 						$admin_controller->display_settings();
-						break;
+					break;
 					case 'settings':
 						// Load the display options handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_settings_controller $admin_controller */
 						$admin_controller->display_settings();
-						break;
+					break;
 					case 'transactions':
 						// Load the display transactions log handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_transactions_controller $admin_controller */
 						$admin_controller->display_transactions($id, $mode, $action);
 				}
-				break;
+			break;
 			case 'donation_pages':
 				// Get an instance of the admin controller and the entity
 				/** @type \skouat\ppde\controller\admin_donation_pages_controller $admin_donation_pages_controller */
@@ -135,12 +135,12 @@ class ppde_module
 							)));
 						}
 
-						break;
+					break;
 				}
 
 				// Display module main page
 				$admin_donation_pages_controller->display_donation_pages();
-				break;
+			break;
 			case 'currency':
 				// Get an instance of the admin controller and the entity
 				/** @type \skouat\ppde\controller\admin_currency_controller $admin_currency_controller */
@@ -183,12 +183,12 @@ class ppde_module
 					case 'move_up':
 						// Move a currency
 						$admin_currency_controller->move_currency($currency_id, $action);
-						break;
+					break;
 					case 'activate':
 					case 'deactivate':
 						// Enable/disable a currency
 						$admin_currency_controller->enable_currency($currency_id, $action);
-						break;
+					break;
 					case 'delete':
 						// Use a confirm box routine when deleting a currency
 						if (confirm_box(true))
@@ -205,14 +205,14 @@ class ppde_module
 								'action'        => $action,
 							)));
 						}
-						break;
+					break;
 				}
 				// Display module main page
 				$admin_currency_controller->display_currency();
-				break;
+			break;
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);
-				break;
+			break;
 		}
 	}
 }

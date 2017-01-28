@@ -58,21 +58,21 @@ $lang = array_merge($lang, array(
 	'PPDE_DONORLIST_LAST_DATE'         => 'Effectué le',
 	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Somme des dons',
 
-	'PPDE_NO_DONORS'                   => 'Aucun donateur',
+	'PPDE_NO_DONORS'            => 'Aucun donateur',
 
 	// Statistics
-	'PPDE_DONATE_GOAL_RAISE'           => 'Notre objectif est d’obtenir <strong>%s</strong>.',
-	'PPDE_DONATE_GOAL_REACHED'         => 'L’objectif de don a été atteint.',
-	'PPDE_DONATE_NO_GOAL'              => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
-	'PPDE_DONATE_NOT_RECEIVED'         => 'Nous n’avons pas encore reçu de dons.',
-	'PPDE_DONATE_NOT_USED'             => 'Les dons n’ont pas été utilisés.',
-	'PPDE_DONATE_RECEIVED'             => 'Nous avons reçu <strong>%s</strong> de dons.',
-	'PPDE_DONATE_USED'                 => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
-	'PPDE_DONATE_USED_EXCEEDED'        => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
+	'PPDE_DONATE_GOAL_RAISE'    => 'Notre objectif est d’obtenir <strong>%s</strong>.',
+	'PPDE_DONATE_GOAL_REACHED'  => 'L’objectif de don a été atteint.',
+	'PPDE_DONATE_NO_GOAL'       => 'Nous n’avons pas défini d’objectif de dons à atteindre.',
+	'PPDE_DONATE_NOT_RECEIVED'  => 'Nous n’avons pas encore reçu de dons.',
+	'PPDE_DONATE_NOT_USED'      => 'Les dons n’ont pas été utilisés.',
+	'PPDE_DONATE_RECEIVED'      => 'Nous avons reçu <strong>%s</strong> de dons.',
+	'PPDE_DONATE_USED'          => 'Les dons ont été utilisés à hauteur de <strong>%1$s</strong> des <strong>%2$s</strong> déjà reçus.',
+	'PPDE_DONATE_USED_EXCEEDED' => 'Nous avons utilisé <strong>%s</strong>. Tous les dons ont été utilisés.',
 
 	// Viewonline
-	'PPDE_VIEWONLINE'                  => 'Consulte la page des dons',
-	'PPDE_VIEWONLINE_DONORLIST'        => 'Consulte la liste des donateurs',
+	'PPDE_VIEWONLINE'           => 'Consulte la page des dons',
+	'PPDE_VIEWONLINE_DONORLIST' => 'Consulte la liste des donateurs',
 ));
 
 /**

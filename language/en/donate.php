@@ -58,21 +58,21 @@ $lang = array_merge($lang, array(
 	'PPDE_DONORLIST_LAST_DATE'         => 'Made on',
 	'PPDE_DONORLIST_TOTAL_DONATION'    => 'Donation amount',
 
-	'PPDE_NO_DONORS'                   => 'No donors',
+	'PPDE_NO_DONORS'            => 'No donors',
 
 	// Statistics
-	'PPDE_DONATE_GOAL_RAISE'           => 'Our goal is to raise <strong>%s</strong>.',
-	'PPDE_DONATE_GOAL_REACHED'         => 'Our goal donation was reached.',
-	'PPDE_DONATE_NO_GOAL'              => 'We haven’t defined a donation goal.',
-	'PPDE_DONATE_NOT_RECEIVED'         => 'We haven’t received any donations.',
-	'PPDE_DONATE_NOT_USED'             => 'We haven’t used any donations.',
-	'PPDE_DONATE_RECEIVED'             => 'We received <strong>%s</strong> in donations.',
-	'PPDE_DONATE_USED'                 => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
-	'PPDE_DONATE_USED_EXCEEDED'        => 'We used <strong>%s</strong>. All your donations have been used.',
+	'PPDE_DONATE_GOAL_RAISE'    => 'Our goal is to raise <strong>%s</strong>.',
+	'PPDE_DONATE_GOAL_REACHED'  => 'Our goal donation was reached.',
+	'PPDE_DONATE_NO_GOAL'       => 'We haven’t defined a donation goal.',
+	'PPDE_DONATE_NOT_RECEIVED'  => 'We haven’t received any donations.',
+	'PPDE_DONATE_NOT_USED'      => 'We haven’t used any donations.',
+	'PPDE_DONATE_RECEIVED'      => 'We received <strong>%s</strong> in donations.',
+	'PPDE_DONATE_USED'          => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
+	'PPDE_DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All your donations have been used.',
 
 	// Viewonline
-	'PPDE_VIEWONLINE'                  => 'Viewing Donation page',
-	'PPDE_VIEWONLINE_DONORLIST'        => 'Viewing the list of donors',
+	'PPDE_VIEWONLINE'           => 'Viewing Donation page',
+	'PPDE_VIEWONLINE_DONORLIST' => 'Viewing the list of donors',
 ));
 
 /**

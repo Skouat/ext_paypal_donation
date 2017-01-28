@@ -166,19 +166,19 @@ class admin_overview_controller extends admin_main
 			case 'date':
 				$confirm = true;
 				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
-				break;
+			break;
 			case 'remote':
 				$confirm = true;
 				$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
-				break;
+			break;
 			case 'sandbox':
 				$confirm = true;
 				$confirm_lang = 'STAT_RESYNC_SANDBOX_STATS_CONFIRM';
-				break;
+			break;
 			case 'stats':
 				$confirm = true;
 				$confirm_lang = 'STAT_RESYNC_STATS_CONFIRM';
-				break;
+			break;
 			default:
 				$confirm = true;
 				$confirm_lang = 'CONFIRM_OPERATION';
@@ -210,20 +210,20 @@ class admin_overview_controller extends admin_main
 			case 'date':
 				$this->config->set('ppde_install_date', time() - 1);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
-				break;
+			break;
 			case 'sandbox':
 				$this->ppde_controller_transactions->update_stats(true);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
-				break;
+			break;
 			case 'stats':
 				$this->ppde_controller_transactions->update_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
-				break;
+			break;
 			case 'remote':
 				$this->ppde_controller_main->set_curl_info();
 				$this->ppde_controller_main->set_remote_detected();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_REMOTE');
-				break;
+			break;
 		}
 	}
 

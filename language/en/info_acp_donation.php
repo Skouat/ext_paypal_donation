@@ -53,20 +53,20 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'                     => 'Overview',
+	'PPDE_OVERVIEW' => 'Overview',
 
-	'INFO_CURL'                         => 'cURL',
-	'INFO_CURL_VERSION'                 => 'cURL version: %1$s<br />SSL version: %2$s',
-	'INFO_FSOCKOPEN'                    => 'Fsockopen',
-	'INFO_DETECTED'                     => 'Detected',
-	'INFO_NOT_DETECTED'                 => 'Not detected',
+	'INFO_CURL'         => 'cURL',
+	'INFO_CURL_VERSION' => 'cURL version: %1$s<br />SSL version: %2$s',
+	'INFO_FSOCKOPEN'    => 'Fsockopen',
+	'INFO_DETECTED'     => 'Detected',
+	'INFO_NOT_DETECTED' => 'Not detected',
 
-	'PPDE_INSTALL_DATE'                 => 'Install date of <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'              => 'No version check information given.',
-	'PPDE_NOT_UP_TO_DATE'               => '%s is not up to date',
-	'PPDE_STATS'                        => 'Donation statistics',
-	'PPDE_STATS_SANDBOX'                => 'Sandbox statistics',
-	'PPDE_VERSION'                      => '<strong>%s</strong> version',
+	'PPDE_INSTALL_DATE'    => 'Install date of <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK' => 'No version check information given.',
+	'PPDE_NOT_UP_TO_DATE'  => '%s is not up to date',
+	'PPDE_STATS'           => 'Donation statistics',
+	'PPDE_STATS_SANDBOX'   => 'Sandbox statistics',
+	'PPDE_VERSION'         => '<strong>%s</strong> version',
 
 	'STAT_RESET_DATE'                   => 'Reset Extension Installation date',
 	'STAT_RESET_DATE_EXPLAIN'           => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',

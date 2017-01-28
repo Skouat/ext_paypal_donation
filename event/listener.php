@@ -28,13 +28,13 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                       $config                           Config object
-	 * @param \phpbb\controller\helper                   $controller_helper                Controller helper object
-	 * @param \phpbb\language\language                   $language                         Language user object
-	 * @param \skouat\ppde\controller\main_controller    $ppde_controller_main             PPDE main controller object
-	 * @param \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats    Display stats controller object
-	 * @param \phpbb\template\template                   $template                         Template object
-	 * @param string                                     $php_ext                          phpEx
+	 * @param \phpbb\config\config                       $config                        Config object
+	 * @param \phpbb\controller\helper                   $controller_helper             Controller helper object
+	 * @param \phpbb\language\language                   $language                      Language user object
+	 * @param \skouat\ppde\controller\main_controller    $ppde_controller_main          PPDE main controller object
+	 * @param \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats Display stats controller object
+	 * @param \phpbb\template\template                   $template                      Template object
+	 * @param string                                     $php_ext                       phpEx
 	 *
 	 * @return \skouat\ppde\event\listener
 	 * @access public

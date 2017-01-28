@@ -53,20 +53,20 @@ $lang = array_merge($lang, array(
  * mode: overview
  */
 $lang = array_merge($lang, array(
-	'PPDE_OVERVIEW'                     => 'Vue d’ensemble',
+	'PPDE_OVERVIEW' => 'Vue d’ensemble',
 
-	'INFO_CURL'                         => 'cURL',
-	'INFO_CURL_VERSION'                 => 'Version cURL : %1$s<br />Version SSL : %2$s',
-	'INFO_FSOCKOPEN'                    => 'Fsockopen',
-	'INFO_DETECTED'                     => 'Détecté',
-	'INFO_NOT_DETECTED'                 => 'Non détecté',
+	'INFO_CURL'         => 'cURL',
+	'INFO_CURL_VERSION' => 'Version cURL : %1$s<br />Version SSL : %2$s',
+	'INFO_FSOCKOPEN'    => 'Fsockopen',
+	'INFO_DETECTED'     => 'Détecté',
+	'INFO_NOT_DETECTED' => 'Non détecté',
 
-	'PPDE_INSTALL_DATE'                 => 'Date d’installation de <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK'              => 'Cette extension ne prend pas en charge le contrôle de version.',
-	'PPDE_NOT_UP_TO_DATE'               => '%s n’est pas à jour',
-	'PPDE_STATS'                        => 'Statistiques des dons',
-	'PPDE_STATS_SANDBOX'                => 'Statistiques Sandbox',
-	'PPDE_VERSION'                      => 'Version de <strong>%s</strong>',
+	'PPDE_INSTALL_DATE'    => 'Date d’installation de <strong>%s</strong>',
+	'PPDE_NO_VERSIONCHECK' => 'Cette extension ne prend pas en charge le contrôle de version.',
+	'PPDE_NOT_UP_TO_DATE'  => '%s n’est pas à jour',
+	'PPDE_STATS'           => 'Statistiques des dons',
+	'PPDE_STATS_SANDBOX'   => 'Statistiques Sandbox',
+	'PPDE_VERSION'         => 'Version de <strong>%s</strong>',
 
 	'STAT_RESET_DATE'                   => 'Réinitialiser la date d’installation de l’extension',
 	'STAT_RESET_DATE_EXPLAIN'           => 'La réinitialisation de la date d’installation affectera le calcul du montant total des dons et quelques autres informations.',
@@ -326,18 +326,18 @@ $lang = array_merge($lang, array(
  * Confirm box
  */
 $lang = array_merge($lang, array(
-	'PPDE_DC_CONFIRM_DELETE'        => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
-	'PPDE_DC_GO_TO_PAGE'            => '%sModifier la devise existante%s',
-	'PPDE_DC_ADDED'                 => 'Une devise a été ajoutée.',
-	'PPDE_DC_UPDATED'               => 'Une devise a été mise à jour.',
-	'PPDE_DC_DELETED'               => 'Une devise a été supprimée.',
-	'PPDE_DP_CONFIRM_DELETE'        => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
-	'PPDE_DP_GO_TO_PAGE'            => '%sModifier la page de dons existante%s',
-	'PPDE_DP_ADDED'                 => 'Une page de dons pour la langue « %s » a été ajoutée.',
-	'PPDE_DP_DELETED'               => 'Une page de dons pour la langue « %s » a été supprimée.',
-	'PPDE_DP_UPDATED'               => 'Une page de dons pour la langue « %s » a été mise à jour.',
-	'PPDE_SETTINGS_SAVED'           => 'Les paramètres de PayPal Donation ont été sauvegardés.',
-	'PPDE_PAYPAL_FEATURES_SAVED'    => 'Les paramètres IPN PayPal ont été sauvegardés.',
+	'PPDE_DC_CONFIRM_DELETE'     => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_GO_TO_PAGE'         => '%sModifier la devise existante%s',
+	'PPDE_DC_ADDED'              => 'Une devise a été ajoutée.',
+	'PPDE_DC_UPDATED'            => 'Une devise a été mise à jour.',
+	'PPDE_DC_DELETED'            => 'Une devise a été supprimée.',
+	'PPDE_DP_CONFIRM_DELETE'     => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
+	'PPDE_DP_GO_TO_PAGE'         => '%sModifier la page de dons existante%s',
+	'PPDE_DP_ADDED'              => 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_DELETED'            => 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_UPDATED'            => 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_SETTINGS_SAVED'        => 'Les paramètres de PayPal Donation ont été sauvegardés.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres IPN PayPal ont été sauvegardés.',
 ));
 
 /**

@@ -240,10 +240,10 @@ class transactions
 		{
 			case 'user':
 				$sql_where = ' WHERE user_id = ' . (int) $arg;
-				break;
+			break;
 			case 'email':
 				$sql_where = ' WHERE user_email_hash = ' . crc32(strtolower($arg)) . strlen($arg);
-				break;
+			break;
 			default:
 				$sql_where = '';
 		}
@@ -371,7 +371,7 @@ class transactions
 			case 'ppde_transactions_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('txn_id');
 				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
-				break;
+			break;
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('payer_id');
@@ -382,12 +382,12 @@ class transactions
 					),
 				);
 				$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . (int) $test_ipn;
-				break;
+			break;
 			case 'ppde_anonymous_donors_count':
 			case 'ppde_anonymous_donors_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('payer_id');
 				$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . (int) $test_ipn;
-				break;
+			break;
 			default:
 				$sql_ary = $this->sql_select_stats_main('txn_id');
 		}

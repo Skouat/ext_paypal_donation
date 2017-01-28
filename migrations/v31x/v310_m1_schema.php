@@ -27,7 +27,7 @@ class v310_m1_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'ppde_currency'       => array(
+				$this->table_prefix . 'ppde_currency' => array(
 					'COLUMNS'     => array(
 						'currency_id'       => array('UINT', null, 'auto_increment'),
 						'currency_name'     => array('VCHAR:50', ''),
@@ -41,7 +41,7 @@ class v310_m1_schema extends \phpbb\db\migration\migration
 				),
 
 				$this->table_prefix . 'ppde_donation_pages' => array(
-					'COLUMNS'     => array(
+					'COLUMNS' => array(
 						'page_id'                      => array('UINT', null, 'auto_increment'),
 						'page_title'                   => array('VCHAR:50', ''),
 						'page_lang_id'                 => array('UINT', 0),
@@ -54,8 +54,8 @@ class v310_m1_schema extends \phpbb\db\migration\migration
 					'PRIMARY_KEY' => array('page_id'),
 				),
 
-				$this->table_prefix . 'ppde_txn_log'        => array(
-					'COLUMNS'     => array(
+				$this->table_prefix . 'ppde_txn_log' => array(
+					'COLUMNS' => array(
 						'transaction_id'    => array('UINT', null, 'auto_increment'),
 						// Receiver information
 						'receiver_id'       => array('VCHAR:13', ''),

@@ -90,7 +90,7 @@ class v310_m2_data extends \phpbb\db\migration\migration
 					'module_display'  => 1,
 					'module_langname' => 'PPDE_ACP_DONATION',
 					'module_auth'     => 'ext_skouat/ppde && acl_a_ppde_manage',
-				)
+				),
 			)),
 
 			array('module.add', array(
@@ -99,7 +99,7 @@ class v310_m2_data extends \phpbb\db\migration\migration
 				array(
 					'module_basename' => '\skouat\ppde\acp\ppde_module',
 					'modes'           => array('overview', 'settings', 'donation_pages', 'currency', 'transactions'),
-				)
+				),
 			)),
 		);
 	}

@@ -18,10 +18,10 @@ class donation_pages_text extends \phpbb\textreparser\row_based_plugin
 	public function get_columns()
 	{
 		return array(
-			'id'			=> 'page_id',
-			'text'			=> 'page_content',
-			'bbcode_uid'	=> 'page_content_bbcode_uid',
-			'options'		=> 'page_content_bbcode_options',
+			'id'         => 'page_id',
+			'text'       => 'page_content',
+			'bbcode_uid' => 'page_content_bbcode_uid',
+			'options'    => 'page_content_bbcode_options',
 		);
 	}
 }
