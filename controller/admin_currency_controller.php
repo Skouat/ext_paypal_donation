@@ -13,6 +13,7 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * @property \phpbb\config\config     config             Service container interface
  * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
@@ -317,10 +318,13 @@ class admin_currency_controller extends admin_main
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NO_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		// Return an error if it's the last enabled currency
-		if ($this->ppde_operator->last_currency_enabled($action) && ($action == 'deactivate'))
+		//** @type \phpbb\config\config $config */
+		$this->config = $this->container->get('config');
+
+		// Return an error if it's the default currency
+		if ($this->config['ppde_default_currency'] == $currency_id && ($action == 'deactivate'))
 		{
-			trigger_error($this->language->lang('PPDE_CANNOT_DISABLE_ALL_CURRENCIES') . adm_back_link($this->u_action), E_USER_WARNING);
+			trigger_error($this->language->lang('PPDE_CANNOT_DISABLE_DEFAULT_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
 		// Initiate an entity and load data

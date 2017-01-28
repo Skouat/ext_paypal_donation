@@ -146,43 +146,4 @@ class currency
 
 		return $move_executed;
 	}
-
-	/**
-	 * Checks if the currency is the last enabled.
-	 *
-	 * @param string $action
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function last_currency_enabled($action = '')
-	{
-		return $this->count_currency_enable($action) <= 1;
-	}
-
-	/**
-	 * Count the number of available currencies
-	 *
-	 * @param string $action
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function count_currency_enable($action = '')
-	{
-		// Count the number of available currencies
-		$sql_ary = array(
-			'SELECT' => 'COUNT(c.currency_id) AS cnt_currency',
-			'FROM'   => array($this->ppde_currency_table => 'c'),
-		);
-
-		if ($action == 'deactivate')
-		{
-			$sql_ary['WHERE'] = 'c.currency_enable = 1';
-		}
-
-		$this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
-
-		return $this->db->sql_fetchfield('cnt_currency');
-	}
 }
