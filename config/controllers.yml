@@ -10,6 +10,7 @@ services:
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
+            - '@skouat.ppde.ipn_remote'
             - '@request'
             - '@dispatcher'
             - '%core.php_ext%'
@@ -20,6 +21,13 @@ services:
             - '@config'
             - '@path_helper'
             - '@skouat.ppde.controller'
+
+    skouat.ppde.ipn_remote:
+        class: skouat\ppde\controller\ipn_remote
+        arguments:
+            - '@config'
+            - '@language'
+            - '@skouat.ppde.ipn_log'
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller

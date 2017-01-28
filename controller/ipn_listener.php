@@ -32,6 +32,7 @@ class ipn_listener
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
+	protected $ppde_ipn_remote;
 	protected $request;
 
 	/**
@@ -40,12 +41,6 @@ class ipn_listener
 	 * @var string
 	 */
 	private $args_return_uri = array();
-	/**
-	 * @var array
-	 */
-	private $curl_fsock = array('curl'  => false,
-								'fsock' => false,
-								'none'  => true);
 	/**
 	 * Main currency data
 	 *
@@ -63,36 +58,11 @@ class ipn_listener
 	 */
 	private $payer_data;
 	/**
-	 * PayPal response (VERIFIED or INVALID)
-	 *
-	 * @var string
-	 */
-	private $response = '';
-	/**
-	 * Full PayPal response for include in text report
-	 *
-	 * @var string
-	 */
-	private $report_response = '';
-	/**
-	 * PayPal response status (code 200 or other)
-	 *
-	 * @var string
-	 */
-	private $response_status = '';
-	/**
 	 * phpBB root path
 	 *
 	 * @var string
 	 */
 	private $root_path;
-	/**
-	 * The amount of time, in seconds, to wait for the PayPal server to respond
-	 * before timing out. Default 30 seconds.
-	 *
-	 * @var int
-	 */
-	private $timeout = 30;
 	/**
 	 * Data from PayPal transaction
 	 *
@@ -124,6 +94,7 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
+	 * @param \skouat\ppde\controller\ipn_remote                    $ppde_ipn_remote                    IPN remote (cURL, fsockopen)
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $php_ext                            phpEx
@@ -131,7 +102,7 @@ class ipn_listener
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log,  \skouat\ppde\controller\ipn_remote $ppde_ipn_remote, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
@@ -142,6 +113,7 @@ class ipn_listener
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
+		$this->ppde_ipn_remote = $ppde_ipn_remote;
 		$this->request = $request;
 		$this->php_ext = $php_ext;
 
@@ -153,11 +125,11 @@ class ipn_listener
 		// Set IPN logging
 		$this->ppde_ipn_log->set_use_log_error((bool) $this->config['ppde_ipn_logging']);
 
-		// Set the property 'curl_fsock' to determine which remote connection to use to contact PayPal
-		$this->is_curl_fsock_detected();
+		// Determine which remote connection to use to contact PayPal
+		$this->ppde_ipn_remote->is_remote_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
-		if ($this->get_curl_fsock() == 'none')
+		if ($this->ppde_ipn_remote->get_remote_used() == 'none')
 		{
 			$this->config->set('ppde_ipn_enable', false);
 			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
@@ -174,70 +146,6 @@ class ipn_listener
 		// And PayPal need it to terminate properly the IPN process.
 		garbage_collection();
 		exit_handler();
-	}
-
-	/**
-	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
-	 * If both are not available we use default value of the property 'use_curl'.
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function is_curl_fsock_detected()
-	{
-		// First, we declare fsockopen() as detected if true
-		$this->check_curl_fsock_detected('ppde_fsock_detected', false, true, false);
-
-		// Finally to set as default method to use, cURL is the last method initiated.
-		$this->check_curl_fsock_detected('ppde_curl_detected', true, false, false);
-	}
-
-	/**
-	 * @param string $config_name
-	 * @param bool   $curl
-	 * @param bool   $fsock
-	 * @param bool   $none
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
-	{
-		if ($this->config[$config_name])
-		{
-			$this->set_curl_fsock((bool) $curl, (bool) $fsock, (bool) $none);
-		}
-	}
-
-	/**
-	 * Set the property 'curl_fsock'
-	 *
-	 * @param bool $curl
-	 * @param bool $fsock
-	 * @param bool $none
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
-	{
-		$this->curl_fsock = array(
-			'curl'  => (bool) $curl,
-			'fsock' => (bool) $fsock,
-			'none'  => (bool) $none,
-		);
-	}
-
-	/**
-	 * Get the service that will be used to contact PayPal: cURL or fsockopen()
-	 * Return the name of the key that is set to true.
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function get_curl_fsock()
-	{
-		return array_search(true, $this->curl_fsock);
 	}
 
 	/**
@@ -269,11 +177,13 @@ class ipn_listener
 		// Get PayPal or Sandbox URL
 		$this->u_paypal = $this->ppde_controller_main->get_paypal_url((bool) $this->transaction_data['test_ipn']);
 
-		$this->initiate_paypal_connection();
+		// Initiate PayPal connection
+		$this->ppde_ipn_remote->set_u_paypal($this->u_paypal);
+		$this->ppde_ipn_remote->initiate_paypal_connection($this->args_return_uri, $this->transaction_data);
 
-		if (strpos($this->response_status, '200') === false)
+		if ($this->ppde_ipn_remote->check_response_status())
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->response_status));
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->ppde_ipn_remote->get_response_status()));
 		}
 
 		return $this->check_response();
@@ -468,137 +378,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Select the appropriate method to communicate with PayPal
-	 * In first, we use cURL. If it is not available we try with fsockopen()
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function initiate_paypal_connection()
-	{
-		if ($this->curl_fsock['curl'])
-		{
-			$this->curl_post($this->args_return_uri);
-		}
-		else if ($this->curl_fsock['fsock'])
-		{
-			$this->fsock_post($this->args_return_uri);
-		}
-		else
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_ERROR, $this->transaction_data);
-		}
-	}
-
-	/**
-	 * Post Back Using cURL
-	 *
-	 * Sends the post back to PayPal using the cURL library. Called by
-	 * the validate_transaction() method if the use_curl property is true. Throws an
-	 * exception if the post fails. Populates the response, response_status,
-	 * and post_uri properties on success.
-	 *
-	 * @param  string $encoded_data The post data as a URL encoded string
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function curl_post($encoded_data)
-	{
-		$ch = curl_init($this->u_paypal);
-		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
-
-		if ($this->ppde_ipn_log->is_use_log_error())
-		{
-			curl_setopt($ch, CURLOPT_HEADER, true);
-			curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-		}
-
-		$this->report_response = $this->response = curl_exec($ch);
-		if (curl_errno($ch) != 0)
-		{
-			// cURL error
-			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR') . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->ppde_ipn_log->is_use_log_error());
-			curl_close($ch);
-		}
-		else
-		{
-			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-			curl_close($ch);
-		}
-
-		// Split response headers and payload, a better way for strcmp
-		$tokens = explode("\r\n\r\n", trim($this->response));
-		$this->response = trim(end($tokens));
-	}
-
-	/**
-	 * Post Back Using fsockopen()
-	 *
-	 * Sends the post back to PayPal using the fsockopen() function. Called by
-	 * the validate_transaction() method if the use_curl property is false.
-	 * Throws an exception if the post fails. Populates the response,
-	 * response_status, properties on success.
-	 *
-	 * @param  string $encoded_data The post data as a URL encoded string
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function fsock_post($encoded_data)
-	{
-		$errstr = '';
-		$errno = 0;
-
-		$parse_url = parse_url($this->u_paypal);
-
-		// post back to PayPal system to validate
-		$header = "POST /cgi-bin/webscr HTTP/1.1\r\n";
-		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$header .= 'Host: ' . $parse_url['host'] . "\r\n";
-		$header .= 'Content-Length: ' . strlen($encoded_data) . "\r\n";
-		$header .= "Connection: Close\r\n\r\n";
-
-		$fp = fsockopen('ssl://' . $parse_url['host'], 443, $errno, $errstr, $this->timeout);
-
-		if (!$fp)
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('FSOCK_ERROR') . $errno . ' (' . $errstr . ')', $this->ppde_ipn_log->is_use_log_error());
-		}
-		else
-		{
-			// Send the data to PayPal
-			fputs($fp, $header . $encoded_data);
-
-			// Loop through the response
-			while (!feof($fp))
-			{
-				if (empty($this->response))
-				{
-					// extract HTTP status from first line
-					$this->response = $status = fgets($fp, 1024);
-					$this->response_status = trim(substr($status, 9, 4));
-				}
-				else
-				{
-					$this->response .= fgets($fp, 1024);
-				}
-			}
-
-			$this->report_response = $this->response;
-
-			fclose($fp);
-		}
-	}
-
-	/**
 	 * Check response returned by PayPal et log errors if there is no valid response
 	 * Set true if response is 'VERIFIED'. In other case set to false and log errors
 	 *
@@ -608,7 +387,7 @@ class ipn_listener
 	private function check_response()
 	{
 		// Prepare data to include in report
-		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->get_curl_fsock(), $this->report_response, $this->response_status, $this->transaction_data);
+		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->ppde_ipn_remote->get_remote_used(), $this->ppde_ipn_remote->get_report_response(), $this->ppde_ipn_remote->get_response_status(), $this->transaction_data);
 
 		if ($this->txn_is_verified())
 		{
@@ -638,33 +417,7 @@ class ipn_listener
 	 */
 	private function txn_is_verified()
 	{
-		return $this->is_curl_strcmp('VERIFIED') || $this->is_fsock_strpos('VERIFIED');
-	}
-
-	/**
-	 * If cURL is available we use strcmp() to get the Pay
-	 *
-	 * @param string $arg
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function is_curl_strcmp($arg)
-	{
-		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
-	}
-
-	/**
-	 * If fsockopen is available we use strpos()
-	 *
-	 * @param string $arg
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function is_fsock_strpos($arg)
-	{
-		return $this->curl_fsock['fsock'] && strpos($this->response, $arg) !== false;
+		return $this->ppde_ipn_remote->is_curl_strcmp('VERIFIED') || $this->ppde_ipn_remote->is_fsock_strpos('VERIFIED');
 	}
 
 	/**
@@ -675,7 +428,7 @@ class ipn_listener
 	 */
 	private function txn_is_invalid()
 	{
-		return $this->is_curl_strcmp('INVALID') || $this->is_fsock_strpos('INVALID');
+		return $this->ppde_ipn_remote->is_curl_strcmp('INVALID') || $this->ppde_ipn_remote->is_fsock_strpos('INVALID');
 	}
 
 	/**
