@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0 - 2017-01-28
+- Change: Migrate extension to be compatible with phpBB 3.2
+- Fix: Undefined offset when the default currency is disabled.
+- Code enhancement
+
 ## 1.0.3 - 2017-01-22
 - Add: Add extension events. More information in `/docs/events.md` (Thanks kasimi)
 - Add: The default donation value becomes the default value in the dropdown list. If it's not present, the value is added to the dropdown list.
