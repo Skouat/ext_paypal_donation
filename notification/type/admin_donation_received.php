@@ -33,11 +33,11 @@ class admin_donation_received extends \phpbb\notification\type\base
 		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
 	);
 
-	/** @var \phpbb\user_loader */
-	protected $user_loader;
-
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
 
 	public function set_config(\phpbb\config\config $config)
 	{

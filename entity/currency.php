@@ -242,7 +242,7 @@ class currency extends main
 	/**
 	 * Returns error if the currency is enabled
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function check_currency_enable()

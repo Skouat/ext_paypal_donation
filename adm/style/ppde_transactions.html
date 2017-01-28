@@ -18,80 +18,79 @@
 	<fieldset>
 		<legend>{{ lang('PPDE_DT_DETAILS') }}</legend>
 		<dl>
-			<dt><label for="txn_id">{{ lang('PPDE_DT_TXN_ID') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="txn_id" name="txn_id" type="text" class="text medium" disabled="disabled" value="{TXN_ID}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TXN_ID') }}{{ lang('COLON') }}</span></dt>
+			<dd>{TXN_ID}</dd>
 		</dl>
 		<hr />
 		<dl>
-			<dt><label for="board_username">{{ lang('PPDE_DT_BOARD_USERNAME') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="board_username" name="board_username" type="text" class="text medium" disabled="disabled" value="{BOARD_USERNAME}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_BOARD_USERNAME') }}{{ lang('COLON') }}</span></dt>
+			<dd>{BOARD_USERNAME}</dd>
 		</dl>
 		<dl>
-			<dt><label for="name">{{ lang('PPDE_DT_NAME') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="name" name="name" type="text" class="text medium" disabled="disabled" value="{NAME}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NAME') }}{{ lang('COLON') }}</span></dt>
+			<dd>{NAME}</dd>
 		</dl>
 		<dl>
-			<dt><label for="payer_email">{{ lang('PPDE_DT_PAYER_EMAIL') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="payer_email" name="payer_email" type="text" class="text medium" disabled="disabled" value="{PAYER_EMAIL}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_EMAIL') }}{{ lang('COLON') }}</span></dt>
+			<dd>{PAYER_EMAIL}</dd>
 		</dl>
 		<dl>
-			<dt><label for="payer_id">{{ lang('PPDE_DT_PAYER_ID') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="payer_id" name="payer_id" type="text" class="text medium" disabled="disabled" value="{PAYER_ID}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_ID') }}{{ lang('COLON') }}</span></dt>
+			<dd>{PAYER_ID}</dd>
 		</dl>
 		<dl>
-			<dt><label for="payer_status">{{ lang('PPDE_DT_PAYER_STATUS') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="payer_status" name="payer_status" type="text" class="text medium" disabled="disabled" value="{PAYER_STATUS}" /></dd>
-		</dl>
-		<hr />
-		<dl>
-			<dt><label for="receiver_email">{{ lang('PPDE_DT_RECEIVER_EMAIL') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="receiver_email" name="receiver_email" type="text" class="text medium" disabled="disabled" value="{RECEIVER_EMAIL}" /></dd>
-		</dl>
-		<dl>
-			<dt><label for="receiver_id">{{ lang('PPDE_DT_RECEIVER_ID') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="receiver_id" name="receiver_id" type="text" class="text medium" disabled="disabled" value="{RECEIVER_ID}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_STATUS') }}{{ lang('COLON') }}</span></dt>
+			<dd>{PAYER_STATUS}</dd>
 		</dl>
 		<hr />
 		<dl>
-			<dt><label for="mc_gross">{{ lang('PPDE_DT_TOTAL_AMOUNT') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="mc_gross" name="mc_gross" type="text" class="text medium" disabled="disabled" value="{MC_GROSS}" />
-			</dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_EMAIL') }}{{ lang('COLON') }}</span></dt>
+			<dd>{RECEIVER_EMAIL}</dd>
 		</dl>
 		<dl>
-			<dt><label for="mc_fee">{{ lang('PPDE_DT_FEE_AMOUNT') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="mc_fee" name="mc_fee" type="text" class="text medium" disabled="disabled" value="{MC_FEE}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_ID') }}{{ lang('COLON') }}</span></dt>
+			<dd>{RECEIVER_ID}</dd>
+		</dl>
+		<hr />
+		<dl>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TOTAL_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dd>{MC_GROSS}</dd>
 		</dl>
 		<dl>
-			<dt><label for="mc_net">{{ lang('PPDE_DT_NET_AMOUNT') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="mc_net" name="mc_net" type="text" class="text medium" disabled="disabled" value="{MC_NET}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_FEE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dd>{MC_FEE}</dd>
+		</dl>
+		<dl>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NET_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dd>{MC_NET}</dd>
 		</dl>
 		<!-- IF S_CONVERT -->
 		<hr />
 		<dl>
-			<dt><label for="settle_amount">{{ lang('PPDE_DT_SETTLE_AMOUNT') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="settle_amount" name="settle_amount" type="text" class="text medium" disabled="disabled" value="{SETTLE_AMOUNT}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_SETTLE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dd>{SETTLE_AMOUNT}</dd>
 		</dl>
 		<dl>
-			<dt><label for="exchange_rate">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</span></dt>
-			<dd><input id="exchange_rate" name="exchange_rate" type="text" class="text medium" disabled="disabled" value="{EXCHANGE_RATE}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</span><br />{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
+			<dd>{EXCHANGE_RATE}</dd>
 		</dl>
 		<!-- ENDIF -->
 		<hr />
 		<dl>
-			<dt><label for="item_name">{{ lang('PPDE_DT_ITEM_NAME') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="item_name" name="item_name" type="text" class="text medium" disabled="disabled" value="{ITEM_NAME}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NAME') }}{{ lang('COLON') }}</span></dt>
+			<dd>{ITEM_NAME}</dd>
 		</dl>
 		<dl>
-			<dt><label for="item_number">{{ lang('PPDE_DT_ITEM_NUMBER') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="item_number" name="item_number" type="text" class="text medium" disabled="disabled" value="{ITEM_NUMBER}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NUMBER') }}{{ lang('COLON') }}</span></dt>
+			<dd>{ITEM_NUMBER}</dd>
 		</dl>
 		<dl>
-			<dt><label for="payment_date">{{ lang('PPDE_DT_PAYMENT_DATE') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="payment_date" name="payment_date" type="text" class="text medium" disabled="disabled" value="{PAYMENT_DATE}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_DATE') }}{{ lang('COLON') }}</span></dt>
+			<dd>{PAYMENT_DATE}</dd>
 		</dl>
 		<dl>
-			<dt><label for="payment_status">{{ lang('PPDE_DT_PAYMENT_STATUS') }}{{ lang('COLON') }}</label></dt>
-			<dd><input id="payment_status" name="payment_status" type="text" class="text medium" disabled="disabled" value="{PAYMENT_STATUS}" /></dd>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_STATUS') }}{{ lang('COLON') }}</span></dt>
+			<dd>{PAYMENT_STATUS}</dd>
 		</dl>
 	</fieldset>
 

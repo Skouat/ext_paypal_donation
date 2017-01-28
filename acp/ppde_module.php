@@ -41,6 +41,7 @@ class ppde_module
 		switch ($mode)
 		{
 			case 'overview':
+			case 'paypal_features':
 			case 'settings':
 			case 'transactions':
 				// Get an instance of the admin controller
@@ -62,6 +63,11 @@ class ppde_module
 						// Load the display overview handle in the admin controller
 						/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
 						$admin_controller->display_overview($action);
+						break;
+					case 'paypal_features':
+						// Load the display options handle in the admin controller
+						/** @type \skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
+						$admin_controller->display_settings();
 						break;
 					case 'settings':
 						// Load the display options handle in the admin controller

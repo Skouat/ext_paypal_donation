@@ -19,16 +19,21 @@ class ipn_listener
 {
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-	protected $container;
+	/**
+	 * Services properties declaration
+	 */
 	protected $config;
+	protected $container;
+	protected $dispatcher;
 	protected $language;
 	protected $notification;
+	protected $path_helper;
+	protected $php_ext;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
-	protected $php_ext;
 	protected $request;
-	protected $root_path;
+
 	/**
 	 * Args from PayPal notify return URL
 	 *
@@ -42,10 +47,21 @@ class ipn_listener
 								'fsock' => false,
 								'none'  => true);
 	/**
+	 * Main currency data
+	 *
+	 * @var array
+	 */
+	private $currency_mc_data;
+	/**
+	 * Settle currency data
+	 *
+	 * @var array
+	 */
+	private $currency_settle_data;
+	/**
 	 * @var array|boolean
 	 */
 	private $payer_data;
-
 	/**
 	 * PayPal response (VERIFIED or INVALID)
 	 *
@@ -64,6 +80,12 @@ class ipn_listener
 	 * @var string
 	 */
 	private $response_status = '';
+	/**
+	 * phpBB root path
+	 *
+	 * @var string
+	 */
+	private $root_path;
 	/**
 	 * The amount of time, in seconds, to wait for the PayPal server to respond
 	 * before timing out. Default 30 seconds.
@@ -90,18 +112,6 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
-	/**
-	 * Settle currency data
-	 *
-	 * @var array
-	 */
-	private $currency_settle_data;
-	/**
-	 * Main currency data
-	 *
-	 * @var array
-	 */
-	private $currency_mc_data;
 
 	/**
 	 * Constructor
@@ -110,28 +120,32 @@ class ipn_listener
 	 * @param ContainerInterface                                    $container                          Service container interface
 	 * @param \phpbb\language\language                              $language                           Language user object
 	 * @param \phpbb\notification\manager                           $notification                       Notification object
+	 * @param \phpbb\path_helper                                    $path_helper                        Path helper object
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
 	 * @param \phpbb\request\request                                $request                            Request object
-	 * @param string                                                $root_path                          phpBB root path
+	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \phpbb\request\request $request, $root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
+		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
+		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
-		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
+
+		$this->root_path = $this->path_helper->get_phpbb_root_path();
 	}
 
 	public function handle()
@@ -166,7 +180,7 @@ class ipn_listener
 	 * Set property 'use_curl' to determine if we use cURL or fsockopen().
 	 * If both are not available we use default value of the property 'use_curl'.
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function is_curl_fsock_detected()
@@ -184,7 +198,7 @@ class ipn_listener
 	 * @param bool   $fsock
 	 * @param bool   $none
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
@@ -202,7 +216,7 @@ class ipn_listener
 	 * @param bool $fsock
 	 * @param bool $none
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
@@ -420,7 +434,7 @@ class ipn_listener
 	/**
 	 * Get all args for construct the return URI
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function set_args_return_uri()
@@ -446,7 +460,7 @@ class ipn_listener
 	 * Select the appropriate method to communicate with PayPal
 	 * In first, we use cURL. If it is not available we try with fsockopen()
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function initiate_paypal_connection()
@@ -475,7 +489,7 @@ class ipn_listener
 	 *
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function curl_post($encoded_data)
@@ -524,7 +538,7 @@ class ipn_listener
 	 *
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function fsock_post($encoded_data)
@@ -682,7 +696,7 @@ class ipn_listener
 	/**
 	 * Retrieve user_id from item_number args
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function extract_item_number_data()
@@ -746,7 +760,7 @@ class ipn_listener
 	 *
 	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function submit_data(\skouat\ppde\entity\transactions $entity)
@@ -774,7 +788,7 @@ class ipn_listener
 	/**
 	 * Do actions if the transaction is verified
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function do_actions()
@@ -787,6 +801,23 @@ class ipn_listener
 
 		if ($this->payment_status_is_completed())
 		{
+			$transaction_data = $this->transaction_data;
+
+			/**
+			 * Event that is triggered when a transaction has been successfully completed
+			 *
+			 * @event skouat.ppde.do_actions_completed_before
+			 * @var array    transaction_data    Array containing transaction data
+			 * @since 1.0.3
+			 */
+			$vars = array(
+				'transaction_data',
+			);
+			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+
+			$this->transaction_data = $transaction_data;
+			unset($transaction_data);
+
 			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
 			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
@@ -803,13 +834,39 @@ class ipn_listener
 	/**
 	 * Add donor to the donors group
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function donors_group_user_add()
 	{
 		// we add the user to the donors group
-		if ($this->can_use_autogroup())
+		$can_use_autogroup = $this->can_use_autogroup();
+		$group_id = (int) $this->config['ppde_ipn_group_id'];
+		$payer_id = (int) $this->payer_data['user_id'];
+		$payer_username = $this->payer_data['username'];
+		$default_group = $this->config['ppde_ipn_group_as_default'];
+
+		/**
+		 * Event to modify data before a user is added to the donors group
+		 *
+		 * @event skouat.ppde.donors_group_user_add_before
+		 * @var bool    can_use_autogroup   Whether or not to add the user to the group
+		 * @var int     group_id            The ID of the group to which the user will be added
+		 * @var int     payer_id            The ID of the user who will we added to the group
+		 * @var string  payer_username      The user name
+		 * @var bool    default_group       Whether or not the group should be made default for the user
+		 * @since 1.0.3
+		 */
+		$vars = array(
+			'can_use_autogroup',
+			'group_id',
+			'payer_id',
+			'payer_username',
+			'default_group',
+		);
+		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
+
+		if ($can_use_autogroup)
 		{
 			if (!function_exists('group_user_add'))
 			{
@@ -817,7 +874,7 @@ class ipn_listener
 			}
 
 			// add the user to the donors group and set as default.
-			group_user_add($this->config['ppde_ipn_group_id'], array($this->payer_data['user_id']), array($this->payer_data['username']), get_group_name($this->config['ppde_ipn_group_id']), $this->config['ppde_ipn_group_as_default']);
+			group_user_add($group_id, array($payer_id), array($payer_username), get_group_name($group_id), $default_group);
 		}
 	}
 
@@ -901,7 +958,7 @@ class ipn_listener
 	/**
 	 * Updates the amount of donation raised
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function update_raised_amount()
@@ -913,7 +970,7 @@ class ipn_listener
 	/**
 	 * Notify donors and admin when the donation is received
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function notify_donation_received()

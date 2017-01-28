@@ -74,7 +74,7 @@ class currency
 	/**
 	 * Check all items order and fix them if necessary
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function fix_currency_order()

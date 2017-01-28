@@ -35,19 +35,19 @@ class main_controller
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth                      $auth                         Auth object
-	 * @param \phpbb\config\config                  $config                       Config object
-	 * @param ContainerInterface                    $container                    Service container interface
-	 * @param \phpbb\extension\manager              $extension_manager            An instance of the phpBB extension manager
-	 * @param \phpbb\controller\helper              $helper                       Controller helper object
-	 * @param \phpbb\language\language              $language                     Language user object
-	 * @param \skouat\ppde\entity\currency          $ppde_entity_currency         Currency entity object
-	 * @param \skouat\ppde\operators\currency       $ppde_operator_currency       Currency operator object
-	 * @param \phpbb\request\request                $request                      Request object
-	 * @param \phpbb\template\template              $template                     Template object
-	 * @param \phpbb\user                           $user                         User object
-	 * @param string                                $root_path                    phpBB root path
-	 * @param string                                $php_ext                      phpEx
+	 * @param \phpbb\auth\auth                $auth                   Auth object
+	 * @param \phpbb\config\config            $config                 Config object
+	 * @param ContainerInterface              $container              Service container interface
+	 * @param \phpbb\extension\manager        $extension_manager      An instance of the phpBB extension manager
+	 * @param \phpbb\controller\helper        $helper                 Controller helper object
+	 * @param \phpbb\language\language        $language               Language user object
+	 * @param \skouat\ppde\entity\currency    $ppde_entity_currency   Currency entity object
+	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Currency operator object
+	 * @param \phpbb\request\request          $request                Request object
+	 * @param \phpbb\template\template        $template               Template object
+	 * @param \phpbb\user                     $user                   User object
+	 * @param string                          $root_path              phpBB root path
+	 * @param string                          $php_ext                phpEx
 	 *
 	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
@@ -130,7 +130,7 @@ class main_controller
 	 *
 	 * @param int $config_value Currency identifier; default: 0
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function build_currency_select_menu($config_value = 0)
@@ -205,22 +205,22 @@ class main_controller
 	/**
 	 * Put the currency on the left or on the right of the amount
 	 *
-	 * @param int    $value
-	 * @param string $currency
-	 * @param bool   $on_left
+	 * @param int|float $value
+	 * @param string    $currency
+	 * @param bool      $on_left
 	 *
 	 * @return string
 	 * @access public
 	 */
 	public function currency_on_left($value, $currency, $on_left = true)
 	{
-		return $on_left ? $currency . $value : $value . $currency;
+		return $on_left ? $currency . round($value, 2) : round($value, 2) . $currency;
 	}
 
 	/**
 	 * Do action if it's the first time the extension is accessed
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function first_start()
@@ -236,7 +236,7 @@ class main_controller
 	/**
 	 * Set config value for cURL version
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_curl_info()
@@ -252,7 +252,7 @@ class main_controller
 	/**
 	 * Set config value for cURL and fsockopen
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_remote_detected()
@@ -320,7 +320,7 @@ class main_controller
 	/**
 	 * Get extension metadata
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function get_ext_meta()
@@ -363,7 +363,7 @@ class main_controller
 	/**
 	 * Retrieve the extension name
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function retrieve_ext_name()

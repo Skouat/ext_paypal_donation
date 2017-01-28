@@ -39,7 +39,7 @@ class main_display_stats
 	/**
 	 * Assign statistics vars to the template
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_stats()
@@ -85,7 +85,7 @@ class main_display_stats
 		}
 		else
 		{
-			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_controller_main->currency_on_left((int) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -108,7 +108,7 @@ class main_display_stats
 		}
 		else
 		{
-			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_controller_main->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -131,11 +131,11 @@ class main_display_stats
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->ppde_controller_main->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left), $this->ppde_controller_main->currency_on_left((int) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left), $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_controller_main->currency_on_left((int) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
@@ -144,20 +144,20 @@ class main_display_stats
 	/**
 	 * Generate statistics percent for display
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function generate_stats_percent()
 	{
 		if ($this->is_ppde_goal_stats())
 		{
-			$percent = $this->percent_value((int) $this->config['ppde_raised'], (int) $this->config['ppde_goal']);
+			$percent = $this->percent_value((float) $this->config['ppde_raised'], (float) $this->config['ppde_goal']);
 			$this->assign_vars_stats_percent('GOAL_NUMBER', $percent);
 		}
 
 		if ($this->is_ppde_used_stats())
 		{
-			$percent = $this->percent_value((int) $this->config['ppde_used'], (int) $this->config['ppde_raised']);
+			$percent = $this->percent_value((float) $this->config['ppde_used'], (float) $this->config['ppde_raised']);
 			$this->assign_vars_stats_percent('USED_NUMBER', $percent, true);
 		}
 	}
@@ -187,33 +187,36 @@ class main_display_stats
 	/**
 	 * Returns percent value
 	 *
-	 * @param integer $multiplicand
-	 * @param integer $dividend
+	 * @param float $multiplicand
+	 * @param float $dividend
 	 *
 	 * @return float
 	 * @access private
 	 */
 	private function percent_value($multiplicand, $dividend)
 	{
-		return round(($multiplicand * 100) / $dividend, 2);
+		return ($multiplicand * 100) / $dividend;
 	}
 
 	/**
 	 * Assign statistics percent vars to template
 	 *
-	 * @param string $type
+	 * @param string $varname
 	 * @param float  $percent
 	 * @param bool   $reverse_css
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($type, $percent, $reverse_css = false)
+	private function assign_vars_stats_percent($varname, $percent, $reverse_css = false)
 	{
+		// Force $varname to be in upper case
+		$varname = strtoupper($varname);
+
 		$this->template->assign_vars(array(
-			'PPDE_' . $type     => $percent,
-			'PPDE_CSS_' . $type => $this->ppde_css_classname($percent, $reverse_css),
-			'S_' . $type        => !empty($type) ? true : false,
+			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent, 0),
+			'PPDE_CSS_' . $varname => $this->ppde_css_classname($percent, $reverse_css),
+			'S_' . $varname        => true,
 		));
 	}
 

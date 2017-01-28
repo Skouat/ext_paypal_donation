@@ -6,19 +6,20 @@ services:
             - '@service_container'
             - '@language'
             - '@notification_manager'
+            - '@path_helper'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
             - '@request'
-            - '%core.root_path%'
+            - '@dispatcher'
             - '%core.php_ext%'
 
     skouat.ppde.ipn_log:
         class: skouat\ppde\controller\ipn_log
         arguments:
             - '@config'
+            - '@path_helper'
             - '@skouat.ppde.controller'
-            - '%core.root_path%'
 
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
@@ -106,7 +107,17 @@ services:
             - '@service_container'
             - '@language'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.operator.currency'
+            - '@request'
+            - '@template'
+            - '@user'
+
+    skouat.ppde.controller.admin.paypal_features:
+        class: skouat\ppde\controller\admin_paypal_features_controller
+        arguments:
+            - '@config'
+            - '@service_container'
+            - '@language'
+            - '@skouat.ppde.controller'
             - '@request'
             - '@template'
             - '@user'

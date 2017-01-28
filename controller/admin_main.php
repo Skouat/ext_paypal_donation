@@ -12,6 +12,8 @@ namespace skouat\ppde\controller;
 
 abstract class admin_main
 {
+	/** @var object \phpbb\config\config */
+	protected $config;
 	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
 	protected $container;
 	/** @var string */
@@ -110,7 +112,7 @@ abstract class admin_main
 	 *
 	 * @param string $u_action Custom form action
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_page_url($u_action)
@@ -215,7 +217,7 @@ abstract class admin_main
 	 *
 	 * @param string $message Text message to show to the user
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function ajax_delete_result_message($message = '')
@@ -227,8 +229,8 @@ abstract class admin_main
 				'MESSAGE_TITLE' => $this->language->lang('INFORMATION'),
 				'MESSAGE_TEXT'  => $message,
 				'REFRESH_DATA'  => array(
-					'time' => 3
-				)
+					'time' => 3,
+				),
 			));
 		}
 	}
@@ -247,7 +249,7 @@ abstract class admin_main
 	/**
 	 * Set u_action output vars for display in the template
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function u_action_assign_template_vars()
@@ -262,7 +264,7 @@ abstract class admin_main
 	 *
 	 * @param array $errors
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function s_error_assign_template_vars($errors)
@@ -271,5 +273,56 @@ abstract class admin_main
 			'S_ERROR'   => (sizeof($errors)) ? true : false,
 			'ERROR_MSG' => (sizeof($errors)) ? implode('<br />', $errors) : '',
 		));
+	}
+
+	/**
+	 * Check if a config value is true
+	 *
+	 * @param mixed  $config Config value
+	 * @param string $type   (see settype())
+	 * @param mixed  $default
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function check_config($config, $type = 'boolean', $default = '')
+	{
+		// We're using settype to enforce data types
+		settype($config, $type);
+		settype($default, $type);
+
+		return $config ? $config : $default;
+	}
+
+	/**
+	 * Check if settings is required
+	 *
+	 * @param $settings
+	 * @param $depend_on
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function required_settings($settings, $depend_on)
+	{
+		if (empty($settings) && $depend_on == true)
+		{
+			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Check if a settings depend on another.
+	 *
+	 * @param $config_name
+	 *
+	 * @return bool
+	 * @access protected
+	 */
+	protected function depend_on($config_name)
+	{
+		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 }

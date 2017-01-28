@@ -117,7 +117,7 @@ class donation_pages extends main
 	/**
 	 * Add language key for donation pages Predefined vars
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function add_predefined_lang_vars()
@@ -234,7 +234,7 @@ class donation_pages extends main
 	 * @param bool $negate          Negate (unset) option (Default: False)
 	 * @param bool $reparse_message Reparse the message after setting option (Default: True)
 	 *
-	 * @return null
+	 * @return void
 	 * @access protected
 	 */
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true)

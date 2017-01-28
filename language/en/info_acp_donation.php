@@ -40,12 +40,13 @@ if (empty($lang) || !is_array($lang))
  * mode: main
  */
 $lang = array_merge($lang, array(
-	'PPDE_ACP_DONATION'       => 'PayPal Donation',
-	'PPDE_ACP_OVERVIEW'       => 'Overview',
-	'PPDE_ACP_SETTINGS'       => 'General Settings',
-	'PPDE_ACP_DONATION_PAGES' => 'Donation Pages',
-	'PPDE_ACP_CURRENCY'       => 'Currency management',
-	'PPDE_ACP_TRANSACTIONS'   => 'Transactions log',
+	'PPDE_ACP_DONATION'        => 'PayPal Donation',
+	'PPDE_ACP_OVERVIEW'        => 'Overview',
+	'PPDE_ACP_PAYPAL_FEATURES' => 'PayPal IPN Features',
+	'PPDE_ACP_SETTINGS'        => 'General Settings',
+	'PPDE_ACP_DONATION_PAGES'  => 'Donation Pages',
+	'PPDE_ACP_CURRENCY'        => 'Currency management',
+	'PPDE_ACP_TRANSACTIONS'    => 'Transactions log',
 ));
 
 /**
@@ -92,30 +93,55 @@ $lang = array_merge($lang, array(
  * mode: settings
  */
 $lang = array_merge($lang, array(
-	'PPDE_SETTINGS'                        => 'General Settings',
-	'PPDE_SETTINGS_EXPLAIN'                => 'Here you can configure the main settings for PayPal Donation.',
+	'PPDE_SETTINGS'                   => 'General Settings',
+	'PPDE_SETTINGS_EXPLAIN'           => 'Here you can configure the main settings for PayPal Donation.',
 
 	// Global settings
-	'PPDE_LEGEND_GENERAL_SETTINGS'         => 'General Settings',
-	'PPDE_ENABLE'                          => 'Enable PayPal Donation',
-	'PPDE_ENABLE_EXPLAIN'                  => 'Enable or disable the PayPal Donation Extension.',
-	'PPDE_HEADER_LINK'                     => 'Display the link “Donations” in the header',
-	'PPDE_ACCOUNT_ID'                      => 'PayPal account ID',
-	'PPDE_ACCOUNT_ID_EXPLAIN'              => 'Enter your PayPal email address or Merchant account ID.',
-	'PPDE_DEFAULT_CURRENCY'                => 'Default currency',
-	'PPDE_DEFAULT_CURRENCY_EXPLAIN'        => 'Define which currency will be selected by default.',
-	'PPDE_DEFAULT_VALUE'                   => 'Default donation value',
-	'PPDE_DEFAULT_VALUE_EXPLAIN'           => 'Define which donation value will be suggested by default.',
-	'PPDE_DROPBOX_ENABLE'                  => 'Enable drop-down list',
-	'PPDE_DROPBOX_ENABLE_EXPLAIN'          => 'If enabled, it will replace the Textbox by a drop-down list.',
-	'PPDE_DROPBOX_VALUE'                   => 'Drop-down donation value',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'           => 'Define the numbers you want to see in the drop-down list.<br />Use <strong>comma</strong> (",") <strong>with no space</strong> to separate each values.',
+	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'General Settings',
+	'PPDE_ENABLE'                     => 'Enable PayPal Donation',
+	'PPDE_ENABLE_EXPLAIN'             => 'Enable or disable the PayPal Donation Extension.',
+	'PPDE_HEADER_LINK'                => 'Display the link “Donations” in the header',
+	'PPDE_ACCOUNT_ID'                 => 'PayPal account ID',
+	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Enter your PayPal email address or Merchant account ID.',
+	'PPDE_DEFAULT_CURRENCY'           => 'Default currency',
+	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Define which currency will be selected by default.',
+	'PPDE_DEFAULT_VALUE'              => 'Default donation value',
+	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Define which donation value will be suggested by default.',
+	'PPDE_DROPBOX_ENABLE'             => 'Enable drop-down list',
+	'PPDE_DROPBOX_ENABLE_EXPLAIN'     => 'If enabled, it will replace the Textbox by a drop-down list.',
+	'PPDE_DROPBOX_VALUE'              => 'Drop-down donation value',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Define the numbers you want to see in the drop-down list.<br />Use <strong>comma</strong> (",") <strong>with no space</strong> to separate each values.',
+
+	// Stats Donation settings
+	'PPDE_LEGEND_STATS_SETTINGS'      => 'Stats donation config',
+	'PPDE_STATS_INDEX_ENABLE'         => 'Display donation stats on index',
+	'PPDE_STATS_INDEX_ENABLE_EXPLAIN' => 'Enable this if you want to display the donation stats on index.',
+	'PPDE_RAISED'                     => 'Donation raised',
+	'PPDE_RAISED_EXPLAIN'             => 'The current amount raised through donations.',
+	'PPDE_GOAL'                       => 'Donation goal',
+	'PPDE_GOAL_EXPLAIN'               => 'The total amount that you want to raise.',
+	'PPDE_USED'                       => 'Donation used',
+	'PPDE_USED_EXPLAIN'               => 'The amount of donation that you have already used.',
+	'PPDE_AMOUNT'                     => 'Amount',
+	// Note for translator: do not translate the decimal symbol
+	'PPDE_DECIMAL_EXPLAIN'            => 'Use “.” as decimal symbol.',
+
+	'PPDE_CURRENCY_ENABLE'            => 'Enable donation currency',
+	'PPDE_CURRENCY_ENABLE_EXPLAIN'    => 'Enable this option if you want to display the ISO 4217 code of default currency in Stats.',
+));
+
+/**
+ * mode: PayPal features
+ */
+$lang = array_merge($lang, array(
+	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN features',
+	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure all features that use the PayPal Instant Payment Notification (IPN).',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto-group',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'PayPal IPN settings',
+	'PPDE_LEGEND_IPN_SETTINGS'             => 'General settings',
 	'PPDE_IPN_AG_ENABLE'                   => 'Enable Auto Group',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
@@ -127,7 +153,7 @@ $lang = array_merge($lang, array(
 	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
 	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want use Instant Payment Notification of PayPal services.<br />If enabled, all features dependent on PayPal IPN will be available below.',
 	'PPDE_IPN_LOGGING'                     => 'Enable log errors',
-	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Log errors and data from PayPal IPN into <strong>/store/ppde_transactions.log</strong>.',
+	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Log errors and data from PayPal IPN into the directory <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify PPDE admin and donors when a donation is received.',
 
@@ -139,23 +165,6 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only by the board founders.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal sandbox address',
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter your Sandbox email address or Sandbox Merchant account ID.',
-
-	// Stats Donation settings
-	'PPDE_LEGEND_STATS_SETTINGS'           => 'Stats donation config',
-	'PPDE_STATS_INDEX_ENABLE'              => 'Display donation stats on index',
-	'PPDE_STATS_INDEX_ENABLE_EXPLAIN'      => 'Enable this if you want to display the donation stats on index.',
-	'PPDE_RAISED'                          => 'Donation raised',
-	'PPDE_RAISED_EXPLAIN'                  => 'The current amount raised through donations.',
-	'PPDE_GOAL'                            => 'Donation goal',
-	'PPDE_GOAL_EXPLAIN'                    => 'The total amount that you want to raise.',
-	'PPDE_USED'                            => 'Donation used',
-	'PPDE_USED_EXPLAIN'                    => 'The amount of donation that you have already used.',
-	'PPDE_AMOUNT'                          => 'Amount',
-	// Note for translator: do not translate the decimal symbol
-	'PPDE_DECIMAL_EXPLAIN'                 => 'Use “.” as decimal symbol.',
-
-	'PPDE_CURRENCY_ENABLE'                 => 'Enable donation currency',
-	'PPDE_CURRENCY_ENABLE_EXPLAIN'         => 'Enable this option if you want to display the ISO 4217 code of default currency in Stats.',
 ));
 
 /**
@@ -317,17 +326,18 @@ $lang = array_merge($lang, array(
  * Confirm box
  */
 $lang = array_merge($lang, array(
-	'PPDE_DC_CONFIRM_DELETE' => 'Are you sure you want to delete the selected currency?',
-	'PPDE_DC_GO_TO_PAGE'     => '%sEdit existing currency%s',
-	'PPDE_DC_ADDED'          => 'A currency has been added.',
-	'PPDE_DC_UPDATED'        => 'A currency has been updated.',
-	'PPDE_DC_DELETED'        => 'A currency has been deleted.',
-	'PPDE_DP_CONFIRM_DELETE' => 'Are you sure you want to delete the selected donation page?',
-	'PPDE_DP_GO_TO_PAGE'     => '%sEdit existing donation page%s',
-	'PPDE_DP_ADDED'          => 'A donation page for the language “%s” has been added.',
-	'PPDE_DP_DELETED'        => 'A donation page for the language “%s” has been removed.',
-	'PPDE_DP_UPDATED'        => 'A donation page for the language “%s” has been updated.',
-	'PPDE_SETTINGS_SAVED'    => 'Donation settings saved.',
+	'PPDE_DC_CONFIRM_DELETE'     => 'Are you sure you want to delete the selected currency?',
+	'PPDE_DC_GO_TO_PAGE'         => '%sEdit existing currency%s',
+	'PPDE_DC_ADDED'              => 'A currency has been added.',
+	'PPDE_DC_UPDATED'            => 'A currency has been updated.',
+	'PPDE_DC_DELETED'            => 'A currency has been deleted.',
+	'PPDE_DP_CONFIRM_DELETE'     => 'Are you sure you want to delete the selected donation page?',
+	'PPDE_DP_GO_TO_PAGE'         => '%sEdit existing donation page%s',
+	'PPDE_DP_ADDED'              => 'A donation page for the language “%s” has been added.',
+	'PPDE_DP_DELETED'            => 'A donation page for the language “%s” has been removed.',
+	'PPDE_DP_UPDATED'            => 'A donation page for the language “%s” has been updated.',
+	'PPDE_SETTINGS_SAVED'        => 'Donation settings saved.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal IPN features saved.',
 ));
 
 /**
@@ -339,6 +349,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_EMPTY_ISO_CODE'             => 'Enter an ISO code.',
 	'PPDE_DC_EMPTY_SYMBOL'               => 'Enter a symbol.',
 	'PPDE_DC_EXISTS'                     => 'This currency already exists.',
+	'PPDE_DC_INVALID_HASH'               => 'The link is corrupted. The hash is invalid.',
 	'PPDE_DC_NO_CURRENCY'                => 'No currency found.',
 	'PPDE_DP_EMPTY_LANG_ID'              => 'No language selected.',
 	'PPDE_DP_EMPTY_NAME'                 => 'The selected donation page does not exist.',
@@ -346,5 +357,6 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_NO_DONATION_PAGES'          => 'No donation page found.',
 	'PPDE_DT_NO_TRANSACTION'             => 'No transaction found.',
 	'PPDE_DISABLE_BEFORE_DELETION'       => 'You must disable this currency before deleting it.',
-	'PPDE_SETTINGS_MISSING'              => 'Please check “Account ID” or “Sandbox address”.',
+	'PPDE_SETTINGS_MISSING'              => 'Please check “Account ID”.',
+	'PPDE_PAYPAL_FEATURES_MISSING'       => 'Please check “Sandbox address”.',
 ));

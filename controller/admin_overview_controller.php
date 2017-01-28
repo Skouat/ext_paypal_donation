@@ -76,7 +76,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @param string $action Action name
 	 *
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function display_overview($action)
@@ -133,7 +133,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @param string $action Requested action
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function do_action($action)
@@ -156,7 +156,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @param string $action Requested action
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function display_confirm($action)
@@ -195,7 +195,7 @@ class admin_overview_controller extends admin_main
 	/**
 	 * @param string $action Requested action
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function exec_action($action)
@@ -230,7 +230,7 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Obtains the last version for this extension
 	 *
-	 * @return null
+	 * @return void
 	 * @access private
 	 */
 	private function obtain_last_version()
