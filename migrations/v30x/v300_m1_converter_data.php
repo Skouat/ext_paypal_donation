@@ -16,6 +16,11 @@ namespace skouat\ppde\migrations\v30x;
  */
 class v300_m1_converter_data extends \phpbb\db\migration\migration
 {
+	public static function depends_on()
+	{
+		return array('\phpbb\db\migration\data\v31x\v313');
+	}
+
 	/**
 	 * Run migration if donation_mod_version config exists
 	 *
@@ -24,11 +29,6 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 	public function effectively_installed()
 	{
 		return !isset($this->config['donation_mod_version']);
-	}
-
-	public static function depends_on()
-	{
-		return array('\phpbb\db\migration\data\v31x\v313');
 	}
 
 	/**

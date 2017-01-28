@@ -432,6 +432,17 @@ class ipn_listener
 	}
 
 	/**
+	 * Check if Sandbox is enabled based on config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function ipn_use_sandbox()
+	{
+		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
+	}
+
+	/**
 	 * Get all args for construct the return URI
 	 *
 	 * @return void
@@ -775,17 +786,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Checks if payment_status is completed
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function payment_status_is_completed()
-	{
-		return $this->transaction_data['payment_status'] === 'Completed';
-	}
-
-	/**
 	 * Do actions if the transaction is verified
 	 *
 	 * @return void
@@ -829,6 +829,29 @@ class ipn_listener
 				$this->notify_donation_received();
 			}
 		}
+	}
+
+	/**
+	 * Checks if payment_status is completed
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function payment_status_is_completed()
+	{
+		return $this->transaction_data['payment_status'] === 'Completed';
+	}
+
+	/**
+	 * Updates the amount of donation raised
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function update_raised_amount()
+	{
+		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
+		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 
 	/**
@@ -956,18 +979,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Updates the amount of donation raised
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function update_raised_amount()
-	{
-		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
-		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
-	}
-
-	/**
 	 * Notify donors and admin when the donation is received
 	 *
 	 * @return void
@@ -1019,16 +1030,5 @@ class ipn_listener
 		$entity->data_exists($entity->build_sql_data_exists($iso_code));
 
 		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
-	}
-
-	/**
-	 * Check if Sandbox is enabled based on config value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function ipn_use_sandbox()
-	{
-		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
 }

@@ -15,7 +15,7 @@ class v320_m1_reparse extends \phpbb\db\migration\container_aware_migration
 	/**
 	 * @inheritDoc
 	 */
-	static public function depends_on()
+	public static function depends_on()
 	{
 		return array(
 			'\skouat\ppde\migrations\v31x\v310_m3_currency_data',

@@ -279,53 +279,6 @@ class admin_donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * @param $bbcode_enabled
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function include_custom_bbcodes($bbcode_enabled)
-	{
-		if ($bbcode_enabled)
-		{
-			$this->include_function('display_custom_bbcodes', $this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
-			display_custom_bbcodes();
-		}
-	}
-
-	/**
-	 * @param $smilies_enabled
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function include_smileys($smilies_enabled)
-	{
-		if ($smilies_enabled)
-		{
-			$this->include_function('generate_smilies', $this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
-			generate_smilies('inline', 0);
-		}
-	}
-
-	/**
-	 * Includes the file that contains the function, if not loaded.
-	 *
-	 * @param $function_name     string Name of the function to test
-	 * @param $function_filepath string Path of the file that containing the function
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function include_function($function_name, $function_filepath)
-	{
-		if (!function_exists($function_name))
-		{
-			include($function_filepath);
-		}
-	}
-
-	/**
 	 * Get parse options of the message
 	 *
 	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
@@ -418,6 +371,53 @@ class admin_donation_pages_controller extends admin_main
 		foreach ($langs as $lang)
 		{
 			$this->lang_local_name = $lang['name'];
+		}
+	}
+
+	/**
+	 * @param $bbcode_enabled
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function include_custom_bbcodes($bbcode_enabled)
+	{
+		if ($bbcode_enabled)
+		{
+			$this->include_function('display_custom_bbcodes', $this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+			display_custom_bbcodes();
+		}
+	}
+
+	/**
+	 * Includes the file that contains the function, if not loaded.
+	 *
+	 * @param $function_name     string Name of the function to test
+	 * @param $function_filepath string Path of the file that containing the function
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function include_function($function_name, $function_filepath)
+	{
+		if (!function_exists($function_name))
+		{
+			include($function_filepath);
+		}
+	}
+
+	/**
+	 * @param $smilies_enabled
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function include_smileys($smilies_enabled)
+	{
+		if ($smilies_enabled)
+		{
+			$this->include_function('generate_smilies', $this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			generate_smilies('inline', 0);
 		}
 	}
 

@@ -12,14 +12,12 @@ namespace skouat\ppde\controller;
 
 class main_donor_list extends main_controller
 {
-	/** @var string */
-	private $u_action;
-
 	/** @var \skouat\ppde\entity\transactions */
 	protected $ppde_entity_transactions;
-
 	/** @var \skouat\ppde\operators\transactions */
 	protected $ppde_operator_transactions;
+	/** @var string */
+	private $u_action;
 
 	public function set_entity_transactions(\skouat\ppde\entity\transactions $ppde_entity_transactions)
 	{
@@ -129,35 +127,6 @@ class main_donor_list extends main_controller
 	}
 
 	/**
-	 * Set the sort key value
-	 *
-	 * @param string $sk
-	 * @param string $sk_comp
-	 * @param string $sd
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_sort_key($sk, $sk_comp, $sd)
-	{
-		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
-	}
-
-	/**
-	 * Simply adds an url or &amp; delimiter to the url when params is empty
-	 *
-	 * @param $url
-	 * @param $params
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_url_delim($url, $params)
-	{
-		return (empty($params)) ? $url . '?' : $url . '&amp;';
-	}
-
-	/**
 	 * @param array    $params_ary
 	 * @param string[] $excluded_keys
 	 *
@@ -185,6 +154,35 @@ class main_donor_list extends main_controller
 		}
 
 		return $params;
+	}
+
+	/**
+	 * Simply adds an url or &amp; delimiter to the url when params is empty
+	 *
+	 * @param $url
+	 * @param $params
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_url_delim($url, $params)
+	{
+		return (empty($params)) ? $url . '?' : $url . '&amp;';
+	}
+
+	/**
+	 * Set the sort key value
+	 *
+	 * @param string $sk
+	 * @param string $sk_comp
+	 * @param string $sd
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_sort_key($sk, $sk_comp, $sd)
+	{
+		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
 	}
 
 	/**

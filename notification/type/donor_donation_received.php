@@ -20,24 +20,39 @@ class donor_donation_received extends \phpbb\notification\type\base
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_type()
+	public static $notification_option = array(
+		'lang'  => 'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED',
+		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
+	);
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function get_item_id($data)
 	{
-		return 'skouat.ppde.notification.type.donor_donation_received';
+		return (int) $data['transaction_id'];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $notification_option = array(
-		'lang'  => 'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED',
-		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
-	);
+	public static function get_item_parent_id($data)
+	{
+		// No parent
+		return 0;
+	}
 
-	/** @var \phpbb\user_loader */
-	protected $user_loader;
-
-	/** @var \phpbb\config\config */
-	protected $config;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_type()
+	{
+		return 'skouat.ppde.notification.type.donor_donation_received';
+	}
 
 	public function set_config(\phpbb\config\config $config)
 	{
@@ -55,23 +70,6 @@ class donor_donation_received extends \phpbb\notification\type\base
 	public function is_available()
 	{
 		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable']);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public static function get_item_id($data)
-	{
-		return (int) $data['transaction_id'];
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public static function get_item_parent_id($data)
-	{
-		// No parent
-		return 0;
 	}
 
 	/**

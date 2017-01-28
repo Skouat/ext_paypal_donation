@@ -28,7 +28,7 @@ class ipn_log
 	 *
 	 * @var \skouat\ppde\output_handler\log_wrapper_output_handler
 	 */
-	public $output_handler;
+	private $output_handler;
 	/**
 	 * If true, the error are logged into /store/ppde_transactions.log.
 	 * If false, error aren't logged. Default false.
@@ -64,6 +64,14 @@ class ipn_log
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function is_use_log_error()
+	{
+		return $this->use_log_error;
+	}
+
+	/**
 	 * Set the property
 	 *
 	 * @param boolean $use_log_error
@@ -71,14 +79,6 @@ class ipn_log
 	public function set_use_log_error($use_log_error)
 	{
 		$this->use_log_error = (bool) $use_log_error;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function is_use_log_error()
-	{
-		return $this->use_log_error;
 	}
 
 	/**
