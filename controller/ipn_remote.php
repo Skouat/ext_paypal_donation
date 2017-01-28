@@ -214,7 +214,7 @@ class ipn_remote
 	 * Set property 'curl_fsock' to determine if we use cURL or fsockopen().
 	 * If both are not available we use default value of the property 'curl_fsock'.
 	 *
-	 * @return string
+	 * @return bool
 	 * @access public
 	 */
 	public function is_remote_detected()
@@ -314,7 +314,7 @@ class ipn_remote
 	/**
 	 * Check if the response status is equal to "200".
 	 *
-	 * @return string
+	 * @return bool
 	 * @access public
 	 */
 	public function check_response_status()
