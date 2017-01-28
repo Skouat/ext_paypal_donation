@@ -12,19 +12,16 @@ namespace skouat\ppde\controller;
 
 class main_donate extends main_controller
 {
+	/** @var \skouat\ppde\controller\main_display_stats */
+	protected $ppde_controller_display_stats;
+	/** @var \skouat\ppde\entity\donation_pages */
+	protected $ppde_entity_donation_pages;
+	/** @var \skouat\ppde\operators\donation_pages */
+	protected $ppde_operator_donation_pages;
 	/** @var string */
 	private $donation_body;
 	/** @var string */
 	private $return_args_url;
-
-	/** @var \skouat\ppde\controller\main_display_stats */
-	protected $ppde_controller_display_stats;
-
-	/** @var \skouat\ppde\entity\donation_pages */
-	protected $ppde_entity_donation_pages;
-
-	/** @var \skouat\ppde\operators\donation_pages */
-	protected $ppde_operator_donation_pages;
 
 	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
 	{
@@ -68,7 +65,7 @@ class main_donate extends main_controller
 		$this->template->assign_vars(array(
 			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
-			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu(),
+			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
 			'S_PPDE_FORM_ACTION' => $this->get_paypal_url(),
@@ -98,13 +95,13 @@ class main_donate extends main_controller
 					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
 				));
 				$this->return_args_url = $set_return_args_url;
-				break;
+			break;
 			case 'donorlist':
 				$this->template->assign_vars(array(
 					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
 				));
 				$this->return_args_url = $set_return_args_url;
-				break;
+			break;
 			default:
 				$this->return_args_url = 'body';
 		}
@@ -132,7 +129,7 @@ class main_donate extends main_controller
 	 * @return string List of currency value set in ACP for dropdown menu
 	 * @access private
 	 */
-	private function build_currency_value_select_menu()
+	private function build_currency_value_select_menu($default_value = 0)
 	{
 		$list_donation_value = '';
 
@@ -143,7 +140,7 @@ class main_donate extends main_controller
 			foreach ($donation_ary_value as $value)
 			{
 				$int_value = $this->settype_dropbox_int_value($value);
-				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '">' . $int_value . '</option>' : '';
+				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '"' . $this->is_value_selected($int_value, $default_value) . '>' . $int_value . '</option>' : '';
 			}
 			unset($value);
 		}
@@ -178,6 +175,25 @@ class main_donate extends main_controller
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Define if the status of the attribute "selected"
+	 *
+	 * @param mixed $value
+	 * @param mixed $default
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function is_value_selected($value, $default)
+	{
+		if ($default == $value)
+		{
+			return ' selected="selected"';
+		}
+
+		return '';
 	}
 
 	/**

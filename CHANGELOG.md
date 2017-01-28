@@ -3,6 +3,7 @@
 ## 2.0.0 - 2017-01-28
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Fix: Undefined offset when the default currency is disabled.
+- Fix: In the donation page, the default donation value is not selected in the dropdown menu
 - Code enhancement
 
 ## 1.0.3 - 2017-01-22
