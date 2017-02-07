@@ -162,8 +162,8 @@ class ipn_listener
 		if ($this->validate_post_data() === false)
 		{
 			// The minimum required checks are not met
-			// So we force to log collected data in /store/ppde_transactions.log
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), true, true, E_USER_NOTICE, $this->transaction_data);
+			// So we force to log collected data in /store/ext/ppde directory
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_ACCOUNT_ID'), true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
@@ -271,31 +271,31 @@ class ipn_listener
 	private function validate_post_data()
 	{
 		$check = array();
-		$check[] = $this->is_valid_txn_id();
+		$check[] = $this->check_txn_id($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
+		$check[] = $this->check_txn_id($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
 		$check[] = $this->check_account_id();
 
 		return (bool) array_product($check);
 	}
 
 	/**
-	 * Check if txn_id is not_empty
+	 * Check if value is true
 	 * Return false if txn_id is not empty
+	 *
+	 * @param mixed  $checked_value
+	 * @param string $lang_key
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function is_valid_txn_id()
+	private function check_txn_id($checked_value, $lang_key)
 	{
-		if (empty($this->transaction_data['txn_id']))
+		if (!$checked_value)
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TRANSACTION_RECORD'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
-		}
-		else
-		{
-			return $this->only_ascii($this->transaction_data['txn_id']);
+			$this->ppde_ipn_log->log_error($this->language->lang($lang_key), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -322,7 +322,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Check if account_id
+	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
 	 *
 	 * @return bool
 	 * @access private
