@@ -444,6 +444,7 @@ class ipn_listener
 
 		// the item number contains the user_id
 		$this->extract_item_number_data();
+		$this->validate_user_id();
 
 		// set username in extra_data property in $entity
 		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
@@ -466,6 +467,20 @@ class ipn_listener
 	private function extract_item_number_data()
 	{
 		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+	}
+
+	/**
+	 * Avoid the user_id to be set to 0
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function validate_user_id()
+	{
+		if (empty($this->transaction_data['user_id']))
+		{
+			$this->transaction_data['user_id'] = ANONYMOUS;
+		}
 	}
 
 	/**
