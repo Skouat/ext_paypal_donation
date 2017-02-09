@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015 Skouat
+ * @copyright (c) 2017 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -18,6 +18,15 @@ class ppde_module
 	public $page_title;
 	/** @var string */
 	public $tpl_name;
+	/** @var array */
+	private static $language_mode = array(
+		'overview',
+		'paypal_features',
+		'settings',
+		'transactions',
+		'donation_pages',
+		'currency',
+	);
 
 	/**
 	 * @param string $id
@@ -37,6 +46,12 @@ class ppde_module
 		$action = $request->variable('action', '');
 		$page_id = $request->variable('page_id', 0);
 		$currency_id = $request->variable('currency_id', 0);
+
+		// Load the module language file currently in use
+		if (in_array($mode, $this::$language_mode))
+		{
+			$language->add_lang('acp_' . $mode, 'skouat/ppde');
+		}
 
 		switch ($mode)
 		{

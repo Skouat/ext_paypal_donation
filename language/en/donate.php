@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015 Skouat
+ * @copyright (c) 2017 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -18,7 +18,6 @@ if (empty($lang) || !is_array($lang))
 	$lang = array();
 }
 
-
 // DEVELOPERS PLEASE NOTE
 //
 // All language files should use UTF-8 as their encoding and the files must not contain a BOM.
@@ -32,7 +31,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ « » “ ” …
+// ’ « » “ ” …
 //
 
 $lang = array_merge($lang, array(
