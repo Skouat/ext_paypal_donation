@@ -1,10 +1,13 @@
 # Changelog
 
-## 2.0.0 - 2017-02-07
+## 2.0.0 - 2017-02-09
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Improve transaction debug
+- Change: Refactor language files
 - Fix: Undefined offset when the default currency is disabled
 - Fix: In the donation page, the default donation value is not selected in the dropdown menu
+- Fix: Prevent Transaction user_id to be set to 0 (#41)
+- Fix: Missing language keys
 - Code enhancement
 
 ## 1.0.3 - 2017-01-22
