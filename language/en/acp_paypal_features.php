@@ -55,7 +55,7 @@ $lang = array_merge($lang, array(
 	'PPDE_IPN_DL_ENABLE'                   => 'Enable Donors list',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
 	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want use Instant Payment Notification of PayPal services.<br />If enabled, all features dependent on PayPal IPN will be available below.',
+	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want use Instant Payment Notification of PayPal services.<br>If enabled, all features dependent on PayPal IPN will be available below.',
 	'PPDE_IPN_LOGGING'                     => 'Enable log errors',
 	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Log errors and data from PayPal IPN into the directory <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
@@ -64,7 +64,7 @@ $lang = array_merge($lang, array(
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Sandbox settings',
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
-	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Enable this option if you want use PayPal Sandbox instead of PayPal services.<br />Useful for developers/testers. All the transactions are fictitious.',
+	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Enable this option if you want use PayPal Sandbox instead of PayPal services.<br>Useful for developers/testers. All the transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only by the board founders.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox Account',

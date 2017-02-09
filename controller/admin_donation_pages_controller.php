@@ -270,7 +270,7 @@ class admin_donation_pages_controller extends admin_main
 			'S_BBCODE_IMG'      => true,
 			'S_LINKS_ALLOWED'   => true,
 			'S_SMILIES_ALLOWED' => true,
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '" />',
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '">',
 		));
 
 		// Display custom bbcodes and smilies

@@ -144,7 +144,7 @@ abstract class admin_main
 		{
 			// Show user warning for an already exist page and provide link back to the edit page
 			$message = $this->language->lang($this->lang_key_prefix . '_EXISTS');
-			$message .= '<br /><br />';
+			$message .= '<br><br>';
 			$message .= $this->language->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
 			trigger_error($message . adm_back_link($this->u_action), E_USER_WARNING);
 		}
@@ -271,7 +271,7 @@ abstract class admin_main
 	{
 		$this->template->assign_vars(array(
 			'S_ERROR'   => (sizeof($errors)) ? true : false,
-			'ERROR_MSG' => (sizeof($errors)) ? implode('<br />', $errors) : '',
+			'ERROR_MSG' => (sizeof($errors)) ? implode('<br>', $errors) : '',
 		));
 	}
 

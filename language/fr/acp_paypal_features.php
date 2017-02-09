@@ -56,7 +56,7 @@ $lang = array_merge($lang, array(
 	'PPDE_IPN_DL_ENABLE'                   => 'Activer la liste des donateurs',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Permet d’activer la liste des donateurs.',
 	'PPDE_IPN_ENABLE'                      => 'Activer IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser IPN (Notification Instantanée de Paiement).<br />Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaitront ci-dessous.',
+	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser IPN (Notification Instantanée de Paiement).<br>Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaitront ci-dessous.',
 	'PPDE_IPN_LOGGING'                     => 'Activer le journal des erreurs',
 	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le répertoire <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Activer les notifications',
@@ -65,7 +65,7 @@ $lang = array_merge($lang, array(
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Paramètres PayPal Sandbox',
 	'PPDE_SANDBOX_ENABLE'                  => 'Tester avec PayPal Sandbox',
-	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br />Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
+	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br>Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'Compte PayPal Sandbox',

@@ -114,28 +114,28 @@
 
 	<form id="action_stats_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_stats">{{ lang('STAT_RESYNC_STATS') }}</label><br /><span>{{ lang('STAT_RESYNC_STATS_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="stats" /><input class="button2" type="submit" id="action_stats" name="action_stats" value="{{ lang('RUN') }}" /></dd>
+			<dt><label for="action_stats">{{ lang('STAT_RESYNC_STATS') }}</label><br><span>{{ lang('STAT_RESYNC_STATS_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="stats"><input class="button2" type="submit" id="action_stats" name="action_stats" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 <!-- IF S_IPN_TEST -->
 	<form id="action_sandbox_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_stats">{{ lang('STAT_RESYNC_SANDBOX_STATS') }}</label><br /><span>{{ lang('STAT_RESYNC_SANDBOX_STATS_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="sandbox" /><input class="button2" type="submit" id="action_sandbox" name="action_sandbox" value="{{ lang('RUN') }}" /></dd>
+			<dt><label for="action_stats">{{ lang('STAT_RESYNC_SANDBOX_STATS') }}</label><br><span>{{ lang('STAT_RESYNC_SANDBOX_STATS_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="sandbox"><input class="button2" type="submit" id="action_sandbox" name="action_sandbox" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 <!-- ENDIF -->
 	<form id="action_date_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_date">{{ lang('STAT_RESET_DATE') }}</label><br /><span>{{ lang('STAT_RESET_DATE_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="date" /><input class="button2" type="submit" id="action_date" name="action_date" value="{{ lang('RUN') }}" /></dd>
+			<dt><label for="action_date">{{ lang('STAT_RESET_DATE') }}</label><br><span>{{ lang('STAT_RESET_DATE_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="date"><input class="button2" type="submit" id="action_date" name="action_date" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 	<form id="action_remote_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_remote">{{ lang('STAT_RETEST_CURL_FSOCK') }}</label><br /><span>{{ lang('STAT_RETEST_CURL_FSOCK_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="remote" /><input class="button2" type="submit" id="action_remote" name="action_remote" value="{{ lang('RUN') }}" /></dd>
+			<dt><label for="action_remote">{{ lang('STAT_RETEST_CURL_FSOCK') }}</label><br><span>{{ lang('STAT_RETEST_CURL_FSOCK_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="remote"><input class="button2" type="submit" id="action_remote" name="action_remote" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 </fieldset>

@@ -71,7 +71,7 @@
 			<dd>{SETTLE_AMOUNT}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</span><br />{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</span><br>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
 			<dd>{EXCHANGE_RATE}</dd>
 		</dl>
 		<!-- ENDIF -->
@@ -96,7 +96,7 @@
 
 	<fieldset>
 		<p class="submit-buttons">
-			<input class="button1" type="submit" id="submit" name="update" value="{{ lang('BACK') }}" />&nbsp;
+			<input class="button1" type="submit" id="submit" name="update" value="{{ lang('BACK') }}">&nbsp;
 			{S_FORM_TOKEN}
 		</p>
 	</fieldset>
@@ -104,7 +104,7 @@
 <!-- ELSE -->
 <form id="ppde_transactions" method="post" action="{U_ACTION}">
 	<fieldset class="display-options search-box">
-		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{S_KEYWORDS}" />&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}" />
+		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{S_KEYWORDS}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
 	</fieldset>
 
 	<!-- IF .pagination -->
@@ -136,7 +136,7 @@
 			<td<!-- IF log.S_PAYMENT_STATUS --> style="color:#FF0000;"<!-- ENDIF -->>{log.PAYMENT_STATUS}</td>
 			<td style="text-align: center;">{log.DATE}</td>
 			<!-- IF S_CLEARLOGS -->
-			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" title="{log.ID}" /></td>
+			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" title="{log.ID}"></td>
 			<!-- ENDIF -->
 		</tr>
 		<!-- END log -->
@@ -157,7 +157,7 @@
 
 	<fieldset class="display-options">
 		{{ lang('DISPLAY_LOG') }}{{ lang('COLON') }} &nbsp;{S_LIMIT_DAYS}&nbsp;{{ lang('SORT_BY') }}{{ lang('COLON') }} {S_SORT_KEY} {S_SORT_DIR}
-		<input class="button2" type="submit" value="{{ lang('GO') }}" name="sort" />
+		<input class="button2" type="submit" value="{{ lang('GO') }}" name="sort">
 		{S_FORM_TOKEN}
 	</fieldset>
 
@@ -165,8 +165,8 @@
 
 	<!-- IF .log and S_CLEARLOGS -->
 	<fieldset class="quick">
-		<input class="button2" type="submit" name="delall" value="{{ lang('DELETE_ALL') }}" />&nbsp;
-		<input class="button2" type="submit" name="delmarked" value="{{ lang('DELETE_MARKED') }}" /><br />
+		<input class="button2" type="submit" name="delall" value="{{ lang('DELETE_ALL') }}">&nbsp;
+		<input class="button2" type="submit" name="delmarked" value="{{ lang('DELETE_MARKED') }}"><br>
 		<p class="small"><a href="#" onclick="marklist('ppde_transactions', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('ppde_transactions', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
 	</fieldset>
 	<!-- ENDIF -->

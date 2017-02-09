@@ -124,10 +124,10 @@ class ipn_log
 		if ($this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']))
 		{
 			$backtrace = get_backtrace();
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', "\n\n"), "\n", $backtrace)));
+			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br>', "\n\n"), "\n", $backtrace)));
 		}
 
-		$message = str_replace('<br />', ';', $message);
+		$message = str_replace('<br>', ';', $message);
 
 		if (sizeof($args))
 		{

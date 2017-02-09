@@ -182,7 +182,7 @@ class admin_currency_controller extends admin_main
 			'CURRENCY_POSITION' => $entity->get_currency_position(),
 			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '" />',
+			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
 		));
 	}
 
