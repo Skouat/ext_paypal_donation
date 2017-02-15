@@ -54,6 +54,10 @@ class ipn_listener
 	 */
 	private $currency_settle_data;
 	/**
+	 * @var boolean
+	 */
+	private $donor_is_member = false;
+	/**
 	 * @var array|boolean
 	 */
 	private $payer_data;
@@ -587,12 +591,12 @@ class ipn_listener
 			$this->transaction_data = $transaction_data;
 			unset($transaction_data);
 
-			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+			// Do actions whether the transaction is real or a test.
 			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
 
-			// If the transaction is not a IPN test do additional actions
-			if (!$this->transaction_data['test_ipn'])
+			// Do additional actions if the transaction is not a test.
+			if (!$this->ppde_controller_transactions_admin->get_ipn_test())
 			{
 				$this->update_donor_stats();
 				$this->donors_group_user_add();
@@ -687,7 +691,11 @@ class ipn_listener
 	 */
 	private function can_use_autogroup()
 	{
-		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->payment_status_is_completed();
+		return
+			$this->autogroup_is_enabled() &&
+			$this->donor_is_member() &&
+			$this->payment_status_is_completed() &&
+			$this->minimum_donation_raised();
 	}
 
 	/**
@@ -715,7 +723,7 @@ class ipn_listener
 	/**
 	 * Checks if the donor is a member
 	 *
-	 * @return bool
+	 * @return void
 	 * @access private
 	 */
 
@@ -749,11 +757,19 @@ class ipn_listener
 			if (empty($this->payer_data))
 			{
 				// no results, therefore the user is really a guest
-				return false;
+				$this->donor_is_member = false;
 			}
 		}
 
-		return true;
+		$this->donor_is_member = true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function minimum_donation_raised()
+	{
+		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : true;
 	}
 
 	/**

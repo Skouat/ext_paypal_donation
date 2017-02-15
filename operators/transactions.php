@@ -247,7 +247,7 @@ class transactions
 				$sql_where = '';
 		}
 
-		$sql = 'SELECT user_id, username
+		$sql = 'SELECT user_id, username, user_ppde_donated_amount
 			FROM ' . USERS_TABLE .
 			$sql_where;
 		$result = $this->db->sql_query($sql);

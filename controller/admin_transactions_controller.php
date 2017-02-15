@@ -208,11 +208,13 @@ class admin_transactions_controller extends admin_main
 
 
 	/**
-	 * @param bool $ipn_stats
+	 * @param bool $ipn_test
+	 *
+	 * @return void
 	 */
-	public function update_stats($ipn_stats = false)
+	public function update_stats($ipn_test = false)
 	{
-		$this->set_ipn_test_properties($ipn_stats);
+		$this->set_ipn_test_properties($ipn_test);
 		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_anonymous_donors_count' . $this->suffix_ipn));
 		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_known_donors_count' . $this->suffix_ipn), true);
 		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_transactions_count' . $this->suffix_ipn), true);
@@ -221,14 +223,14 @@ class admin_transactions_controller extends admin_main
 	/**
 	 * Sets properties related to ipn tests
 	 *
-	 * @param bool $ipn_stats
+	 * @param bool $ipn_test
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_stats)
+	public function set_ipn_test_properties($ipn_test)
 	{
-		$this->set_ipn_test($ipn_stats);
+		$this->set_ipn_test($ipn_test);
 		$this->set_suffix_ipn();
 	}
 
@@ -437,7 +439,7 @@ class admin_transactions_controller extends admin_main
 	/**
 	 * @return boolean
 	 */
-	public function get_is_ipn_test()
+	public function get_ipn_test()
 	{
 		return ($this->is_ipn_test) ? $this->is_ipn_test : false;
 	}
