@@ -73,15 +73,15 @@
 				<!-- ENDIF -->
 			</dd>
 			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 5px;">
-			<!-- IF .smiley --><hr /><!-- ENDIF -->
+			<!-- IF .smiley --><hr><!-- ENDIF -->
 			<!-- IF S_BBCODE_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_bbcode"<!-- IF S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF -->> {{ lang('DISABLE_BBCODE') }}</label>
+				<label><input type="checkbox" class="radio" name="disable_bbcode"<!-- IF S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_BBCODE') }}</label>
 			<!-- ENDIF -->
 			<!-- IF S_SMILIES_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_smilies"<!-- IF S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF -->> {{ lang('DISABLE_SMILIES') }}</label>
+				<label><input type="checkbox" class="radio" name="disable_smilies"<!-- IF S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_SMILIES') }}</label>
 			<!-- ENDIF -->
 			<!-- IF S_LINKS_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_magic_url"<!-- IF S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked="checked"<!-- ENDIF -->> {{ lang('DISABLE_MAGIC_URL') }}</label>
+				<label><input type="checkbox" class="radio" name="disable_magic_url"<!-- IF S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_MAGIC_URL') }}</label>
 			<!-- ENDIF -->
 			</dd>
 			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 10px;"><strong>{{ lang('OPTIONS') }}{{ lang('COLON') }} </strong>{BBCODE_STATUS} :: {IMG_STATUS} :: {FLASH_STATUS} :: {URL_STATUS} :: {SMILIES_STATUS}</dd>
@@ -98,7 +98,7 @@
 	<table class="table1 responsive">
 		<caption>{{ lang('PPDE_DP_PREDEFINED_VARS') }}</caption>
 		<colgroup>
-			<col class="col1" /><col class="col2" /><col class="col1" />
+			<col class="col1"><col class="col2"><col class="col1">
 		</colgroup>
 		<thead>
 		<tr>
@@ -123,7 +123,7 @@
 <form id="acp_donation_pages" method="post" action="{U_ACTION}">
 	<table class="table1 zebra-table">
 		<colgroup>
-			<col class="row1" /><col class="row1" /><col class="row2" /><col class="row2" />
+			<col class="row1"><col class="row1"><col class="row2"><col class="row2">
 		</colgroup>
 		<thead>
 		<tr>
@@ -166,7 +166,7 @@
 	</fieldset>
 </form>
 
-<div class="clearfix">&nbsp;</div><br style="clear: both;" />
+<div class="clearfix">&nbsp;</div><br style="clear: both;">
 <!-- ENDIF -->
 
 <!-- INCLUDE overall_footer.html -->

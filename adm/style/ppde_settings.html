@@ -18,13 +18,13 @@
 		<legend>{{ lang('PPDE_LEGEND_GENERAL_SETTINGS') }}</legend>
 		<dl>
 			<dt><label for="ppde_enable">{{ lang('PPDE_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_ENABLE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_enable" name="ppde_enable" value="1"<!-- IF S_PPDE_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_enable" value="0"<!-- IF not S_PPDE_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+			<dd><label><input type="radio" class="radio" id="ppde_enable" name="ppde_enable" value="1"<!-- IF S_PPDE_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_enable" value="0"<!-- IF not S_PPDE_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 		</dl>
 		<dl>
 			<dt><label for="ppde_header_link">{{ lang('PPDE_HEADER_LINK') }}{{ lang('COLON') }}</label></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_header_link" name="ppde_header_link" value="1"<!-- IF S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_header_link" value="0"<!-- IF not S_PPDE_HEADER_LINK --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+			<dd><label><input type="radio" class="radio" id="ppde_header_link" name="ppde_header_link" value="1"<!-- IF S_PPDE_HEADER_LINK --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_header_link" value="0"<!-- IF not S_PPDE_HEADER_LINK --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 		</dl>
 		<dl>
 			<dt><label for="ppde_account_id">{{ lang('PPDE_ACCOUNT_ID') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_ACCOUNT_ID_EXPLAIN') }}</span></dt>
@@ -45,8 +45,8 @@
 		</dl>
 		<dl>
 			<dt><label for="ppde_dropbox_enable">{{ lang('PPDE_DROPBOX_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DROPBOX_ENABLE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_dropbox_enable" name="ppde_dropbox_enable" value="1"<!-- IF S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_dropbox_enable" value="0"<!-- IF not S_PPDE_DROPBOX_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+			<dd><label><input type="radio" class="radio" id="ppde_dropbox_enable" name="ppde_dropbox_enable" value="1"<!-- IF S_PPDE_DROPBOX_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_dropbox_enable" value="0"<!-- IF not S_PPDE_DROPBOX_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 		</dl>
 		<dl>
 			<dt><label for="ppde_dropbox_value">{{ lang('PPDE_DROPBOX_VALUE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DROPBOX_VALUE_EXPLAIN') }}</span></dt>
@@ -58,15 +58,15 @@
 		<legend>{{ lang('PPDE_LEGEND_STATS_SETTINGS') }}</legend>
 		<dl>
 			<dt><label for="ppde_stats_index_enable">{{ lang('PPDE_STATS_INDEX_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_INDEX_ENABLE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"<!-- IF S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"<!-- IF not S_PPDE_STATS_INDEX_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"<!-- IF S_PPDE_STATS_INDEX_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"<!-- IF not S_PPDE_STATS_INDEX_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 		</dl>
 		<fieldset>
 			<legend>{{ lang('PPDE_RAISED') }}</legend>
 			<dl>
 				<dt><label for="ppde_raised_enable">{{ lang('ENABLE') }}{{ lang('COLON') }}</label></dt>
-				<dd><label><input type="radio" class="radio" id="ppde_raised_enable" name="ppde_raised_enable" value="1"<!-- IF S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ppde_raised_enable" value="0"<!-- IF not S_PPDE_RAISED_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+				<dd><label><input type="radio" class="radio" id="ppde_raised_enable" name="ppde_raised_enable" value="1"<!-- IF S_PPDE_RAISED_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ppde_raised_enable" value="0"<!-- IF not S_PPDE_RAISED_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ppde_raised">{{ lang('PPDE_AMOUNT') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_RAISED_EXPLAIN') }}<br>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
@@ -77,8 +77,8 @@
 			<legend>{{ lang('PPDE_GOAL') }}</legend>
 			<dl>
 				<dt><label for="ppde_goal_enable">{{ lang('ENABLE') }}{{ lang('COLON') }}</label></dt>
-				<dd><label><input type="radio" class="radio" id="ppde_goal_enable" name="ppde_goal_enable" value="1"<!-- IF S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ppde_goal_enable" value="0"<!-- IF not S_PPDE_GOAL_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+				<dd><label><input type="radio" class="radio" id="ppde_goal_enable" name="ppde_goal_enable" value="1"<!-- IF S_PPDE_GOAL_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ppde_goal_enable" value="0"<!-- IF not S_PPDE_GOAL_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ppde_goal">{{ lang('PPDE_AMOUNT') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_GOAL_EXPLAIN') }}<br>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
@@ -89,8 +89,8 @@
 			<legend>{{ lang('PPDE_USED') }}</legend>
 			<dl>
 				<dt><label for="ppde_used_enable">{{ lang('ENABLE') }}{{ lang('COLON') }}</label></dt>
-				<dd><label><input type="radio" class="radio" id="ppde_used_enable" name="ppde_used_enable" value="1"<!-- IF S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ppde_used_enable" value="0"<!-- IF not S_PPDE_USED_ENABLE --> checked="checked"<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
+				<dd><label><input type="radio" class="radio" id="ppde_used_enable" name="ppde_used_enable" value="1"<!-- IF S_PPDE_USED_ENABLE --> checked<!-- ENDIF -->> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ppde_used_enable" value="0"<!-- IF not S_PPDE_USED_ENABLE --> checked<!-- ENDIF -->> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
 				<dt><label for="ppde_used">{{ lang('PPDE_AMOUNT') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_USED_EXPLAIN') }}<br>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
