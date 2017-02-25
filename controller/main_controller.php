@@ -229,7 +229,7 @@ class main_controller
 		{
 			$this->set_curl_info();
 			$this->set_remote_detected();
-			$this->config['ppde_first_start'] = false;
+			$this->config->set('ppde_first_start', false);
 		}
 	}
 
