@@ -93,24 +93,26 @@ class admin_overview_controller extends admin_main
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
-			'ANONYMOUS_DONORS_COUNT'    => $this->config['ppde_anonymous_donors_count'],
-			'ANONYMOUS_DONORS_PER_DAY'  => $this->per_day_stats('ppde_anonymous_donors_count'),
-			'INFO_CURL'                 => $this->config['ppde_curl_detected'] ? $this->language->lang('INFO_CURL_VERSION', $this->config['ppde_curl_version'], $this->config['ppde_curl_ssl_version']) : $this->language->lang('INFO_NOT_DETECTED'),
-			'INFO_FSOCKOPEN'            => $this->config['ppde_fsock_detected'] ? $this->language->lang('INFO_DETECTED') : $this->language->lang('INFO_NOT_DETECTED'),
-			'KNOWN_DONORS_COUNT'        => $this->config['ppde_known_donors_count'],
-			'KNOWN_DONORS_PER_DAY'      => $this->per_day_stats('ppde_known_donors_count'),
-			'L_PPDE_INSTALL_DATE'       => $this->language->lang('PPDE_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
-			'L_PPDE_VERSION'            => $this->language->lang('PPDE_VERSION', $this->ext_meta['extra']['display-name']),
-			'PPDE_INSTALL_DATE'         => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_VERSION'              => $this->ext_meta['version'],
-			'S_ACTION_OPTIONS'          => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
-			'S_CURL'                    => $this->config['ppde_curl_detected'],
-			'S_FSOCKOPEN'               => $this->config['ppde_fsock_detected'],
-			'TRANSACTIONS_COUNT'        => $this->config['ppde_transactions_count'],
-			'TRANSACTIONS_PER_DAY'      => $this->per_day_stats('ppde_transactions_count'),
-			'U_PPDE_MORE_INFORMATION'   => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
-			'U_PPDE_VERSIONCHECK_FORCE' => $this->u_action . '&amp;versioncheck_force=1',
-			'U_ACTION'                  => $this->u_action,
+			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $this->ext_meta['extra']['display-name']),
+			'PPDE_ESI_FSOCKOPEN'             => $this->config['ppde_fsock_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
+			'PPDE_ESI_VERSION'               => $this->ext_meta['version'],
+			'PPDE_ESI_VERSION_CURL'          => $this->config['ppde_curl_detected'] ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_SSL'           => $this->config['ppde_curl_detected'] ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'S_ACTION_OPTIONS'               => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
+			'S_CURL'                         => $this->config['ppde_curl_detected'],
+			'S_SSL'                          => $this->config['ppde_curl_detected'],
+			'S_FSOCKOPEN'                    => $this->config['ppde_fsock_detected'],
+			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
+			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
+			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
+			'STATS_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count'),
+			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
+			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
+			'U_PPDE_MORE_INFORMATION'        => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
+			'U_PPDE_VERSIONCHECK_FORCE'      => $this->u_action . '&amp;versioncheck_force=1',
+			'U_ACTION'                       => $this->u_action,
 		));
 
 		if ($this->ppde_controller_main->use_sandbox())
@@ -167,9 +169,9 @@ class admin_overview_controller extends admin_main
 				$confirm = true;
 				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
 			break;
-			case 'remote':
+			case 'esi':
 				$confirm = true;
-				$confirm_lang = 'STAT_RETEST_CURL_FSOCK_CONFIRM';
+				$confirm_lang = 'STAT_RETEST_ESI_CONFIRM';
 			break;
 			case 'sandbox':
 				$confirm = true;
@@ -211,6 +213,11 @@ class admin_overview_controller extends admin_main
 				$this->config->set('ppde_install_date', time() - 1);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 			break;
+			case 'esi':
+				$this->ppde_controller_main->set_curl_info();
+				$this->ppde_controller_main->set_remote_detected();
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
+			break;
 			case 'sandbox':
 				$this->ppde_controller_transactions->update_stats(true);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
@@ -218,11 +225,6 @@ class admin_overview_controller extends admin_main
 			case 'stats':
 				$this->ppde_controller_transactions->update_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
-			break;
-			case 'remote':
-				$this->ppde_controller_main->set_curl_info();
-				$this->ppde_controller_main->set_remote_detected();
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_REMOTE');
 			break;
 		}
 	}

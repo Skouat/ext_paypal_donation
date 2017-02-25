@@ -66,6 +66,6 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation: Statistics resynchronised</strong>',
-	'LOG_PPDE_STAT_RETEST_REMOTE'      => '<strong>PayPal Donation: Remote connection re-detected</strong>',
+	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation: Check extension prerequisites</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation: PayPal Sandbox Statistics resynchronised</strong>',
 ));

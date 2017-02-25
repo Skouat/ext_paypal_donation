@@ -33,25 +33,29 @@ if (empty($lang) || !is_array($lang))
 // Some characters you may want to copy&paste:
 // ’ « » “ ” …
 //
+
 /**
  * mode: overview
  */
 $lang = array_merge($lang, array(
 	'PPDE_OVERVIEW' => 'Overview',
 
-	'INFO_CURL'         => 'cURL',
-	'INFO_CURL_VERSION' => 'cURL version: %1$s<br>SSL version: %2$s',
-	'INFO_DETECTED'     => 'Detected',
-	'INFO_FSOCKOPEN'    => 'Fsockopen',
-	'INFO_NOT_DETECTED' => 'Not detected',
+	'PPDE_ESI'                 => 'Extension and System Infomation',
+	'PPDE_ESI_DETECTED'        => 'Detected',
+	'PPDE_ESI_FSOCKOPEN'       => 'Fsockopen',
+	'PPDE_ESI_INSTALL_DATE'    => 'Install date of <strong>%s</strong>',
+	'PPDE_ESI_NOT_DETECTED'    => 'Not detected',
+	'PPDE_ESI_NO_VERSIONCHECK' => 'No version check information given.',
+	'PPDE_ESI_NOT_UP_TO_DATE'  => '%s is not up to date',
+	'PPDE_ESI_VERSION'         => '<strong>%s</strong> version',
+	'PPDE_ESI_VERSION_CURL'    => 'cURL version',
+	'PPDE_ESI_VERSION_SSL'     => 'SSL version',
+	'PPDE_ESI_RESYNC_OPTIONS'  => 'Reset or recheck extension and system information',
 
-	'PPDE_INSTALL_DATE'    => 'Install date of <strong>%s</strong>',
-	'PPDE_NO_VERSIONCHECK' => 'No version check information given.',
-	'PPDE_NOT_UP_TO_DATE'  => '%s is not up to date',
-	'PPDE_STATS'           => 'Donation statistics',
-	'PPDE_STATS_SANDBOX'   => 'Sandbox statistics',
-	'PPDE_VERSION'         => '<strong>%s</strong> version',
+	'PPDE_STATS'         => 'Donation statistics',
+	'PPDE_STATS_SANDBOX' => 'Sandbox statistics',
 
+	'STAT_RESYNC_OPTIONS'               => 'Resynchronise statistics',
 	'STAT_RESET_DATE'                   => 'Reset Extension Installation date',
 	'STAT_RESET_DATE_EXPLAIN'           => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
 	'STAT_RESET_DATE_CONFIRM'           => 'Are you sure you wish to reset the installation date of this extension?',
@@ -61,9 +65,9 @@ $lang = array_merge($lang, array(
 	'STAT_RESYNC_SANDBOX_STATS'         => 'Resynchronise PayPal Sandbox counts',
 	'STAT_RESYNC_SANDBOX_STATS_EXPLAIN' => 'Resynchronise all donors and transactions PayPal Sandbox counts.',
 	'STAT_RESYNC_SANDBOX_STATS_CONFIRM' => 'Are you sure you wish to resynchronise PayPal Sandbox counts?',
-	'STAT_RETEST_CURL_FSOCK'            => 'Re-detect “cURL” and “fsockopen”',
-	'STAT_RETEST_CURL_FSOCK_EXPLAIN'    => 'Allow to re-detect this features if the webserver configuration have changed.',
-	'STAT_RETEST_CURL_FSOCK_CONFIRM'    => 'Are you sure you wish to re-detect “cURL” and “fsockopen”?',
+	'STAT_RETEST_ESI'                   => 'Check extension prerequisites',
+	'STAT_RETEST_ESI_EXPLAIN'           => 'Allows to check the prerequisites of the extension, in case the Web server configuration has been changed.',
+	'STAT_RETEST_ESI_CONFIRM'           => 'Are you sure you wish to check extension prerequisites?',
 
 	'STATS_ANONYMOUS_DONORS_COUNT'   => 'Number of anonymous donors',
 	'STATS_ANONYMOUS_DONORS_PER_DAY' => 'Anonymous donors per day',

@@ -38,35 +38,21 @@
 	<tbody>
 	<tr>
 		<td>{{ lang('STATS_TRANSACTIONS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{TRANSACTIONS_COUNT}</strong></td>
+		<td><strong>{STATS_TRANSACTIONS_COUNT}</strong></td>
 		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{TRANSACTIONS_PER_DAY}</strong></td>
+		<td><strong>{STATS_TRANSACTIONS_PER_DAY}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{KNOWN_DONORS_COUNT}</strong></td>
+		<td><strong>{STATS_KNOWN_DONORS_COUNT}</strong></td>
 		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{KNOWN_DONORS_PER_DAY}</strong></td>
+		<td><strong>{STATS_KNOWN_DONORS_PER_DAY}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{ANONYMOUS_DONORS_COUNT}</strong></td>
+		<td><strong>{STATS_ANONYMOUS_DONORS_COUNT}</strong></td>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{ANONYMOUS_DONORS_PER_DAY}</strong></td>
-	</tr>
-	<tr>
-		<td>{{ lang('PPDE_INSTALL_DATE') }}{{ lang('COLON') }}</td>
-		<td><strong>{PPDE_INSTALL_DATE}</strong></td>
-		<td>{{ lang('INFO_CURL') }}{{ lang('COLON') }}</td>
-		<td><strong <!-- IF S_CURL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{INFO_CURL}</strong></td>
-	</tr>
-	<tr>
-		<td>{{ lang('PPDE_VERSION') }}{{ lang('COLON') }}</td>
-		<td>
-			<strong><a href="{U_PPDE_MORE_INFORMATION}" style="color: <!-- IF S_UP_TO_DATE -->#228822;<!-- ELSE -->#BC2A4D;<!-- ENDIF -->" title="{{ lang('MORE_INFORMATION') }}">{PPDE_VERSION}</a></strong> [&nbsp;<a href="{U_PPDE_VERSIONCHECK_FORCE}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a>&nbsp;]
-		</td>
-		<td>{{ lang('INFO_FSOCKOPEN') }}{{ lang('COLON') }}</td>
-		<td><strong <!-- IF S_FSOCKOPEN -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{INFO_FSOCKOPEN}</strong></td>
+		<td><strong>{STATS_ANONYMOUS_DONORS_PER_DAY}</strong></td>
 	</tr>
 	</tbody>
 </table>
@@ -110,7 +96,7 @@
 
 <!-- IF S_ACTION_OPTIONS -->
 <fieldset>
-	<legend>{{ lang('STATISTIC_RESYNC_OPTIONS') }}</legend>
+	<legend>{{ lang('STAT_RESYNC_OPTIONS') }}</legend>
 
 	<form id="action_stats_form" method="post" action="{U_ACTION}">
 		<dl>
@@ -126,16 +112,57 @@
 		</dl>
 	</form>
 <!-- ENDIF -->
+</fieldset>
+<!-- ENDIF -->
+
+<table cellspacing="1">
+	<caption>{{ lang('PPDE_ESI') }}</caption>
+	<colgroup>
+		<col class="col1"><col class="col2"><col class="col1"><col class="col2">
+	</colgroup>
+	<thead>
+	<tr>
+		<th style="width: 30%;">{{ lang('STATISTIC') }}</th>
+		<th style="width: 20%;">{{ lang('VALUE') }}</th>
+		<th style="width: 30%;">{{ lang('STATISTIC') }}</th>
+		<th style="width: 20%;">{{ lang('VALUE') }}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>{{ lang('PPDE_ESI_VERSION') }}{{ lang('COLON') }}</td>
+		<td><strong><a href="{U_PPDE_MORE_INFORMATION}" style="color: <!-- IF S_UP_TO_DATE -->#228822;<!-- ELSE -->#BC2A4D;<!-- ENDIF -->" title="{{ lang('MORE_INFORMATION') }}">{PPDE_ESI_VERSION}</a></strong> [&nbsp;<a href="{U_PPDE_VERSIONCHECK_FORCE}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a>&nbsp;]</td>
+		<td>{{ lang('PPDE_ESI_INSTALL_DATE') }}{{ lang('COLON') }}</td>
+		<td><strong>{PPDE_ESI_INSTALL_DATE}</strong></td>
+	</tr>
+	<tr>
+		<td>{{ lang('PPDE_ESI_VERSION_CURL') }}{{ lang('COLON') }}</td>
+		<td><strong <!-- IF S_CURL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_VERSION_CURL}</strong></td>
+		<td>{{ lang('PPDE_ESI_FSOCKOPEN') }}{{ lang('COLON') }}</td>
+		<td><strong <!-- IF S_FSOCKOPEN -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_FSOCKOPEN}</strong></td>
+	</tr>
+	<tr>
+		<td>{{ lang('PPDE_ESI_VERSION_SSL') }}{{ lang('COLON') }}</td>
+		<td><strong <!-- IF S_SSL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_VERSION_SSL}</strong></td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+	</tbody>
+</table>
+
+<!-- IF S_ACTION_OPTIONS -->
+<fieldset>
+	<legend>{{ lang('PPDE_ESI_RESYNC_OPTIONS') }}</legend>
 	<form id="action_date_form" method="post" action="{U_ACTION}">
 		<dl>
 			<dt><label for="action_date">{{ lang('STAT_RESET_DATE') }}</label><br><span>{{ lang('STAT_RESET_DATE_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="date"><input class="button2" type="submit" id="action_date" name="action_date" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
-	<form id="action_remote_form" method="post" action="{U_ACTION}">
+	<form id="action_esi_form" method="post" action="{U_ACTION}">
 		<dl>
-			<dt><label for="action_remote">{{ lang('STAT_RETEST_CURL_FSOCK') }}</label><br><span>{{ lang('STAT_RETEST_CURL_FSOCK_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="remote"><input class="button2" type="submit" id="action_remote" name="action_remote" value="{{ lang('RUN') }}"></dd>
+			<dt><label for="action_esi">{{ lang('STAT_RETEST_ESI') }}</label><br><span>{{ lang('STAT_RETEST_ESI_EXPLAIN') }}</span></dt>
+			<dd><input type="hidden" name="action" value="esi"><input class="button2" type="submit" id="action_esi" name="action_esi" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 </fieldset>
