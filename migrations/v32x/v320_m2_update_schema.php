@@ -10,14 +10,14 @@
 
 namespace skouat\ppde\migrations\v32x;
 
-class v320_m2_update_schema extends \phpbb\db\migration\container_aware_migration
+class v320_m2_update_schema extends \phpbb\db\migration\migration
 {
 	/**
 	 * @inheritDoc
 	 */
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v31x\v320_m1_reparse');
+		return array('\skouat\ppde\migrations\v32x\v320_m1_reparse');
 	}
 
 	/**

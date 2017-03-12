@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\migrations\v31x;
+namespace skouat\ppde\migrations\v32x;
 
 class v320_m3_update_data extends \phpbb\db\migration\migration
 {
