@@ -40,7 +40,7 @@ class admin_paypal_features_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config,  \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->language = $language;
