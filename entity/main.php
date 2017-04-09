@@ -54,7 +54,7 @@ abstract class main
 	 *
 	 * @param string $run_before_insert
 	 *
-	 * @return donation_pages $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function insert($run_before_insert = '')
@@ -389,7 +389,7 @@ abstract class main
 	 * @param  array $data Data array, typically from the database
 	 * @param array  $additional_table_schema
 	 *
-	 * @return object $this->data object
+	 * @return array $this->data
 	 * @access public
 	 */
 	public function import($data, $additional_table_schema = array())

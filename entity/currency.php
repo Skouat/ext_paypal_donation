@@ -129,7 +129,7 @@ class currency extends main
 	 *
 	 * @param bool $on_left
 	 *
-	 * @return bool
+	 * @return \skouat\ppde\entity\currency
 	 * @access public
 	 */
 	public function set_currency_position($on_left)
@@ -145,7 +145,7 @@ class currency extends main
 	 *
 	 * @param bool $enable
 	 *
-	 * @return bool
+	 * @return \skouat\ppde\entity\currency
 	 * @access public
 	 */
 	public function set_currency_enable($enable)
