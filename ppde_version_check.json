@@ -1,16 +1,16 @@
 {
     "stable": {
         "1.0": {
-            "current": "1.0.2",
-            "download": "https://www.phpbb.com/Skouat/customise/db/download/129421",
-            "announcement": "https://www.phpbb.com/community/viewtopic.php?t=2390946",
+            "current": "1.0.3",
+            "download": "https://www.phpbb.com/customise/db/download/136956",
+            "announcement": "https://www.phpbb.com/customise/db/extension/paypal_donation_extension/#revisions-panel",
             "eol": null,
             "security": false
         }
     },
     "unstable": {
         "1.0": {
-            "current": "1.0.3-dev",
+            "current": "1.0.4-dev",
             "announcement": "http://skouat.github.io/ext_paypal_donation/",
             "download": "https://github.com/Skouat/ext_paypal_donation/archive/develop.zip",
             "eol": null,
