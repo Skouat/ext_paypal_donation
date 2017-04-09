@@ -60,7 +60,7 @@ class ipn_log
 		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
 
-		$this->log_path_filename = $this->path_helper->get_phpbb_root_path() . 'store/ext/ppde/ppde_tx_' . time() . '.log';
+		$this->log_path_filename = $this->path_helper->get_phpbb_root_path() . 'store/ext/ppde/ppde_tx_' . time() . '_' . unique_id() . '.log';
 	}
 
 	/**
