@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @property \phpbb\config\config     config             Config object
- * @property ContainerInterface       container          The phpBB log system
+ * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property \phpbb\language\language language           Language object

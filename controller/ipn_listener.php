@@ -99,7 +99,6 @@ class ipn_listener
 	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $php_ext                            phpEx
 	 *
-	 * @return \skouat\ppde\controller\ipn_listener
 	 * @access public
 	 */
 	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \skouat\ppde\controller\ipn_remote $ppde_ipn_remote, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)

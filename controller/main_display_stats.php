@@ -25,7 +25,6 @@ class main_display_stats
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main PPDE main controller object
 	 * @param \phpbb\template\template                $template             Template object
 	 *
-	 * @return \skouat\ppde\controller\main_display_stats
 	 * @access public
 	 */
 	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template)

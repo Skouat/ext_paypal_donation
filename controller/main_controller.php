@@ -49,7 +49,6 @@ class main_controller
 	 * @param string                          $root_path              phpBB root path
 	 * @param string                          $php_ext                phpEx
 	 *
-	 * @return \skouat\ppde\controller\main_controller
 	 * @access public
 	 */
 	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \phpbb\language\language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)

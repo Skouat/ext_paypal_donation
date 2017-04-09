@@ -36,7 +36,6 @@ class listener implements EventSubscriberInterface
 	 * @param \phpbb\template\template                   $template                      Template object
 	 * @param string                                     $php_ext                       phpEx
 	 *
-	 * @return \skouat\ppde\event\listener
 	 * @access public
 	 */
 	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats, \phpbb\template\template $template, $php_ext)

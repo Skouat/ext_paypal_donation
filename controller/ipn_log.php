@@ -51,7 +51,6 @@ class ipn_log
 	 * @param \phpbb\path_helper                      $path_helper          Path helper object
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller
 	 *
-	 * @return \skouat\ppde\controller\ipn_log
 	 * @access public
 	 */
 	public function __construct(\phpbb\config\config $config, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main)

@@ -64,7 +64,6 @@ class ipn_remote
 	 * @param \phpbb\language\language        $language     Language user object
 	 * @param \skouat\ppde\controller\ipn_log $ppde_ipn_log IPN log
 	 *
-	 * @return \skouat\ppde\controller\ipn_remote
 	 * @access public
 	 */
 	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \skouat\ppde\controller\ipn_log $ppde_ipn_log)
