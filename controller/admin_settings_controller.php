@@ -10,14 +10,12 @@
 
 namespace skouat\ppde\controller;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * @property \phpbb\config\config     config             Config object
- * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property \phpbb\language\language language           Language user object
+ * @property \phpbb\log\log           log                The phpBB log system
  * @property string                   module_name        Name of the module currently used
  * @property \phpbb\request\request   request            Request object
  * @property bool                     submit             State of submit $_POST variable
@@ -33,8 +31,8 @@ class admin_settings_controller extends admin_main
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                    $config               Config object
-	 * @param ContainerInterface                      $container            Service container interface
 	 * @param \phpbb\language\language                $language             Language user object
+	 * @param \phpbb\log\log                          $log                  The phpBB log system
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
 	 * @param \phpbb\request\request                  $request              Request object
 	 * @param \phpbb\template\template                $template             Template object
@@ -42,11 +40,11 @@ class admin_settings_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
-		$this->container = $container;
 		$this->language = $language;
+		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->request = $request;
 		$this->template = $template;
@@ -119,8 +117,7 @@ class admin_settings_controller extends admin_main
 			$this->set_settings();
 
 			// Add option settings change action to the admin log
-			$phpbb_log = $this->container->get('log');
-			$phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
 
 			// Option settings have been updated and logged
 			// Confirm this to the user and provide link back to previous page

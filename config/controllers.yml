@@ -112,8 +112,8 @@ services:
         class: skouat\ppde\controller\admin_settings_controller
         arguments:
             - '@config'
-            - '@service_container'
             - '@language'
+            - '@log'
             - '@skouat.ppde.controller'
             - '@request'
             - '@template'
@@ -123,8 +123,8 @@ services:
         class: skouat\ppde\controller\admin_paypal_features_controller
         arguments:
             - '@config'
-            - '@service_container'
             - '@language'
+            - '@log'
             - '@skouat.ppde.controller'
             - '@request'
             - '@template'
