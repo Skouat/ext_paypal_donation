@@ -267,7 +267,7 @@ class admin_currency_controller extends admin_main
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_move'))
 		{
 			trigger_error($this->user->lang['PPDE_DC_INVALID_HASH'] . adm_back_link($this->u_action), E_USER_WARNING);
-		};
+		}
 
 		// Initiate an entity and load data
 		/** @type \skouat\ppde\entity\currency $entity */
