@@ -594,6 +594,7 @@ class ipn_listener
 			// If the transaction is not a IPN test do additional actions
 			if (!$this->transaction_data['test_ipn'])
 			{
+				$this->update_donor_stats();
 				$this->donors_group_user_add();
 				$this->notify_donation_received();
 			}
@@ -621,6 +622,14 @@ class ipn_listener
 	{
 		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
 		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+	}
+
+	private function update_donor_stats()
+	{
+		if ($this->donor_is_member)
+		{
+			$this->ppde_controller_transactions_admin->update_stats();
+		}
 	}
 
 	/**
