@@ -121,6 +121,8 @@ class ipn_listener
 
 	public function handle()
 	{
+		$this->language->add_lang('donate', 'skouat/ppde');
+
 		// Set IPN logging
 		$this->ppde_ipn_log->set_use_log_error((bool) $this->config['ppde_ipn_logging']);
 
