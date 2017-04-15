@@ -61,21 +61,21 @@ abstract class main
 	{
 		if (!empty($this->data[$this->table_schema['item_id']['name']]))
 		{
-			// The page already exists
+			// The item already exists
 			$this->display_warning_message($this->lang_key_prefix . '_EXIST');
 		}
 
 		// Run some stuff before insert data in database
 		$this->run_function_before_action($run_before_insert);
 
-		// Make extra sure there is no page_id set
+		// Make extra sure there is no item_id set
 		unset($this->data[$this->table_schema['item_id']['name']]);
 
-		// Insert the page data to the database
+		// Insert the item data to the database
 		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
 		$this->db->sql_query($sql);
 
-		// Set the page_id using the id created by the SQL insert
+		// Set the item_id using the id created by the SQL insert
 		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
 
 		return $this;
@@ -130,7 +130,7 @@ abstract class main
 	 * Save the current settings to the database
 	 *
 	 * This must be called before closing or any changes will not be saved!
-	 * If adding a page (saving for the first time), you must call insert() or an exception will be thrown
+	 * If adding a item (saving for the first time), you must call insert() or an exception will be thrown
 	 *
 	 * @param bool $required_fields
 	 *
@@ -141,7 +141,7 @@ abstract class main
 	{
 		if ($required_fields)
 		{
-			// The page already exists
+			// The item already exists
 			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
@@ -360,7 +360,7 @@ abstract class main
 		}
 		$this->db->sql_freeresult($result);
 
-		// Return all page entities
+		// Return all entities
 		return $entities;
 	}
 
@@ -383,7 +383,7 @@ abstract class main
 	 * Import and validate data
 	 *
 	 * Used when the data is already loaded externally.
-	 * Any existing data on this page is over-written.
+	 * Any existing data on this item is over-written.
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
 	 * @param  array $data Data array, typically from the database
