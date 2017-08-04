@@ -1,26 +1,26 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<!-- IF S_VERSIONCHECK -->
-	<!-- IF not S_UP_TO_DATE -->
+{% if S_VERSIONCHECK %}
+	{% if not S_UP_TO_DATE %}
 	<div class="errorbox">
-		<p>{UP_TO_DATE_MSG} - <a href="{U_PPDE_MORE_INFORMATION}">{{ lang('MORE_INFORMATION') }}</a></p>
+		<p>{{ UP_TO_DATE_MSG }} - <a href="{{ U_PPDE_MORE_INFORMATION }}">{{ lang('MORE_INFORMATION') }}</a></p>
 	</div>
-	<!-- ENDIF -->
-<!-- ELSE IF S_VERSIONCHECK_STATUS == 0 -->
+	{% endif %}
+{% elseif S_VERSIONCHECK_STATUS == 0 %}
 
 <div class="errorbox notice">
 	<p>{{ lang('VERSIONCHECK_FAIL') }}</p>
 
-	<p>{VERSIONCHECK_FAIL_REASON}</p>
+	<p>{{ VERSIONCHECK_FAIL_REASON }}</p>
 
-	<p><a href="{U_PPDE_VERSIONCHECK_FORCE}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a></p>
+	<p><a href="{{ U_PPDE_VERSIONCHECK_FORCE }}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a></p>
 </div>
 
-<!-- ELSE IF S_VERSIONCHECK_STATUS == 1 -->
+{% elseif S_VERSIONCHECK_STATUS == 1 %}
 <div class="errorbox notice">
-	<p>{VERSIONCHECK_FAIL_REASON}</p>
+	<p>{{ VERSIONCHECK_FAIL_REASON }}</p>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
 <table cellspacing="1">
 	<caption>{{ lang('PPDE_STATS') }}</caption>
@@ -38,26 +38,26 @@
 	<tbody>
 	<tr>
 		<td>{{ lang('STATS_TRANSACTIONS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_TRANSACTIONS_COUNT}</strong></td>
+		<td><strong>{{ STATS_TRANSACTIONS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_TRANSACTIONS_PER_DAY}</strong></td>
+		<td><strong>{{ STATS_TRANSACTIONS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_KNOWN_DONORS_COUNT}</strong></td>
+		<td><strong>{{ STATS_KNOWN_DONORS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_KNOWN_DONORS_PER_DAY}</strong></td>
+		<td><strong>{{ STATS_KNOWN_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_ANONYMOUS_DONORS_COUNT}</strong></td>
+		<td><strong>{{ STATS_ANONYMOUS_DONORS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{STATS_ANONYMOUS_DONORS_PER_DAY}</strong></td>
+		<td><strong>{{ STATS_ANONYMOUS_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	</tbody>
 </table>
 
-<!-- IF S_IPN_TEST -->
+{% if S_IPN_TEST %}
 <table cellspacing="1">
 	<caption>{{ lang('PPDE_STATS_SANDBOX') }}</caption>
 	<colgroup>
@@ -74,46 +74,46 @@
 	<tbody>
 	<tr>
 		<td>{{ lang('STATS_TRANSACTIONS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_TRANSACTIONS_COUNT}</strong></td>
+		<td><strong>{{ SANDBOX_TRANSACTIONS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_TRANSACTIONS_PER_DAY}</strong></td>
+		<td><strong>{{ SANDBOX_TRANSACTIONS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_KNOWN_DONORS_COUNT}</strong></td>
+		<td><strong>{{ SANDBOX_KNOWN_DONORS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_KNOWN_DONORS_PER_DAY}</strong></td>
+		<td><strong>{{ SANDBOX_KNOWN_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_ANONYMOUS_DONORS_COUNT}</strong></td>
+		<td><strong>{{ SANDBOX_ANONYMOUS_DONORS_COUNT }}</strong></td>
 		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
-		<td><strong>{SANDBOX_ANONYMOUS_DONORS_PER_DAY}</strong></td>
+		<td><strong>{{ SANDBOX_ANONYMOUS_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	</tbody>
 </table>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF S_ACTION_OPTIONS -->
+{% if S_ACTION_OPTIONS %}
 <fieldset>
 	<legend>{{ lang('STAT_RESYNC_OPTIONS') }}</legend>
 
-	<form id="action_stats_form" method="post" action="{U_ACTION}">
+	<form id="action_stats_form" method="post" action="{{ U_ACTION }}">
 		<dl>
 			<dt><label for="action_stats">{{ lang('STAT_RESYNC_STATS') }}</label><br><span>{{ lang('STAT_RESYNC_STATS_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="stats"><input class="button2" type="submit" id="action_stats" name="action_stats" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
-<!-- IF S_IPN_TEST -->
-	<form id="action_sandbox_form" method="post" action="{U_ACTION}">
+{% if S_IPN_TEST %}
+	<form id="action_sandbox_form" method="post" action="{{ U_ACTION }}">
 		<dl>
 			<dt><label for="action_stats">{{ lang('STAT_RESYNC_SANDBOX_STATS') }}</label><br><span>{{ lang('STAT_RESYNC_SANDBOX_STATS_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="sandbox"><input class="button2" type="submit" id="action_sandbox" name="action_sandbox" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
-<!-- ENDIF -->
+{% endif %}
 </fieldset>
-<!-- ENDIF -->
+{% endif %}
 
 <table cellspacing="1">
 	<caption>{{ lang('PPDE_ESI') }}</caption>
@@ -131,41 +131,41 @@
 	<tbody>
 	<tr>
 		<td>{{ lang('PPDE_ESI_VERSION') }}{{ lang('COLON') }}</td>
-		<td><strong><a href="{U_PPDE_MORE_INFORMATION}" style="color: <!-- IF S_UP_TO_DATE -->#228822;<!-- ELSE -->#BC2A4D;<!-- ENDIF -->" title="{{ lang('MORE_INFORMATION') }}">{PPDE_ESI_VERSION}</a></strong> [&nbsp;<a href="{U_PPDE_VERSIONCHECK_FORCE}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a>&nbsp;]</td>
+		<td><strong><a href="{{ U_PPDE_MORE_INFORMATION }}" style="color: {% if S_UP_TO_DATE %}#228822;{% else %}#BC2A4D;{% endif %}" title="{{ lang('MORE_INFORMATION') }}">{{ PPDE_ESI_VERSION }}</a></strong> [&nbsp;<a href="{{ U_PPDE_VERSIONCHECK_FORCE }}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a>&nbsp;]</td>
 		<td>{{ lang('PPDE_ESI_INSTALL_DATE') }}{{ lang('COLON') }}</td>
-		<td><strong>{PPDE_ESI_INSTALL_DATE}</strong></td>
+		<td><strong>{{ PPDE_ESI_INSTALL_DATE }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('PPDE_ESI_VERSION_CURL') }}{{ lang('COLON') }}</td>
-		<td><strong <!-- IF S_CURL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_VERSION_CURL}</strong></td>
+		<td><strong {% if S_CURL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_CURL }}</strong></td>
 		<td>{{ lang('PPDE_ESI_FSOCKOPEN') }}{{ lang('COLON') }}</td>
-		<td><strong <!-- IF S_FSOCKOPEN -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_FSOCKOPEN}</strong></td>
+		<td><strong {% if S_FSOCKOPEN %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_FSOCKOPEN }}</strong></td>
 	</tr>
 	<tr>
 		<td>{{ lang('PPDE_ESI_VERSION_SSL') }}{{ lang('COLON') }}</td>
-		<td><strong <!-- IF S_SSL -->style="color: #228822;"<!-- ELSE -->style="color: #BC2A4D;"<!-- ENDIF -->>{PPDE_ESI_VERSION_SSL}</strong></td>
+		<td><strong {% if S_SSL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_SSL }}</strong></td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 	</tr>
 	</tbody>
 </table>
 
-<!-- IF S_ACTION_OPTIONS -->
+{% if S_ACTION_OPTIONS %}
 <fieldset>
 	<legend>{{ lang('PPDE_ESI_RESYNC_OPTIONS') }}</legend>
-	<form id="action_date_form" method="post" action="{U_ACTION}">
+	<form id="action_date_form" method="post" action="{{ U_ACTION }}">
 		<dl>
 			<dt><label for="action_date">{{ lang('STAT_RESET_DATE') }}</label><br><span>{{ lang('STAT_RESET_DATE_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="date"><input class="button2" type="submit" id="action_date" name="action_date" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
-	<form id="action_esi_form" method="post" action="{U_ACTION}">
+	<form id="action_esi_form" method="post" action="{{ U_ACTION }}">
 		<dl>
 			<dt><label for="action_esi">{{ lang('STAT_RETEST_ESI') }}</label><br><span>{{ lang('STAT_RETEST_ESI_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="esi"><input class="button2" type="submit" id="action_esi" name="action_esi" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 </fieldset>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

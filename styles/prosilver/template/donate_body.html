@@ -1,41 +1,41 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<!-- IF S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' -->
-	<h2>{SITENAME} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
-	<!-- IF DONATION_BODY -->
+{% if S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' %}
+	<h2>{{ SITENAME }} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
+	{% if DONATION_BODY %}
 	<div class="panel">
-		{DONATION_BODY}
+		{{ DONATION_BODY }}
 	</div>
-	<!-- ENDIF -->
-<!-- ELSE -->
-	<!-- IF S_SANDBOX -->
+	{% endif %}
+{% else %}
+	{% if S_SANDBOX %}
 		<h2>{{ lang('PPDE_SANDBOX_TITLE') }}</h2>
-	<!-- ELSE -->
-		<h2>{{ lang('PPDE_DONATION_TITLE_HEAD') }} {SITENAME}</h2>
-	<!-- ENDIF -->
+	{% else %}
+		<h2>{{ lang('PPDE_DONATION_TITLE_HEAD') }} {{ SITENAME }}</h2>
+	{% endif %}
 
-	<!-- IF DONATION_BODY -->
+	{% if DONATION_BODY %}
 	<div class="panel">
-		{DONATION_BODY}
+		{{ DONATION_BODY }}
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 
 	<div class="panel">
-		<form action="{S_PPDE_FORM_ACTION}" method="post">
+		<form action="{{ S_PPDE_FORM_ACTION }}" method="post">
 			<div class="donate_value">
-				<!-- IF PPDE_LIST_VALUE -->
-				<select name="amount" id="amount">{PPDE_LIST_VALUE}</select>
-				<!-- ELSE -->
-				<input type="text" name="amount" class="inputbox autowidth" value="{PPDE_DEFAULT_VALUE}" />
-				<!-- ENDIF -->
+				{% if PPDE_LIST_VALUE %}
+				<select name="amount" id="amount">{{ PPDE_LIST_VALUE }}</select>
+				{% else %}
+				<input type="text" name="amount" class="inputbox autowidth" value="{{ PPDE_DEFAULT_VALUE }}" />
+				{% endif %}
 				<select name="currency_code" id="currency_code">
-					<!-- BEGIN options -->
-					<option value="{options.CURRENCY_ISO_CODE}"<!-- IF options.S_CURRENCY_DEFAULT --> selected="selected"<!-- ENDIF -->>{options.CURRENCY_SYMBOL} {options.CURRENCY_ISO_CODE}</option>
-					<!-- END options -->
+					{% for options in loops.options %}
+					<option value="{{ options.CURRENCY_ISO_CODE }}"{% if options.S_CURRENCY_DEFAULT %} selected="selected"{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }}</option>
+					{% endfor %}
 				</select>
 			</div>
 			<fieldset class="submit-buttons">
-				{S_HIDDEN_FIELDS}
+				{{ S_HIDDEN_FIELDS }}
 				<div id="paypalbutton">
 					<input type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{{ lang('PPDE_DONATION_BUTTON_TITLE') }}">
 				</div>
@@ -43,11 +43,11 @@
 			</fieldset>
 		</form>
 	</div>
-	<!-- IF PPDE_GOAL_ENABLE or PPDE_RAISED_ENABLE or PPDE_USED_ENABLE -->
+	{% if PPDE_GOAL_ENABLE or PPDE_RAISED_ENABLE or PPDE_USED_ENABLE %}
 	<div class="panel">
-		<!-- INCLUDE donate_stats.html -->
+		{% INCLUDE 'donate_stats.html' %}
 	</div>
-	<!-- ENDIF -->
-<!-- ENDIF -->
+	{% endif %}
+{% endif %}
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}
