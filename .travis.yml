@@ -1,11 +1,12 @@
 # Opt into fully virtualized infrastructure
 sudo: required
+dist: precise
 
 language: php
 
 matrix:
   include:
-    - php: 5.4
+    - php: 5.5
       env: DB=none;NOTESTS=1
     - php: 5.4
       env: DB=mysqli #myisam
@@ -23,10 +24,8 @@ matrix:
       env: DB=mysqli
     - php: 7.0
       env: DB=mysqli
-    - php: hhvm
+    - php: 7.1
       env: DB=mysqli
-  allow_failures:
-    - php: hhvm
   fast_finish: true
 
 env:
@@ -47,7 +46,7 @@ install:
   - cd ../../phpBB3
   - travis/prepare-extension.sh $EXTNAME $PHPBB_BRANCH
   - travis/setup-phpbb.sh $DB $TRAVIS_PHP_VERSION $NOTESTS
-  - ../$GITREPO/travis/prepare-epv.sh $EPV $NOTESTS
+  - sh -c "if [ '$EPV' != '0' ]; then ../$GITREPO/travis/prepare-epv.sh $EPV $NOTESTS; fi"
 
 before_script:
   - travis/setup-database.sh $DB $TRAVIS_PHP_VERSION $NOTESTS
