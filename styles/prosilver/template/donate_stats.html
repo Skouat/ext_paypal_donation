@@ -1,40 +1,40 @@
-<!-- IF PPDE_STATS_INDEX_ENABLE -->
-<h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}<!-- IF U_PPDE_DONATE --> &bull; <a href="{U_PPDE_DONATE}">{{ lang('PPDE_HEADER_LINK_TITLE') }}</a><!-- ENDIF --></h3>
-<!-- ELSE -->
+{% if PPDE_STATS_INDEX_ENABLE %}
+<h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}{% if U_PPDE_DONATE %} &bull; <a href="{{ U_PPDE_DONATE }}">{{ lang('PPDE_HEADER_LINK_TITLE') }}</a>{% endif %}</h3>
+{% else %}
 <h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF S_GOAL_NUMBER -->
+{% if S_GOAL_NUMBER %}
 <div class="progress">
-	<div class="progress-value">{PPDE_GOAL_NUMBER} %</div>
+	<div class="progress-value">{{ PPDE_GOAL_NUMBER }} %</div>
 	<div class="progress-grey">
-		<div class="prog-color {PPDE_CSS_GOAL_NUMBER}" style="width: {PPDE_GOAL_NUMBER}%;"></div>
+		<div class="prog-color {{ PPDE_CSS_GOAL_NUMBER }}" style="width: {{ PPDE_GOAL_NUMBER }}%;"></div>
 	</div>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
 <p class="donation_stats">
-	<!-- IF PPDE_RAISED_ENABLE -->
-	{{ lang('PPDE_RAISED') }}<!-- IF PPDE_USED_ENABLE --><br><!-- ENDIF -->
-	<!-- ENDIF -->
-	<!-- IF PPDE_GOAL_ENABLE -->
+	{% if PPDE_RAISED_ENABLE %}
+	{{ lang('PPDE_RAISED') }}{% if PPDE_USED_ENABLE %}<br>{% endif %}
+	{% endif %}
+	{% if PPDE_GOAL_ENABLE %}
 	{{ lang('PPDE_GOAL') }}<br>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF S_USED_NUMBER -->
+	{% if S_USED_NUMBER %}
 </p>
 
 <div class="progress">
-	<div class="progress-value">{PPDE_USED_NUMBER} %</div>
+	<div class="progress-value">{{ PPDE_USED_NUMBER }} %</div>
 	<div class="progress-grey">
-		<div class="prog-color {PPDE_CSS_USED_NUMBER}" style="width: {PPDE_USED_NUMBER}%;"></div>
+		<div class="prog-color {{ PPDE_CSS_USED_NUMBER }}" style="width: {{ PPDE_USED_NUMBER }}%;"></div>
 	</div>
 </div>
 
 <p class="donation_stats">
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF PPDE_USED_ENABLE -->
+	{% if PPDE_USED_ENABLE %}
 	{{ lang('PPDE_USED') }}
-	<!-- ENDIF -->
+	{% endif %}
 </p>

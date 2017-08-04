@@ -1,11 +1,11 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
 <a id="maincontent"></a>
 
 <h1>{{ lang('PPDE_DP_CONFIG') }}</h1>
 <p>{{ lang('PPDE_DP_CONFIG_EXPLAIN') }}</p>
 
-<!-- IF S_ADD_DONATION_PAGE or S_EDIT_DONATION_PAGE -->
+{% if S_ADD_DONATION_PAGE or S_EDIT_DONATION_PAGE %}
 <script type="text/javascript">
 	// <![CDATA[
 
@@ -18,81 +18,81 @@
 	// ]]>
 </script>
 
-<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {{ lang('BACK') }}</a>
+<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 
-<!-- IF S_ERROR -->
+{% if S_ERROR %}
 <div class="errorbox">
 	<h3>{{ lang('WARNING') }}</h3>
 
-	<p>{ERROR_MSG}</p>
+	<p>{{ ERROR_MSG }}</p>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF S_PPDE_DP_PREVIEW -->
+{% if S_PPDE_DP_PREVIEW %}
 <fieldset>
 	<legend>{{ lang('PREVIEW') }}</legend>
-	<p>{PPDE_DP_PREVIEW}</p>
+	<p>{{ PPDE_DP_PREVIEW }}</p>
 </fieldset>
-<!-- ENDIF -->
+{% endif %}
 
-<form id="add_edit_donation_pages" method="post" action="<!-- IF S_ADD_DONATION_PAGE -->{U_ADD_ACTION}<!-- ELSE -->{U_EDIT_ACTION}<!-- ENDIF -->">
+<form id="add_edit_donation_pages" method="post" action="{% if S_ADD_DONATION_PAGE %}{{ U_ADD_ACTION }}{% else %}{{ U_EDIT_ACTION }}{% endif %}">
 	<fieldset>
 		<legend>{{ lang('DONATION_PAGES_TITLE') }}</legend>
 		<p>{{ lang('DONATION_PAGES_TITLE_EXPLAIN') }}</p>
-		<!-- IF S_BBCODE_ALLOWED -->
+		{% if S_BBCODE_ALLOWED %}
 		<dl class="responsive-columns">
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;"><!-- INCLUDE acp_posting_buttons.html --></dd>
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px;">{% INCLUDE 'acp_posting_buttons.html' %}</dd>
 		</dl>
-		<!-- ENDIF -->
+		{% endif %}
 		<dl class="responsive-columns">
 			<dt style="width: 90px;"><label for="lang_id">{{ lang('PPDE_DP_LANG') }}</label></dt>
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;">
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px;">
 				<select id="lang_id" name="lang_id">
 					<option value="">{{ lang('PPDE_DP_LANG_SELECT') }}</option>
-					<!-- BEGIN ppde_langs -->
-					<option value="{ppde_langs.VALUE}"<!-- IF ppde_langs.S_SELECTED --> selected="selected"<!-- ENDIF -->>{ppde_langs.LANG_LOCAL_NAME}</option>
-					<!-- END ppde_langs -->
+					{% for ppde_langs in loops.ppde_langs %}
+					<option value="{{ ppde_langs.VALUE }}"{% if ppde_langs.S_SELECTED %} selected="selected"{% endif %}>{{ ppde_langs.LANG_LOCAL_NAME }}</option>
+					{% endfor %}
 				</select>
 			</dd>
 		</dl>
 		<dl class="responsive-columns">
 			<dt style="width: 90px;" id="color_palette_placeholder" data-orientation="v" data-height="12" data-width="15" data-bbcode="true"></dt>
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px;">
-				<label><textarea name="page_content" rows="10" cols="60" style="width: 95%;" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" data-bbcode="true">{DONATION_BODY}</textarea></label>
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px;">
+				<label><textarea name="page_content" rows="10" cols="60" style="width: 95%;" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" data-bbcode="true">{{ DONATION_BODY }}</textarea></label>
 			</dd>
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 5px;">
-				<!-- IF S_SMILIES_ALLOWED and .smiley -->
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 5px;">
+				{% if S_SMILIES_ALLOWED and loops.smiley|length %}
 				<label><strong>{{ lang('SMILIES') }}</strong><br>
-					<!-- BEGIN smiley -->
-					<a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a>
-					<!-- END smiley -->
-					<!-- IF S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED -->
-					<br><a href="{U_MORE_SMILIES}" onclick="popup(this.href, 750, 350, '_phpbbsmilies'); return false;">{{ lang('MORE_SMILIES') }}</a>
-					<!-- ENDIF -->
+					{% for smiley in loops.smiley %}
+					<a href="#" onclick="insert_text('{{ smiley.A_SMILEY_CODE }}', true); return false;"><img src="{{ smiley.SMILEY_IMG }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_DESC }}" /></a>
+					{% endfor %}
+					{% if S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED %}
+					<br><a href="{{ U_MORE_SMILIES }}" onclick="popup(this.href, 750, 350, '_phpbbsmilies'); return false;">{{ lang('MORE_SMILIES') }}</a>
+					{% endif %}
 				</label>
-				<!-- ENDIF -->
+				{% endif %}
 			</dd>
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 5px;">
-			<!-- IF .smiley --><hr><!-- ENDIF -->
-			<!-- IF S_BBCODE_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_bbcode"<!-- IF S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_BBCODE') }}</label>
-			<!-- ENDIF -->
-			<!-- IF S_SMILIES_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_smilies"<!-- IF S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_SMILIES') }}</label>
-			<!-- ENDIF -->
-			<!-- IF S_LINKS_ALLOWED -->
-				<label><input type="checkbox" class="radio" name="disable_magic_url"<!-- IF S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) --> checked<!-- ENDIF -->> {{ lang('DISABLE_MAGIC_URL') }}</label>
-			<!-- ENDIF -->
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 5px;">
+			{% if loops.smiley|length %}<hr>{% endif %}
+			{% if S_BBCODE_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_bbcode"{% if S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_BBCODE') }}</label>
+			{% endif %}
+			{% if S_SMILIES_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_smilies"{% if S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_SMILIES') }}</label>
+			{% endif %}
+			{% if S_LINKS_ALLOWED %}
+				<label><input type="checkbox" class="radio" name="disable_magic_url"{% if S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_MAGIC_URL') }}</label>
+			{% endif %}
 			</dd>
-			<dd style="margin-{S_CONTENT_FLOW_BEGIN}: 90px; margin-top: 10px;"><strong>{{ lang('OPTIONS') }}{{ lang('COLON') }} </strong>{BBCODE_STATUS} :: {IMG_STATUS} :: {FLASH_STATUS} :: {URL_STATUS} :: {SMILIES_STATUS}</dd>
+			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 10px;"><strong>{{ lang('OPTIONS') }}{{ lang('COLON') }} </strong>{{ BBCODE_STATUS }} :: {{ IMG_STATUS }} :: {{ FLASH_STATUS }} :: {{ URL_STATUS }} :: {{ SMILIES_STATUS }}</dd>
 		</dl>
 	</fieldset>
 
 	<fieldset class="submit-buttons">
-		{S_HIDDEN_FIELDS}
+		{{ S_HIDDEN_FIELDS }}
 		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">&nbsp;
 		<input class="button2" type="submit" id="preview" name="preview" value="{{ lang('PREVIEW') }}">
-		{S_FORM_TOKEN}
+		{{ S_FORM_TOKEN }}
 	</fieldset>
 
 	<table class="table1 responsive">
@@ -109,18 +109,18 @@
 		</thead>
 
 		<tbody>
-		<!-- BEGIN dp_vars -->
+		{% for dp_vars in loops.dp_vars %}
 		<tr>
-			<td>{dp_vars.NAME}</td>
-			<td><a href="#" onclick="insert_text('{dp_vars.VARIABLE}'); return false;"><strong>{dp_vars.VARIABLE}</strong></a></td>
-			<td><strong><em>{dp_vars.EXAMPLE}</em></strong></td>
+			<td>{{ dp_vars.NAME }}</td>
+			<td><a href="#" onclick="insert_text('{{ dp_vars.VARIABLE }}'); return false;"><strong>{{ dp_vars.VARIABLE }}</strong></a></td>
+			<td><strong><em>{{ dp_vars.EXAMPLE }}</em></strong></td>
 		</tr>
-		<!-- END dp_vars -->
+		{% endfor %}
 		</tbody>
 	</table>
 </form>
-<!-- ELSE -->
-<form id="acp_donation_pages" method="post" action="{U_ACTION}">
+{% else %}
+<form id="acp_donation_pages" method="post" action="{{ U_ACTION }}">
 	<table class="table1 zebra-table">
 		<colgroup>
 			<col class="row1"><col class="row1"><col class="row2"><col class="row2">
@@ -133,25 +133,25 @@
 		</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN ppde_langs -->
+		{% for ppde_langs in loops.ppde_langs %}
 			<tr>
-				<td class="row3" colspan="3">{ppde_langs.LANG_LOCAL_NAME}</td>
+				<td class="row3" colspan="3">{{ ppde_langs.LANG_LOCAL_NAME }}</td>
 			</tr>
-			<!-- BEGIN dp_list -->
-			<!-- IF langs.dp_list.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
-				<td><a href="{ppde_langs.dp_list.U_EDIT}">{ppde_langs.dp_list.DONATION_PAGE_TITLE}</a></td>
-				<td>{ppde_langs.dp_list.DONATION_PAGE_LANG}</td>
+			{% for dp_list in ppde_langs.dp_list %}
+			{% if langs.dp_list.S_ROW_COUNT is even %}<tr class="row1">{% else %}<tr class="row2">{% endif %}
+				<td><a href="{{ dp_list.U_EDIT }}">{{ dp_list.DONATION_PAGE_TITLE }}</a></td>
+				<td>{{ dp_list.DONATION_PAGE_LANG }}</td>
 				<td>
-					<a href="{ppde_langs.dp_list.U_EDIT}">{ICON_EDIT}</a>
-					<a href="{ppde_langs.dp_list.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a>
+					<a href="{{ dp_list.U_EDIT }}">{{ ICON_EDIT }}</a>
+					<a href="{{ dp_list.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
 				</td>
 			</tr>
-			<!-- BEGINELSE -->
+			{% else %}
 			<tr>
 				<td style="text-align: center;" colspan="3">{{ lang('ACP_NO_ITEMS') }}</td>
 			</tr>
-			<!-- END dp_list -->
-		<!-- END ppde_langs -->
+			{% endfor %}
+		{% endfor %}
 		</tbody>
 	</table>
 	<fieldset class="quick">
@@ -162,11 +162,11 @@
 		</select>
 		<input type="hidden" name="action" value="add">
 		<input class="button1" type="submit" name="add" value="{{ lang('ADD') }}">
-		{S_FORM_TOKEN}
+		{{ S_FORM_TOKEN }}
 	</fieldset>
 </form>
 
 <div class="clearfix">&nbsp;</div><br style="clear: both;">
-<!-- ENDIF -->
+{% endif %}
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

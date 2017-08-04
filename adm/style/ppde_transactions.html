@@ -1,119 +1,119 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
 <h1>{{ lang('PPDE_DT_CONFIG') }}</h1>
 <p>{{ lang('PPDE_DT_CONFIG_EXPLAIN') }}</p>
 
-<!-- IF S_VIEW -->
-<a href="{U_BACK}" style="float: {S_CONTENT_FLOW_END};">&laquo; {{ lang('BACK') }}</a>
+{% if S_VIEW %}
+<a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 
-<!-- IF S_ERROR -->
+{% if S_ERROR %}
 <div class="errorbox">
 	<h3>{{ lang('WARNING') }}</h3>
 
-	<p>{ERROR_MSG}</p>
+	<p>{{ ERROR_MSG }}</p>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
-<form id="view_transactions" method="post" action="{U_ACTION}">
+<form id="view_transactions" method="post" action="{{ U_ACTION }}">
 	<fieldset>
 		<legend>{{ lang('PPDE_DT_DETAILS') }}</legend>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TXN_ID') }}{{ lang('COLON') }}</span></dt>
-			<dd>{TXN_ID}</dd>
+			<dd>{{ TXN_ID }}</dd>
 		</dl>
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_BOARD_USERNAME') }}{{ lang('COLON') }}</span></dt>
-			<dd>{BOARD_USERNAME}</dd>
+			<dd>{{ BOARD_USERNAME }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NAME') }}{{ lang('COLON') }}</span></dt>
-			<dd>{NAME}</dd>
+			<dd>{{ NAME }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_EMAIL') }}{{ lang('COLON') }}</span></dt>
-			<dd>{PAYER_EMAIL}</dd>
+			<dd>{{ PAYER_EMAIL }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_ID') }}{{ lang('COLON') }}</span></dt>
-			<dd>{PAYER_ID}</dd>
+			<dd>{{ PAYER_ID }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_STATUS') }}{{ lang('COLON') }}</span></dt>
-			<dd>{PAYER_STATUS}</dd>
+			<dd>{{ PAYER_STATUS }}</dd>
 		</dl>
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_EMAIL') }}{{ lang('COLON') }}</span></dt>
-			<dd>{RECEIVER_EMAIL}</dd>
+			<dd>{{ RECEIVER_EMAIL }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_ID') }}{{ lang('COLON') }}</span></dt>
-			<dd>{RECEIVER_ID}</dd>
+			<dd>{{ RECEIVER_ID }}</dd>
 		</dl>
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TOTAL_AMOUNT') }}{{ lang('COLON') }}</span></dt>
-			<dd>{MC_GROSS}</dd>
+			<dd>{{ MC_GROSS }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_FEE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
-			<dd>{MC_FEE}</dd>
+			<dd>{{ MC_FEE }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NET_AMOUNT') }}{{ lang('COLON') }}</span></dt>
-			<dd>{MC_NET}</dd>
+			<dd>{{ MC_NET }}</dd>
 		</dl>
-		<!-- IF S_CONVERT -->
+		{% if S_CONVERT %}
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_SETTLE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
-			<dd>{SETTLE_AMOUNT}</dd>
+			<dd>{{ SETTLE_AMOUNT }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</span><br>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
-			<dd>{EXCHANGE_RATE}</dd>
+			<dd>{{ EXCHANGE_RATE }}</dd>
 		</dl>
-		<!-- ENDIF -->
+		{% endif %}
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NAME') }}{{ lang('COLON') }}</span></dt>
-			<dd>{ITEM_NAME}</dd>
+			<dd>{{ ITEM_NAME }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NUMBER') }}{{ lang('COLON') }}</span></dt>
-			<dd>{ITEM_NUMBER}</dd>
+			<dd>{{ ITEM_NUMBER }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_DATE') }}{{ lang('COLON') }}</span></dt>
-			<dd>{PAYMENT_DATE}</dd>
+			<dd>{{ PAYMENT_DATE }}</dd>
 		</dl>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_STATUS') }}{{ lang('COLON') }}</span></dt>
-			<dd>{PAYMENT_STATUS}</dd>
+			<dd>{{ PAYMENT_STATUS }}</dd>
 		</dl>
 	</fieldset>
 
 	<fieldset>
 		<p class="submit-buttons">
 			<input class="button1" type="submit" id="submit" name="update" value="{{ lang('BACK') }}">&nbsp;
-			{S_FORM_TOKEN}
+			{{ S_FORM_TOKEN }}
 		</p>
 	</fieldset>
 </form>
-<!-- ELSE -->
-<form id="ppde_transactions" method="post" action="{U_ACTION}">
+{% else %}
+<form id="ppde_transactions" method="post" action="{{ U_ACTION }}">
 	<fieldset class="display-options search-box">
-		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{S_KEYWORDS}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
+		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{{ S_KEYWORDS }}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
 	</fieldset>
 
-	<!-- IF .pagination -->
+	{% if loops.pagination|length %}
 	<div class="pagination top-pagination">
-		<!-- INCLUDE pagination.html -->
+		{% INCLUDE 'pagination.html' %}
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF .log -->
+	{% if loops.log|length %}
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 		<tr>
@@ -122,54 +122,54 @@
 			<th>{{ lang('PPDE_DT_IPN_STATUS') }}</th>
 			<th>{{ lang('PPDE_DT_PAYMENT_STATUS') }}</th>
 			<th>{{ lang('PPDE_DT_PAYMENT_DATE') }}</th>
-			<!-- IF S_CLEARLOGS -->
+			{% if S_CLEARLOGS %}
 			<th style="width: 50px;">{{ lang('MARK') }}</th>
-			<!-- ENDIF -->
+			{% endif %}
 		</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN log -->
+		{% for log in loops.log %}
 		<tr>
-			<td>{log.TNX_ID}</td>
-			<td>{log.USERNAME}</td>
-			<td<!-- IF log.S_CONFIRMED --> style="color:#FF0000;"<!-- ENDIF -->>{log.CONFIRMED}<!-- IF log.S_TEST_IPN -->&nbsp;({{ lang('PPDE_DT_IPN_TEST') }})<!-- ENDIF --></td>
-			<td<!-- IF log.S_PAYMENT_STATUS --> style="color:#FF0000;"<!-- ENDIF -->>{log.PAYMENT_STATUS}</td>
-			<td style="text-align: center;">{log.DATE}</td>
-			<!-- IF S_CLEARLOGS -->
-			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{log.ID}" title="{log.ID}"></td>
-			<!-- ENDIF -->
+			<td>{{ log.TNX_ID }}</td>
+			<td>{{ log.USERNAME }}</td>
+			<td{% if log.S_CONFIRMED %} style="color:#FF0000;"{% endif %}>{{ log.CONFIRMED }}{% if log.S_TEST_IPN %}&nbsp;({{ lang('PPDE_DT_IPN_TEST') }}){% endif %}</td>
+			<td{% if log.S_PAYMENT_STATUS %} style="color:#FF0000;"{% endif %}>{{ log.PAYMENT_STATUS }}</td>
+			<td style="text-align: center;">{{ log.DATE }}</td>
+			{% if S_CLEARLOGS %}
+			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{{ log.ID }}" title="{{ log.ID }}"></td>
+			{% endif %}
 		</tr>
-		<!-- END log -->
+		{% endfor %}
 		</tbody>
 	</table>
 
-	<!-- IF .pagination -->
+	{% if loops.pagination|length %}
 	<div class="pagination">
-		<!-- INCLUDE pagination.html -->
+		{% INCLUDE 'pagination.html' %}
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- ELSE -->
+	{% else %}
 	<div class="errorbox">
 		<p>{{ lang('NO_ENTRIES') }}</p>
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 
 	<fieldset class="display-options">
-		{{ lang('DISPLAY_LOG') }}{{ lang('COLON') }} &nbsp;{S_LIMIT_DAYS}&nbsp;{{ lang('SORT_BY') }}{{ lang('COLON') }} {S_SORT_KEY} {S_SORT_DIR}
+		{{ lang('DISPLAY_LOG') }}{{ lang('COLON') }} &nbsp;{{ S_LIMIT_DAYS }}&nbsp;{{ lang('SORT_BY') }}{{ lang('COLON') }} {{ S_SORT_KEY }} {{ S_SORT_DIR }}
 		<input class="button2" type="submit" value="{{ lang('GO') }}" name="sort">
-		{S_FORM_TOKEN}
+		{{ S_FORM_TOKEN }}
 	</fieldset>
 
 	<hr>
 
-	<!-- IF .log and S_CLEARLOGS -->
+	{% if loops.log|length and S_CLEARLOGS %}
 	<fieldset class="quick">
 		<input class="button2" type="submit" name="delall" value="{{ lang('DELETE_ALL') }}">&nbsp;
 		<input class="button2" type="submit" name="delmarked" value="{{ lang('DELETE_MARKED') }}"><br>
 		<p class="small"><a href="#" onclick="marklist('ppde_transactions', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('ppde_transactions', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
 	</fieldset>
-	<!-- ENDIF -->
+	{% endif %}
 </form>
-<!-- ENDIF -->
-<!-- INCLUDE overall_footer.html -->
+{% endif %}
+{% INCLUDE 'overall_footer.html' %}
