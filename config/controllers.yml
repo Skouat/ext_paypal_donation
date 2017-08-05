@@ -97,7 +97,6 @@ services:
         class: skouat\ppde\controller\admin_overview_controller
         arguments:
             - '@auth'
-            - '@cache'
             - '@config'
             - '@language'
             - '@log'
