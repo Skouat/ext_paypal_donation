@@ -1,15 +1,17 @@
 # Changelog
 
-## 2.0.0 - 2017-02-26
+## 2.0.0 - 2017-08-05
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Improve transaction debug
 - Change: Refactor language files
 - Change: Refactor ACP Overview module
+- Change: Use Twig syntax in all template files
 - Fix: Undefined offset when the default currency is disabled
 - Fix: In the donation page, the default donation value is not selected in the dropdown menu
 - Fix: Prevent Transaction user_id to be set to 0 (#41)
 - Fix: Missing language keys
 - Fix: "ppde_first_start" not set properly after first start of PPDE
+- Fix: Fails to get extension metadata after upgrading to phpBB 3.2.1 (#47)
 - Code enhancement
 
 ## 1.0.3 - 2017-01-22
