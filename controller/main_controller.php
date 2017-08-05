@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
 {
+	const EXT_NAME = 'skouat/ppde';
+
 	protected $auth;
 	protected $config;
 	protected $container;
@@ -29,8 +31,6 @@ class main_controller
 	protected $php_ext;
 	/** @var array */
 	protected $ext_meta = array();
-	/** @var string */
-	protected $ext_name;
 
 	/**
 	 * Constructor
@@ -338,36 +338,17 @@ class main_controller
 	 */
 	public function load_metadata()
 	{
-		// Retrieve the extension name based on the namespace of this file
-		$this->retrieve_ext_name();
+		$md_manager = $this->extension_manager->create_extension_metadata_manager($this::EXT_NAME);
 
-		// If they've specified an extension, let's load the metadata manager and validate it.
-		if ($this->ext_name)
+		try
 		{
-			$md_manager = new \phpbb\extension\metadata_manager($this->ext_name, $this->config, $this->extension_manager, $this->root_path);
-
-			try
-			{
-				$this->ext_meta = $md_manager->get_metadata('all');
-			}
-			catch (\phpbb\extension\exception $e)
-			{
-				trigger_error($e, E_USER_WARNING);
-			}
+			$this->ext_meta = $md_manager->get_metadata('all');
+		}
+		catch (\phpbb\extension\exception $e)
+		{
+			trigger_error($e, E_USER_WARNING);
 		}
 
 		return $this->ext_meta;
-	}
-
-	/**
-	 * Retrieve the extension name
-	 *
-	 * @return void
-	 * @access protected
-	 */
-	protected function retrieve_ext_name()
-	{
-		$namespace_ary = explode('\\', __NAMESPACE__);
-		$this->ext_name = $namespace_ary[0] . '/' . $namespace_ary[1];
 	}
 }
