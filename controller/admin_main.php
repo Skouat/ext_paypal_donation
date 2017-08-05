@@ -156,7 +156,7 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function is_added_data_exists($entity)
+	protected function is_added_data_exists(\skouat\ppde\entity\main $entity)
 	{
 		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
