@@ -11,6 +11,7 @@
 namespace skouat\ppde\controller;
 
 /**
+ * @property \phpbb\config\config     config             Config object
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property \phpbb\language\language language           Language user object
@@ -26,7 +27,6 @@ class admin_overview_controller extends admin_main
 {
 	protected $auth;
 	protected $cache;
-	protected $config;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $php_ext;
@@ -38,7 +38,6 @@ class admin_overview_controller extends admin_main
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth                                      $auth                         Authentication object
-	 * @param \phpbb\cache\service                                  $cache                        Cache object
 	 * @param \phpbb\config\config                                  $config                       Config object
 	 * @param \phpbb\language\language                              $language                     Language user object
 	 * @param \phpbb\log\log                                        $log                          The phpBB log system
@@ -51,10 +50,9 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->auth = $auth;
-		$this->cache = $cache;
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
@@ -88,9 +86,6 @@ class admin_overview_controller extends admin_main
 		//Load metadata for this extension
 		$this->ext_meta = $this->ppde_controller_main->load_metadata();
 
-		// Check if a new version is available
-		$this->obtain_last_version();
-
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
@@ -111,7 +106,6 @@ class admin_overview_controller extends admin_main
 			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
 			'U_PPDE_MORE_INFORMATION'        => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
-			'U_PPDE_VERSIONCHECK_FORCE'      => $this->u_action . '&amp;versioncheck_force=1',
 			'U_ACTION'                       => $this->u_action,
 		));
 
@@ -226,46 +220,6 @@ class admin_overview_controller extends admin_main
 				$this->ppde_controller_transactions->update_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
 			break;
-		}
-	}
-
-	/**
-	 * Obtains the last version for this extension
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function obtain_last_version()
-	{
-		try
-		{
-			if (!isset($this->ext_meta['extra']['version-check']))
-			{
-				throw new \RuntimeException($this->language->lang('PPDE_NO_VERSIONCHECK'), 1);
-			}
-
-			$version_check = $this->ext_meta['extra']['version-check'];
-
-			$version_helper = new \phpbb\version_helper($this->cache, $this->config, new \phpbb\file_downloader(), $this->user);
-			$version_helper->set_current_version($this->ext_meta['version']);
-			$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
-			$version_helper->force_stability($this->config['extension_force_unstable'] ? 'unstable' : null);
-
-			$recheck = $this->request->variable('versioncheck_force', false);
-			$s_up_to_date = $version_helper->get_suggested_updates($recheck);
-
-			$this->template->assign_vars(array(
-				'S_UP_TO_DATE'   => empty($s_up_to_date),
-				'S_VERSIONCHECK' => true,
-				'UP_TO_DATE_MSG' => $this->language->lang('PPDE_NOT_UP_TO_DATE', $this->ext_meta['extra']['display-name']),
-			));
-		}
-		catch (\RuntimeException $e)
-		{
-			$this->template->assign_vars(array(
-				'S_VERSIONCHECK_STATUS'    => $e->getCode(),
-				'VERSIONCHECK_FAIL_REASON' => ($e->getMessage() !== $this->language->lang('VERSIONCHECK_FAIL')) ? $e->getMessage() : '',
-			));
 		}
 	}
 

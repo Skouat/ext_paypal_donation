@@ -1,27 +1,5 @@
 {% INCLUDE 'overall_header.html' %}
 
-{% if S_VERSIONCHECK %}
-	{% if not S_UP_TO_DATE %}
-	<div class="errorbox">
-		<p>{{ UP_TO_DATE_MSG }} - <a href="{{ U_PPDE_MORE_INFORMATION }}">{{ lang('MORE_INFORMATION') }}</a></p>
-	</div>
-	{% endif %}
-{% elseif S_VERSIONCHECK_STATUS == 0 %}
-
-<div class="errorbox notice">
-	<p>{{ lang('VERSIONCHECK_FAIL') }}</p>
-
-	<p>{{ VERSIONCHECK_FAIL_REASON }}</p>
-
-	<p><a href="{{ U_PPDE_VERSIONCHECK_FORCE }}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a></p>
-</div>
-
-{% elseif S_VERSIONCHECK_STATUS == 1 %}
-<div class="errorbox notice">
-	<p>{{ VERSIONCHECK_FAIL_REASON }}</p>
-</div>
-{% endif %}
-
 <table cellspacing="1">
 	<caption>{{ lang('PPDE_STATS') }}</caption>
 	<colgroup>
@@ -131,7 +109,7 @@
 	<tbody>
 	<tr>
 		<td>{{ lang('PPDE_ESI_VERSION') }}{{ lang('COLON') }}</td>
-		<td><strong><a href="{{ U_PPDE_MORE_INFORMATION }}" style="color: {% if S_UP_TO_DATE %}#228822;{% else %}#BC2A4D;{% endif %}" title="{{ lang('MORE_INFORMATION') }}">{{ PPDE_ESI_VERSION }}</a></strong> [&nbsp;<a href="{{ U_PPDE_VERSIONCHECK_FORCE }}">{{ lang('VERSIONCHECK_FORCE_UPDATE') }}</a>&nbsp;]</td>
+		<td><strong>{{ PPDE_ESI_VERSION }}</strong> [ <a href="{{ U_PPDE_MORE_INFORMATION }}" title="{{ lang('PPDE_ESI_MORE_INFORMATION') }}">{{ lang('PPDE_ESI_MORE_INFORMATION') }}</a> ]</td>
 		<td>{{ lang('PPDE_ESI_INSTALL_DATE') }}{{ lang('COLON') }}</td>
 		<td><strong>{{ PPDE_ESI_INSTALL_DATE }}</strong></td>
 	</tr>
