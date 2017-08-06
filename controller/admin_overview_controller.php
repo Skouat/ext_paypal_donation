@@ -26,7 +26,6 @@ namespace skouat\ppde\controller;
 class admin_overview_controller extends admin_main
 {
 	protected $auth;
-	protected $cache;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $php_ext;
