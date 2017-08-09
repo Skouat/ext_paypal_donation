@@ -66,7 +66,7 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Enable this option if you want use PayPal Sandbox instead of PayPal services.<br>Useful for developers/testers. All the transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
-	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only by the board founders.',
+	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only for board founders.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox Account',
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter the PayPal Sandbox email address or Merchant ID.',
 ));
