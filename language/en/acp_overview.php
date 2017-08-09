@@ -51,10 +51,10 @@ $lang = array_merge($lang, array(
 	'PPDE_ESI_VERSION_SSL'      => 'SSL version',
 	'PPDE_ESI_RESYNC_OPTIONS'   => 'Reset or recheck extension and system information',
 
-	'PPDE_STATS'         => 'Donation statistics',
-	'PPDE_STATS_SANDBOX' => 'Sandbox statistics',
+	'PPDE_STATS'         => 'Donation Statistics',
+	'PPDE_STATS_SANDBOX' => 'Sandbox Statistics',
 
-	'STAT_RESET_DATE'                   => 'Reset Extension Installation date',
+	'STAT_RESET_DATE'                   => 'Reset extension installation date',
 	'STAT_RESET_DATE_CONFIRM'           => 'Are you sure you wish to reset the installation date of this extension?',
 	'STAT_RESET_DATE_EXPLAIN'           => 'Resetting the installation date will affect the calculation of the total amount of donations and some other statistics.',
 	'STAT_RESYNC_OPTIONS'               => 'Resynchronise statistics',
@@ -66,7 +66,7 @@ $lang = array_merge($lang, array(
 	'STAT_RESYNC_STATS_EXPLAIN'         => 'Resynchronise all donors and transactions counts. Only anonymous donors and active members will be taken in consideration.',
 	'STAT_RETEST_ESI'                   => 'Check extension prerequisites',
 	'STAT_RETEST_ESI_CONFIRM'           => 'Are you sure you wish to check extension prerequisites?',
-	'STAT_RETEST_ESI_EXPLAIN'           => 'Allows to check the prerequisites of the extension, in case the Web server configuration has been changed.',
+	'STAT_RETEST_ESI_EXPLAIN'           => 'Allows to check the prerequisites of the extension, in case the web server configuration has been changed.',
 
 	'STATS_ANONYMOUS_DONORS_COUNT'   => 'Number of anonymous donors',
 	'STATS_ANONYMOUS_DONORS_PER_DAY' => 'Anonymous donors per day',

@@ -39,8 +39,8 @@ if (empty($lang) || !is_array($lang))
  */
 $lang = array_merge($lang, array(
 	// Transactions log
-	'PPDE_DT_CONFIG'                => 'Transactions log',
-	'PPDE_DT_CONFIG_EXPLAIN'        => 'Here you can show transactions details.',
+	'PPDE_DT_CONFIG'                => 'Transactions Log',
+	'PPDE_DT_CONFIG_EXPLAIN'        => 'Here you can see transaction details.',
 	'PPDE_DT_IPN_STATUS'            => 'IPN Status',
 	'PPDE_DT_IPN_TEST'              => 'IPN test',
 	'PPDE_DT_PAYMENT_STATUS'        => 'Payment Status',

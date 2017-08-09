@@ -45,10 +45,10 @@ $lang = array_merge($lang, array(
 	// Pages
 	'PPDE_DONATION_BUTTON_TITLE'       => 'Donate',
 	'PPDE_DONATION_TITLE'              => 'Make a Donation',
-	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to',
-	'PPDE_CANCEL_TITLE'                => 'Donation Canceled',
-	'PPDE_SUCCESS_TITLE'               => 'Donation Successful',
-	'PPDE_CONTACT_PAYPAL'              => 'Connecting to PayPal - Please Wait…',
+	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to %s',
+	'PPDE_CANCEL_TITLE'                => 'Donation canceled',
+	'PPDE_SUCCESS_TITLE'               => 'Donation successful',
+	'PPDE_CONTACT_PAYPAL'              => 'Connecting to PayPal. Please wait…',
 	'PPDE_SANDBOX_TITLE'               => 'Test PayPal Donation with PayPal Sandbox',
 
 	// Donors list
@@ -61,13 +61,13 @@ $lang = array_merge($lang, array(
 
 	// Statistics
 	'PPDE_DONATE_GOAL_RAISE'    => 'Our goal is to raise <strong>%s</strong>.',
-	'PPDE_DONATE_GOAL_REACHED'  => 'Our goal donation was reached.',
+	'PPDE_DONATE_GOAL_REACHED'  => 'Our donation goal was reached.',
 	'PPDE_DONATE_NO_GOAL'       => 'We haven’t defined a donation goal.',
 	'PPDE_DONATE_NOT_RECEIVED'  => 'We haven’t received any donations.',
 	'PPDE_DONATE_NOT_USED'      => 'We haven’t used any donations.',
 	'PPDE_DONATE_RECEIVED'      => 'We received <strong>%s</strong> in donations.',
-	'PPDE_DONATE_USED'          => 'We used <strong>%1$s</strong> of your donations on <strong>%2$s</strong> already received.',
-	'PPDE_DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All your donations have been used.',
+	'PPDE_DONATE_USED'          => 'We used <strong>%1$s</strong> out of a total of <strong>%2$s</strong> received in dontaions.',
+	'PPDE_DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All donations have been used.',
 
 	// Viewonline
 	'PPDE_VIEWONLINE'           => 'Viewing Donation page',
@@ -86,18 +86,18 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'              => 'cURL error: ',
-	'FSOCK_ERROR'             => 'fsockopen error: ',
-	'NO_CONNECTION_DETECTED'  => 'cURL and fsockopen() have not been detected. Please contact the administrator of your Web server.',
-	'INVALID_TXN_ACCOUNT_ID'  => 'Invalid Transaction: Merchant ID do not match.',
-	'INVALID_TXN_EMPTY_ID'    => 'Invalid Transaction: Transaction ID not found.',
-	'INVALID_TXN_NON_ASCII'   => 'Invalid Transaction: Non ASCII chars detected.',
+	'CURL_ERROR'              => 'cURL error: %s',
+	'FSOCK_ERROR'             => 'fsockopen error: %s',
+	'NO_CONNECTION_DETECTED'  => 'cURL and fsockopen have not been detected. Please contact the administrator of your web server.',
+	'INVALID_TXN_ACCOUNT_ID'  => 'Invalid transaction: merchant ID does not match.',
+	'INVALID_TXN_EMPTY_ID'    => 'Invalid transaction: transaction ID not found.',
+	'INVALID_TXN_NON_ASCII'   => 'Invalid transaction: non ASCII chars detected.',
 	'INVALID_RESPONSE_STATUS' => 'Invalid response status: ',
 	'UNEXPECTED_RESPONSE'     => 'Unexpected response from PayPal.',
 ));
 
 $lang = array_merge($lang, array(
 	// Notification
-	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donate “%2$s”.',
-	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'The donation for an amount of “%1$s” has been received.',
+	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donated “%2$s”.',
+	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Your donation of “%1$s” has been received.',
 ));

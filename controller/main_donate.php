@@ -207,7 +207,7 @@ class main_donate extends main_controller
 		return build_hidden_fields(array(
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
-			'item_name'     => $this->language->lang('PPDE_DONATION_TITLE_HEAD') . ' ' . $this->config['sitename'],
+			'item_name'     => $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']),
 			'no_shipping'   => 1,
 			'return'        => $this->generate_paypal_return_url('success'),
 			'notify_url'    => $this->generate_paypal_notify_return_url(),

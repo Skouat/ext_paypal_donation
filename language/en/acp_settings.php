@@ -43,18 +43,18 @@ $lang = array_merge($lang, array(
 
 	// General settings
 	'PPDE_ACCOUNT_ID'                 => 'PayPal account ID',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Enter your Merchant account ID or PayPal email address.',
+	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Enter your merchant account ID or PayPal email address.',
 	'PPDE_DEFAULT_CURRENCY'           => 'Default currency',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Define which currency will be selected by default.',
 	'PPDE_DEFAULT_VALUE'              => 'Default donation value',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Define which donation value will be suggested by default.',
 	'PPDE_DROPBOX_ENABLE'             => 'Enable drop-down list',
-	'PPDE_DROPBOX_ENABLE_EXPLAIN'     => 'If enabled, it will replace the Textbox by a drop-down list.',
-	'PPDE_DROPBOX_VALUE'              => 'Drop-down donation value',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Define the numbers you want to see in the drop-down list.<br>Use <strong>comma</strong> (“,”) <strong>with no space</strong> to separate each values.',
+	'PPDE_DROPBOX_ENABLE_EXPLAIN'     => 'Display a drop-down list instead of a text box.',
+	'PPDE_DROPBOX_VALUE'              => 'Drop-down donation values',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Define the donation values available in the drop-down list.<br>Use <strong>comma</strong> (“,”) <strong>with no space</strong> to separate the values.',
 	'PPDE_ENABLE'                     => 'Enable PayPal Donation',
 	'PPDE_ENABLE_EXPLAIN'             => 'Enable or disable the PayPal Donation Extension.',
-	'PPDE_HEADER_LINK'                => 'Display the link “Donations” in the header',
+	'PPDE_HEADER_LINK'                => 'Display the “Donations” link in the header',
 	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'General Settings',
 
 	// Stats Donation settings
@@ -67,8 +67,8 @@ $lang = array_merge($lang, array(
 	'PPDE_RAISED_EXPLAIN'             => 'The current amount raised through donations.',
 	'PPDE_STATS_INDEX_ENABLE'         => 'Display donation stats on index',
 	'PPDE_STATS_INDEX_ENABLE_EXPLAIN' => 'Enable this if you want to display the donation stats on index.',
-	'PPDE_USED'                       => 'Donation used',
-	'PPDE_USED_EXPLAIN'               => 'The amount of donation that you have already used.',
+	'PPDE_USED'                       => 'Donations used',
+	'PPDE_USED_EXPLAIN'               => 'The amount of donations that you have already used.',
 ));
 
 /**
