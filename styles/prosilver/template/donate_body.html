@@ -11,7 +11,7 @@
 	{% if S_SANDBOX %}
 		<h2>{{ lang('PPDE_SANDBOX_TITLE') }}</h2>
 	{% else %}
-		<h2>{{ lang('PPDE_DONATION_TITLE_HEAD') }} {{ SITENAME }}</h2>
+		<h2>{{ lang('PPDE_DONATION_TITLE_HEAD', SITENAME) }}</h2>
 	{% endif %}
 
 	{% if DONATION_BODY %}
