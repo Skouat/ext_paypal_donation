@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="PayPal Donation" description="An extension which allows you to add a PayPal donation page on your phpBB board" default="all">
+<project name="PayPal Donation" description="An extension which adds a PayPal donation page to your phpBB board" default="all">
 	<property name="vendor-name" value="skouat" />
 	<property name="extension-name" value="ppde" />
 	<!--

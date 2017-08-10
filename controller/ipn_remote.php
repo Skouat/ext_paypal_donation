@@ -136,7 +136,7 @@ class ipn_remote
 		if (curl_errno($ch) != 0)
 		{
 			// cURL error
-			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR') . curl_errno($ch) . ' (' . curl_error($ch) . ')', $this->ppde_ipn_log->is_use_log_error());
+			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR', curl_errno($ch) . ' (' . curl_error($ch) . ')'), $this->ppde_ipn_log->is_use_log_error());
 			curl_close($ch);
 		}
 		else
@@ -181,7 +181,7 @@ class ipn_remote
 
 		if (!$fp)
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('FSOCK_ERROR') . $errno . ' (' . $errstr . ')', $this->ppde_ipn_log->is_use_log_error());
+			$this->ppde_ipn_log->log_error($this->language->lang('FSOCK_ERROR', $errno . ' (' . $errstr . ')'), $this->ppde_ipn_log->is_use_log_error());
 		}
 		else
 		{

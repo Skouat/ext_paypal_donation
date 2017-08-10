@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 	// Pages
 	'PPDE_DONATION_BUTTON_TITLE'       => 'Faire un don',
 	'PPDE_DONATION_TITLE'              => 'Faire un don',
-	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour',
+	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
 	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
 	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
 	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal - Veuillez patienter…',
@@ -86,9 +86,9 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'              => 'Erreur cURL :',
-	'FSOCK_ERROR'             => 'Erreur fsockopen :',
-	'NO_CONNECTION_DETECTED'  => 'cURL et fsockopen() n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
+	'CURL_ERROR'              => 'Erreur cURL : %s',
+	'FSOCK_ERROR'             => 'Erreur fsockopen : %s',
+	'NO_CONNECTION_DETECTED'  => 'cURL et fsockopen n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
 	'INVALID_TXN_ACCOUNT_ID'  => 'Transaction non valide : Les ID marchant ne correspondent pas.',
 	'INVALID_TXN_EMPTY_ID'    => 'Transaction non valide : ID de transaction non trouvé.',
 	'INVALID_TXN_NON_ASCII'   => 'Transaction non valide : Charactères non ASCII détectés.',

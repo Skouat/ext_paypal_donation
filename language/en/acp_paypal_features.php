@@ -38,36 +38,36 @@ if (empty($lang) || !is_array($lang))
  * mode: PayPal features
  */
 $lang = array_merge($lang, array(
-	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN features',
+	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN Features',
 	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure all features that use the PayPal Instant Payment Notification (IPN).',
 
 	// PayPal IPN settings
-	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto-group',
+	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto group',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
 	'PPDE_LEGEND_IPN_SETTINGS'             => 'General settings',
-	'PPDE_IPN_AG_ENABLE'                   => 'Enable Auto Group',
+	'PPDE_IPN_AG_ENABLE'                   => 'Enable auto group',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
-	'PPDE_IPN_AG_DONORS_GROUP_EXPLAIN'     => 'Select the group that will host the donor members.',
+	'PPDE_IPN_AG_DONORS_GROUP_EXPLAIN'     => 'Select the group that donors will be added to.',
 	'PPDE_IPN_AG_GROUP_AS_DEFAULT'         => 'Set donors group as default',
-	'PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN' => 'Enable to set the donors group as the default group for users having make a donation.',
-	'PPDE_IPN_DL_ENABLE'                   => 'Enable Donors list',
+	'PPDE_IPN_AG_GROUP_AS_DEFAULT_EXPLAIN' => 'Enable to set the donors group as the user’s default group.',
+	'PPDE_IPN_DL_ENABLE'                   => 'Enable donors list',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
 	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want use Instant Payment Notification of PayPal services.<br>If enabled, all features dependent on PayPal IPN will be available below.',
-	'PPDE_IPN_LOGGING'                     => 'Enable log errors',
-	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Log errors and data from PayPal IPN into the directory <strong>/store/ext/ppde/</strong>.',
+	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want to use PayPal’s Instant Payment Notification service.',
+	'PPDE_IPN_LOGGING'                     => 'Enable errors logs',
+	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Write errors and data from PayPal IPN to a file in <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
-	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify PPDE admin and donors when a donation is received.',
+	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify site admin and donors when a donation is received.',
 
 	// PayPal sandbox settings
 	'PPDE_LEGEND_SANDBOX_SETTINGS'         => 'Sandbox settings',
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
-	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Enable this option if you want use PayPal Sandbox instead of PayPal services.<br>Useful for developers/testers. All the transactions are fictitious.',
+	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Use PayPal Sandbox instead of PayPal services.<br>Useful for developers and testers. All transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
-	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'If enabled, PayPal Sandbox will be displayed only for board founders.',
-	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox Account',
+	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only by the board founders.',
+	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox account',
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter the PayPal Sandbox email address or Merchant ID.',
 ));
 

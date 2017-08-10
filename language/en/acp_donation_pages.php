@@ -51,8 +51,8 @@ $lang = array_merge($lang, array(
 	'DONATION_SUCCESS_EXPLAIN' => 'Enter the text you want displayed on the success page.',
 
 	// Donation Page settings
-	'PPDE_DP_CONFIG'           => 'Donation pages',
-	'PPDE_DP_CONFIG_EXPLAIN'   => 'Permit to improve the rendering of customizable pages of the extension.',
+	'PPDE_DP_CONFIG'           => 'Donation Pages',
+	'PPDE_DP_CONFIG_EXPLAIN'   => 'Allows you to customise main, success & error pages of the extension.',
 	'PPDE_DP_LANG'             => 'Language',
 	'PPDE_DP_LANG_SELECT'      => 'Select a language',
 	'PPDE_DP_PAGE'             => 'Page type',
@@ -60,8 +60,8 @@ $lang = array_merge($lang, array(
 	// Donation Page Template vars
 	'PPDE_DP_BOARD_CONTACT'    => 'Board contact',
 	'PPDE_DP_BOARD_EMAIL'      => 'Board e-mail',
-	'PPDE_DP_BOARD_SIG'        => 'Board’s Signature',
-	'PPDE_DP_PREDEFINED_VARS'  => 'Predefined Variables',
+	'PPDE_DP_BOARD_SIG'        => 'Board’s signature',
+	'PPDE_DP_PREDEFINED_VARS'  => 'Predefined variables',
 	'PPDE_DP_SITE_DESC'        => 'Site description',
 	'PPDE_DP_SITE_NAME'        => 'Sitename',
 	'PPDE_DP_USER_ID'          => 'User ID',
