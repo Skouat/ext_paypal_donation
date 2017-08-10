@@ -86,8 +86,8 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'              => 'Erreur cURL: %s',
-	'FSOCK_ERROR'             => 'Erreur fsockopen: %s',
+	'CURL_ERROR'              => 'Erreur cURL : %s',
+	'FSOCK_ERROR'             => 'Erreur fsockopen : %s',
 	'NO_CONNECTION_DETECTED'  => 'cURL et fsockopen n’ont pas été détectés. Veuillez contacter l’administrateur du serveur.',
 	'INVALID_TXN_ACCOUNT_ID'  => 'Transaction non valide : Les ID marchant ne correspondent pas.',
 	'INVALID_TXN_EMPTY_ID'    => 'Transaction non valide : ID de transaction non trouvé.',
