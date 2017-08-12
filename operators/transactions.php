@@ -252,8 +252,10 @@ class transactions
 			FROM ' . USERS_TABLE .
 			$sql_where;
 		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
-		return $this->db->sql_fetchrow($result);
+		return $row;
 	}
 
 	/**
@@ -291,6 +293,8 @@ class transactions
 			$i++;
 		}
 
+		$this->db->sql_freeresult($result);
+
 		return $log;
 	}
 
@@ -313,9 +317,9 @@ class transactions
 		// We cache some common variables we need within this function
 		if (empty($_profile_cache))
 		{
-			$_profile_cache['tpl_nourl'] = '{TRANSACTION}';
-			$_profile_cache['tpl_url'] = '<a href="{TXN_URL}">{TRANSACTION}</a>';
-			$_profile_cache['tpl_url_colour'] = '<a href="{TXN_URL}" style="{TXN_COLOUR};">{TRANSACTION}</a>';
+			$_profile_cache['tpl_nourl'] = '{{ TRANSACTION }}';
+			$_profile_cache['tpl_url'] = '<a href="{{ TXN_URL }}">{{ TRANSACTION }}</a>';
+			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR };">{{ TRANSACTION }}</a>';
 		}
 
 		// Build correct transaction url
@@ -329,10 +333,10 @@ class transactions
 
 		if (!$txn_url)
 		{
-			return str_replace('{TRANSACTION}', $txn_id, $_profile_cache['tpl_nourl']);
+			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
 		}
 
-		return str_replace(array('{TXN_URL}', '{TXN_COLOUR}', '{TRANSACTION}'), array($txn_url, '#FF0000', $txn_id), (!$colour) ? $_profile_cache['tpl_url'] : $_profile_cache['tpl_url_colour']);
+		return str_replace(array('{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'), array($txn_url, '#FF0000', $txn_id), (!$colour) ? $_profile_cache['tpl_url'] : $_profile_cache['tpl_url_colour']);
 	}
 
 	/**
