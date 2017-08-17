@@ -30,7 +30,7 @@
 				{% endif %}
 				<select name="currency_code" id="currency_code">
 					{% for options in loops.options %}
-					<option value="{{ options.CURRENCY_ISO_CODE }}"{% if options.S_CURRENCY_DEFAULT %} selected="selected"{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }}</option>
+					<option value="{{ options.CURRENCY_ISO_CODE }}"{% if options.S_CURRENCY_DEFAULT %} selected{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }}</option>
 					{% endfor %}
 				</select>
 			</div>

@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  * Special Thanks to the following individuals for their inspiration:
  *    David Lewis (Highway of Life) http://startrekguide.com

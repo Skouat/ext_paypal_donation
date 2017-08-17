@@ -12,12 +12,6 @@ namespace skouat\ppde\acp;
 
 class ppde_module
 {
-	/** @var string */
-	public $u_action;
-	/** @var string */
-	public $page_title;
-	/** @var string */
-	public $tpl_name;
 	/** @var array */
 	private static $language_mode = array(
 		'overview',
@@ -27,6 +21,12 @@ class ppde_module
 		'donation_pages',
 		'currency',
 	);
+	/** @var string */
+	public $u_action;
+	/** @var string */
+	public $page_title;
+	/** @var string */
+	public $tpl_name;
 
 	/**
 	 * @param string $id

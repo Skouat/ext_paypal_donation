@@ -50,7 +50,7 @@
 				<select id="lang_id" name="lang_id">
 					<option value="">{{ lang('PPDE_DP_LANG_SELECT') }}</option>
 					{% for ppde_langs in loops.ppde_langs %}
-					<option value="{{ ppde_langs.VALUE }}"{% if ppde_langs.S_SELECTED %} selected="selected"{% endif %}>{{ ppde_langs.LANG_LOCAL_NAME }}</option>
+					<option value="{{ ppde_langs.VALUE }}"{% if ppde_langs.S_SELECTED %} selected{% endif %}>{{ ppde_langs.LANG_LOCAL_NAME }}</option>
 					{% endfor %}
 				</select>
 			</dd>
