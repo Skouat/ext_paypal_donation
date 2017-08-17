@@ -209,12 +209,9 @@ class transactions
 
 		if (!empty($keywords))
 		{
-			$keywords_pattern = array();
-
 			// Build pattern and keywords...
 			for ($i = 0, $num_keywords = sizeof($keywords); $i < $num_keywords; $i++)
 			{
-				$keywords_pattern[] = preg_quote($keywords[$i], '#');
 				$keywords[$i] = $this->db->sql_like_expression($this->db->get_any_char() . $keywords[$i] . $this->db->get_any_char());
 			}
 
