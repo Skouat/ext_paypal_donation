@@ -276,12 +276,11 @@ class transactions
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
 
-		$i = 0;
 		$log = array();
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$log[$i] = array(
+			$log[] = array(
 				'transaction_id' => $row['transaction_id'],
 				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
 				'test_ipn'       => $row['test_ipn'],
@@ -291,8 +290,6 @@ class transactions
 
 				'username_full'  => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $url_ary['profile_url']),
 			);
-
-			$i++;
 		}
 
 		$this->db->sql_freeresult($result);
