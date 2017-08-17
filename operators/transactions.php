@@ -144,9 +144,11 @@ class transactions
 		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
 
 		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
+		$field = (int) $this->db->sql_fetchfield('total_entries');
+		$this->db->sql_freeresult($result);
 
-		return (int) $this->db->sql_fetchfield('total_entries');
+		return $field;
 	}
 
 	/**

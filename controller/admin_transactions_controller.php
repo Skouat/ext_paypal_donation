@@ -271,9 +271,11 @@ class admin_transactions_controller extends admin_main
 			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
-		$this->db->sql_query($this->ppde_operator->sql_build_update_stats($config_name, $this->is_ipn_test));
+		$result = $this->db->sql_query($this->ppde_operator->sql_build_update_stats($config_name, $this->is_ipn_test));
+		$field = (int) $this->db->sql_fetchfield('count_result');
+		$this->db->sql_freeresult($result);
 
-		return (int) $this->db->sql_fetchfield('count_result');
+		return $field;
 	}
 
 	/**

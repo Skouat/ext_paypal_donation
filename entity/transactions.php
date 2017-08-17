@@ -118,9 +118,11 @@ class transactions extends main
 		$sql = 'SELECT transaction_id
 			FROM ' . $this->transactions_log_table . "
 			WHERE txn_id = '" . $this->db->sql_escape($this->data['txn_id']) . "'";
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
+		$field = (int) $this->db->sql_fetchfield('transaction_id');
+		$this->db->sql_freeresult($result);
 
-		return $this->db->sql_fetchfield('transaction_id');
+		return $field;
 	}
 
 	/**

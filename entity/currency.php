@@ -234,9 +234,11 @@ class currency extends main
 	{
 		$sql = 'SELECT MAX(currency_order) AS max_order
 			FROM ' . $this->currency_table;
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
+		$field = $this->db->sql_fetchfield('max_order');
+		$this->db->sql_freeresult($result);
 
-		return $this->db->sql_fetchfield('max_order');
+		return $field;
 	}
 
 	/**
