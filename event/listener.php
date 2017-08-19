@@ -105,7 +105,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Load language files during user setup
 	 *
-	 * @param object $event The event object
+	 * @param \phpbb\event\data $event The event object
 	 *
 	 * @return void
 	 * @access public
@@ -123,7 +123,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Show users as viewing the Donation page on Who Is Online page
 	 *
-	 * @param object $event The event object
+	 * @param \phpbb\event\data $event The event object
 	 *
 	 * @return void
 	 * @access public
@@ -149,23 +149,16 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add extension permissions
 	 *
-	 * @param object $event The event object
+	 * @param \phpbb\event\data $event The event object
 	 *
 	 * @return void
 	 * @access public
 	 */
 	public function add_permissions($event)
 	{
-		$categories = $event['categories'];
-		$categories = array_merge($categories, array('ppde' => 'ACL_CAT_PPDE'));
-		$event['categories'] = $categories;
-
-		$permissions = $event['permissions'];
-		$permissions = array_merge($permissions, array(
-			'a_ppde_manage'         => array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'),
-			'u_ppde_use'            => array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'),
-			'u_ppde_view_donorlist' => array('lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde'),
-		));
-		$event['permissions'] = $permissions;
+		$event->update_subarray('categories', 'ppde', 'ACL_CAT_PPDE');
+		$event->update_subarray('permissions', 'a_ppde_manage', array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'));
+		$event->update_subarray('permissions', 'u_ppde_use', array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'));
+		$event->update_subarray('permissions', 'u_ppde_view_donorlist', array('lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde'));
 	}
 }
