@@ -37,6 +37,10 @@
 				<dd><label><input type="radio" class="radio" id="ppde_ipn_group_as_default" name="ppde_ipn_group_as_default" value="1"{% if S_PPDE_IPN_AG_GROUP_AS_DEFAULT %} checked{% endif %}> {{ lang('YES') }}</label>
 					<label><input type="radio" class="radio" name="ppde_ipn_group_as_default" value="0"{% if not S_PPDE_IPN_AG_GROUP_AS_DEFAULT %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>
+			<dl>
+				<dt><label for="ppde_ipn_min_before_group">{{ lang('PPDE_IPN_AG_MIN_BEFORE_GROUP') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_IPN_AG_MIN_BEFORE_GROUP_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_ipn_min_before_group" name="ppde_ipn_min_before_group" size="10" maxlength="50" value="{{ PPDE_IPN_AG_MIN_BEFORE_GROUP }}"></dd>
+			</dl>
 		</fieldset>
 		<fieldset class="ppde_toggle"{% if not S_PPDE_IPN_ENABLE %} style="display: none;"{% endif %}>
 			<legend>{{ lang('PPDE_LEGEND_IPN_DONORLIST') }}</legend>

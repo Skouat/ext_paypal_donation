@@ -224,10 +224,10 @@ class transactions
 	}
 
 	/**
-	 * Returns user information based on the ID of the donor or they email
+	 * Returns user information based on the donor ID or email
 	 *
-	 * @param string $type
-	 * @param int    $arg
+	 * @param string     $type
+	 * @param int|string $arg
 	 *
 	 * @return array|bool
 	 * @access public
@@ -247,7 +247,7 @@ class transactions
 				$sql_where = '';
 		}
 
-		$sql = 'SELECT user_id, username
+		$sql = 'SELECT user_id, username, user_ppde_donated_amount
 			FROM ' . USERS_TABLE .
 			$sql_where;
 		$result = $this->db->sql_query($sql);

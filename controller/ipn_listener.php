@@ -54,6 +54,10 @@ class ipn_listener
 	 */
 	private $currency_settle_data;
 	/**
+	 * @var boolean
+	 */
+	private $donor_is_member = false;
+	/**
 	 * @var array|boolean
 	 */
 	private $payer_data;
@@ -587,13 +591,18 @@ class ipn_listener
 			$this->transaction_data = $transaction_data;
 			unset($transaction_data);
 
-			$this->ppde_controller_transactions_admin->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+			// Do actions whether the transaction is real or a test.
 			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
 
-			// If the transaction is not a IPN test do additional actions
-			if (!$this->transaction_data['test_ipn'])
+			// Do additional actions if the transaction is not a test.
+			if (!$this->ppde_controller_transactions_admin->get_ipn_test())
 			{
+				// Set donor_is_member property
+				$this->donor_is_member();
+
+				// Do actions
+				$this->update_donor_stats();
 				$this->donors_group_user_add();
 				$this->notify_donation_received();
 			}
@@ -621,6 +630,14 @@ class ipn_listener
 	{
 		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
 		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+	}
+
+	private function update_donor_stats()
+	{
+		if ($this->donor_is_member)
+		{
+			$this->ppde_controller_transactions_admin->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
+		}
 	}
 
 	/**
@@ -678,7 +695,11 @@ class ipn_listener
 	 */
 	private function can_use_autogroup()
 	{
-		return $this->autogroup_is_enabled() && $this->donor_is_member() && $this->payment_status_is_completed();
+		return
+			$this->autogroup_is_enabled() &&
+			$this->donor_is_member &&
+			$this->payment_status_is_completed() &&
+			$this->minimum_donation_raised();
 	}
 
 	/**
@@ -704,9 +725,9 @@ class ipn_listener
 	}
 
 	/**
-	 * Checks if the donor is a member
+	 * Checks if the donor is a member then gets payer_data values
 	 *
-	 * @return bool
+	 * @return void
 	 * @access private
 	 */
 
@@ -714,12 +735,12 @@ class ipn_listener
 	{
 		$anonymous_user = false;
 
-		// if the user_id is not anonymous, get the user information (user id, username)
+		// if the user_id is not anonymous
 		if ($this->transaction_data['user_id'] != ANONYMOUS)
 		{
-			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
 
-			if (empty($this->payer_data))
+			if (!$this->donor_is_member)
 			{
 				// no results, therefore the user is anonymous...
 				$anonymous_user = true;
@@ -735,16 +756,33 @@ class ipn_listener
 		{
 			// if the user is anonymous, check their PayPal email address with all known email hashes
 			// to determine if the user exists in the database with that email
-			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('email', $this->transaction_data['payer_email']);
-
-			if (empty($this->payer_data))
-			{
-				// no results, therefore the user is really a guest
-				return false;
-			}
+			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
 		}
+	}
 
-		return true;
+	/**
+	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 *
+	 * @param string     $type Allowed value : 'user' or 'email'
+	 * @param string|int $args If $type is set to 'user', $args must be a user id.
+	 *                         If $type is set to 'email', $args must be an email address
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_donors_status($type, $args)
+	{
+		$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data($type, $args);
+
+		return !empty($this->payer_data);
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function minimum_donation_raised()
+	{
+		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : true;
 	}
 
 	/**

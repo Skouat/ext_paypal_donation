@@ -37,6 +37,7 @@ class admin_transactions_controller extends admin_main
 	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
+	protected $table_prefix;
 	protected $table_ppde_transactions;
 	private $is_ipn_test = false;
 	private $suffix_ipn;
@@ -57,11 +58,12 @@ class admin_transactions_controller extends admin_main
 	 * @param string                              $adm_relative_path          phpBB admin relative path
 	 * @param string                              $phpbb_root_path            phpBB root path
 	 * @param string                              $php_ext                    phpEx
+	 * @param string                              $table_prefix               The table prefix
 	 * @param string                              $table_ppde_transactions    Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_ppde_transactions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->db = $db;
@@ -77,6 +79,7 @@ class admin_transactions_controller extends admin_main
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->table_prefix = $table_prefix;
 		$this->table_ppde_transactions = $table_ppde_transactions;
 		parent::__construct(
 			'transactions',
@@ -208,27 +211,46 @@ class admin_transactions_controller extends admin_main
 
 
 	/**
-	 * @param bool $ipn_stats
+	 * @param bool $ipn_test
+	 *
+	 * @return void
 	 */
-	public function update_stats($ipn_stats = false)
+	public function update_stats($ipn_test = false)
 	{
-		$this->set_ipn_test_properties($ipn_stats);
+		$this->set_ipn_test_properties($ipn_test);
 		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_anonymous_donors_count' . $this->suffix_ipn));
 		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_known_donors_count' . $this->suffix_ipn), true);
 		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_transactions_count' . $this->suffix_ipn), true);
 	}
 
 	/**
+	 * @param int   $user_id
+	 * @param float $amount
+	 */
+	public function update_user_stats($user_id, $amount)
+	{
+		if (!$user_id)
+		{
+			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
+		}
+
+		$sql = 'UPDATE ' . $this->table_prefix . 'users
+			SET user_ppde_donated_amount = ' . (float) $amount . '
+			WHERE user_id = ' . (int) $user_id;
+		$this->db->sql_query($sql);
+	}
+
+	/**
 	 * Sets properties related to ipn tests
 	 *
-	 * @param bool $ipn_stats
+	 * @param bool $ipn_test
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_stats)
+	public function set_ipn_test_properties($ipn_test)
 	{
-		$this->set_ipn_test($ipn_stats);
+		$this->set_ipn_test($ipn_test);
 		$this->set_suffix_ipn();
 	}
 
@@ -437,7 +459,7 @@ class admin_transactions_controller extends admin_main
 	/**
 	 * @return boolean
 	 */
-	public function get_is_ipn_test()
+	public function get_ipn_test()
 	{
 		return ($this->is_ipn_test) ? $this->is_ipn_test : false;
 	}

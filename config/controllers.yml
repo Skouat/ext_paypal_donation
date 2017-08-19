@@ -145,4 +145,5 @@ services:
             - '%core.adm_relative_path%'
             - '%core.root_path%'
             - '%core.php_ext%'
+            - '%core.table_prefix%'
             - '%skouat.ppde.tables.ppde_transactions%'
