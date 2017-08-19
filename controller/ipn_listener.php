@@ -735,12 +735,12 @@ class ipn_listener
 	{
 		$anonymous_user = false;
 
-		// if the user_id is not anonymous, get the user information (user id, username)
+		// if the user_id is not anonymous
 		if ($this->transaction_data['user_id'] != ANONYMOUS)
 		{
-			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
 
-			if (empty($this->payer_data))
+			if (!$this->donor_is_member)
 			{
 				// no results, therefore the user is anonymous...
 				$anonymous_user = true;
@@ -756,16 +756,30 @@ class ipn_listener
 		{
 			// if the user is anonymous, check their PayPal email address with all known email hashes
 			// to determine if the user exists in the database with that email
-			$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('email', $this->transaction_data['payer_email']);
+			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
+		}
+	}
 
-			if (empty($this->payer_data))
-			{
-				// no results, therefore the user is really a guest
-				$this->donor_is_member = false;
-			}
+	/**
+	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 *
+	 * @param string     $type Allowed value : 'user' or 'email'
+	 * @param string|int $args If $type is set to 'user', $args must be a user id.
+	 *                         If $type is set to 'email', $args must be an email address
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_donors_status($type, $args)
+	{
+		$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data($type, $args);
+
+		if (empty($this->payer_data))
+		{
+			return false;
 		}
 
-		$this->donor_is_member = true;
+		return true;
 	}
 
 	/**
