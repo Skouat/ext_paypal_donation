@@ -774,12 +774,7 @@ class ipn_listener
 	{
 		$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data($type, $args);
 
-		if (empty($this->payer_data))
-		{
-			return false;
-		}
-
-		return true;
+		return !empty($this->payer_data);
 	}
 
 	/**
