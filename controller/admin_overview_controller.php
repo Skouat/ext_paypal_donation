@@ -29,8 +29,7 @@ class admin_overview_controller extends admin_main
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $php_ext;
-
-	protected $ext_name;
+	/** @var array */
 	protected $ext_meta = array();
 
 	/**
