@@ -598,6 +598,10 @@ class ipn_listener
 			// Do additional actions if the transaction is not a test.
 			if (!$this->ppde_controller_transactions_admin->get_ipn_test())
 			{
+				// Set donor_is_member property
+				$this->donor_is_member();
+
+				// Do actions
 				$this->update_donor_stats();
 				$this->donors_group_user_add();
 				$this->notify_donation_received();
@@ -632,7 +636,7 @@ class ipn_listener
 	{
 		if ($this->donor_is_member)
 		{
-			$this->ppde_controller_transactions_admin->update_stats();
+			$this->ppde_controller_transactions_admin->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
 		}
 	}
 
@@ -693,7 +697,7 @@ class ipn_listener
 	{
 		return
 			$this->autogroup_is_enabled() &&
-			$this->donor_is_member() &&
+			$this->donor_is_member &&
 			$this->payment_status_is_completed() &&
 			$this->minimum_donation_raised();
 	}
@@ -721,7 +725,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Checks if the donor is a member
+	 * Checks if the donor is a member then gets payer_data values
 	 *
 	 * @return void
 	 * @access private

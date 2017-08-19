@@ -224,7 +224,7 @@ class transactions
 	}
 
 	/**
-	 * Returns user information based on the ID of the donor or they email
+	 * Returns user information based on the donor ID or email
 	 *
 	 * @param string $type
 	 * @param int    $arg
