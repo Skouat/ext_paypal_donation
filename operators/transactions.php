@@ -355,15 +355,15 @@ class transactions
 	}
 
 	/**
-	 * Build SQL query for updating stats
+	 * Returns the count result for updating stats
 	 *
 	 * @param string $type
 	 * @param bool   $test_ipn
 	 *
-	 * @return string
+	 * @return int
 	 * @access public
 	 */
-	public function sql_build_update_stats($type, $test_ipn)
+	public function sql_query_count_result($type, $test_ipn)
 	{
 		switch ($type)
 		{
@@ -392,7 +392,28 @@ class transactions
 				$sql_ary = $this->sql_select_stats_main('txn_id');
 		}
 
-		return $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
+		$count = (int) $this->db->sql_fetchfield('count_result');
+		$this->db->sql_freeresult($result);
+
+		return $count;
+	}
+
+	/**
+	 * Updates the user donated amount
+	 *
+	 * @param $user_id
+	 * @param $value
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function sql_update_user_sats($user_id, $value)
+	{
+		$sql = 'UPDATE ' . USERS_TABLE . '
+			SET user_ppde_donated_amount = ' . (float) $value . '
+			WHERE user_id = ' . (int) $user_id;
+		$this->db->sql_query($sql);
 	}
 
 	/**

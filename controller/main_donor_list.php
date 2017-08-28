@@ -82,7 +82,7 @@ class main_donor_list extends main_controller
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
-		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(false, $order_by);
+		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(0, $order_by);
 		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
 		$start = $pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
 

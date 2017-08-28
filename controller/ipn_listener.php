@@ -592,7 +592,7 @@ class ipn_listener
 			unset($transaction_data);
 
 			// Do actions whether the transaction is real or a test.
-			$this->ppde_controller_transactions_admin->update_stats((bool) $this->transaction_data['test_ipn']);
+			$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
 
 			// Do additional actions if the transaction is not a test.

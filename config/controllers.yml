@@ -133,7 +133,6 @@ services:
         class: skouat\ppde\controller\admin_transactions_controller
         arguments:
             - '@auth'
-            - '@dbal.conn'
             - '@config'
             - '@service_container'
             - '@language'

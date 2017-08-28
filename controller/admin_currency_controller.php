@@ -13,7 +13,7 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \phpbb\config\config     config             Service container interface
+ * @property \phpbb\config\config     config             Config object
  * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions

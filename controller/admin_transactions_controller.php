@@ -13,7 +13,8 @@ namespace skouat\ppde\controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property ContainerInterface       container          The phpBB log system
+ * @property \phpbb\config\config     config             Config object
+ * @property ContainerInterface       container          Service container interface
  * @property string                   id_prefix_name     Prefix name for identifier in the URL
  * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property \phpbb\language\language language           Language user object
@@ -30,8 +31,6 @@ class admin_transactions_controller extends admin_main
 	public $ppde_operator;
 	protected $adm_relative_path;
 	protected $auth;
-	protected $db;
-	protected $config;
 	protected $entry_count;
 	protected $last_page_offset;
 	protected $php_ext;
@@ -46,7 +45,6 @@ class admin_transactions_controller extends admin_main
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth                    $auth                       Authentication object
-	 * @param \phpbb\db\driver\driver_interface   $db                         Database object
 	 * @param \phpbb\config\config                $config                     Config object
 	 * @param ContainerInterface                  $container                  Service container interface
 	 * @param \phpbb\language\language            $language                   Language user object
@@ -63,10 +61,9 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\transactions $ppde_operator_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
-		$this->db = $db;
 		$this->config = $config;
 		$this->container = $container;
 		$this->language = $language;
@@ -129,8 +126,8 @@ class admin_transactions_controller extends admin_main
 				if ($where_sql || $deleteall)
 				{
 					$entity->delete(0, '', $where_sql);
-					$this->update_stats();
-					$this->update_stats(true);
+					$this->update_overview_stats();
+					$this->update_overview_stats(true);
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 				}
 			}
@@ -211,16 +208,19 @@ class admin_transactions_controller extends admin_main
 
 
 	/**
+	 * Updates the Overview module statistics
+	 *
 	 * @param bool $ipn_test
 	 *
 	 * @return void
+	 * @access public
 	 */
-	public function update_stats($ipn_test = false)
+	public function update_overview_stats($ipn_test = false)
 	{
 		$this->set_ipn_test_properties($ipn_test);
-		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_anonymous_donors_count' . $this->suffix_ipn));
-		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_known_donors_count' . $this->suffix_ipn), true);
-		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->sql_query_update_stats('ppde_transactions_count' . $this->suffix_ipn), true);
+		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_anonymous_donors_count' . $this->suffix_ipn));
+		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_known_donors_count' . $this->suffix_ipn), true);
+		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->get_count_result('ppde_transactions_count' . $this->suffix_ipn), true);
 	}
 
 	/**
@@ -234,10 +234,7 @@ class admin_transactions_controller extends admin_main
 			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
 		}
 
-		$sql = 'UPDATE ' . $this->table_prefix . 'users
-			SET user_ppde_donated_amount = ' . (float) $amount . '
-			WHERE user_id = ' . (int) $user_id;
-		$this->db->sql_query($sql);
+		$this->ppde_operator->sql_update_user_sats($user_id, $amount);
 	}
 
 	/**
@@ -286,18 +283,14 @@ class admin_transactions_controller extends admin_main
 	 * @return int
 	 * @access private
 	 */
-	private function sql_query_update_stats($config_name)
+	private function get_count_result($config_name)
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
 			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
-		$result = $this->db->sql_query($this->ppde_operator->sql_build_update_stats($config_name, $this->is_ipn_test));
-		$field = (int) $this->db->sql_fetchfield('count_result');
-		$this->db->sql_freeresult($result);
-
-		return $field;
+		return $this->ppde_operator->sql_query_count_result($config_name, $this->is_ipn_test);
 	}
 
 	/**

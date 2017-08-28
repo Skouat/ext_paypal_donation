@@ -211,11 +211,11 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':
-				$this->ppde_controller_transactions->update_stats(true);
+				$this->ppde_controller_transactions->update_overview_stats(true);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
 			break;
 			case 'stats':
-				$this->ppde_controller_transactions->update_stats();
+				$this->ppde_controller_transactions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
 			break;
 		}
