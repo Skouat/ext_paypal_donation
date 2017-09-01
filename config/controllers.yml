@@ -108,6 +108,14 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
 
+    skouat.ppde.controller.admin.donors:
+        class: skouat\ppde\controller\admin_donors_controller
+        arguments:
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.controller'
+            - '@skouat.ppde.operator.transactions'
+            - '@template'
+
     skouat.ppde.controller.admin.overview:
         class: skouat\ppde\controller\admin\overview_controller
         arguments:

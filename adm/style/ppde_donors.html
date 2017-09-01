@@ -1,0 +1,31 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{{ lang('PPDE_DD_CONFIG') }}</h1>
+<p>{{ lang('PPDE_DD_CONFIG_EXPLAIN') }}</p>
+
+<form id="ppde_donors" method="post" action="{U_ACTION}">
+	<table class="table1 zebra-table fixed-width-table">
+		<thead>
+		<tr>
+			<th>{{ lang('PPDE_DD_TH_USERNAME') }}</th>
+			<th>{{ lang('PPDE_DD_TH_SUM') }}</th>
+			<th>{{ lang('PPDE_DD_TH_LAST_DONATION') }}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN donorrow -->
+		<tr>
+			<td>{donorrow.PPDE_DD_USERNAME}</td>
+			<td>{donorrow.PPDE_DD_DONATED_AMOUNT}</td>
+			<td>{donorrow.PPDE_DD_LAST_DONATION}</td>
+		</tr>
+		<!-- BEGINELSE -->
+		<tr class="bg1">
+			<td colspan="5">{{ lang('PPDE_NO_DONORS') }}</td>
+		</tr>
+		<!-- END donorrow -->
+		</tbody>
+	</table>
+</form>
+
+<!-- INCLUDE overall_footer.html -->

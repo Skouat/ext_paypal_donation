@@ -38,12 +38,13 @@ if (empty($lang) || !is_array($lang))
  * mode: main
  */
 $lang = array_merge($lang, array(
+	'PPDE_ACP_CURRENCY'        => 'Currency Management',
 	'PPDE_ACP_DONATION'        => 'PayPal Donation',
+	'PPDE_ACP_DONATION_PAGES'  => 'Donation Pages',
+	'PPDE_ACP_DONORS'          => 'Donors Management',
 	'PPDE_ACP_OVERVIEW'        => 'Overview',
 	'PPDE_ACP_PAYPAL_FEATURES' => 'PayPal IPN Features',
 	'PPDE_ACP_SETTINGS'        => 'General Settings',
-	'PPDE_ACP_DONATION_PAGES'  => 'Donation Pages',
-	'PPDE_ACP_CURRENCY'        => 'Currency Management',
 	'PPDE_ACP_TRANSACTIONS'    => 'Transactions Log',
 ));
 

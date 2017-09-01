@@ -25,6 +25,19 @@ class v320_m3_update_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_tls_detected', false)),
 			array('config.remove', array('ppde_fsock_detected')),
 			array('config.update', array('ppde_first_start', true)),
+
+			// Donors module
+			array('module.add', array(
+				'acp',
+				'PPDE_ACP_DONATION',
+				array(
+					'module_basename' => '\skouat\ppde\acp\ppde_module',
+					'module_langname' => 'PPDE_ACP_DONORS',
+					'module_mode'     => 'donors',
+					'module_auth'     => 'ext_skouat/ppde && acl_a_ppde_manage',
+					'after'           => 'PPDE_ACP_CURRENCY',
+				),
+			)),
 		);
 	}
 }

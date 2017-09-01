@@ -81,7 +81,7 @@ class transactions
 	{
 		// Build main sql request
 		$donorlist_sql_ary = array(
-			'SELECT'    => 'txn.*, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, u.username, u.user_colour',
+			'SELECT'    => 'txn.*, MAX(txn.transaction_id) AS max_txn_id, u.user_ppde_donated_amount AS amount, u.username, u.user_colour',
 			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
 			'LEFT_JOIN' => array(
 				array(
