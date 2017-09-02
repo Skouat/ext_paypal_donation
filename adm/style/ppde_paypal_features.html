@@ -21,6 +21,28 @@
 			<dd><label><input type="radio" class="radio" id="ppde_ipn_enable" name="ppde_ipn_enable" value="1"{% if S_PPDE_IPN_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="ppde_ipn_enable" value="0"{% if not S_PPDE_IPN_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
+		<dl>
+			<dt><label for="ppde_ipn_logging">{{ lang('PPDE_IPN_LOGGING') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_IPN_LOGGING_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_ipn_logging" name="ppde_ipn_logging" value="1"{% if S_PPDE_IPN_LOGGING %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_ipn_logging" value="0"{% if not S_PPDE_IPN_LOGGING %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+		</dl>
+		<fieldset class="ppde_toggle"{% if not S_PPDE_IPN_ENABLE %} style="display: none;"{% endif %}>
+			<legend>{{ lang('PPDE_LEGEND_SANDBOX_SETTINGS') }}</legend>
+			<dl>
+				<dt><label for="ppde_sandbox_enable">{{ lang('PPDE_SANDBOX_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ENABLE_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_sandbox_enable" name="ppde_sandbox_enable" value="1"{% if S_PPDE_SANDBOX_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ppde_sandbox_enable" value="0"{% if not S_PPDE_SANDBOX_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_founder_enable">{{ lang('PPDE_SANDBOX_FOUNDER_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN') }}</span></dt>
+				<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"{% if S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
+					<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"{% if not S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_address">{{ lang('PPDE_SANDBOX_ADDRESS') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ADDRESS_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="255" value="{{ PPDE_SANDBOX_ADDRESS }}"></dd>
+			</dl>
+		</fieldset>
 		<fieldset class="ppde_toggle"{% if not S_PPDE_IPN_ENABLE %} style="display: none;"{% endif %}>
 			<legend>{{ lang('PPDE_LEGEND_IPN_AUTOGROUP') }}</legend>
 			<dl>
@@ -58,28 +80,6 @@
 					<label><input type="radio" class="radio" name="ppde_ipn_notification_enable" value="0"{% if not S_PPDE_IPN_NOTIFICATION_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>
 		</fieldset>
-		<fieldset class="ppde_toggle"{% if not S_PPDE_IPN_ENABLE %} style="display: none;"{% endif %}>
-			<legend>{{ lang('PPDE_LEGEND_SANDBOX_SETTINGS') }}</legend>
-			<dl>
-				<dt><label for="ppde_sandbox_enable">{{ lang('PPDE_SANDBOX_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ENABLE_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ppde_sandbox_enable" name="ppde_sandbox_enable" value="1"{% if S_PPDE_SANDBOX_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ppde_sandbox_enable" value="0"{% if not S_PPDE_SANDBOX_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label for="ppde_sandbox_founder_enable">{{ lang('PPDE_SANDBOX_FOUNDER_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN') }}</span></dt>
-				<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"{% if S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
-					<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"{% if not S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label for="ppde_sandbox_address">{{ lang('PPDE_SANDBOX_ADDRESS') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ADDRESS_EXPLAIN') }}</span></dt>
-				<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="255" value="{{ PPDE_SANDBOX_ADDRESS }}"></dd>
-			</dl>
-		</fieldset>
-		<dl>
-			<dt><label for="ppde_ipn_logging">{{ lang('PPDE_IPN_LOGGING') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_IPN_LOGGING_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_ipn_logging" name="ppde_ipn_logging" value="1"{% if S_PPDE_IPN_LOGGING %} checked{% endif %}> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_ipn_logging" value="0"{% if not S_PPDE_IPN_LOGGING %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-		</dl>
 	</fieldset>
 
 	<fieldset class="submit-buttons">
