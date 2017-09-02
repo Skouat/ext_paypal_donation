@@ -661,7 +661,7 @@ class transactions extends main
 	/**
 	 * Set member user_id
 	 *
-	 * @param integer $user_id
+	 * @param int $user_id
 	 *
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
@@ -798,7 +798,7 @@ class transactions extends main
 	/**
 	 * Set PayPal payment date
 	 *
-	 * @param integer $payment_date
+	 * @param int $payment_date
 	 *
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public

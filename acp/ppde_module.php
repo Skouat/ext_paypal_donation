@@ -157,7 +157,7 @@ class ppde_module
 	/**
 	 * Performs action requested by the module
 	 *
-	 * @param integer                            $id
+	 * @param int                                $id
 	 * @param string                             $mode
 	 * @param string                             $action
 	 * @param \skouat\ppde\controller\admin_main $controller

@@ -154,9 +154,9 @@ class transactions
 	/**
 	 * Returns the SQL Query for displaying simple transactions details
 	 *
-	 * @param string  $keywords
-	 * @param string  $sort_by
-	 * @param integer $log_time
+	 * @param string $keywords
+	 * @param string $sort_by
+	 * @param int    $log_time
 	 *
 	 * @return array
 	 * @access public
@@ -402,8 +402,8 @@ class transactions
 	/**
 	 * Updates the user donated amount
 	 *
-	 * @param $user_id
-	 * @param $value
+	 * @param int    $user_id
+	 * @param string $value
 	 *
 	 * @return void
 	 * @access public

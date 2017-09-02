@@ -299,10 +299,10 @@ abstract class main
 	/**
 	 * Delete data from the database
 	 *
-	 * @param integer $id
-	 * @param string  $action_before_delete
+	 * @param int    $id
+	 * @param string $action_before_delete
 	 *
-	 * @param string  $sql_where
+	 * @param string $sql_where
 	 *
 	 * @return bool
 	 * @access public
@@ -328,7 +328,7 @@ abstract class main
 	/**
 	 * Returns if we can proceed to item deletion
 	 *
-	 * @param integer $id
+	 * @param int $id
 	 *
 	 * @return bool
 	 */
@@ -367,9 +367,9 @@ abstract class main
 	/**
 	 * Use query limit if requested
 	 *
-	 * @param string  $sql
-	 * @param integer $limit
-	 * @param integer $offset
+	 * @param string $sql
+	 * @param int    $limit
+	 * @param int    $offset
 	 *
 	 * @return mixed
 	 * @access private

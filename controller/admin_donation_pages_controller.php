@@ -114,8 +114,8 @@ class admin_donation_pages_controller extends admin_main
 	 * Assign language template vars to a block vars
 	 * $s_select is for build options select menu
 	 *
-	 * @param array   $lang
-	 * @param integer $current
+	 * @param array $lang
+	 * @param int   $current
 	 *
 	 * @return void
 	 * @access private
@@ -171,7 +171,7 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * Set template var options for language select menus
 	 *
-	 * @param integer $current ID of the language assigned to the donation page
+	 * @param int $current ID of the language assigned to the donation page
 	 *
 	 * @return void
 	 * @access protected
