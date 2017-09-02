@@ -111,9 +111,12 @@ services:
     skouat.ppde.controller.admin.donors:
         class: skouat\ppde\controller\admin_donors_controller
         arguments:
+            - '@config'
+            - '@service_container'
             - '@skouat.ppde.entity.transactions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.operator.transactions'
+            - '@request'
             - '@template'
 
     skouat.ppde.controller.admin.overview:

@@ -387,4 +387,17 @@ abstract class admin_main
 	{
 		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
+
+	/**
+	 * Set the internal pointer of an array to its last element
+	 *
+	 * @param $array
+	 *
+	 * @return array|false
+	 * @access protected
+	 */
+	protected function get_last_element($array)
+	{
+		return end($array);
+	}
 }

@@ -1,9 +1,17 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
 <h1>{{ lang('PPDE_DD_CONFIG') }}</h1>
 <p>{{ lang('PPDE_DD_CONFIG_EXPLAIN') }}</p>
 
-<form id="ppde_donors" method="post" action="{U_ACTION}">
+<form id="ppde_donors" method="post" action="{{ U_ACTION }}">
+	{% if loops.donorrow|length %}
+
+	{% if loops.pagination|length %}
+	<div class="pagination top-pagination">
+		{% INCLUDE 'pagination.html' %}
+	</div>
+	{% endif %}
+
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 		<tr>
@@ -13,19 +21,27 @@
 		</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN donorrow -->
+		{% for donorrow in loops.donorrow %}
 		<tr>
-			<td>{donorrow.PPDE_DD_USERNAME}</td>
-			<td>{donorrow.PPDE_DD_DONATED_AMOUNT}</td>
-			<td>{donorrow.PPDE_DD_LAST_DONATION}</td>
+			<td>{{ donorrow.PPDE_DD_USERNAME }}</td>
+			<td>{{ donorrow.PPDE_DD_DONATED_AMOUNT }}</td>
+			<td>{{ donorrow.PPDE_DD_LAST_DONATION }}</td>
 		</tr>
-		<!-- BEGINELSE -->
-		<tr class="bg1">
-			<td colspan="5">{{ lang('PPDE_NO_DONORS') }}</td>
-		</tr>
-		<!-- END donorrow -->
+		{% endfor %}
 		</tbody>
 	</table>
+
+	{% if loops.pagination|length %}
+	<div class="pagination">
+		{% INCLUDE 'pagination.html' %}
+	</div>
+	{% endif %}
+
+	{% else %}
+	<div class="errorbox">
+		<p>{{ lang('PPDE_NO_DONORS') }}</p>
+	</div>
+	{% endif %}
 </form>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}
