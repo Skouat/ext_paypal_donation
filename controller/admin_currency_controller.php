@@ -65,7 +65,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_currency()
+	public function display()
 	{
 		// Check if currency_order is valid and fix it if necessary
 		$this->ppde_operator->fix_currency_order();
@@ -105,7 +105,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function add_currency()
+	public function add()
 	{
 		// Add form key
 		add_form_key('add_edit_currency');
@@ -219,7 +219,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access   public
 	 */
-	public function edit_currency($currency_id)
+	public function edit($currency_id)
 	{
 		// Add form key
 		add_form_key('add_edit_currency');
@@ -260,7 +260,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access   public
 	 */
-	public function move_currency($currency_id, $direction)
+	public function move($currency_id, $direction)
 	{
 		// Before moving the currency, with check the link hash.
 		// If the hash, is invalid we return an error.
@@ -310,7 +310,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function enable_currency($currency_id, $action)
+	public function enable($currency_id, $action)
 	{
 		// Return an error if no currency
 		if (!$currency_id)
@@ -358,7 +358,7 @@ class admin_currency_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function delete_currency($currency_id)
+	public function delete($currency_id)
 	{
 		// Initiate an entity and load data
 		/** @type \skouat\ppde\entity\currency $entity */

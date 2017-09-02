@@ -71,7 +71,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_donation_pages()
+	public function display()
 	{
 		// Get list of available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -135,7 +135,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function add_donation_page()
+	public function add()
 	{
 		// Add form key
 		add_form_key('add_edit_donation_pages');
@@ -429,7 +429,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function edit_donation_page($page_id)
+	public function edit($page_id)
 	{
 		// Add form key
 		add_form_key('add_edit_donation_pages');
@@ -472,7 +472,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function delete_donation_page($page_id)
+	public function delete($page_id)
 	{
 		// Initiate an entity and load data
 		/** @type \skouat\ppde\entity\donation_pages $entity */
