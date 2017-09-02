@@ -120,6 +120,30 @@ abstract class admin_main
 		$this->u_action = $u_action;
 	}
 
+	public function display()
+	{
+	}
+
+	public function add()
+	{
+	}
+
+	public function edit($id)
+	{
+	}
+
+	public function delete($id)
+	{
+	}
+
+	public function enable($id, $action)
+	{
+	}
+
+	public function move($id, $action)
+	{
+	}
+
 	/**
 	 * @param array $errors
 	 *

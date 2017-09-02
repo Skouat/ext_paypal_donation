@@ -85,6 +85,7 @@ class ppde_module
 				case 'paypal_features':
 				case 'settings':
 					// Load the display handle in the admin controller
+					/** @type \skouat\ppde\controller\admin_settings_controller|\skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
 					$admin_controller->display_settings();
 				break;
 				case 'overview':
