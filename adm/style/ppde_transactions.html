@@ -107,13 +107,14 @@
 		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{{ S_KEYWORDS }}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
 	</fieldset>
 
+	{% if loops.log|length %}
+
 	{% if loops.pagination|length %}
 	<div class="pagination top-pagination">
 		{% INCLUDE 'pagination.html' %}
 	</div>
 	{% endif %}
 
-	{% if loops.log|length %}
 	<table class="table1 zebra-table fixed-width-table">
 		<thead>
 		<tr>

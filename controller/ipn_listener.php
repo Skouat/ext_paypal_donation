@@ -482,7 +482,7 @@ class ipn_listener
 	 */
 	private function validate_user_id()
 	{
-		if (empty($this->transaction_data['user_id']))
+		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
 		{
 			$this->transaction_data['user_id'] = ANONYMOUS;
 		}
