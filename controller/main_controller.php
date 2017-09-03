@@ -209,9 +209,9 @@ class main_controller
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary));
 			$this->template->assign_block_vars('donorrow', array(
 				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
-				'PPDE_LAST_DONATED_AMOUNT'  => $this->currency_on_left(number_format($last_donation_data[0]['mc_gross'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->currency_on_left($last_donation_data[0]['mc_gross'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->currency_on_left(number_format($data['amount'], 2), $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->currency_on_left($data['amount'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 			));
 		}
 
@@ -633,7 +633,7 @@ class main_controller
 	 */
 	public function currency_on_left($value, $currency, $on_left = true)
 	{
-		return $on_left ? $currency . round($value, 2) : round($value, 2) . $currency;
+		return $on_left ? $currency . number_format(round($value, 2), 2) : number_format(round($value, 2), 2) . $currency;
 	}
 
 	/**
