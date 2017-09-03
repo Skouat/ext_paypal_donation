@@ -529,14 +529,17 @@ class ipn_listener
 	/**
 	 * Returns the net amount of a PayPal Transaction
 	 *
-	 * @param float $amount
-	 * @param float $fee
+	 * @param float  $amount
+	 * @param float  $fee
+	 * @param string $dec_point
+	 * @param string $thousands_sep
 	 *
 	 * @return string
+	 * @access private
 	 */
-	private function net_amount($amount, $fee)
+	private function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = '')
 	{
-		return number_format((float) $amount - (float) $fee, 2);
+		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
 	}
 
 	/**
@@ -806,11 +809,11 @@ class ipn_listener
 		$this->currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
 
 		$notification_data = array(
-			'net_amount'     => $this->ppde_controller_main->currency_on_left(number_format($entity->get_net_amount(), 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
-			'mc_gross'       => $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['mc_gross'], 2), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'net_amount'     => $this->ppde_controller_main->currency_on_left($entity->get_net_amount(), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
+			'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->transaction_data['mc_gross'], $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
 			'payer_email'    => $this->transaction_data['payer_email'],
 			'payer_username' => $entity->get_username(),
-			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left(number_format($this->transaction_data['settle_amount'], 2), $this->currency_settle_data[0]['currency_symbol'], (bool) $this->currency_settle_data[0]['currency_on_left']) : '',
+			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left($this->transaction_data['settle_amount'], $this->currency_settle_data[0]['currency_symbol'], (bool) $this->currency_settle_data[0]['currency_on_left']) : '',
 			'transaction_id' => $entity->get_id(),
 			'txn_id'         => $this->transaction_data['txn_id'],
 			'user_from'      => $entity->get_user_id(),

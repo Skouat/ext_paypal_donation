@@ -207,13 +207,15 @@ class main_controller
 	 * @param int|float $value
 	 * @param string    $currency
 	 * @param bool      $on_left
+	 * @param string    $dec_point
+	 * @param string    $thousands_sep
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function currency_on_left($value, $currency, $on_left = true)
+	public function currency_on_left($value, $currency, $on_left = true, $dec_point = '.', $thousands_sep = '')
 	{
-		return $on_left ? $currency . round($value, 2) : round($value, 2) . $currency;
+		return $on_left ? $currency . number_format(round($value, 2), 2, $dec_point, $thousands_sep) : number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency;
 	}
 
 	/**
