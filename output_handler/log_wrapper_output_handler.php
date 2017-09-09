@@ -12,6 +12,7 @@ namespace skouat\ppde\output_handler;
 
 class log_wrapper_output_handler
 {
+	protected $filesystem;
 	/**
 	 * Log file handle
 	 *
@@ -28,10 +29,12 @@ class log_wrapper_output_handler
 	/**
 	 * Constructor
 	 *
-	 * @param string $log_file File to log to
+	 * @param \phpbb\filesystem\filesystem_interface $filesystem phpBB's filesystem service
+	 * @param string                                 $log_file   File to log to
 	 */
-	public function __construct($log_file)
+	public function __construct(\phpbb\filesystem\filesystem_interface $filesystem, $log_file)
 	{
+		$this->filesystem = $filesystem;
 		$this->file_open($log_file);
 	}
 
@@ -45,7 +48,7 @@ class log_wrapper_output_handler
 		//check if the extension directory exists in the store/ folder
 		$this->ext_folder_exists(dirname($file));
 
-		if (phpbb_is_writable(dirname($file)) && $this->log_path_result)
+		if ($this->filesystem->is_writable(dirname($file)) && $this->log_path_result)
 		{
 			$this->file_handle = fopen($file, 'w');
 		}
@@ -61,7 +64,7 @@ class log_wrapper_output_handler
 		if (!file_exists($dir))
 		{
 			$mkdir_result = @mkdir($dir, 0777, true);
-			$chmod_result = phpbb_chmod($dir, CHMOD_READ | CHMOD_WRITE);
+			$chmod_result = $this->filesystem->phpbb_chmod($dir, CHMOD_READ | CHMOD_WRITE);
 			$this->log_path_result = ($mkdir_result && $chmod_result) ? true : false;
 		}
 		else

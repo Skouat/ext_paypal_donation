@@ -16,6 +16,7 @@ namespace skouat\ppde\controller;
 class ipn_log
 {
 	protected $config;
+	protected $filesystem;
 	protected $path_helper;
 	protected $ppde_controller_main;
 
@@ -48,14 +49,16 @@ class ipn_log
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config                    $config               Config object
+	 * @param \phpbb\filesystem\filesystem_interface  $filesystem           phpBB's filesystem service
 	 * @param \phpbb\path_helper                      $path_helper          Path helper object
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main)
+	public function __construct(\phpbb\config\config $config, \phpbb\filesystem\filesystem_interface $filesystem, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main)
 	{
 		$this->config = $config;
+		$this->filesystem = $filesystem;
 		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
 
@@ -141,7 +144,7 @@ class ipn_log
 
 		if ($log_in_file)
 		{
-			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->log_path_filename));
+			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->filesystem, $this->log_path_filename));
 
 			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace));
 		}

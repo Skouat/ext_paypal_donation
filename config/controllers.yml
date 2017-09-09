@@ -19,6 +19,7 @@ services:
         class: skouat\ppde\controller\ipn_log
         arguments:
             - '@config'
+            - '@filesystem'
             - '@path_helper'
             - '@skouat.ppde.controller'
 
