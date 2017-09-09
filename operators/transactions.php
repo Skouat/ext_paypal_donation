@@ -68,7 +68,7 @@ class transactions
 	}
 
 	/**
-	 * Returns the SQL Query for generation the donors list
+	 * SQL Query to return the donors list
 	 *
 	 * @param int    $max_txn_id Identifier of the transaction logged in the DB
 	 * @param string $order_by
@@ -111,7 +111,7 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to return donors list details
+	 * Build SQL Query to return the donors list
 	 *
 	 * @param array $sql_donorlist_ary
 	 *
@@ -408,7 +408,7 @@ class transactions
 	 * @return void
 	 * @access public
 	 */
-	public function sql_update_user_sats($user_id, $value)
+	public function sql_update_user_stats($user_id, $value)
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET user_ppde_donated_amount = ' . (float) $value . '

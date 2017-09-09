@@ -234,7 +234,7 @@ class admin_transactions_controller extends admin_main
 			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
 		}
 
-		$this->ppde_operator->sql_update_user_sats($user_id, $amount);
+		$this->ppde_operator->sql_update_user_stats($user_id, $amount);
 	}
 
 	/**
