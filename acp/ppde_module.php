@@ -16,6 +16,7 @@ class ppde_module
 	private static $available_mode = array(
 		array('module_name' => 'currency', 'lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'),
 		array('module_name' => 'donation_pages', 'lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'),
+		array('module_name' => 'donors'),
 		array('module_name' => 'overview'),
 		array('module_name' => 'paypal_features'),
 		array('module_name' => 'settings'),
@@ -156,6 +157,11 @@ class ppde_module
 				$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
 
 				$this->do_action($id, $mode, $action, $admin_controller);
+			break;
+			case 'donors':
+				// Load the display transactions log handle in the admin controller
+				/** @type \skouat\ppde\controller\admin_donors_controller $admin_controller */
+				$admin_controller->display_donors();
 			break;
 			case 'paypal_features':
 			case 'settings':
