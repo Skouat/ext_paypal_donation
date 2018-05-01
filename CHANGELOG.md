@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 - 2017-08-19
+## 2.0.0 - 2018-05-02
 - Add: Minimum amount before auto group donors (#40]
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Improve transaction debug
@@ -15,6 +15,7 @@
 - Fix: Fails to get extension metadata after upgrading to phpBB 3.2.1 (#47)
 - Fix: Some SQL result wasn't freed
 - Fix: English wording (thanks kasimi)
+- Fix: Unable to use "delete all" in Transactions Log module
 - Remove: Extension version check removed from the Overview module
 - Code improvement
 

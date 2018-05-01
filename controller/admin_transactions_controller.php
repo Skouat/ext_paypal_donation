@@ -125,7 +125,7 @@ class admin_transactions_controller extends admin_main
 
 				if ($where_sql || $deleteall)
 				{
-					$entity->delete(0, '', $where_sql);
+					$entity->delete(0, '', $where_sql, $deleteall);
 					$this->update_overview_stats();
 					$this->update_overview_stats(true);
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());

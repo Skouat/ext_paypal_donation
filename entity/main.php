@@ -300,24 +300,30 @@ abstract class main
 	 * Delete data from the database
 	 *
 	 * @param int    $id
-	 * @param string $action_before_delete
-	 *
+	 * @param string $action_before_delete Function to start before deleting data.
 	 * @param string $sql_where
+	 * @param bool   $all                  Set to true if you want delete all data from the table.
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function delete($id, $action_before_delete = '', $sql_where = '')
+	public function delete($id, $action_before_delete = '', $sql_where = '', $all = false)
 	{
-		if ($this->disallow_deletion($id) && empty($sql_where))
+		$where_clause = '';
+
+		if (!$all)
 		{
-			// The item selected does not exists
-			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+			if ($this->disallow_deletion($id) && empty($sql_where))
+			{
+				// The item selected does not exists
+				$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
+			}
+
+			$where_clause = !empty($sql_where) ? $sql_where : ' WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $id;
 		}
 
 		$this->run_function_before_action($action_before_delete);
 
-		$where_clause = !empty($sql_where) ? $sql_where : ' WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $id;
 		// Delete data from the database
 		$sql = 'DELETE FROM ' . $this->table_name . $where_clause;
 		$this->db->sql_query($sql);
