@@ -108,10 +108,15 @@ class ipn_remote
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
+		curl_setopt($ch, CURLOPT_SSLVERSION, 6);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'User-Agent: PHP-IPN-Verification-Script',
+			'Connection: Close',
+		));
 
 		if ($this->ppde_ipn_log->is_use_log_error())
 		{
@@ -128,7 +133,8 @@ class ipn_remote
 		}
 		else
 		{
-			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+			$info = curl_getinfo($ch);
+			$this->response_status = $info['http_code'];
 			curl_close($ch);
 		}
 
@@ -212,7 +218,7 @@ class ipn_remote
 	 */
 	public function check_response_status()
 	{
-		return strpos($this->response_status, '200') === false;
+		return $this->response_status != 200;
 	}
 
 	/**
