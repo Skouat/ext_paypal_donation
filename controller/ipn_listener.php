@@ -98,7 +98,7 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
-	 * @param \skouat\ppde\controller\ipn_remote                    $ppde_ipn_remote                    IPN remote (cURL, fsockopen)
+	 * @param \skouat\ppde\controller\ipn_remote                    $ppde_ipn_remote                    IPN remote (cURL)
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $php_ext                            phpEx
@@ -415,25 +415,25 @@ class ipn_listener
 	}
 
 	/**
-	 * Check if transaction is VERIFIED for both method: cURL or fsockopen()
+	 * Check if transaction is VERIFIED
 	 *
 	 * @return bool
 	 * @access private
 	 */
 	private function txn_is_verified()
 	{
-		return $this->ppde_ipn_remote->is_curl_strcmp('VERIFIED') || $this->ppde_ipn_remote->is_fsock_strpos('VERIFIED');
+		return $this->ppde_ipn_remote->is_curl_strcmp('VERIFIED');
 	}
 
 	/**
-	 * Check if transaction is INVALID for both method: cURL or fsockopen()
+	 * Check if transaction is INVALID
 	 *
 	 * @return bool
 	 * @access private
 	 */
 	private function txn_is_invalid()
 	{
-		return $this->ppde_ipn_remote->is_curl_strcmp('INVALID') || $this->ppde_ipn_remote->is_fsock_strpos('INVALID');
+		return $this->ppde_ipn_remote->is_curl_strcmp('INVALID');
 	}
 
 	/**

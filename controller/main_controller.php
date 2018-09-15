@@ -121,7 +121,7 @@ class main_controller
 	 */
 	public function is_remote_detected()
 	{
-		return !empty($this->config['ppde_curl_detected']) || !empty($this->config['ppde_fsockopen_detected']);
+		return !empty($this->config['ppde_curl_detected']);
 	}
 
 	/**
@@ -251,7 +251,7 @@ class main_controller
 	}
 
 	/**
-	 * Set config value for cURL and fsockopen
+	 * Set config value for cURL
 	 *
 	 * @return void
 	 * @access public
@@ -259,7 +259,6 @@ class main_controller
 	public function set_remote_detected()
 	{
 		$this->config->set('ppde_curl_detected', $this->check_curl());
-		$this->config->set('ppde_fsock_detected', $this->check_fsockopen());
 	}
 
 	/**
@@ -291,28 +290,6 @@ class main_controller
 			curl_close($ch);
 
 			return ($response !== false || $response_status !== '0') ? true : false;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Check if fsockopen is available
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_fsockopen()
-	{
-		if (function_exists('fsockopen'))
-		{
-			$this->get_ext_meta();
-
-			$url = parse_url($this->ext_meta['extra']['version-check']['host']);
-
-			$fp = @fsockopen($url['path'], 80);
-
-			return ($fp !== false) ? true : false;
 		}
 
 		return false;

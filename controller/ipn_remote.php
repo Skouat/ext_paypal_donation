@@ -21,9 +21,8 @@ class ipn_remote
 	/**
 	 * @var array
 	 */
-	private $curl_fsock = array('curl'  => false,
-								'fsock' => false,
-								'none'  => true);
+	private $curl_fsock = array('curl' => false,
+								'none' => true);
 	/**
 	 * Full PayPal response for include in text report
 	 *
@@ -75,7 +74,7 @@ class ipn_remote
 
 	/**
 	 * Select the appropriate method to communicate with PayPal
-	 * In first, we use cURL. If it is not available we try with fsockopen()
+	 * We use cURL. If it is not available we log an error
 	 *
 	 * @param string $args_return_uri
 	 * @param array  $data
@@ -88,11 +87,6 @@ class ipn_remote
 		if ($this->curl_fsock['curl'])
 		{
 			$this->curl_post($args_return_uri);
-			$this->response;
-		}
-		else if ($this->curl_fsock['fsock'])
-		{
-			$this->fsock_post($args_return_uri);
 			$this->response;
 		}
 		else
@@ -151,78 +145,15 @@ class ipn_remote
 	}
 
 	/**
-	 * Post Back Using fsockopen()
-	 *
-	 * Sends the post back to PayPal using the fsockopen() function. Called by
-	 * the validate_transaction() method if the curl_fsock['fsock'] property is to true.
-	 * Throws an exception if the post fails. Populates the response,
-	 * response_status, properties on success.
-	 *
-	 * @param  string $encoded_data The post data as a URL encoded string
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function fsock_post($encoded_data)
-	{
-		$errstr = '';
-		$errno = 0;
-
-		$parse_url = parse_url($this->u_paypal);
-
-		// post back to PayPal system to validate
-		$header = "POST /cgi-bin/webscr HTTP/1.1\r\n";
-		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$header .= 'Host: ' . $parse_url['host'] . "\r\n";
-		$header .= 'Content-Length: ' . strlen($encoded_data) . "\r\n";
-		$header .= "Connection: Close\r\n\r\n";
-
-		$fp = fsockopen('ssl://' . $parse_url['host'], 443, $errno, $errstr, $this->timeout);
-
-		if (!$fp)
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('FSOCK_ERROR', $errno . ' (' . $errstr . ')'), $this->ppde_ipn_log->is_use_log_error());
-		}
-		else
-		{
-			// Send the data to PayPal
-			fputs($fp, $header . $encoded_data);
-
-			// Loop through the response
-			while (!feof($fp))
-			{
-				if (empty($this->response))
-				{
-					// extract HTTP status from first line
-					$this->response = $status = fgets($fp, 1024);
-					$this->response_status = trim(substr($status, 9, 4));
-				}
-				else
-				{
-					$this->response .= fgets($fp, 1024);
-				}
-			}
-
-			$this->report_response = $this->response;
-
-			fclose($fp);
-		}
-	}
-
-	/**
-	 * Set property 'curl_fsock' to determine if we use cURL or fsockopen().
-	 * If both are not available we use default value of the property 'curl_fsock'.
+	 * Set property 'curl_fsock' to use cURL.
+	 * If cURL is not available we use default value of the property 'curl_fsock'.
 	 *
 	 * @return bool
 	 * @access public
 	 */
 	public function is_remote_detected()
 	{
-		// First, we declare fsockopen() as detected if true
-		$this->check_curl_fsock_detected('ppde_fsock_detected', false, true, false);
-
-		// Finally to set as default method to use, cURL is the last method initiated.
-		$this->check_curl_fsock_detected('ppde_curl_detected', true, false, false);
+		$this->check_curl_fsock_detected('ppde_curl_detected', true, false);
 
 		return array_search(true, $this->curl_fsock);
 	}
@@ -230,17 +161,16 @@ class ipn_remote
 	/**
 	 * @param string $config_name
 	 * @param bool   $curl
-	 * @param bool   $fsock
 	 * @param bool   $none
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function check_curl_fsock_detected($config_name, $curl, $fsock, $none)
+	private function check_curl_fsock_detected($config_name, $curl, $none)
 	{
 		if ($this->config[$config_name])
 		{
-			$this->set_curl_fsock((bool) $curl, (bool) $fsock, (bool) $none);
+			$this->set_curl_fsock((bool) $curl, (bool) $none);
 		}
 	}
 
@@ -248,18 +178,16 @@ class ipn_remote
 	 * Set the property 'curl_fsock'
 	 *
 	 * @param bool $curl
-	 * @param bool $fsock
 	 * @param bool $none
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function set_curl_fsock($curl = false, $fsock = false, $none = true)
+	private function set_curl_fsock($curl = false, $none = true)
 	{
 		$this->curl_fsock = array(
-			'curl'  => (bool) $curl,
-			'fsock' => (bool) $fsock,
-			'none'  => (bool) $none,
+			'curl' => (bool) $curl,
+			'none' => (bool) $none,
 		);
 	}
 
@@ -277,7 +205,7 @@ class ipn_remote
 	}
 
 	/**
-	 * Get the service that will be used to contact PayPal: cURL or fsockopen()
+	 * Get the service that will be used to contact PayPal
 	 * Returns the name of the key that is set to true.
 	 *
 	 * @return string
@@ -332,18 +260,5 @@ class ipn_remote
 	public function is_curl_strcmp($arg)
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
-	}
-
-	/**
-	 * If fsockopen is available we use strpos()
-	 *
-	 * @param string $arg
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_fsock_strpos($arg)
-	{
-		return $this->curl_fsock['fsock'] && strpos($this->response, $arg) !== false;
 	}
 }

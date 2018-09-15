@@ -88,7 +88,6 @@ class admin_overview_controller extends admin_main
 		$this->template->assign_vars(array(
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $this->ext_meta['extra']['display-name']),
-			'PPDE_ESI_FSOCKOPEN'             => $this->config['ppde_fsock_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_ESI_VERSION'               => $this->ext_meta['version'],
 			'PPDE_ESI_VERSION_CURL'          => $this->config['ppde_curl_detected'] ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
@@ -96,7 +95,6 @@ class admin_overview_controller extends admin_main
 			'S_ACTION_OPTIONS'               => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
 			'S_CURL'                         => $this->config['ppde_curl_detected'],
 			'S_SSL'                          => $this->config['ppde_curl_detected'],
-			'S_FSOCKOPEN'                    => $this->config['ppde_fsock_detected'],
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
 			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
 			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
