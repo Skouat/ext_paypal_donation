@@ -68,7 +68,7 @@ class main_donate extends main_controller
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->get_paypal_url(),
+			'S_PPDE_FORM_ACTION' => $this->get_paypal_uri(),
 			'S_RETURN_ARGS'      => $this->return_args_url,
 			'S_SANDBOX'          => $this->use_sandbox(),
 		));

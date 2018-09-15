@@ -179,8 +179,8 @@ class ipn_listener
 
 		$this->set_args_return_uri();
 
-		// Get PayPal or Sandbox URL
-		$this->u_paypal = $this->ppde_controller_main->get_paypal_url((bool) $this->transaction_data['test_ipn']);
+		// Get PayPal or Sandbox URI
+		$this->u_paypal = $this->ppde_controller_main->get_paypal_uri((bool) $this->transaction_data['test_ipn']);
 
 		// Initiate PayPal connection
 		$this->ppde_ipn_remote->set_u_paypal($this->u_paypal);

@@ -14,7 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
 {
+	/** Extension name  */
 	const EXT_NAME = 'skouat/ppde';
+	/** Production Postback URL */
+	const VERIFY_URI = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+	/** Sandbox Postback URL */
+	const SANDBOX_VERIFY_URI = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
 
 	protected $auth;
 	protected $config;
@@ -153,7 +158,7 @@ class main_controller
 	}
 
 	/**
-	 * Get PayPal URL
+	 * Get PayPal URI
 	 * Used in form and in IPN process
 	 *
 	 * @param bool $is_test_ipn
@@ -161,9 +166,9 @@ class main_controller
 	 * @return string
 	 * @access public
 	 */
-	public function get_paypal_url($is_test_ipn = false)
+	public function get_paypal_uri($is_test_ipn = false)
 	{
-		return ($is_test_ipn || $this->use_sandbox()) ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+		return ($is_test_ipn || $this->use_sandbox()) ? self::SANDBOX_VERIFY_URI : self::VERIFY_URI;
 	}
 
 	/**
