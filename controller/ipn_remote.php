@@ -42,13 +42,6 @@ class ipn_remote
 	 */
 	private $response_status = '';
 	/**
-	 * The amount of time, in seconds, to wait for the PayPal server to respond
-	 * before timing out. Default 30 seconds.
-	 *
-	 * @var int
-	 */
-	private $timeout = 30;
-	/**
 	 * PayPal URL
 	 * Could be Sandbox URL ou normal PayPal URL.
 	 *
@@ -153,46 +146,19 @@ class ipn_remote
 	 */
 	public function is_remote_detected()
 	{
-		$this->check_curl_fsock_detected('ppde_curl_detected', true, false);
+		if ($this->config['ppde_curl_detected'])
+		{
+			$this->curl_fsock = array(
+				'curl' => (bool) true,
+				'none' => (bool) false,
+			);
+		}
 
 		return array_search(true, $this->curl_fsock);
 	}
 
 	/**
-	 * @param string $config_name
-	 * @param bool   $curl
-	 * @param bool   $none
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function check_curl_fsock_detected($config_name, $curl, $none)
-	{
-		if ($this->config[$config_name])
-		{
-			$this->set_curl_fsock((bool) $curl, (bool) $none);
-		}
-	}
-
-	/**
-	 * Set the property 'curl_fsock'
-	 *
-	 * @param bool $curl
-	 * @param bool $none
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_curl_fsock($curl = false, $none = true)
-	{
-		$this->curl_fsock = array(
-			'curl' => (bool) $curl,
-			'none' => (bool) $none,
-		);
-	}
-
-	/**
-	 * Set the property 'curl_fsock'
+	 * Set the property '$u_paypal'
 	 *
 	 * @param string $u_paypal
 	 *
