@@ -2,7 +2,7 @@
     "name": "skouat/ppde",
     "type": "phpbb-extension",
     "description": "An extension which adds a PayPal donation page to your phpBB board",
-    "homepage": "http://skouat.github.io/ext_paypal_donation",
+    "homepage": "https://skouat.github.io/ext_paypal_donation",
     "version": "2.0.0-dev",
     "keywords": [
         "phpbb",
@@ -16,7 +16,7 @@
     "authors": [
         {
             "name": "Skouat",
-            "homepage": "http://skouat.github.io/ext_paypal_donation",
+            "homepage": "https://skouat.github.io/ext_paypal_donation",
             "role": "Developer"
         },
         {
@@ -41,7 +41,7 @@
         },
         "version-check": {
             "host": "skouat.github.io",
-            "directory": "/ext_paypal_donation",
+            "directory": "/ext_paypal_donation/",
             "filename": "ppde_version_check.json"
         }
     }
