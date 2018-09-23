@@ -26,6 +26,7 @@ namespace skouat\ppde\controller;
 class admin_paypal_features_controller extends admin_main
 {
 	protected $ppde_controller_main;
+	protected $ppde_ipn_paypal;
 
 	/**
 	 * Constructor
@@ -34,18 +35,20 @@ class admin_paypal_features_controller extends admin_main
 	 * @param \phpbb\language\language                $language             Language object
 	 * @param \phpbb\log\log                          $log                  The phpBB log system
 	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
+	 * @param \skouat\ppde\controller\ipn_paypal      $ppde_ipn_paypal      IPN PayPal object
 	 * @param \phpbb\request\request                  $request              Request object
 	 * @param \phpbb\template\template                $template             Template object
 	 * @param \phpbb\user                             $user                 User object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -64,7 +67,13 @@ class admin_paypal_features_controller extends admin_main
 	 */
 	public function display_settings()
 	{
-		$this->ppde_controller_main->first_start();
+		if ($this->config['ppde_first_start'])
+		{
+			$this->ppde_ipn_paypal->set_curl_info();
+			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_ipn_paypal->check_tls();
+			$this->config->set('ppde_first_start', false);
+		}
 
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_paypal_features');
@@ -145,8 +154,14 @@ class admin_paypal_features_controller extends admin_main
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
 
 		// Set misc settings
-		$this->ppde_controller_main->set_curl_info();
-		$this->ppde_controller_main->set_remote_detected();
+		$this->ppde_ipn_paypal->set_curl_info();
+		$this->ppde_ipn_paypal->set_remote_detected();
+		$this->ppde_ipn_paypal->check_tls();
+		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
+		{
+			$this->config->set('ppde_ipn_enable', false);
+			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
+		};
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));

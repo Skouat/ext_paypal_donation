@@ -14,8 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
 {
-	/** Extension name  */
-	const EXT_NAME = 'skouat/ppde';
 	/** Production Postback URL */
 	const VERIFY_URI = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 	/** Sandbox Postback URL */
@@ -24,7 +22,6 @@ class main_controller
 	protected $auth;
 	protected $config;
 	protected $container;
-	protected $extension_manager;
 	protected $helper;
 	protected $language;
 	protected $ppde_entity_currency;
@@ -34,8 +31,6 @@ class main_controller
 	protected $user;
 	protected $root_path;
 	protected $php_ext;
-	/** @var array */
-	protected $ext_meta = array();
 
 	/**
 	 * Constructor
@@ -43,7 +38,6 @@ class main_controller
 	 * @param \phpbb\auth\auth                $auth                   Auth object
 	 * @param \phpbb\config\config            $config                 Config object
 	 * @param ContainerInterface              $container              Service container interface
-	 * @param \phpbb\extension\manager        $extension_manager      An instance of the phpBB extension manager
 	 * @param \phpbb\controller\helper        $helper                 Controller helper object
 	 * @param \phpbb\language\language        $language               Language user object
 	 * @param \skouat\ppde\entity\currency    $ppde_entity_currency   Currency entity object
@@ -56,12 +50,11 @@ class main_controller
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\extension\manager $extension_manager, \phpbb\controller\helper $helper, \phpbb\language\language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \phpbb\language\language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
-		$this->extension_manager = $extension_manager;
 		$this->helper = $helper;
 		$this->language = $language;
 		$this->ppde_entity_currency = $ppde_entity_currency;
@@ -115,18 +108,20 @@ class main_controller
 	 */
 	public function use_ipn()
 	{
-		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_remote_detected();
+		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_ipn_requirement_satisfied();
 	}
 
 	/**
-	 * Check if remote is detected based on config value
+	 * Check if IPN requirements are satisfied based on config value
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function is_remote_detected()
+	public function is_ipn_requirement_satisfied()
 	{
-		return !empty($this->config['ppde_curl_detected']);
+		return !empty($this->config['ppde_curl_detected'])
+			&& !empty($this->config['ppde_https_detected'])
+			&& !empty($this->config['ppde_tls_detected']);
 	}
 
 	/**
@@ -221,118 +216,5 @@ class main_controller
 	public function currency_on_left($value, $currency, $on_left = true, $dec_point = '.', $thousands_sep = '')
 	{
 		return $on_left ? $currency . number_format(round($value, 2), 2, $dec_point, $thousands_sep) : number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency;
-	}
-
-	/**
-	 * Do action if it's the first time the extension is accessed
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function first_start()
-	{
-		if ($this->config['ppde_first_start'])
-		{
-			$this->set_curl_info();
-			$this->set_remote_detected();
-			$this->config->set('ppde_first_start', false);
-		}
-	}
-
-	/**
-	 * Set config value for cURL version
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_curl_info()
-	{
-		// Get cURL version informations
-		if ($curl_info = $this->check_curl(true))
-		{
-			$this->config->set('ppde_curl_version', $curl_info['version']);
-			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
-		}
-	}
-
-	/**
-	 * Set config value for cURL
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_remote_detected()
-	{
-		$this->config->set('ppde_curl_detected', $this->check_curl());
-	}
-
-	/**
-	 * Check if cURL is available
-	 *
-	 * @param bool $check_version
-	 *
-	 * @return array|bool
-	 * @access public
-	 */
-	public function check_curl($check_version = false)
-	{
-		if (function_exists('curl_version') && $check_version)
-		{
-			return curl_version();
-		}
-
-		if (function_exists('curl_init') && function_exists('curl_exec'))
-		{
-			$this->get_ext_meta();
-
-			$ch = curl_init($this->ext_meta['extra']['version-check']['host']);
-
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			$response = curl_exec($ch);
-			$response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-
-			curl_close($ch);
-
-			return ($response !== false || $response_status !== '0') ? true : false;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get extension metadata
-	 *
-	 * @return void
-	 * @access protected
-	 */
-	protected function get_ext_meta()
-	{
-		if (empty($this->ext_meta))
-		{
-			$this->load_metadata();
-		}
-	}
-
-	/**
-	 * Load metadata for this extension
-	 *
-	 * @return array
-	 * @access public
-	 */
-	public function load_metadata()
-	{
-		$md_manager = $this->extension_manager->create_extension_metadata_manager($this::EXT_NAME);
-
-		try
-		{
-			$this->ext_meta = $md_manager->get_metadata('all');
-		}
-		catch (\phpbb\extension\exception $e)
-		{
-			trigger_error($e, E_USER_WARNING);
-		}
-
-		return $this->ext_meta;
 	}
 }

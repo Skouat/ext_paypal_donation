@@ -15,12 +15,15 @@ namespace skouat\ppde\controller;
 
 use phpbb\config\config;
 use phpbb\language\language;
+use phpbb\request\request;
 
 class ipn_paypal
 {
 	protected $config;
 	protected $language;
+	protected $ppde_ext_manager;
 	protected $ppde_ipn_log;
+	protected $request;
 	/**
 	 * @var array
 	 */
@@ -55,17 +58,21 @@ class ipn_paypal
 	/**
 	 * Constructor
 	 *
-	 * @param config   $config       Config object
-	 * @param language $language     Language user object
-	 * @param ipn_log  $ppde_ipn_log IPN log
+	 * @param config            $config           Config object
+	 * @param language          $language         Language user object
+	 * @param extension_manager $ppde_ext_manager Extension manager object
+	 * @param ipn_log           $ppde_ipn_log     IPN log
+	 * @param request           $request          Request object
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, ipn_log $ppde_ipn_log, request $request)
+	public function __construct(config $config, language $language, extension_manager $ppde_ext_manager, ipn_log $ppde_ipn_log, request $request)
 	{
 		$this->config = $config;
 		$this->language = $language;
+		$this->ppde_ext_manager = $ppde_ext_manager;
 		$this->ppde_ipn_log = $ppde_ipn_log;
+		$this->request = $request;
 	}
 
 	/**
@@ -234,5 +241,126 @@ class ipn_paypal
 	public function is_curl_strcmp($arg)
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
+	}
+
+	/**
+	 * Check if cURL is available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function check_curl()
+	{
+		if (function_exists('curl_init') && function_exists('curl_exec'))
+		{
+			$ext_meta = $this->ppde_ext_manager->get_ext_meta();
+
+			$ch = curl_init($ext_meta['extra']['version-check']['host']);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$this->response = curl_exec($ch);
+			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+
+			curl_close($ch);
+
+			return ($this->response !== false || $this->response_status !== '0') ? true : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if PayPal connection use TLS 1.2 and HTTP 1.1
+	 *
+	 * @access public
+	 */
+	public function check_tls()
+	{
+		// Reset settings to false
+		$this->config->set('ppde_tls_detected', false);
+
+		if (function_exists('curl_init') && function_exists('curl_exec'))
+		{
+			$ch = curl_init('https://tlstest.paypal.com/');
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$response = curl_exec($ch);
+
+			curl_close($ch);
+
+			if ($response === 'PayPal_Connection_OK')
+			{
+				$this->config->set('ppde_tls_detected', true);
+			}
+		}
+	}
+
+	/**
+	 * Check if HTTPS Protocol is enabled
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function check_https()
+	{
+		if ($this->request->is_set('HTTPS', \phpbb\request\request_interface::SERVER))
+		{
+			if ('on' == strtolower($this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER)))
+				return true;
+			if ('1' == $this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER))
+				return true;
+		}
+		else if ($this->request->is_set('SERVER_PORT', \phpbb\request\request_interface::SERVER) && ('443' == $this->request->variable('SERVER_PORT', \phpbb\request\request_interface::SERVER)))
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * Set config value for cURL and HTTPS
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_remote_detected()
+	{
+		$this->config->set('ppde_curl_detected', $this->check_curl());
+		$this->config->set('ppde_https_detected', $this->check_https());
+	}
+
+	/**
+	 * Get cURL version if available
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function check_curl_info()
+	{
+		if (function_exists('curl_version'))
+		{
+			return curl_version();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Set config value for cURL version
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_curl_info()
+	{
+		// Get cURL version informations
+		if ($curl_info = $this->check_curl_info())
+		{
+			$this->config->set('ppde_curl_version', $curl_info['version']);
+			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
+		}
 	}
 }

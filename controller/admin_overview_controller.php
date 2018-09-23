@@ -22,15 +22,14 @@ namespace skouat\ppde\controller;
  * @property string                   u_action           Action URL
  * @property \phpbb\user              user               User object
  */
-
 class admin_overview_controller extends admin_main
 {
 	protected $auth;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
+	protected $ppde_ext_manager;
+	protected $ppde_ipn_paypal;
 	protected $php_ext;
-	/** @var array */
-	protected $ext_meta = array();
 
 	/**
 	 * Constructor
@@ -41,6 +40,8 @@ class admin_overview_controller extends admin_main
 	 * @param \phpbb\log\log                                        $log                          The phpBB log system
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main         Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
+	 * @param \skouat\ppde\controller\extension_manager             $ppde_ext_manager             Extension manager object
+	 * @param \skouat\ppde\controller\ipn_paypal                    $ppde_ipn_paypal              IPN PayPal object
 	 * @param \phpbb\request\request                                $request                      Request object
 	 * @param \phpbb\template\template                              $template                     Template object
 	 * @param \phpbb\user                                           $user                         User object
@@ -48,7 +49,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \skouat\ppde\controller\extension_manager $ppde_ext_manager, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -56,6 +57,8 @@ class admin_overview_controller extends admin_main
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
+		$this->ppde_ext_manager = $ppde_ext_manager;
+		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -77,31 +80,41 @@ class admin_overview_controller extends admin_main
 	 */
 	public function display_overview($action)
 	{
-		$this->ppde_controller_main->first_start();
+		if ($this->config['ppde_first_start'])
+		{
+			$this->ppde_ipn_paypal->set_curl_info();
+			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_ipn_paypal->check_tls();
+			$this->config->set('ppde_first_start', false);
+		}
 
 		$this->do_action($action);
 
 		//Load metadata for this extension
-		$this->ext_meta = $this->ppde_controller_main->load_metadata();
+		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
 		// Set output block vars for display in the template
 		$this->template->assign_vars(array(
-			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $this->ext_meta['extra']['display-name']),
-			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $this->ext_meta['extra']['display-name']),
+			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
+			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_ESI_VERSION'               => $this->ext_meta['version'],
-			'PPDE_ESI_VERSION_CURL'          => $this->config['ppde_curl_detected'] ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
-			'PPDE_ESI_VERSION_SSL'           => $this->config['ppde_curl_detected'] ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_HTTPS'                 => $this->config['ppde_https_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION'               => $ext_meta['version'],
+			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'S_ACTION_OPTIONS'               => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
 			'S_CURL'                         => $this->config['ppde_curl_detected'],
+			'S_HTTPS'                        => $this->config['ppde_https_detected'],
 			'S_SSL'                          => $this->config['ppde_curl_detected'],
+			'S_TLS'                          => $this->config['ppde_tls_detected'],
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
 			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
 			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
 			'STATS_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count'),
 			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
-			'U_PPDE_MORE_INFORMATION'        => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($this->ext_meta['name'])),
+			'U_PPDE_MORE_INFORMATION'        => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
 			'U_ACTION'                       => $this->u_action,
 		));
 
@@ -204,8 +217,9 @@ class admin_overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 			break;
 			case 'esi':
-				$this->ppde_controller_main->set_curl_info();
-				$this->ppde_controller_main->set_remote_detected();
+				$this->ppde_ipn_paypal->set_curl_info();
+				$this->ppde_ipn_paypal->set_remote_detected();
+				$this->ppde_ipn_paypal->check_tls();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':

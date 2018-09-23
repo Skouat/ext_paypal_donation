@@ -84,5 +84,6 @@ $lang = array_merge($lang, array(
  * Errors
  */
 $lang = array_merge($lang, array(
-	'PPDE_PAYPAL_FEATURES_MISSING' => 'Please check “Sandbox address”.',
+	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Please check “Sandbox address”.',
+	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'IPN PayPal cannot be enabled. Check the system requirements from the “Overview” module.',
 ));

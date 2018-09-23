@@ -41,13 +41,15 @@ $lang = array_merge($lang, array(
 	'PPDE_OVERVIEW' => 'Overview',
 
 	'PPDE_ESI'                  => 'Extension and System Information',
-	'PPDE_ESI_MORE_INFORMATION' => 'More information…',
+	'PPDE_ESI_HTTPS'            => 'TLS 1.2 and HTTP/1.1',
 	'PPDE_ESI_INSTALL_DATE'     => 'Install date of <strong>%s</strong>',
+	'PPDE_ESI_MORE_INFORMATION' => 'More information…',
 	'PPDE_ESI_NOT_DETECTED'     => 'Not detected',
+	'PPDE_ESI_RESYNC_OPTIONS'   => 'Reset or recheck extension and system information',
+	'PPDE_ESI_TLS'              => 'TLS 1.2 and HTTP/1.1',
 	'PPDE_ESI_VERSION'          => '<strong>%s</strong> version',
 	'PPDE_ESI_VERSION_CURL'     => 'cURL version',
 	'PPDE_ESI_VERSION_SSL'      => 'SSL version',
-	'PPDE_ESI_RESYNC_OPTIONS'   => 'Reset or recheck extension and system information',
 
 	'PPDE_STATS'         => 'Donation Statistics',
 	'PPDE_STATS_SANDBOX' => 'Sandbox Statistics',
