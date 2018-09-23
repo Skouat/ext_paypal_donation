@@ -13,7 +13,10 @@
 
 namespace skouat\ppde\controller;
 
-class ipn_remote
+use phpbb\config\config;
+use phpbb\language\language;
+
+class ipn_paypal
 {
 	protected $config;
 	protected $language;
@@ -52,13 +55,13 @@ class ipn_remote
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config            $config       Config object
-	 * @param \phpbb\language\language        $language     Language user object
-	 * @param \skouat\ppde\controller\ipn_log $ppde_ipn_log IPN log
+	 * @param config   $config       Config object
+	 * @param language $language     Language user object
+	 * @param ipn_log  $ppde_ipn_log IPN log
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \skouat\ppde\controller\ipn_log $ppde_ipn_log)
+	public function __construct(config $config, language $language, ipn_log $ppde_ipn_log, request $request)
 	{
 		$this->config = $config;
 		$this->language = $language;
@@ -93,8 +96,7 @@ class ipn_remote
 	 *
 	 * Sends the post back to PayPal using the cURL library. Called by
 	 * the validate_transaction() method if the curl_fsock['curl'] property is true.
-	 * Throws an exception if the post fails. Populates the response, response_status,
-	 * and post_uri properties on success.
+	 * Throws an exception if the post fails. Populates the response and response_status properties on success.
 	 *
 	 * @param  string $encoded_data The post data as a URL encoded string
 	 *

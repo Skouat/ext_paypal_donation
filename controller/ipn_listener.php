@@ -32,7 +32,7 @@ class ipn_listener
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
-	protected $ppde_ipn_remote;
+	protected $ppde_ipn_paypal;
 	protected $request;
 
 	/**
@@ -98,14 +98,14 @@ class ipn_listener
 	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
 	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
-	 * @param \skouat\ppde\controller\ipn_remote                    $ppde_ipn_remote                    IPN remote (cURL)
+	 * @param \skouat\ppde\controller\ipn_paypal                    $ppde_ipn_paypal                    IPN PayPal
 	 * @param \phpbb\request\request                                $request                            Request object
 	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
 	 * @param string                                                $php_ext                            phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \skouat\ppde\controller\ipn_remote $ppde_ipn_remote, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
@@ -116,7 +116,7 @@ class ipn_listener
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
-		$this->ppde_ipn_remote = $ppde_ipn_remote;
+		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
 		$this->request = $request;
 		$this->php_ext = $php_ext;
 
@@ -131,10 +131,10 @@ class ipn_listener
 		$this->ppde_ipn_log->set_use_log_error((bool) $this->config['ppde_ipn_logging']);
 
 		// Determine which remote connection to use to contact PayPal
-		$this->ppde_ipn_remote->is_remote_detected();
+		$this->ppde_ipn_paypal->is_remote_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
-		if ($this->ppde_ipn_remote->get_remote_used() == 'none')
+		if ($this->ppde_ipn_paypal->get_remote_used() == 'none')
 		{
 			$this->config->set('ppde_ipn_enable', false);
 			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
@@ -183,12 +183,12 @@ class ipn_listener
 		$this->u_paypal = $this->ppde_controller_main->get_paypal_uri((bool) $this->transaction_data['test_ipn']);
 
 		// Initiate PayPal connection
-		$this->ppde_ipn_remote->set_u_paypal($this->u_paypal);
-		$this->ppde_ipn_remote->initiate_paypal_connection($this->args_return_uri, $this->transaction_data);
+		$this->ppde_ipn_paypal->set_u_paypal($this->u_paypal);
+		$this->ppde_ipn_paypal->initiate_paypal_connection($this->args_return_uri, $this->transaction_data);
 
-		if ($this->ppde_ipn_remote->check_response_status())
+		if ($this->ppde_ipn_paypal->check_response_status())
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->ppde_ipn_remote->get_response_status()));
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->ppde_ipn_paypal->get_response_status()));
 		}
 
 		return $this->check_response();
@@ -392,7 +392,7 @@ class ipn_listener
 	private function check_response()
 	{
 		// Prepare data to include in report
-		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->ppde_ipn_remote->get_remote_used(), $this->ppde_ipn_remote->get_report_response(), $this->ppde_ipn_remote->get_response_status(), $this->transaction_data);
+		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
 
 		if ($this->txn_is_verified())
 		{
@@ -422,7 +422,7 @@ class ipn_listener
 	 */
 	private function txn_is_verified()
 	{
-		return $this->ppde_ipn_remote->is_curl_strcmp('VERIFIED');
+		return $this->ppde_ipn_paypal->is_curl_strcmp('VERIFIED');
 	}
 
 	/**
@@ -433,7 +433,7 @@ class ipn_listener
 	 */
 	private function txn_is_invalid()
 	{
-		return $this->ppde_ipn_remote->is_curl_strcmp('INVALID');
+		return $this->ppde_ipn_paypal->is_curl_strcmp('INVALID');
 	}
 
 	/**
