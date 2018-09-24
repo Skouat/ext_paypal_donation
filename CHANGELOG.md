@@ -1,13 +1,13 @@
 # Changelog
 
-## 2.0.0 - 2018-09-23
+## 2.0.0 - 2018-09-24
 - Add: Minimum amount before auto group donors (#40]
 - Change: Improve transaction debug
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Refactor language files
 - Change: Refactor ACP Overview module
 - Change: Refactor IPN module
-- Change: Update PayPal prerequisite checks (TLS 1.2, HTTP/1.1, SSL Certificates)
+- Change: Update PayPal prerequisite checks (TLS 1.2, HTTP/1.1)
 - Change: Update PayPal IPN Verification Postback to HTTPS
 - Change: Use Twig syntax in all template files
 - Fix: Undefined offset when the default currency is disabled
