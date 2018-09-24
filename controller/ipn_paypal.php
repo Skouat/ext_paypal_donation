@@ -308,9 +308,14 @@ class ipn_paypal
 		if ($this->request->is_set('HTTPS', \phpbb\request\request_interface::SERVER))
 		{
 			if ('on' == strtolower($this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER)))
+			{
 				return true;
+			}
+
 			if ('1' == $this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER))
+			{
 				return true;
+			}
 		}
 		else if ($this->request->is_set('SERVER_PORT', \phpbb\request\request_interface::SERVER) && ('443' == $this->request->variable('SERVER_PORT', \phpbb\request\request_interface::SERVER)))
 		{
