@@ -8,6 +8,7 @@
 - Change: Refactor ACP Overview module
 - Change: Refactor IPN module
 - Change: Update PayPal prerequisite checks (TLS 1.2, HTTP/1.1, SSL Certificates)
+- Change: Update PayPal IPN Verification Postback to HTTPS
 - Change: Use Twig syntax in all template files
 - Fix: Undefined offset when the default currency is disabled
 - Fix: In the donation page, the default donation value is not selected in the dropdown menu
