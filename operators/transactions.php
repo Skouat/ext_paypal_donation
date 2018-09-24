@@ -102,7 +102,7 @@ class transactions
 
 		if ($max_txn_id)
 		{
-			$donorlist_sql_ary['WHERE'] = 'txn.transaction_id = ' . $max_txn_id;
+			$donorlist_sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $max_txn_id;
 			unset($donorlist_sql_ary['GROUP_BY'], $donorlist_sql_ary['ORDER_BY']);
 		}
 

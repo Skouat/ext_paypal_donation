@@ -90,7 +90,7 @@ class currency
 			{
 				$this->db->sql_query('UPDATE ' . $this->ppde_currency_table . '
 						SET currency_order = ' . $order . '
-						WHERE currency_id = ' . $row['currency_id']);
+						WHERE currency_id = ' . (int) $row['currency_id']);
 			}
 		}
 
