@@ -21,10 +21,10 @@ class v320_m3_update_data extends \phpbb\db\migration\migration
 	{
 		return array(
 			// IPN Settings
-			array('config.add', array('ppde_https_detected', 0)),
+			array('config.add', array('ppde_https_detected', false)),
 			array('config.add', array('ppde_ipn_min_before_group', 0)),
-			array('config.add', array('ppde_tls_detected', 0)),
-			array('config.remove', array('ppde_fsock_detected', 0)),
+			array('config.add', array('ppde_tls_detected', false)),
+			array('config.remove', array('ppde_fsock_detected')),
 			array('config.update', array('ppde_first_start', false)),
 		);
 	}
