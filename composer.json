@@ -12,7 +12,7 @@
         "paypal",
         "donation"
     ],
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-only",
     "authors": [
         {
             "name": "Skouat",
@@ -21,7 +21,7 @@
         },
         {
             "name": "cabot",
-            "homepage": "http://cabotweb.fr",
+            "homepage": "https://cabotweb.fr",
             "role": "SushiMaker"
         },
         {
