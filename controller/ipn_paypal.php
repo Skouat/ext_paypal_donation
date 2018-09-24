@@ -298,35 +298,7 @@ class ipn_paypal
 	}
 
 	/**
-	 * Check if HTTPS Protocol is enabled
-	 *
-	 * @return array|bool
-	 * @access public
-	 */
-	public function check_https()
-	{
-		if ($this->request->is_set('HTTPS', \phpbb\request\request_interface::SERVER))
-		{
-			if ('on' == strtolower($this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER)))
-			{
-				return true;
-			}
-
-			if ('1' == $this->request->variable('HTTPS', \phpbb\request\request_interface::SERVER))
-			{
-				return true;
-			}
-		}
-		else if ($this->request->is_set('SERVER_PORT', \phpbb\request\request_interface::SERVER) && ('443' == $this->request->variable('SERVER_PORT', \phpbb\request\request_interface::SERVER)))
-		{
-			return true;
-		}
-		return false;
-	}
-
-
-	/**
-	 * Set config value for cURL and HTTPS
+	 * Set config value for cURL
 	 *
 	 * @return void
 	 * @access public
@@ -334,7 +306,6 @@ class ipn_paypal
 	public function set_remote_detected()
 	{
 		$this->config->set('ppde_curl_detected', $this->check_curl());
-		$this->config->set('ppde_https_detected', $this->check_https());
 	}
 
 	/**
