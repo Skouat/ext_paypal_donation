@@ -50,7 +50,6 @@ services:
             - '@auth'
             - '@config'
             - '@service_container'
-            - '@ext.manager'
             - '@controller.helper'
             - '@language'
             - '@skouat.ppde.entity.currency'
