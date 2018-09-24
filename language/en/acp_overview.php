@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'PPDE_OVERVIEW' => 'Overview',
 
 	'PPDE_ESI'                  => 'Extension and System Information',
-	'PPDE_ESI_HTTPS'            => 'TLS 1.2 and HTTP/1.1',
+	'PPDE_ESI_HTTPS'            => 'HTTPS',
 	'PPDE_ESI_INSTALL_DATE'     => 'Install date of <strong>%s</strong>',
 	'PPDE_ESI_MORE_INFORMATION' => 'More information…',
 	'PPDE_ESI_NOT_DETECTED'     => 'Not detected',
