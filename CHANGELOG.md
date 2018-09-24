@@ -1,11 +1,13 @@
 # Changelog
 
-## 2.0.0 - 2018-05-02
+## 2.0.0 - 2018-09-23
 - Add: Minimum amount before auto group donors (#40]
-- Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Improve transaction debug
+- Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Refactor language files
 - Change: Refactor ACP Overview module
+- Change: Refactor IPN module
+- Change: Update PayPal prerequisite checks (TLS 1.2, HTTP/1.1, SSL Certificates)
 - Change: Use Twig syntax in all template files
 - Fix: Undefined offset when the default currency is disabled
 - Fix: In the donation page, the default donation value is not selected in the dropdown menu
@@ -17,6 +19,7 @@
 - Fix: English wording (thanks kasimi)
 - Fix: Unable to use "delete all" in Transactions Log module
 - Remove: Extension version check removed from the Overview module
+- Remove: fsockopen related code
 - Code improvement
 
 ## 1.0.3 - 2017-01-22
