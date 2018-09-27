@@ -119,9 +119,7 @@ class main_controller
 	 */
 	public function is_ipn_requirement_satisfied()
 	{
-		return !empty($this->config['ppde_curl_detected'])
-			&& !empty($this->config['ppde_https_detected'])
-			&& !empty($this->config['ppde_tls_detected']);
+		return !empty($this->config['ppde_curl_detected']) && !empty($this->config['ppde_tls_detected']);
 	}
 
 	/**
