@@ -10,6 +10,9 @@
 
 namespace skouat\ppde\entity;
 
+use phpbb\db\driver\driver_interface;
+use phpbb\user;
+
 abstract class main
 {
 	/** @type string */
@@ -28,16 +31,16 @@ abstract class main
 	/**
 	 * Construct
 	 *
-	 * @param \phpbb\db\driver\driver_interface $db              Database object
-	 * @param \phpbb\user                       $user            User object
-	 * @param string                            $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string                            $lang_key_suffix Suffix for the messages thrown by exceptions
-	 * @param string                            $table_name      Table name
-	 * @param array                             $table_schema    Array with column names to overwrite and type of data
+	 * @param driver_interface $db              Database object
+	 * @param user             $user            User object
+	 * @param string           $lang_key_prefix Prefix for the messages thrown by exceptions
+	 * @param string           $lang_key_suffix Suffix for the messages thrown by exceptions
+	 * @param string           $table_name      Table name
+	 * @param array            $table_schema    Array with column names to overwrite and type of data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(driver_interface $db, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
 		$this->user = $user;

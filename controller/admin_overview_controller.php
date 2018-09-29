@@ -10,17 +10,25 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\language\language;
+use phpbb\log\log;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+
 /**
- * @property \phpbb\config\config     config             Config object
- * @property string                   id_prefix_name     Prefix name for identifier in the URL
- * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property \phpbb\language\language language           Language user object
- * @property \phpbb\log\log           log                The phpBB log system
- * @property string                   module_name        Name of the module currently used
- * @property \phpbb\request\request   request            Request object
- * @property \phpbb\template\template template           Template object
- * @property string                   u_action           Action URL
- * @property \phpbb\user              user               User object
+ * @property config   config             Config object
+ * @property string   id_prefix_name     Prefix name for identifier in the URL
+ * @property string   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property language language           Language user object
+ * @property log      log                The phpBB log system
+ * @property string   module_name        Name of the module currently used
+ * @property request  request            Request object
+ * @property template template           Template object
+ * @property string   u_action           Action URL
+ * @property user     user               User object
  */
 class admin_overview_controller extends admin_main
 {
@@ -34,22 +42,22 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth                                      $auth                         Authentication object
-	 * @param \phpbb\config\config                                  $config                       Config object
-	 * @param \phpbb\language\language                              $language                     Language user object
-	 * @param \phpbb\log\log                                        $log                          The phpBB log system
-	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main         Main controller object
-	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
-	 * @param \skouat\ppde\controller\extension_manager             $ppde_ext_manager             Extension manager object
-	 * @param \skouat\ppde\controller\ipn_paypal                    $ppde_ipn_paypal              IPN PayPal object
-	 * @param \phpbb\request\request                                $request                      Request object
-	 * @param \phpbb\template\template                              $template                     Template object
-	 * @param \phpbb\user                                           $user                         User object
-	 * @param string                                                $php_ext                      phpEx
+	 * @param auth                          $auth                         Authentication object
+	 * @param config                        $config                       Config object
+	 * @param language                      $language                     Language user object
+	 * @param log                           $log                          The phpBB log system
+	 * @param main_controller               $ppde_controller_main         Main controller object
+	 * @param admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
+	 * @param extension_manager             $ppde_ext_manager             Extension manager object
+	 * @param ipn_paypal                    $ppde_ipn_paypal              IPN PayPal object
+	 * @param request                       $request                      Request object
+	 * @param template                      $template                     Template object
+	 * @param user                          $user                         User object
+	 * @param string                        $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions, \skouat\ppde\controller\extension_manager $ppde_ext_manager, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $php_ext)
+	public function __construct(auth $auth, config $config, language $language, log $log, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

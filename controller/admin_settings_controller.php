@@ -10,18 +10,25 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\config\config;
+use phpbb\language\language;
+use phpbb\log\log;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+
 /**
- * @property \phpbb\config\config     config             Config object
- * @property string                   id_prefix_name     Prefix name for identifier in the URL
- * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property \phpbb\language\language language           Language user object
- * @property \phpbb\log\log           log                The phpBB log system
- * @property string                   module_name        Name of the module currently used
- * @property \phpbb\request\request   request            Request object
- * @property bool                     submit             State of submit $_POST variable
- * @property \phpbb\template\template template           Template object
- * @property string                   u_action           Action URL
- * @property \phpbb\user              user               User object
+ * @property config   config             Config object
+ * @property string   id_prefix_name     Prefix name for identifier in the URL
+ * @property string   lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property language language           Language user object
+ * @property log      log                The phpBB log system
+ * @property string   module_name        Name of the module currently used
+ * @property request  request            Request object
+ * @property bool     submit             State of submit $_POST variable
+ * @property template template           Template object
+ * @property string   u_action           Action URL
+ * @property user     user               User object
  */
 class admin_settings_controller extends admin_main
 {
@@ -30,17 +37,17 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\language\language                $language             Language user object
-	 * @param \phpbb\log\log                          $log                  The phpBB log system
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller object
-	 * @param \phpbb\request\request                  $request              Request object
-	 * @param \phpbb\template\template                $template             Template object
-	 * @param \phpbb\user                             $user                 User object
+	 * @param config          $config               Config object
+	 * @param language        $language             Language user object
+	 * @param log             $log                  The phpBB log system
+	 * @param main_controller $ppde_controller_main Main controller object
+	 * @param request         $request              Request object
+	 * @param template        $template             Template object
+	 * @param user            $user                 User object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(config $config, language $language, log $log, main_controller $ppde_controller_main, request $request, template $template, user $user)
 	{
 		$this->config = $config;
 		$this->language = $language;

@@ -10,21 +10,26 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\language\language;
+use phpbb\log\log;
+use phpbb\request\request;
+use phpbb\template\template;
+use skouat\ppde\operators\currency;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \phpbb\config\config     config             Config object
- * @property ContainerInterface       container          Service container interface
- * @property string                   id_prefix_name     Prefix name for identifier in the URL
- * @property string                   lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property \phpbb\language\language language           Language user object
- * @property \phpbb\log\log           log                The phpBB log system
- * @property string                   module_name        Name of the module currently used
- * @property \phpbb\request\request   request            Request object
- * @property bool                     submit             State of submit $_POST variable
- * @property \phpbb\template\template template           Template object
- * @property string                   u_action           Action URL
- * @property \phpbb\user              user               User object
+ * @property \phpbb\config\config config             Config object
+ * @property ContainerInterface   container          Service container interface
+ * @property string               id_prefix_name     Prefix name for identifier in the URL
+ * @property string               lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property language             language           Language user object
+ * @property log                  log                The phpBB log system
+ * @property string               module_name        Name of the module currently used
+ * @property request              request            Request object
+ * @property bool                 submit             State of submit $_POST variable
+ * @property template             template           Template object
+ * @property string               u_action           Action URL
+ * @property \phpbb\user          user               User object
  */
 class admin_currency_controller extends admin_main
 {
@@ -33,17 +38,17 @@ class admin_currency_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface              $container              Service container interface
-	 * @param \phpbb\language\language        $language               Language user object
-	 * @param \phpbb\log\log                  $log                    The phpBB log system
-	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Operator object
-	 * @param \phpbb\request\request          $request                Request object
-	 * @param \phpbb\template\template        $template               Template object
-	 * @param \phpbb\user                     $user                   User object
+	 * @param ContainerInterface $container              Service container interface
+	 * @param language           $language               Language user object
+	 * @param log                $log                    The phpBB log system
+	 * @param currency           $ppde_operator_currency Operator object
+	 * @param request            $request                Request object
+	 * @param template           $template               Template object
+	 * @param \phpbb\user        $user                   User object
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, \phpbb\language\language $language, \phpbb\log\log $log, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(ContainerInterface $container, language $language, log $log, currency $ppde_operator_currency, request $request, template $template, \phpbb\user $user)
 	{
 		$this->container = $container;
 		$this->language = $language;

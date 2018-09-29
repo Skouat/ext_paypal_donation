@@ -10,6 +10,10 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\config\config;
+use phpbb\language\language;
+use phpbb\template\template;
+
 class main_display_stats
 {
 	protected $config;
@@ -20,14 +24,14 @@ class main_display_stats
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\language\language                $language             Language user object
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main PPDE main controller object
-	 * @param \phpbb\template\template                $template             Template object
+	 * @param config                   $config               Config object
+	 * @param language                 $language             Language user object
+	 * @param main_controller          $ppde_controller_main PPDE main controller object
+	 * @param \phpbb\template\template $template             Template object
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \phpbb\template\template $template)
+	public function __construct(config $config, language $language, main_controller $ppde_controller_main, template $template)
 	{
 		$this->config = $config;
 		$this->language = $language;

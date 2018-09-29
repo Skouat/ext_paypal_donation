@@ -10,6 +10,8 @@
 
 namespace skouat\ppde\output_handler;
 
+use phpbb\filesystem\filesystem_interface;
+
 class log_wrapper_output_handler
 {
 	protected $filesystem;
@@ -29,10 +31,10 @@ class log_wrapper_output_handler
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\filesystem\filesystem_interface $filesystem phpBB's filesystem service
-	 * @param string                                 $log_file   File to log to
+	 * @param filesystem_interface $filesystem phpBB's filesystem service
+	 * @param string               $log_file   File to log to
 	 */
-	public function __construct(\phpbb\filesystem\filesystem_interface $filesystem, $log_file)
+	public function __construct(filesystem_interface $filesystem, $log_file)
 	{
 		$this->filesystem = $filesystem;
 		$this->file_open($log_file);

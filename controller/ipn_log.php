@@ -13,6 +13,10 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\config\config;
+use phpbb\filesystem\filesystem_interface;
+use phpbb\path_helper;
+
 class ipn_log
 {
 	protected $config;
@@ -48,14 +52,14 @@ class ipn_log
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                    $config               Config object
-	 * @param \phpbb\filesystem\filesystem_interface  $filesystem           phpBB's filesystem service
-	 * @param \phpbb\path_helper                      $path_helper          Path helper object
-	 * @param \skouat\ppde\controller\main_controller $ppde_controller_main Main controller
+	 * @param config               $config               Config object
+	 * @param filesystem_interface $filesystem           phpBB's filesystem service
+	 * @param path_helper          $path_helper          Path helper object
+	 * @param main_controller      $ppde_controller_main Main controller
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\filesystem\filesystem_interface $filesystem, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main)
+	public function __construct(config $config, filesystem_interface $filesystem, path_helper $path_helper, main_controller $ppde_controller_main)
 	{
 		$this->config = $config;
 		$this->filesystem = $filesystem;

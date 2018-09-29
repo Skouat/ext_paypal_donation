@@ -10,6 +10,13 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\auth\auth;
+use phpbb\config\config;
+use phpbb\controller\helper;
+use phpbb\language\language;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
@@ -35,22 +42,22 @@ class main_controller
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth                $auth                   Auth object
-	 * @param \phpbb\config\config            $config                 Config object
+	 * @param auth                            $auth                   Auth object
+	 * @param config                          $config                 Config object
 	 * @param ContainerInterface              $container              Service container interface
-	 * @param \phpbb\controller\helper        $helper                 Controller helper object
-	 * @param \phpbb\language\language        $language               Language user object
+	 * @param helper                          $helper                 Controller helper object
+	 * @param language                        $language               Language user object
 	 * @param \skouat\ppde\entity\currency    $ppde_entity_currency   Currency entity object
 	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Currency operator object
-	 * @param \phpbb\request\request          $request                Request object
-	 * @param \phpbb\template\template        $template               Template object
-	 * @param \phpbb\user                     $user                   User object
+	 * @param request                         $request                Request object
+	 * @param template                        $template               Template object
+	 * @param user                            $user                   User object
 	 * @param string                          $root_path              phpBB root path
 	 * @param string                          $php_ext                phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, ContainerInterface $container, \phpbb\controller\helper $helper, \phpbb\language\language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\operators\currency $ppde_operator_currency, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user, $root_path, $php_ext)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, helper $helper, language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\operators\currency $ppde_operator_currency, request $request, template $template, user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

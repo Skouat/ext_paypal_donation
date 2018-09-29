@@ -10,6 +10,12 @@
 
 namespace skouat\ppde\event;
 
+use phpbb\config\config;
+use phpbb\controller\helper;
+use phpbb\language\language;
+use phpbb\template\template;
+use skouat\ppde\controller\main_controller;
+use skouat\ppde\controller\main_display_stats;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,17 +34,17 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                       $config                        Config object
-	 * @param \phpbb\controller\helper                   $controller_helper             Controller helper object
-	 * @param \phpbb\language\language                   $language                      Language user object
-	 * @param \skouat\ppde\controller\main_controller    $ppde_controller_main          PPDE main controller object
-	 * @param \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats Display stats controller object
-	 * @param \phpbb\template\template                   $template                      Template object
-	 * @param string                                     $php_ext                       phpEx
+	 * @param config             $config                        Config object
+	 * @param helper             $controller_helper             Controller helper object
+	 * @param language           $language                      Language user object
+	 * @param main_controller    $ppde_controller_main          PPDE main controller object
+	 * @param main_display_stats $ppde_controller_display_stats Display stats controller object
+	 * @param template           $template                      Template object
+	 * @param string             $php_ext                       phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\controller\helper $controller_helper, \phpbb\language\language $language, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\main_display_stats $ppde_controller_display_stats, \phpbb\template\template $template, $php_ext)
+	public function __construct(config $config, helper $controller_helper, language $language, main_controller $ppde_controller_main, main_display_stats $ppde_controller_display_stats, template $template, $php_ext)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;

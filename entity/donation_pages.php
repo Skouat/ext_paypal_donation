@@ -10,11 +10,16 @@
 
 namespace skouat\ppde\entity;
 
+use phpbb\config\config;
+use phpbb\db\driver\driver_interface;
+use phpbb\language\language;
+use phpbb\user;
+
 /**
- * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
- * @property \phpbb\user                       user               phpBB User object
- * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property driver_interface db                 phpBB Database object
+ * @property user             user               phpBB User object
+ * @property string           lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string           lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class donation_pages extends main
 {
@@ -41,15 +46,15 @@ class donation_pages extends main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config              $config     Config object
-	 * @param \phpbb\db\driver\driver_interface $db         Database object
-	 * @param \phpbb\language\language          $language   Language user object
-	 * @param \phpbb\user                       $user       User object
-	 * @param string                            $table_name Name of the table used to store data
+	 * @param config           $config     Config object
+	 * @param driver_interface $db         Database object
+	 * @param language         $language   Language user object
+	 * @param user             $user       User object
+	 * @param string           $table_name Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\language\language $language, \phpbb\user $user, $table_name)
+	public function __construct(config $config, driver_interface $db, language $language, user $user, $table_name)
 	{
 		$this->config = $config;
 		$this->db = $db;

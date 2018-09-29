@@ -10,11 +10,14 @@
 
 namespace skouat\ppde\entity;
 
+use phpbb\db\driver\driver_interface;
+use phpbb\user;
+
 /**
- * @property \phpbb\db\driver\driver_interface db                 phpBB Database object
- * @property \phpbb\user                       user               phpBB User object
- * @property string                            lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property string                            lang_key_suffix    Suffix for the messages thrown by exceptions
+ * @property driver_interface db                 phpBB Database object
+ * @property user             user               phpBB User object
+ * @property string           lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property string           lang_key_suffix    Suffix for the messages thrown by exceptions
  */
 class currency extends main
 {
@@ -36,13 +39,13 @@ class currency extends main
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\db\driver\driver_interface $db         Database object
-	 * @param \phpbb\user                       $user       User object
-	 * @param string                            $table_name Name of the table used to store data
+	 * @param driver_interface $db         Database object
+	 * @param user             $user       User object
+	 * @param string           $table_name Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, $table_name)
+	public function __construct(driver_interface $db, user $user, $table_name)
 	{
 		$this->db = $db;
 		$this->user = $user;

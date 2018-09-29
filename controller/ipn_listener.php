@@ -13,6 +13,12 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\config\config;
+use phpbb\event\dispatcher_interface;
+use phpbb\language\language;
+use phpbb\notification\manager;
+use phpbb\path_helper;
+use phpbb\request\request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ipn_listener
@@ -90,22 +96,22 @@ class ipn_listener
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\config\config                                  $config                             Config object
-	 * @param ContainerInterface                                    $container                          Service container interface
-	 * @param \phpbb\language\language                              $language                           Language user object
-	 * @param \phpbb\notification\manager                           $notification                       Notification object
-	 * @param \phpbb\path_helper                                    $path_helper                        Path helper object
-	 * @param \skouat\ppde\controller\main_controller               $ppde_controller_main               Main controller object
-	 * @param \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
-	 * @param \skouat\ppde\controller\ipn_log                       $ppde_ipn_log                       IPN log
-	 * @param \skouat\ppde\controller\ipn_paypal                    $ppde_ipn_paypal                    IPN PayPal
-	 * @param \phpbb\request\request                                $request                            Request object
-	 * @param \phpbb\event\dispatcher_interface                     $dispatcher                         Dispatcher object
-	 * @param string                                                $php_ext                            phpEx
+	 * @param config                        $config                             Config object
+	 * @param ContainerInterface            $container                          Service container interface
+	 * @param language                      $language                           Language user object
+	 * @param manager                       $notification                       Notification object
+	 * @param path_helper                   $path_helper                        Path helper object
+	 * @param main_controller               $ppde_controller_main               Main controller object
+	 * @param admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param ipn_log                       $ppde_ipn_log                       IPN log
+	 * @param ipn_paypal                    $ppde_ipn_paypal                    IPN PayPal
+	 * @param request                       $request                            Request object
+	 * @param dispatcher_interface          $dispatcher                         Dispatcher object
+	 * @param string                        $php_ext                            phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\config\config $config, ContainerInterface $container, \phpbb\language\language $language, \phpbb\notification\manager $notification, \phpbb\path_helper $path_helper, \skouat\ppde\controller\main_controller $ppde_controller_main, \skouat\ppde\controller\admin_transactions_controller $ppde_controller_transactions_admin, \skouat\ppde\controller\ipn_log $ppde_ipn_log, \skouat\ppde\controller\ipn_paypal $ppde_ipn_paypal, \phpbb\request\request $request, \phpbb\event\dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(config $config, ContainerInterface $container, language $language, manager $notification, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
