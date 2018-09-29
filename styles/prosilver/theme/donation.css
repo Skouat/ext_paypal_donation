@@ -30,15 +30,15 @@
 	content: "";
 	height: 20px;
 	width: 20px;
-	margin: -8px 0 0 -35px;
+	margin: -10px 0 0 -35px;
 	position: absolute;
-	border: 4px solid #ccc;
+	border: 6px solid #ccc;
 	border-top-color: #2180c0;
 	border-radius: 100%;
-	-webkit-animation: paypal_loader 1s infinite;
-	-moz-animation: paypal_loader 1s infinite;
-	-o-animation: paypal_loader 1s infinite;
-	animation: paypal_loader 1s infinite;
+	-webkit-animation: paypal_loader .7s infinite linear;
+	-moz-animation: paypal_loader .7s infinite linear;
+	-o-animation: paypal_loader .7s infinite linear;
+	animation: paypal_loader .7s infinite linear;
 }
 
 @-webkit-keyframes paypal_loader {
