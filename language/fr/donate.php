@@ -75,7 +75,8 @@ $lang = array_merge($lang, array(
 ));
 
 /**
- * Info: This array is out of the previous because there is an issue with Transifex platform
+ * Note: This array is out of the previous because there is an issue with Transifex platform
+ * Note for translators: Before pushing your translation on Transifex, please surround array indexes with ''.
  */
 $lang = array_merge($lang, array(
 	'PPDE_DONORS' => array(
