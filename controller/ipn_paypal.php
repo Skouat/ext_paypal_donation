@@ -76,8 +76,8 @@ class ipn_paypal
 	}
 
 	/**
-	 * Select the appropriate method to communicate with PayPal
-	 * We use cURL. If it is not available we log an error
+	 * Initiate communication with PayPal.
+	 * We use cURL. If it is not available we log an error.
 	 *
 	 * @param string $args_return_uri
 	 * @param array  $data
@@ -153,7 +153,7 @@ class ipn_paypal
 	}
 
 	/**
-	 * Set property 'curl_fsock' to use cURL.
+	 * Set property 'curl_fsock' to use cURL based on config settings.
 	 * If cURL is not available we use default value of the property 'curl_fsock'.
 	 *
 	 * @return bool
