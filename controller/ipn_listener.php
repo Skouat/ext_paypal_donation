@@ -137,7 +137,7 @@ class ipn_listener
 		if ($this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
-			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), true, true, E_USER_WARNING);
+			$this->ppde_ipn_log->log_error($this->language->lang('REQUIREMENT_NOT_SATISFIED'), true, true, E_USER_WARNING);
 		}
 
 		// Check the transaction returned by PayPal

@@ -86,13 +86,14 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'              => 'Erreur cURL : %s',
-	'NO_CONNECTION_DETECTED'  => 'cURL n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
-	'INVALID_TXN_ACCOUNT_ID'  => 'Transaction non valide : Les ID marchant ne correspondent pas.',
-	'INVALID_TXN_EMPTY_ID'    => 'Transaction non valide : ID de transaction non trouvé.',
-	'INVALID_TXN_NON_ASCII'   => 'Transaction non valide : Caractères non ASCII détectés.',
-	'INVALID_RESPONSE_STATUS' => 'Statut de réponse non valide : ',
-	'UNEXPECTED_RESPONSE'     => 'Réponse inattendue de PayPal.',
+	'CURL_ERROR'                => 'Erreur cURL : %s',
+	'INVALID_TXN_ACCOUNT_ID'    => 'Transaction non valide : Les ID marchant ne correspondent pas.',
+	'INVALID_TXN_EMPTY_ID'      => 'Transaction non valide : ID de transaction non trouvé.',
+	'INVALID_TXN_NON_ASCII'     => 'Transaction non valide : Caractères non ASCII détectés.',
+	'INVALID_RESPONSE_STATUS'   => 'Statut de réponse non valide : ',
+	'NO_CONNECTION_DETECTED'    => 'cURL n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
+	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 ou HTTP1/1 n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
+	'UNEXPECTED_RESPONSE'       => 'Réponse inattendue de PayPal.',
 ));
 
 $lang = array_merge($lang, array(

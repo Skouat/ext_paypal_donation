@@ -86,13 +86,14 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Error
-	'CURL_ERROR'              => 'cURL error: %s',
-	'NO_CONNECTION_DETECTED'  => 'cURL has not been detected. Please contact the administrator of your web server.',
-	'INVALID_TXN_ACCOUNT_ID'  => 'Invalid transaction: merchant ID does not match.',
-	'INVALID_TXN_EMPTY_ID'    => 'Invalid transaction: transaction ID not found.',
-	'INVALID_TXN_NON_ASCII'   => 'Invalid transaction: non ASCII chars detected.',
-	'INVALID_RESPONSE_STATUS' => 'Invalid response status: ',
-	'UNEXPECTED_RESPONSE'     => 'Unexpected response from PayPal.',
+	'CURL_ERROR'                => 'cURL error: %s',
+	'INVALID_TXN_ACCOUNT_ID'    => 'Invalid transaction: merchant ID does not match.',
+	'INVALID_TXN_EMPTY_ID'      => 'Invalid transaction: transaction ID not found.',
+	'INVALID_TXN_NON_ASCII'     => 'Invalid transaction: non ASCII chars detected.',
+	'INVALID_RESPONSE_STATUS'   => 'Invalid response status: ',
+	'NO_CONNECTION_DETECTED'    => 'cURL has not been detected. Please contact the administrator of your web server.',
+	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 have not been detected. Please contact the administrator of your web server.',
+	'UNEXPECTED_RESPONSE'       => 'Unexpected response from PayPal.',
 ));
 
 $lang = array_merge($lang, array(
