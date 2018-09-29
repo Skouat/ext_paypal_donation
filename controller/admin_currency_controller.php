@@ -10,26 +10,28 @@
 
 namespace skouat\ppde\controller;
 
+use phpbb\config\config;
 use phpbb\language\language;
 use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
+use phpbb\user;
 use skouat\ppde\operators\currency;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @property \phpbb\config\config config             Config object
- * @property ContainerInterface   container          Service container interface
- * @property string               id_prefix_name     Prefix name for identifier in the URL
- * @property string               lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property language             language           Language user object
- * @property log                  log                The phpBB log system
- * @property string               module_name        Name of the module currently used
- * @property request              request            Request object
- * @property bool                 submit             State of submit $_POST variable
- * @property template             template           Template object
- * @property string               u_action           Action URL
- * @property \phpbb\user          user               User object
+ * @property config             config             Config object
+ * @property ContainerInterface container          Service container interface
+ * @property string             id_prefix_name     Prefix name for identifier in the URL
+ * @property string             lang_key_prefix    Prefix for the messages thrown by exceptions
+ * @property language           language           Language user object
+ * @property log                log                The phpBB log system
+ * @property string             module_name        Name of the module currently used
+ * @property request            request            Request object
+ * @property bool               submit             State of submit $_POST variable
+ * @property template           template           Template object
+ * @property string             u_action           Action URL
+ * @property user               user               User object
  */
 class admin_currency_controller extends admin_main
 {
@@ -38,18 +40,20 @@ class admin_currency_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container              Service container interface
-	 * @param language           $language               Language user object
-	 * @param log                $log                    The phpBB log system
-	 * @param currency           $ppde_operator_currency Operator object
-	 * @param request            $request                Request object
-	 * @param template           $template               Template object
-	 * @param \phpbb\user        $user                   User object
+	 * @param config             $config
+	 * @param ContainerInterface $container
+	 * @param language           $language
+	 * @param log                $log
+	 * @param currency           $ppde_operator_currency PPDE Operator object
+	 * @param request            $request
+	 * @param template           $template
+	 * @param user               $user
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, language $language, log $log, currency $ppde_operator_currency, request $request, template $template, \phpbb\user $user)
+	public function __construct(config $config, ContainerInterface $container, language $language, log $log, currency $ppde_operator_currency, request $request, template $template, user $user)
 	{
+		$this->config = $config;
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
@@ -90,11 +94,11 @@ class admin_currency_controller extends admin_main
 			$this->template->assign_block_vars('currency', array(
 				'CURRENCY_NAME'    => $data['currency_name'],
 				'CURRENCY_ENABLED' => (bool) $data['currency_enable'],
-
+				'L_ENABLE_DISABLE' => $this->language->lang($enable_lang),
+				'S_DEFAULT'        => (int) $data['currency_id'] === (int) $this->config['ppde_default_currency'],
 				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
 				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'L_ENABLE_DISABLE' => $this->language->lang($enable_lang),
 				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
 				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
 			));

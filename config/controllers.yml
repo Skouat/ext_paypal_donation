@@ -86,6 +86,7 @@ services:
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin_currency_controller
         arguments:
+            - '@config'
             - '@service_container'
             - '@language'
             - '@log'

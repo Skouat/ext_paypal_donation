@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_CONFIG'           => 'Currency Management',
 	'PPDE_DC_CONFIG_EXPLAIN'   => 'Here you can manage currencies.',
 	'PPDE_DC_CREATE_CURRENCY'  => 'Add currency',
+	'PPDE_DC_DEFAULT_CURRENCY' => '(default currency)',
 	'PPDE_DC_ENABLE'           => 'Enable currency',
 	'PPDE_DC_ENABLE_EXPLAIN'   => 'If enabled, the currency will be displayed in the dropbox.',
 	'PPDE_DC_ISO_CODE'         => 'ISO 4217 code',

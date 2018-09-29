@@ -65,7 +65,7 @@
 		<tbody>
 		{% for currency in loops.currency %}
 			<tr>
-				<td><a href="{{ currency.U_EDIT }}">{{ currency.CURRENCY_NAME }}</a></td>
+				<td><a href="{{ currency.U_EDIT }}">{{ currency.CURRENCY_NAME }}</a>{% if currency.S_DEFAULT %} {{ lang('PPDE_DC_DEFAULT_CURRENCY') }}{% endif %}</td>
 				<td style="width: 15%; text-align: center;">&nbsp;<a href="{{ currency.U_ENABLE_DISABLE }}" data-ajax="activate_deactivate">{{ currency.L_ENABLE_DISABLE }}</a>&nbsp;</td>
 				<td class="actions">
 					<span class="up-disabled" style="display:none;">{{ ICON_MOVE_UP_DISABLED }}</span>

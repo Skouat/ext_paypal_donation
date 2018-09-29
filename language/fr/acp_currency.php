@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_CONFIG'           => 'Gestion des devises',
 	'PPDE_DC_CONFIG_EXPLAIN'   => 'Permet de gérer les devises pour faire un don.',
 	'PPDE_DC_CREATE_CURRENCY'  => 'Ajouter une devise',
+	'PPDE_DC_DEFAULT_CURRENCY' => '(devise par défaut)',
 	'PPDE_DC_ENABLE'           => 'Activer la devise',
 	'PPDE_DC_ENABLE_EXPLAIN'   => 'Si activée, la devise sera disponible dans la liste de sélection.',
 	'PPDE_DC_ISO_CODE'         => 'Code ISO 4217',
