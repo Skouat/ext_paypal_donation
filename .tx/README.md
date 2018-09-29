@@ -30,7 +30,7 @@ tx push -t -l <LN> -r <RESOURCES>
 ### Sample command
 ```shell
 #Pull info_acp_donation.php file from IT language.
-tx pull --mode=translator -l it -r info_acp_donation_php
+tx pull --mode=translator -l it -r ppde-develop-32x.donate_php
 
 #Pull all files from DE language
 tx pull --mode=translator -l de
@@ -43,6 +43,7 @@ tx push -t -l de --skip
 ```
 
 ## TX Client Tooltips
+* The name of ressources in stored in `.tx/config`.
 * Use the option `-f` will force the download/upload of files.
 * Omit the option `-l` will download/upload all language files.
 * Omit the option `-r` will download/upload all resources files.
