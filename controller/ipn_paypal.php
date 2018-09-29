@@ -164,8 +164,8 @@ class ipn_paypal
 		if ($this->config['ppde_curl_detected'])
 		{
 			$this->curl_fsock = array(
-				'curl' => (bool) true,
-				'none' => (bool) false,
+				'curl' => true,
+				'none' => false,
 			);
 		}
 
@@ -244,33 +244,6 @@ class ipn_paypal
 	}
 
 	/**
-	 * Check if cURL is available
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_curl()
-	{
-		if (function_exists('curl_init') && function_exists('curl_exec'))
-		{
-			$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-
-			$ch = curl_init($ext_meta['extra']['version-check']['host']);
-
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			$this->response = curl_exec($ch);
-			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-
-			curl_close($ch);
-
-			return ($this->response !== false || $this->response_status !== '0') ? true : false;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Check if PayPal connection use TLS 1.2 and HTTP 1.1
 	 *
 	 * @access public
@@ -309,16 +282,27 @@ class ipn_paypal
 	}
 
 	/**
-	 * Get cURL version if available
+	 * Check if cURL is available
 	 *
-	 * @return array|bool
+	 * @return bool
 	 * @access public
 	 */
-	public function check_curl_info()
+	public function check_curl()
 	{
-		if (function_exists('curl_version'))
+		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
-			return curl_version();
+			$ext_meta = $this->ppde_ext_manager->get_ext_meta();
+
+			$ch = curl_init($ext_meta['extra']['version-check']['host']);
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			$this->response = curl_exec($ch);
+			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+
+			curl_close($ch);
+
+			return ($this->response !== false || $this->response_status !== '0') ? true : false;
 		}
 
 		return false;
@@ -338,5 +322,21 @@ class ipn_paypal
 			$this->config->set('ppde_curl_version', $curl_info['version']);
 			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
 		}
+	}
+
+	/**
+	 * Get cURL version if available
+	 *
+	 * @return array|bool
+	 * @access public
+	 */
+	public function check_curl_info()
+	{
+		if (function_exists('curl_version'))
+		{
+			return curl_version();
+		}
+
+		return false;
 	}
 }
