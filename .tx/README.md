@@ -1,19 +1,21 @@
 ## Transifex Client
 Transifex provides a [Client](http://docs.transifex.com/client/) to easily manage and synchronize localization files.
-This client is a Command Line Interface tool and must also be installed on your system following the [Client installation](http://docs.transifex.com/client/setup) guide.
+This client is a Command Line Interface tool and must also be installed on your system following the [Client installation](https://docs.transifex.com/client/installing-the-client) guide.
 
 ## How to use TX Client with this project?
-* First of all, [join](https://www.transifex.com/signup/?join_project=ppde-develop) the translation team.
-* Create `.transifexrc` file, based on the [Client configuration](http://docs.transifex.com/client/config/#transifexrc).
+* First of all, join the [PPDE develop 3.2.x](https://www.transifex.com/signup/?join_project=ppde-develop-32x) project.
+* Then, go to your profile and create an [API token](https://www.transifex.com/user/settings/api/) 
+* Run the command `tx init --skipsetup` to create the file `.transifexrc`, which stores your Transifex host configuration in your home directory.
 * Clone this project from git.
 ```shell
 git clone https://github.com/Skouat/ext_paypal_donation.git
 ```
-* Go tho the project directory.
+* Go tho the project directory and use the proper branch
 ```shell
 cd ext_paypal_donation
+git checkout develop-3.2.x
 ```
-* Check that all works as expected (if not check your Client installation).
+* Check that all works as expected (if not check your [Client installation](https://docs.transifex.com/client/installing-the-client)).
 ```shell
 tx status
 ```
