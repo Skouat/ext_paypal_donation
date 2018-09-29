@@ -38,7 +38,6 @@ if (empty($lang) || !is_array($lang))
  * mode: currency
  */
 $lang = array_merge($lang, array(
-	// Currency Management
 	'PPDE_DC_CONFIG'           => 'Gestion des devises',
 	'PPDE_DC_CONFIG_EXPLAIN'   => 'Permet de gérer les devises pour faire un don.',
 	'PPDE_DC_CREATE_CURRENCY'  => 'Ajouter une devise',

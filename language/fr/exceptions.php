@@ -34,7 +34,6 @@ if (empty($lang) || !is_array($lang))
 // ’ « » “ ” …
 //
 
-
 /**
  * logs
  */
