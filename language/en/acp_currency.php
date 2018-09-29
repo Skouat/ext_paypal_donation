@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_ENABLE'           => 'Enable currency',
 	'PPDE_DC_ENABLE_EXPLAIN'   => 'If enabled, the currency will be displayed in the dropbox.',
 	'PPDE_DC_ISO_CODE'         => 'ISO 4217 code',
-	'PPDE_DC_ISO_CODE_EXPLAIN' => 'Alphabetic code of the currency.<br>For more information about ISO 4217, please refer to the <a href="http://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="PayPal Donation MOD FAQ">PayPal Donation MOD FAQ</a> (external link).',
+	'PPDE_DC_ISO_CODE_EXPLAIN' => 'Alphabetic code of the currency.<br>For more information about ISO 4217, please refer to the <a href="https://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="PayPal Donation MOD FAQ">PayPal Donation MOD FAQ</a> (external link).',
 	'PPDE_DC_NAME'             => 'Currency name',
 	'PPDE_DC_NAME_EXPLAIN'     => 'Name of the currency.<br>(i.e. Euro).',
 	'PPDE_DC_POSITION'         => 'Position of the currency',
