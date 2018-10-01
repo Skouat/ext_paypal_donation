@@ -304,7 +304,7 @@ class admin_transactions_controller extends admin_main
 	/**
 	 * Do action regarding the value of $action
 	 *
-	 * @param $action
+	 * @param string $action Requested action
 	 *
 	 * @return void
 	 * @access private
@@ -446,7 +446,7 @@ class admin_transactions_controller extends admin_main
 	 */
 	public function get_log_count()
 	{
-		return ($this->entry_count) ? $this->entry_count : 0;
+		return ($this->entry_count) ? (int) $this->entry_count : 0;
 	}
 
 	/**
@@ -454,7 +454,7 @@ class admin_transactions_controller extends admin_main
 	 */
 	public function get_valid_offset()
 	{
-		return ($this->last_page_offset) ? $this->last_page_offset : 0;
+		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
 	}
 
 	/**
@@ -462,7 +462,7 @@ class admin_transactions_controller extends admin_main
 	 */
 	public function get_ipn_test()
 	{
-		return ($this->is_ipn_test) ? $this->is_ipn_test : false;
+		return ($this->is_ipn_test) ? (bool) $this->is_ipn_test : false;
 	}
 
 	/**

@@ -199,7 +199,7 @@ abstract class main
 	}
 
 	/**
-	 * SQL Query to return the ID of selected currency
+	 * SQL Query to return the ID of selected item
 	 *
 	 * @return string
 	 * @access public
@@ -208,7 +208,7 @@ abstract class main
 	{
 		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
  			FROM ' . $this->table_name . '
-			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $this->data[$this->table_name['item_id']['name']];
+			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $this->data[$this->table_schema['item_id']['name']];
 	}
 
 	/**

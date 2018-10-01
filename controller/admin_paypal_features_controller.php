@@ -112,39 +112,12 @@ class admin_paypal_features_controller extends admin_main
 	}
 
 	/**
-	 * The form submitting if 'submit' is true
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function submit_settings()
-	{
-		$this->submit = $this->request->is_set_post('submit');
-
-		// Test if the submitted form is valid
-		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
-
-		if ($this->can_submit_data($errors))
-		{
-			// Set the options the user configured
-			$this->set_settings();
-
-			// Add option settings change action to the admin log
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
-
-			// Option settings have been updated and logged
-			// Confirm this to the user and provide link back to previous page
-			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
-		}
-	}
-
-	/**
 	 * Set the options a user can configure
 	 *
 	 * @return void
-	 * @access private
+	 * @access protected
 	 */
-	private function set_settings()
+	protected function set_settings()
 	{
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));

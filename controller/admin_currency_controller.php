@@ -226,7 +226,7 @@ class admin_currency_controller extends admin_main
 	 * @param int $currency_id Currency Identifier
 	 *
 	 * @return void
-	 * @access   public
+	 * @access public
 	 */
 	public function edit($currency_id)
 	{

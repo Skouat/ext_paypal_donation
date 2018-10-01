@@ -144,6 +144,51 @@ abstract class admin_main
 	{
 	}
 
+	protected function set_settings()
+	{
+	}
+
+	/**
+	 * The form submitting if 'submit' is true
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function submit_settings()
+	{
+		$this->submit = $this->request->is_set_post('submit');
+
+		// Test if the submitted form is valid
+		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
+
+		if ($this->can_submit_data($errors))
+		{
+			// Set the options the user configured
+			$this->set_settings();
+
+			// Add option settings change action to the admin log
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
+
+			// Option settings have been updated and logged
+			// Confirm this to the user and provide link back to previous page
+			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
+		}
+	}
+
+	/**
+	 * Check if form is valid or not
+	 *
+	 * @param string $form_name
+	 * @param bool   $submit_or_preview
+	 *
+	 * @return array
+	 * @access protected
+	 */
+	protected function is_invalid_form($form_name, $submit_or_preview = false)
+	{
+		return (!check_form_key($form_name) && $submit_or_preview) ? array($this->language->lang('FORM_INVALID')) : array();
+	}
+
 	/**
 	 * @param array $errors
 	 *
@@ -209,20 +254,6 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if form is valid or not
-	 *
-	 * @param string $form_name
-	 * @param bool   $submit_or_preview
-	 *
-	 * @return array
-	 * @access protected
-	 */
-	protected function is_invalid_form($form_name, $submit_or_preview = false)
-	{
-		return (!check_form_key($form_name) && $submit_or_preview) ? array($this->language->lang('FORM_INVALID')) : array();
-	}
-
-	/**
 	 * Get result of submit and preview expression
 	 *
 	 * @param bool $submit
@@ -233,7 +264,7 @@ abstract class admin_main
 	 */
 	protected function submit_or_preview($submit = false, $preview = false)
 	{
-		return (bool) $submit || $preview;
+		return (bool) $submit || (bool) $preview;
 	}
 
 	/**

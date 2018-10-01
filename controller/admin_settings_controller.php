@@ -93,50 +93,23 @@ class admin_settings_controller extends admin_main
 			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
 
 			// Statistics Settings vars
-			'PPDE_RAISED'               => $this->check_config($this->config['ppde_raised'], 'float', 0),
 			'PPDE_GOAL'                 => $this->check_config($this->config['ppde_goal'], 'float', 0),
+			'PPDE_RAISED'               => $this->check_config($this->config['ppde_raised'], 'float', 0),
 			'PPDE_USED'                 => $this->check_config($this->config['ppde_used'], 'float', 0),
-			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
-			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
 			'S_PPDE_GOAL_ENABLE'        => $this->check_config($this->config['ppde_goal_enable']),
+			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
+			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
 			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
 		));
-	}
-
-	/**
-	 * The form submitting if 'submit' is true
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function submit_settings()
-	{
-		$this->submit = $this->request->is_set_post('submit');
-
-		// Test if the submitted form is valid
-		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
-
-		if ($this->can_submit_data($errors))
-		{
-			// Set the options the user configured
-			$this->set_settings();
-
-			// Add option settings change action to the admin log
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
-
-			// Option settings have been updated and logged
-			// Confirm this to the user and provide link back to previous page
-			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
-		}
 	}
 
 	/**
 	 * Set the options a user can configure
 	 *
 	 * @return void
-	 * @access private
+	 * @access protected
 	 */
-	private function set_settings()
+	protected function set_settings()
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));

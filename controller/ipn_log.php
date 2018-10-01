@@ -218,7 +218,7 @@ class ipn_log
 	}
 
 	/**
-	 * Insert $this->transaction_data args int the text report
+	 * Insert remote data args into the text report
 	 *
 	 * @param string $r
 	 *

@@ -26,7 +26,7 @@
 				{% if PPDE_LIST_VALUE %}
 				<select name="amount" id="amount">{{ PPDE_LIST_VALUE }}</select>
 				{% else %}
-				<input type="text" name="amount" class="inputbox autowidth" value="{{ PPDE_DEFAULT_VALUE }}" />
+				<input type="text" name="amount" class="inputbox autowidth" value="{{ PPDE_DEFAULT_VALUE }}">
 				{% endif %}
 				<select name="currency_code" id="currency_code">
 					{% for options in loops.options %}

@@ -246,6 +246,7 @@ class ipn_paypal
 	/**
 	 * Check if PayPal connection use TLS 1.2 and HTTP 1.1
 	 *
+	 * @return void
 	 * @access public
 	 */
 	public function check_tls()

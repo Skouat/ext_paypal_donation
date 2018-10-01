@@ -196,7 +196,7 @@ class main_controller
 	/**
 	 * Get default currency symbol
 	 *
-	 * @param int $id
+	 * @param int $id Currency identifier; default: 0
 	 *
 	 * @return array
 	 * @access public

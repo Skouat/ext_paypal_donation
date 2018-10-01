@@ -303,8 +303,9 @@ class admin_donation_pages_controller extends admin_main
 	 * Assign vars to the template if preview is true.
 	 *
 	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
-	 * @param                                    $errors
+	 * @param array                              $errors
 	 *
+	 * @return void
 	 * @access private
 	 */
 	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors)
@@ -325,7 +326,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @param array $vars
 	 *
 	 * @return void
-	 * @access   private
+	 * @access private
 	 */
 	private function assign_predefined_block_vars($vars)
 	{
@@ -398,8 +399,8 @@ class admin_donation_pages_controller extends admin_main
 	/**
 	 * Includes the file that contains the function, if not loaded.
 	 *
-	 * @param $function_name     string Name of the function to test
-	 * @param $function_filepath string Path of the file that containing the function
+	 * @param string $function_name     Name of the function to test
+	 * @param string $function_filepath Path of the file that containing the function
 	 *
 	 * @return void
 	 * @access private
@@ -413,7 +414,7 @@ class admin_donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * @param $smilies_enabled
+	 * @param bool $smilies_enabled
 	 *
 	 * @return void
 	 * @access private
@@ -465,7 +466,7 @@ class admin_donation_pages_controller extends admin_main
 		// Set output vars for display in the template
 		$this->template->assign_vars(array(
 			'S_EDIT_DONATION_PAGE' => true,
-			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $page_id,
+			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . (int) $page_id,
 			'U_BACK'               => $this->u_action,
 		));
 	}

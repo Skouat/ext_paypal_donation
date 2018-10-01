@@ -33,6 +33,10 @@ class ppde_module
 	/**
 	 * @param string $id
 	 * @param string $mode
+	 *
+	 * @throws \Exception
+	 * @return void
+	 * @access public
 	 */
 	public function main($id, $mode)
 	{
@@ -40,12 +44,6 @@ class ppde_module
 
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
-
-		/** @type \phpbb\request\request $request Request object */
-		$request = $phpbb_container->get('request');
-
-		// Requests
-		$action = $request->variable('action', '');
 
 		if ($this->in_array_field($mode, 'module_name', $this::$available_mode))
 		{
@@ -67,44 +65,12 @@ class ppde_module
 			// Load a template from adm/style for our ACP page
 			$this->tpl_name = 'ppde_' . strtolower($mode);
 
-			switch ($mode)
-			{
-				case 'currency':
-				case 'donation_pages':
-					// Get an instance of the entity
-					$entity = $phpbb_container->get('skouat.ppde.entity.' . $mode);
-
-					// Make the $u_action url available in entity
-					$entity->set_page_url($this->u_action);
-
-					// Request the ID
-					$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
-
-					$this->do_action($id, $mode, $action, $admin_controller);
-				break;
-				case 'paypal_features':
-				case 'settings':
-					// Load the display handle in the admin controller
-					/** @type \skouat\ppde\controller\admin_settings_controller|\skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
-					$admin_controller->display_settings();
-				break;
-				case 'overview':
-					// Load the display overview handle in the admin controller
-					/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
-					$admin_controller->display_overview($action);
-				break;
-				case 'transactions':
-					// Load the display transactions log handle in the admin controller
-					/** @type \skouat\ppde\controller\admin_transactions_controller $admin_controller */
-					$admin_controller->display_transactions($id, $mode, $action);
-				break;
-			}
+			$this->switch_mode($id, $mode, $admin_controller);
 		}
 		else
 		{
 			trigger_error('NO_MODE', E_USER_ERROR);
 		}
-
 	}
 
 	/**
@@ -126,6 +92,7 @@ class ppde_module
 				return true;
 			}
 		}
+		unset($item);
 
 		return false;
 	}
@@ -154,6 +121,60 @@ class ppde_module
 		return array();
 	}
 
+	/**
+	 * Switch to the mode selected
+	 *
+	 * @param int                                $id
+	 * @param string                             $mode
+	 * @param \skouat\ppde\controller\admin_main $admin_controller
+	 *
+	 * @throws \Exception
+	 * @return void
+	 * @access private
+	 */
+	private function switch_mode($id, $mode, $admin_controller)
+	{
+		global $phpbb_container;
+
+		/** @type \phpbb\request\request $request Request object */
+		$request = $phpbb_container->get('request');
+
+		// Requests
+		$action = $request->variable('action', '');
+
+		switch ($mode)
+		{
+			case 'currency':
+			case 'donation_pages':
+				// Get an instance of the entity
+				$entity = $phpbb_container->get('skouat.ppde.entity.' . $mode);
+
+				// Make the $u_action url available in entity
+				$entity->set_page_url($this->u_action);
+
+				// Request the ID
+				$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
+
+				$this->do_action($id, $mode, $action, $admin_controller);
+			break;
+			case 'paypal_features':
+			case 'settings':
+				// Load the display handle in the admin controller
+				/** @type \skouat\ppde\controller\admin_settings_controller|\skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
+				$admin_controller->display_settings();
+			break;
+			case 'overview':
+				// Load the display overview handle in the admin controller
+				/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
+				$admin_controller->display_overview($action);
+			break;
+			case 'transactions':
+				// Load the display transactions log handle in the admin controller
+				/** @type \skouat\ppde\controller\admin_transactions_controller $admin_controller */
+				$admin_controller->display_transactions($id, $mode, $action);
+			break;
+		}
+	}
 
 	/**
 	 * Performs action requested by the module
@@ -163,6 +184,9 @@ class ppde_module
 	 * @param string                             $action
 	 * @param \skouat\ppde\controller\admin_main $controller
 	 *
+	 * @throws \Exception
+	 * @return void
+	 * @access private
 	 */
 	private function do_action($id, $mode, $action, $controller)
 	{

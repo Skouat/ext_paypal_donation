@@ -87,6 +87,8 @@ class main_donate extends main_controller
 	 */
 	private function set_return_args_url($set_return_args_url)
 	{
+		$this->return_args_url = $set_return_args_url;
+
 		switch ($set_return_args_url)
 		{
 			case 'cancel':
@@ -94,13 +96,11 @@ class main_donate extends main_controller
 				$this->template->assign_vars(array(
 					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
 				));
-				$this->return_args_url = $set_return_args_url;
 			break;
 			case 'donorlist':
 				$this->template->assign_vars(array(
 					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
 				));
-				$this->return_args_url = $set_return_args_url;
 			break;
 			default:
 				$this->return_args_url = 'body';
@@ -125,6 +125,8 @@ class main_donate extends main_controller
 
 	/**
 	 * Build pull down menu options of available currency value
+	 *
+	 * @param int $default_value
 	 *
 	 * @return string List of currency value set in ACP for dropdown menu
 	 * @access private
@@ -190,7 +192,7 @@ class main_donate extends main_controller
 	{
 		if ($default == $value)
 		{
-			return ' selected="selected"';
+			return ' selected';
 		}
 
 		return '';
