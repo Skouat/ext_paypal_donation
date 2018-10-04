@@ -1,4 +1,6 @@
 # Changelog
+## 2.0.1 - 2018-10-04
+- Change: Enhance CSS compatibility with other styles (thanks to Mazeltof)
 
 ## 2.0.0 - 2018-10-02
 - Add: Minimum amount before auto group donors (#40]
