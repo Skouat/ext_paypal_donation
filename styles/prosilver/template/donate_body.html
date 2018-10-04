@@ -37,7 +37,7 @@
 			<fieldset class="submit-buttons">
 				{{ S_HIDDEN_FIELDS }}
 				<div id="paypalbutton">
-					<input type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{{ lang('PPDE_DONATION_BUTTON_TITLE') }}">
+					<input class="paypalbutton" type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{{ lang('PPDE_DONATION_BUTTON_TITLE') }}">
 				</div>
 				<div id="processingpaypal" class="spinner loading">{{ lang('PPDE_CONTACT_PAYPAL') }}</div>
 			</fieldset>

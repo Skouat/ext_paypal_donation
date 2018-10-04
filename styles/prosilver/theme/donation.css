@@ -2,7 +2,7 @@
 ---------------------------------------- */
 
 /* PayPal Button */
-#paypalbutton input {
+.paypalbutton {
 	font-size: 14px;
 	font-weight: bold;
 	font-style: italic;
@@ -91,9 +91,7 @@
 	font-weight: bold;
 	line-height: 26px;
 	text-align: center;
-	background: #cadceb;
 	border-radius: 14px;
-	color: #105289;
 	float: left;
 	width: 62px;
 	height: 26px;
