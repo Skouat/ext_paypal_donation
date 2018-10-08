@@ -302,7 +302,7 @@ class transactions
 	 * @param string $txn_id     The txn number id
 	 * @param string $custom_url optional parameter to specify a profile url. The transaction id get appended to this
 	 *                           url as &amp;id={id}
-	 * @param bool   $colour
+	 * @param bool   $colour     If false the color #FF0000 will be applied on the URL.
 	 *
 	 * @return string A string consisting of what is wanted.
 	 * @access private
@@ -316,7 +316,7 @@ class transactions
 		{
 			$_profile_cache['tpl_nourl'] = '{{ TRANSACTION }}';
 			$_profile_cache['tpl_url'] = '<a href="{{ TXN_URL }}">{{ TRANSACTION }}</a>';
-			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR };">{{ TRANSACTION }}</a>';
+			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>';
 		}
 
 		// Build correct transaction url
@@ -333,7 +333,7 @@ class transactions
 			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
 		}
 
-		return str_replace(array('{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'), array($txn_url, '#FF0000', $txn_id), (!$colour) ? $_profile_cache['tpl_url'] : $_profile_cache['tpl_url_colour']);
+		return str_replace(array('{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'), array($txn_url, 'color: #FF0000;', $txn_id), (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
 	}
 
 	/**
