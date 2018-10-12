@@ -327,9 +327,6 @@ class admin_currency_controller extends admin_main
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NO_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		//** @type \phpbb\config\config $config */
-		$this->config = $this->container->get('config');
-
 		// Return an error if it's the default currency
 		if ($this->config['ppde_default_currency'] == $currency_id && ($action == 'deactivate'))
 		{
