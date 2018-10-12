@@ -82,6 +82,8 @@ services:
         calls:
             - [set_entity_transactions, ['@skouat.ppde.entity.transactions']]
             - [set_operator_transactions, ['@skouat.ppde.operator.transactions']]
+            - [set_pagination, ['@pagination']]
+            - [set_path_helper, ['@path_helper']]
 
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin_currency_controller

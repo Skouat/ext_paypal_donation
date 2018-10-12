@@ -16,6 +16,10 @@ class main_donor_list extends main_controller
 	protected $ppde_entity_transactions;
 	/** @var \skouat\ppde\operators\transactions */
 	protected $ppde_operator_transactions;
+	/** @var  \phpbb\pagination */
+	protected $pagination;
+	/** @var  \phpbb\path_helper */
+	protected $path_helper;
 	/** @var string */
 	private $u_action;
 
@@ -27,6 +31,16 @@ class main_donor_list extends main_controller
 	public function set_operator_transactions(\skouat\ppde\operators\transactions $ppde_operator_transactions)
 	{
 		$this->ppde_operator_transactions = $ppde_operator_transactions;
+	}
+
+	public function set_pagination(\phpbb\pagination $pagination)
+	{
+		$this->pagination = $pagination;
+	}
+
+	public function set_path_helper(\phpbb\path_helper $path_helper)
+	{
+		$this->path_helper = $path_helper;
 	}
 
 	public function handle()
@@ -41,12 +55,6 @@ class main_donor_list extends main_controller
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
-
-		// Get needed container
-		/** @type \phpbb\pagination $pagination */
-		$pagination = $this->container->get('pagination');
-		/** @type \phpbb\path_helper $path_helper */
-		$path_helper = $this->container->get('path_helper');
 
 		// Set up general vars
 		$default_key = 'd';
@@ -77,16 +85,16 @@ class main_donor_list extends main_controller
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
-		$this->u_action = reapply_sid($path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
+		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
 		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(0, $order_by);
 		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
-		$start = $pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
+		$start = $this->pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
 
-		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
+		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
 
 		// adds fields to the table schema needed by entity->import()
 		$additional_table_schema = array(
