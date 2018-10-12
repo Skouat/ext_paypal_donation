@@ -33,4 +33,16 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 			),
 		);
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function revert_schema()
+	{
+		return array(
+			'drop_columns' => array(
+				$this->table_prefix . 'users' => 'user_ppde_donated_amount',
+			),
+		);
+	}
 }
