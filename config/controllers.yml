@@ -124,6 +124,8 @@ services:
             - '@request'
             - '@template'
             - '@user'
+            - '%core.adm_relative_path%'
+            - '%core.root_path%'
             - '%core.php_ext%'
 
     skouat.ppde.controller.admin.settings:

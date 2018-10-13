@@ -32,12 +32,15 @@ use phpbb\user;
  */
 class admin_overview_controller extends admin_main
 {
+	protected $adm_relative_path;
 	protected $auth;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $ppde_ext_manager;
 	protected $ppde_ipn_paypal;
 	protected $php_ext;
+	protected $phpbb_admin_path;
+	protected $phpbb_root_path;
 
 	/**
 	 * Constructor
@@ -53,11 +56,13 @@ class admin_overview_controller extends admin_main
 	 * @param request                       $request                      Request object
 	 * @param template                      $template                     Template object
 	 * @param user                          $user                         User object
+	 * @param string                        $adm_relative_path            phpBB admin relative path
+	 * @param string                        $phpbb_root_path              phpBB root path
 	 * @param string                        $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, language $language, log $log, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $php_ext)
+	public function __construct(auth $auth, config $config, language $language, log $log, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -71,6 +76,9 @@ class admin_overview_controller extends admin_main
 		$this->template = $template;
 		$this->user = $user;
 		$this->php_ext = $php_ext;
+		$this->adm_relative_path = $adm_relative_path;
+		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
+		$this->phpbb_root_path = $phpbb_root_path;
 		parent::__construct(
 			'overview',
 			'PPDE_',
@@ -120,7 +128,7 @@ class admin_overview_controller extends admin_main
 			'STATS_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count'),
 			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
-			'U_PPDE_MORE_INFORMATION'        => append_sid("index.$this->php_ext", 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
+			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
 			'U_ACTION'                       => $this->u_action,
 		));
 
