@@ -245,31 +245,31 @@ class ipn_listener
 	private function transaction_vars_list()
 	{
 		return array(
-			'business'          => '',              // Primary merchant e-mail address
+			'business'          => '',              // Primary merchant e-mail address. Length: 127 characters
 			'confirmed'         => false,           // used to check if the payment is confirmed
 			'exchange_rate'     => '',              // Exchange rate used if a currency conversion occurred
-			'first_name'        => array('', true), // First name of sender
+			'first_name'        => array('', true), // First name of sender. Length: 64 characters
 			'item_name'         => array('', true), // Equal to: $this->config['sitename']
 			'item_number'       => '',              // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-			'last_name'         => array('', true), // Last name of sender
+			'last_name'         => array('', true), // Last name of sender. Length: 64 characters
 			'mc_currency'       => '',              // Currency
 			'mc_gross'          => 0.00,            // Amt received (before fees)
 			'mc_fee'            => 0.00,            // Amt of fees
-			'parent_txn_id'     => '',              // Transaction ID
-			'payer_email'       => '',              // PayPal sender email address
-			'payer_id'          => '',              // PayPal sender ID
+			'parent_txn_id'     => '',              // Transaction ID. Length: 19 characters
+			'payer_email'       => '',              // PayPal sender email address. Length: 127 characters
+			'payer_id'          => '',              // PayPal sender ID. Length: 13 characters
 			'payer_status'      => 'unverified',    // PayPal sender status (verified, unverified?)
 			'payment_date'      => '',              // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
 			'payment_status'    => '',              // eg: 'Completed'
-			'payment_type'      => '',              // Payment type
-			'receiver_id'       => '',              // Secure Merchant Account ID
-			'receiver_email'    => '',              // Merchant e-mail address
-			'residence_country' => '',              // Merchant country code
+			'payment_type'      => '',              // Payment type (echeck or instant)
+			'receiver_id'       => '',              // Secure Merchant Account ID. Length: 13 characters
+			'receiver_email'    => '',              // Merchant e-mail address. Length: 127 characters
+			'residence_country' => '',              // Merchant country code. Length: 2 characters
 			'settle_amount'     => 0.00,            // Amt received after currency conversion (before fees)
 			'settle_currency'   => '',              // Currency of 'settle_amount'
 			'test_ipn'          => false,           // used when transaction come from Sandbox platform
 			'txn_id'            => '',              // Transaction ID
-			'txn_type'          => '',              // Transaction type - Should be: 'send_money'
+			'txn_type'          => '',              // Transaction type - Should be: 'web_accept'
 		);
 	}
 
@@ -282,8 +282,8 @@ class ipn_listener
 	private function validate_post_data()
 	{
 		$check = array();
-		$check[] = $this->check_txn_id($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
-		$check[] = $this->check_txn_id($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
+		$check[] = $this->check_post_data($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
+		$check[] = $this->check_post_data($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
 		$check[] = $this->check_account_id();
 
 		return (bool) array_product($check);
@@ -291,7 +291,7 @@ class ipn_listener
 
 	/**
 	 * Check if value is true
-	 * Return false if txn_id is not empty
+	 * Return true if success. Otherwise, we send an exit code via log_error()
 	 *
 	 * @param mixed  $checked_value
 	 * @param string $lang_key
@@ -299,7 +299,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function check_txn_id($checked_value, $lang_key)
+	private function check_post_data($checked_value, $lang_key)
 	{
 		if (!$checked_value)
 		{
@@ -310,7 +310,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Check if txn_id contains only ASCII chars.
+	 * Check if parsed value contains only ASCII chars.
 	 * Return false if it contains non ASCII chars.
 	 *
 	 * @param $value
@@ -320,7 +320,7 @@ class ipn_listener
 	 */
 	private function only_ascii($value)
 	{
-		// we ensure that the txn_id (transaction ID) contains only ASCII chars...
+		// we ensure that the value contains only ASCII chars...
 		$pos = strspn($value, self::ASCII_RANGE);
 		$len = strlen($value);
 
