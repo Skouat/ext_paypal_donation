@@ -280,8 +280,8 @@ class admin_donation_pages_controller extends admin_main
 		));
 
 		// Display custom bbcodes and smilies
-		$this->include_custom_bbcodes($entity->message_bbcode_enabled());
-		$this->include_smileys($entity->message_smilies_enabled());
+		$this->include_custom_bbcodes($this->user->optionget('bbcode') || $entity->message_bbcode_enabled());
+		$this->include_smilies($this->user->optionget('smilies') || $entity->message_smilies_enabled());
 	}
 
 	/**
@@ -419,7 +419,7 @@ class admin_donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_smileys($smilies_enabled)
+	private function include_smilies($smilies_enabled)
 	{
 		if ($smilies_enabled)
 		{
