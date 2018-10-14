@@ -168,7 +168,7 @@ class ipn_listener
 	private function validate_transaction()
 	{
 		// Request and populate $this->transaction_data
-		$this->get_post_data($this->transaction_vars_list());
+		array_map(array($this, "get_post_data"), $this->transaction_vars_list());
 
 		if ($this->validate_post_data() === false)
 		{
@@ -201,39 +201,39 @@ class ipn_listener
 	}
 
 	/**
-	 * Get data from $_POST
+	 * Request predefined variables from super global, then fill in the $this->transaction_data array
 	 *
-	 * @param array $data_ary
+	 * @param array $data_ary List of data to request
 	 *
-	 * @return array
+	 * @return void
 	 */
 	private function get_post_data($data_ary = array())
 	{
-		$post_data = array();
-
-		if (count($data_ary))
+		if (is_array($data_ary["default"]))
 		{
-			foreach ($data_ary as $key => $default)
-			{
-				if (is_array($default))
-				{
-					$this->transaction_data[$key] = $this->request->variable($key, (string) $default[0], (bool) $default[1]);
-				}
-				else
-				{
-					$this->transaction_data[$key] = $this->request->variable($key, $default);
-				}
-			}
+			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
 		}
 		else
 		{
-			foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
-			{
-				$post_data[$key] = $this->request->variable($key, '', true);
-			}
+			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], $data_ary['default']);
+		}
+	}
+
+	/**
+	 * Get $_POST content as is. This is used to Postback args to PayPal.
+	 *
+	 * @return array
+	 */
+	private function get_postback_args()
+	{
+		$data_ary = array();
+
+		foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
+		{
+			$data_ary[$key] = $this->request->variable($key, '', true);
 		}
 
-		return $post_data;
+		return $data_ary;
 	}
 
 	/**
@@ -245,31 +245,67 @@ class ipn_listener
 	private function transaction_vars_list()
 	{
 		return array(
-			'business'          => '',              // Primary merchant e-mail address. Length: 127 characters
-			'confirmed'         => false,           // used to check if the payment is confirmed
-			'exchange_rate'     => '',              // Exchange rate used if a currency conversion occurred
-			'first_name'        => array('', true), // First name of sender. Length: 64 characters
-			'item_name'         => array('', true), // Equal to: $this->config['sitename']
-			'item_number'       => '',              // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-			'last_name'         => array('', true), // Last name of sender. Length: 64 characters
-			'mc_currency'       => '',              // Currency
-			'mc_gross'          => 0.00,            // Amt received (before fees)
-			'mc_fee'            => 0.00,            // Amt of fees
-			'parent_txn_id'     => '',              // Transaction ID. Length: 19 characters
-			'payer_email'       => '',              // PayPal sender email address. Length: 127 characters
-			'payer_id'          => '',              // PayPal sender ID. Length: 13 characters
-			'payer_status'      => 'unverified',    // PayPal sender status (verified, unverified?)
-			'payment_date'      => '',              // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
-			'payment_status'    => '',              // eg: 'Completed'
-			'payment_type'      => '',              // Payment type (echeck or instant)
-			'receiver_id'       => '',              // Secure Merchant Account ID. Length: 13 characters
-			'receiver_email'    => '',              // Merchant e-mail address. Length: 127 characters
-			'residence_country' => '',              // Merchant country code. Length: 2 characters
-			'settle_amount'     => 0.00,            // Amt received after currency conversion (before fees)
-			'settle_currency'   => '',              // Currency of 'settle_amount'
-			'test_ipn'          => false,           // used when transaction come from Sandbox platform
-			'txn_id'            => '',              // Transaction ID
-			'txn_type'          => '',              // Transaction type - Should be: 'web_accept'
+			array('name' => 'confirmed', 'default' => false),  // used to check if the payment is confirmed
+			array('name' => 'exchange_rate', 'default' => ''), // Exchange rate used if a currency conversion occurred
+			array('name' => 'item_name', 'default' => array('', true)), // Equal to: $this->config['sitename']
+			array('name' => 'item_number', 'default' => ''), // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+			array('name' => 'mc_currency', 'default' => ''), // Currency
+			array('name' => 'mc_gross', 'default' => 0.00),  // Amt received (before fees)
+			array('name' => 'mc_fee', 'default' => 0.00),    // Amt of fees
+			array('name' => 'payer_status', 'default' => 'unverified'), // PayPal sender status (verified, unverified?)
+			array('name' => 'payment_date', 'default' => ''),    // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
+			array('name' => 'payment_status', 'default' => ''),  // Payment status. e.g.: 'Completed'
+			array('name' => 'payment_type', 'default' => ''),    // Payment type (echeck or instant)
+			array('name' => 'settle_amount', 'default' => 0.00), // Amt received after currency conversion (before fees)
+			array('name' => 'settle_currency', 'default' => ''), // Currency of 'settle_amount'
+			array('name' => 'test_ipn', 'default' => false),     // used when transaction come from Sandbox platform
+			array('name' => 'txn_id', 'default' => ''),          // Transaction ID
+			array('name' => 'txn_type', 'default' => ''),        // Transaction type - Should be: 'web_accept'
+			array(  // Primary merchant e-mail address
+					'name'            => 'business',
+					'default'         => '',
+					'condition_check' => array('length' => 127),
+			),
+			array(  // Sender's First name
+					'name'            => 'first_name',
+					'default'         => array('', true),
+					'condition_check' => array('length' => 64),
+			),
+			array(  // Sender's Last name
+					'name'            => 'last_name',
+					'default'         => array('', true),
+					'condition_check' => array('length' => 64),
+			),
+			array(  // The Parent transaction ID, in case of refund.
+					'name'            => 'parent_txn_id',
+					'default'         => '',
+					'condition_check' => array('length' => 19),
+			),
+			array(  // PayPal sender email address
+					'name'            => 'payer_email',
+					'default'         => '',
+					'condition_check' => array('length' => 127),
+			),
+			array(  // PayPal sender ID
+					'name'            => 'payer_id',
+					'default'         => '',
+					'condition_check' => array('length' => 13),
+			),
+			array(  // Secure Merchant Account ID
+					'name'            => 'receiver_id',
+					'default'         => '',
+					'condition_check' => array('length' => 13),
+			),
+			array(  // Merchant e-mail address
+					'name'            => 'receiver_email',
+					'default'         => '',
+					'condition_check' => array('length' => 127),
+			),
+			array(  // Merchant country code
+					'name'            => 'residence_country',
+					'default'         => '',
+					'condition_check' => array('length' => 2),
+			),
 		);
 	}
 
@@ -364,7 +400,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Get all args for construct the return URI
+	 * Get all args and build the return URI
 	 *
 	 * @return void
 	 * @access private
@@ -376,12 +412,10 @@ class ipn_listener
 		$this->args_return_uri = 'cmd=_notify-validate';
 
 		// Grab the post data form and set in an array to be used in the URI to PayPal
-		foreach ($this->get_post_data() as $key => $value)
+		foreach ($this->get_postback_args() as $key => $value)
 		{
 			$encoded = urlencode($value);
 			$values[] = $key . '=' . $encoded;
-
-			$this->transaction_data[$key] = $value;
 		}
 
 		// implode the array into a string URI
