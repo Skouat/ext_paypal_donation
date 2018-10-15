@@ -26,9 +26,15 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	public function update_schema()
 	{
 		return array(
-			'add_columns' => array(
+			'add_columns'    => array(
 				$this->table_prefix . 'users' => array(
 					'user_ppde_donated_amount' => array('DECIMAL:8', 0),
+				),
+			),
+			'change_columns' => array(
+				$this->table_prefix . 'ppde_txn_log' => array(
+					'item_name'   => array('VCHAR:127', ''),
+					'item_number' => array('VCHAR:127', ''),
 				),
 			),
 		);
@@ -40,8 +46,14 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	public function revert_schema()
 	{
 		return array(
-			'drop_columns' => array(
+			'drop_columns'   => array(
 				$this->table_prefix . 'users' => 'user_ppde_donated_amount',
+			),
+			'change_columns' => array(
+				$this->table_prefix . 'ppde_txn_log' => array(
+					'item_name'   => array('VCHAR:128', ''),
+					'item_number' => array('VCHAR:128', ''),
+				),
 			),
 		);
 	}
