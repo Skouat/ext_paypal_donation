@@ -88,9 +88,12 @@ $lang = array_merge($lang, array(
 $lang = array_merge($lang, array(
 	// Error
 	'CURL_ERROR'                => 'Erreur cURL : %s',
-	'INVALID_TXN_ACCOUNT_ID'    => 'Transaction non valide : Les ID marchant ne correspondent pas.',
+	'INVALID_TXN_ACCOUNT_ID'    => 'Transaction non valide : les ID marchant ne correspondent pas.',
+	'INVALID_TXN_ASCII'         => 'Transaction non valide : caractères non ASCII détectés.',
+	'INVALID_TXN_CONTENT'       => 'Transaction non valide : contenu inattendu dans « %s ».',
 	'INVALID_TXN_EMPTY_ID'      => 'Transaction non valide : ID de transaction non trouvé.',
-	'INVALID_TXN_NON_ASCII'     => 'Transaction non valide : Caractères non ASCII détectés.',
+	'INVALID_TXN_INVALID_CHECK' => 'Transaction non valide : variable POST inconnue.',
+	'INVALID_TXN_LENGTH'        => 'Transaction non valide : le nombre de caractères attendues pour « %s » ne correspondent pas.',
 	'INVALID_RESPONSE_STATUS'   => 'Statut de réponse non valide : ',
 	'NO_CONNECTION_DETECTED'    => 'cURL n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
 	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 ou HTTP1/1 n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',

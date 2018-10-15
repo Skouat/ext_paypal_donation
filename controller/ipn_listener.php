@@ -274,13 +274,6 @@ class ipn_listener
 		// Request and populate $this->transaction_data
 		array_map(array($this, 'get_post_data'), $this::$paypal_vars_table);
 
-		if ($this->validate_post_data() === false)
-		{
-			// The minimum required checks are not met
-			// So we force to log collected data in /store/ext/ppde directory
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_ACCOUNT_ID'), true, true, E_USER_NOTICE, $this->transaction_data);
-		}
-
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
 		foreach ($decode_ary as $key)
 		{
@@ -815,48 +808,125 @@ class ipn_listener
 	{
 		if (is_array($data_ary['default']))
 		{
-			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
+			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
 		}
 		else
 		{
-			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], $data_ary['default']);
+			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
+		}
+
+		if ($this->validate_post_data($data_ary) === true)
+		{
+			$this->transaction_data[$data_ary['name']] = $data_ary['value'];
+		}
+		else
+		{
+			// The minimum required checks are not met
+			// So we force to log collected data in /store/ext/ppde directory
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_ACCOUNT_ID'), true, true, E_USER_NOTICE, $this->transaction_data);
 		}
 	}
 
 	/**
 	 * Check if some settings are valid.
 	 *
+	 * @param array $data_ary
+	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_post_data()
+	private function validate_post_data($data_ary = array())
 	{
 		$check = array();
-		$check[] = $this->check_post_data($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
-		$check[] = $this->check_post_data($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
-		$check[] = $this->check_account_id();
+
+		// check all conditions declared for this post_data
+		if (isset($data_ary['condition_check']))
+		{
+			$check[] = $this->check_post_data($data_ary);
+		}
 
 		return (bool) array_product($check);
 	}
 
 	/**
 	 * Check if value is true
-	 * Return true if success. Otherwise, we send an exit code via log_error()
+	 * Return true on success. Otherwise, we send an exit code via log_error()
 	 *
-	 * @param mixed  $checked_value
-	 * @param string $lang_key
+	 * @param array $checked_ary
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function check_post_data($checked_value, $lang_key)
+	private function check_post_data($checked_ary)
 	{
-		if (!$checked_value)
+		$result = $this->call_post_data_func($checked_ary);
+		if (is_array($result) && !array_product($result))
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang($lang_key), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_' . strtoupper(key($result)), $checked_ary['name']), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
+		}
+		else if (!$result)
+		{
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_INVALID_CHECK'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check requirements for data value.
+	 *
+	 * @param array $data_ary
+	 *
+	 * @access public
+	 * @return bool|array
+	 */
+	public function call_post_data_func($data_ary)
+	{
+		foreach ($data_ary['condition_check'] as $control_point => $params)
+		{
+			// Calling the check_post_data_function
+			if (call_user_func_array(array($this, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
+			{
+				return true;
+			}
+			else
+			{
+				return array($control_point => false);
+			}
+		}
+		unset($data_ary, $control_point, $params);
+
+		return false;
+	}
+
+	/**
+	 * Check Post data length.
+	 * Called by $this->check_post_data() method
+	 *
+	 * @param string $value
+	 * @param array  $statement
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_post_data_length($value, $statement)
+	{
+		return $this->ppde_controller_main->compare(strlen($value), $statement['value'], $statement['operator']);
+	}
+
+	/**
+	 * Check Post data content based on an array list.
+	 * Called by $this->check_post_data() method
+	 *
+	 * @param string $value
+	 * @param array  $content_ary
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_post_data_content($value,$content_ary)
+	{
+		return in_array($value, $content_ary) ? true : false;
 	}
 
 	/**
@@ -869,7 +939,7 @@ class ipn_listener
 	{
 		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 
-		if ($this->only_ascii($account_value))
+		if ($this->check_post_data_ascii($account_value))
 		{
 			return $account_value == $this->transaction_data['receiver_id'];
 		}
@@ -899,17 +969,12 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function only_ascii($value)
+	private function check_post_data_ascii($value)
 	{
 		// we ensure that the value contains only ASCII chars...
 		$pos = strspn($value, self::ASCII_RANGE);
 		$len = strlen($value);
 
-		if ($pos != $len)
-		{
-			return false;
-		}
-
-		return true;
+		return $pos != $len ? false : true;
 	}
 }

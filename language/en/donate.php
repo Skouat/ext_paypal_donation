@@ -89,8 +89,11 @@ $lang = array_merge($lang, array(
 	// Error
 	'CURL_ERROR'                => 'cURL error: %s',
 	'INVALID_TXN_ACCOUNT_ID'    => 'Invalid transaction: merchant ID does not match.',
+	'INVALID_TXN_ASCII'         => 'Invalid transaction: non ASCII chars detected.',
+	'INVALID_TXN_CONTENT'       => 'Invalid transaction: Unexpected content for “%s”.',
 	'INVALID_TXN_EMPTY_ID'      => 'Invalid transaction: transaction ID not found.',
-	'INVALID_TXN_NON_ASCII'     => 'Invalid transaction: non ASCII chars detected.',
+	'INVALID_TXN_INVALID_CHECK' => 'Invalid transaction: Unknown Postdata.',
+	'INVALID_TXN_LENGTH'        => 'Invalid transaction: the expected number of chars for “%s” does not match.',
 	'INVALID_RESPONSE_STATUS'   => 'Invalid response status: ',
 	'NO_CONNECTION_DETECTED'    => 'cURL has not been detected. Please contact the administrator of your web server.',
 	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 have not been detected. Please contact the administrator of your web server.',
