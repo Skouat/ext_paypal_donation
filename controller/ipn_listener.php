@@ -305,132 +305,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Request predefined variables from super global, then fill in the $this->transaction_data array
-	 *
-	 * @param array $data_ary List of data to request
-	 *
-	 * @return void
-	 */
-	private function get_post_data($data_ary = array())
-	{
-		if (is_array($data_ary["default"]))
-		{
-			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
-		}
-		else
-		{
-			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], $data_ary['default']);
-		}
-	}
-
-	/**
-	 * Get $_POST content as is. This is used to Postback args to PayPal.
-	 *
-	 * @return array
-	 */
-	private function get_postback_args()
-	{
-		$data_ary = array();
-
-		foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
-		{
-			$data_ary[$key] = $this->request->variable($key, '', true);
-		}
-
-		return $data_ary;
-	}
-
-	/**
-	 * Check if some settings are valid.
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function validate_post_data()
-	{
-		$check = array();
-		$check[] = $this->check_post_data($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
-		$check[] = $this->check_post_data($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
-		$check[] = $this->check_account_id();
-
-		return (bool) array_product($check);
-	}
-
-	/**
-	 * Check if value is true
-	 * Return true if success. Otherwise, we send an exit code via log_error()
-	 *
-	 * @param mixed  $checked_value
-	 * @param string $lang_key
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data($checked_value, $lang_key)
-	{
-		if (!$checked_value)
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang($lang_key), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param $value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function only_ascii($value)
-	{
-		// we ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		if ($pos != $len)
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_account_id()
-	{
-		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
-
-		if ($this->only_ascii($account_value))
-		{
-			return $account_value == $this->transaction_data['receiver_id'];
-		}
-		else
-		{
-			return $account_value == $this->transaction_data['receiver_email'];
-		}
-	}
-
-	/**
-	 * Check if Sandbox is enabled based on config value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function ipn_use_sandbox()
-	{
-		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
-	}
-
-	/**
 	 * Get all args and build the return URI
 	 *
 	 * @return void
@@ -451,6 +325,23 @@ class ipn_listener
 
 		// implode the array into a string URI
 		$this->args_return_uri .= '&' . implode('&', $values);
+	}
+
+	/**
+	 * Get $_POST content as is. This is used to Postback args to PayPal.
+	 *
+	 * @return array
+	 */
+	private function get_postback_args()
+	{
+		$data_ary = array();
+
+		foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
+		{
+			$data_ary[$key] = $this->request->variable($key, '', true);
+		}
+
+		return $data_ary;
 	}
 
 	/**
@@ -706,6 +597,70 @@ class ipn_listener
 		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 
+	/**
+	 * Returns if donor is member
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function donor_is_member()
+	{
+		return $this->is_donor_is_member() && !empty($this->payer_data);
+	}
+
+	/**
+	 * Checks if the donor is a member then gets payer_data values
+	 *
+	 * @return void
+	 * @access private
+	 */
+
+	private function is_donor_is_member()
+	{
+		$anonymous_user = false;
+
+		// if the user_id is not anonymous
+		if ($this->transaction_data['user_id'] != ANONYMOUS)
+		{
+			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
+
+			if (!$this->donor_is_member)
+			{
+				// no results, therefore the user is anonymous...
+				$anonymous_user = true;
+			}
+		}
+		else
+		{
+			// the user is anonymous by default
+			$anonymous_user = true;
+		}
+
+		if ($anonymous_user)
+		{
+			// if the user is anonymous, check their PayPal email address with all known email hashes
+			// to determine if the user exists in the database with that email
+			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
+		}
+	}
+
+	/**
+	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 *
+	 * @param string     $type Allowed value : 'user' or 'email'
+	 * @param string|int $args If $type is set to 'user', $args must be a user id.
+	 *                         If $type is set to 'email', $args must be an email address
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_donors_status($type, $args)
+	{
+		$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data($type, $args);
+
+		return !empty($this->payer_data);
+	}
+
 	private function update_donor_stats()
 	{
 		if ($this->donor_is_member)
@@ -788,70 +743,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Returns if donor is member
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function donor_is_member()
-	{
-		return $this->is_donor_is_member() && !empty($this->payer_data);
-	}
-
-	/**
-	 * Checks if the donor is a member then gets payer_data values
-	 *
-	 * @return void
-	 * @access private
-	 */
-
-	private function is_donor_is_member()
-	{
-		$anonymous_user = false;
-
-		// if the user_id is not anonymous
-		if ($this->transaction_data['user_id'] != ANONYMOUS)
-		{
-			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
-
-			if (!$this->donor_is_member)
-			{
-				// no results, therefore the user is anonymous...
-				$anonymous_user = true;
-			}
-		}
-		else
-		{
-			// the user is anonymous by default
-			$anonymous_user = true;
-		}
-
-		if ($anonymous_user)
-		{
-			// if the user is anonymous, check their PayPal email address with all known email hashes
-			// to determine if the user exists in the database with that email
-			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
-		}
-	}
-
-	/**
-	 * Gets donor informations (user id, username, amount donated) and returns if exists
-	 *
-	 * @param string     $type Allowed value : 'user' or 'email'
-	 * @param string|int $args If $type is set to 'user', $args must be a user id.
-	 *                         If $type is set to 'email', $args must be an email address
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_donors_status($type, $args)
-	{
-		$this->payer_data = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data($type, $args);
-
-		return !empty($this->payer_data);
-	}
-
-	/**
 	 * @return bool
 	 */
 	private function minimum_donation_raised()
@@ -911,5 +802,114 @@ class ipn_listener
 		$entity->data_exists($entity->build_sql_data_exists($iso_code));
 
 		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
+	}
+
+	/**
+	 * Request predefined variables from super global, then fill in the $this->transaction_data array
+	 *
+	 * @param array $data_ary List of data to request
+	 *
+	 * @return void
+	 */
+	private function get_post_data($data_ary = array())
+	{
+		if (is_array($data_ary['default']))
+		{
+			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
+		}
+		else
+		{
+			$this->transaction_data[$data_ary['name']] = $this->request->variable($data_ary['name'], $data_ary['default']);
+		}
+	}
+
+	/**
+	 * Check if some settings are valid.
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function validate_post_data()
+	{
+		$check = array();
+		$check[] = $this->check_post_data($this->transaction_data['txn_id'], 'INVALID_TXN_EMPTY_ID');
+		$check[] = $this->check_post_data($this->only_ascii($this->transaction_data['txn_id']), 'INVALID_TXN_NON_ASCII');
+		$check[] = $this->check_account_id();
+
+		return (bool) array_product($check);
+	}
+
+	/**
+	 * Check if value is true
+	 * Return true if success. Otherwise, we send an exit code via log_error()
+	 *
+	 * @param mixed  $checked_value
+	 * @param string $lang_key
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_post_data($checked_value, $lang_key)
+	{
+		if (!$checked_value)
+		{
+			$this->ppde_ipn_log->log_error($this->language->lang($lang_key), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_account_id()
+	{
+		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+
+		if ($this->only_ascii($account_value))
+		{
+			return $account_value == $this->transaction_data['receiver_id'];
+		}
+		else
+		{
+			return $account_value == $this->transaction_data['receiver_email'];
+		}
+	}
+
+	/**
+	 * Check if Sandbox is enabled based on config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function ipn_use_sandbox()
+	{
+		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
+	}
+
+	/**
+	 * Check if parsed value contains only ASCII chars.
+	 * Return false if it contains non ASCII chars.
+	 *
+	 * @param $value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function only_ascii($value)
+	{
+		// we ensure that the value contains only ASCII chars...
+		$pos = strspn($value, self::ASCII_RANGE);
+		$len = strlen($value);
+
+		if ($pos != $len)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
