@@ -25,6 +25,110 @@ class ipn_listener
 {
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+	/** Setup the PayPal variables list with default values and conditions to check.
+	 * Example:
+	 *      array(
+	 *          'name' => 'txn_id'
+	 *          'default' => ''
+	 *          'condition_check' => array('ascii' => true),
+	 *      ),
+	 *      array(
+	 *          'name' => 'business'
+	 *          'default' => ''
+	 *          'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+	 *      ),
+	 * The index 'name' and 'default' are mandatory.
+	 * The index 'condition_check' is optional
+	 *
+	 */
+	private static $paypal_vars_table = array(
+		array('name' => 'confirmed', 'default' => false),    // used to check if the payment is confirmed
+		array('name' => 'exchange_rate', 'default' => ''),   // Exchange rate used if a currency conversion occurred
+		array('name' => 'mc_currency', 'default' => ''),     // Currency
+		array('name' => 'mc_gross', 'default' => 0.00),      // Amt received (before fees)
+		array('name' => 'mc_fee', 'default' => 0.00),        // Amt of fees
+		array('name' => 'payment_status', 'default' => ''),  // Payment status. e.g.: 'Completed'
+		array('name' => 'settle_amount', 'default' => 0.00), // Amt received after currency conversion (before fees)
+		array('name' => 'settle_currency', 'default' => ''), // Currency of 'settle_amount'
+		array('name' => 'test_ipn', 'default' => false),     // used when transaction come from Sandbox platform
+		array('name' => 'txn_type', 'default' => ''),        // Transaction type - Should be: 'web_accept'
+		array(  // Primary merchant e-mail address
+				'name'            => 'business',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+		),
+		array(  // Sender's First name
+				'name'            => 'first_name',
+				'default'         => array('', true),
+				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
+		),
+		array(  // Equal to: $this->config['sitename']
+				'name'            => 'item_name',
+				'default'         => array('', true),
+				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+		),
+		array(  // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+				'name'            => 'item_number',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+		),
+		array(  // Sender's Last name
+				'name'            => 'last_name',
+				'default'         => array('', true),
+				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
+		),
+		array(  // The Parent transaction ID, in case of refund.
+				'name'            => 'parent_txn_id',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 19, 'operator' => '<=')),
+		),
+		array(  // PayPal sender email address
+				'name'            => 'payer_email',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+		),
+		array(  // PayPal sender ID
+				'name'            => 'payer_id',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+		),
+		array(  // PayPal sender status (verified or unverified)
+				'name'            => 'payer_status',
+				'default'         => 'unverified',
+				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+		),
+		array(  // Payment Date/Time in the format 'HH:MM:SS Mmm DD, YYYY PDT'
+				'name'            => 'payment_date',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 28, 'operator' => '<=')),
+		),
+		array(  // Payment type (echeck or instant)
+				'name'            => 'payment_type',
+				'default'         => '',
+				'condition_check' => array('content' => array('echeck', 'instant')),
+		),
+		array(  // Secure Merchant Account ID
+				'name'            => 'receiver_id',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+		),
+		array(  // Merchant e-mail address
+				'name'            => 'receiver_email',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+		),
+		array(  // Merchant country code
+				'name'            => 'residence_country',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 2, 'operator' => '==')),
+		),
+		array(  // Transaction ID
+				'name'            => 'txn_id',
+				'default'         => '',
+				'condition_check' => array('ascii' => true),
+		),
+	);
+
 	/**
 	 * Services properties declaration
 	 */
@@ -168,7 +272,7 @@ class ipn_listener
 	private function validate_transaction()
 	{
 		// Request and populate $this->transaction_data
-		array_map(array($this, "get_post_data"), $this->transaction_vars_list());
+		array_map(array($this, 'get_post_data'), $this::$paypal_vars_table);
 
 		if ($this->validate_post_data() === false)
 		{
@@ -234,79 +338,6 @@ class ipn_listener
 		}
 
 		return $data_ary;
-	}
-
-	/**
-	 * Setup the data list with default values.
-	 *
-	 * @return array<string,string|false|array<string|boolean>|double>
-	 * @access private
-	 */
-	private function transaction_vars_list()
-	{
-		return array(
-			array('name' => 'confirmed', 'default' => false),  // used to check if the payment is confirmed
-			array('name' => 'exchange_rate', 'default' => ''), // Exchange rate used if a currency conversion occurred
-			array('name' => 'item_name', 'default' => array('', true)), // Equal to: $this->config['sitename']
-			array('name' => 'item_number', 'default' => ''), // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-			array('name' => 'mc_currency', 'default' => ''), // Currency
-			array('name' => 'mc_gross', 'default' => 0.00),  // Amt received (before fees)
-			array('name' => 'mc_fee', 'default' => 0.00),    // Amt of fees
-			array('name' => 'payer_status', 'default' => 'unverified'), // PayPal sender status (verified, unverified?)
-			array('name' => 'payment_date', 'default' => ''),    // Payment Date/Time EX: '19:08:04 Oct 03, 2007 PDT'
-			array('name' => 'payment_status', 'default' => ''),  // Payment status. e.g.: 'Completed'
-			array('name' => 'payment_type', 'default' => ''),    // Payment type (echeck or instant)
-			array('name' => 'settle_amount', 'default' => 0.00), // Amt received after currency conversion (before fees)
-			array('name' => 'settle_currency', 'default' => ''), // Currency of 'settle_amount'
-			array('name' => 'test_ipn', 'default' => false),     // used when transaction come from Sandbox platform
-			array('name' => 'txn_id', 'default' => ''),          // Transaction ID
-			array('name' => 'txn_type', 'default' => ''),        // Transaction type - Should be: 'web_accept'
-			array(  // Primary merchant e-mail address
-					'name'            => 'business',
-					'default'         => '',
-					'condition_check' => array('length' => 127),
-			),
-			array(  // Sender's First name
-					'name'            => 'first_name',
-					'default'         => array('', true),
-					'condition_check' => array('length' => 64),
-			),
-			array(  // Sender's Last name
-					'name'            => 'last_name',
-					'default'         => array('', true),
-					'condition_check' => array('length' => 64),
-			),
-			array(  // The Parent transaction ID, in case of refund.
-					'name'            => 'parent_txn_id',
-					'default'         => '',
-					'condition_check' => array('length' => 19),
-			),
-			array(  // PayPal sender email address
-					'name'            => 'payer_email',
-					'default'         => '',
-					'condition_check' => array('length' => 127),
-			),
-			array(  // PayPal sender ID
-					'name'            => 'payer_id',
-					'default'         => '',
-					'condition_check' => array('length' => 13),
-			),
-			array(  // Secure Merchant Account ID
-					'name'            => 'receiver_id',
-					'default'         => '',
-					'condition_check' => array('length' => 13),
-			),
-			array(  // Merchant e-mail address
-					'name'            => 'receiver_email',
-					'default'         => '',
-					'condition_check' => array('length' => 127),
-			),
-			array(  // Merchant country code
-					'name'            => 'residence_country',
-					'default'         => '',
-					'condition_check' => array('length' => 2),
-			),
-		);
 	}
 
 	/**
