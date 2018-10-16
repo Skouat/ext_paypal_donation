@@ -156,13 +156,13 @@ class ipn_listener
 	 *
 	 * @var array
 	 */
-	private $currency_mc_data;
+	private $currency_mc_data = array();
 	/**
 	 * Settle currency data
 	 *
 	 * @var array
 	 */
-	private $currency_settle_data;
+	private $currency_settle_data = array();
 	/**
 	 * @var boolean
 	 */
