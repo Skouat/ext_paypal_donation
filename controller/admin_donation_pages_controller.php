@@ -492,7 +492,7 @@ class admin_donation_pages_controller extends admin_main
 		$entity->delete($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
 		$message = $this->language->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);
