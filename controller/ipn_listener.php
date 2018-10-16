@@ -451,7 +451,7 @@ class ipn_listener
 	private function build_data_ary()
 	{
 		return array(
-			'business'          => $this->transaction_data['business'],
+			'business'          => strtolower($this->transaction_data['business']),
 			'confirmed'         => (bool) $this->transaction_data['confirmed'],
 			'exchange_rate'     => $this->transaction_data['exchange_rate'],
 			'first_name'        => $this->transaction_data['first_name'],
@@ -470,11 +470,11 @@ class ipn_listener
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
 			'receiver_id'       => $this->transaction_data['receiver_id'],
-			'receiver_email'    => $this->transaction_data['receiver_email'],
+			'receiver_email'    => strtolower($this->transaction_data['receiver_email']),
 			'residence_country' => $this->transaction_data['residence_country'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
-			'test_ipn'          => $this->transaction_data['test_ipn'],
+			'test_ipn'          => (bool) $this->transaction_data['test_ipn'],
 			'txn_id'            => $this->transaction_data['txn_id'],
 			'txn_type'          => $this->transaction_data['txn_type'],
 			'user_id'           => (int) $this->transaction_data['user_id'],
@@ -598,7 +598,8 @@ class ipn_listener
 	 */
 	private function donor_is_member()
 	{
-		return $this->is_donor_is_member() && !empty($this->payer_data);
+		$this->is_donor_is_member();
+		return $this->donor_is_member && !empty($this->payer_data);
 	}
 
 	/**
@@ -924,7 +925,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function check_post_data_content($value,$content_ary)
+	private function check_post_data_content($value, $content_ary)
 	{
 		return in_array($value, $content_ary) ? true : false;
 	}
