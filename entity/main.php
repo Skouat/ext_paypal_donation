@@ -11,6 +11,7 @@
 namespace skouat\ppde\entity;
 
 use phpbb\db\driver\driver_interface;
+use phpbb\language\language;
 use phpbb\user;
 
 abstract class main
@@ -25,6 +26,7 @@ abstract class main
 	protected $data;
 	protected $lang_key_prefix;
 	protected $lang_key_suffix;
+	protected $language;
 	protected $table_name;
 	protected $table_schema;
 
@@ -33,6 +35,7 @@ abstract class main
 	 *
 	 * @param driver_interface $db              Database object
 	 * @param user             $user            User object
+	 * @param language         $language        Language object
 	 * @param string           $lang_key_prefix Prefix for the messages thrown by exceptions
 	 * @param string           $lang_key_suffix Suffix for the messages thrown by exceptions
 	 * @param string           $table_name      Table name
@@ -40,9 +43,10 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(driver_interface $db, language $language, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
 	{
 		$this->db = $db;
+		$this->language = $language;
 		$this->user = $user;
 		$this->lang_key_prefix = $lang_key_prefix;
 		$this->lang_key_suffix = $lang_key_suffix;
@@ -95,7 +99,7 @@ abstract class main
 	 */
 	protected function display_warning_message($lang_key, $args = '')
 	{
-		$message = call_user_func_array(array($this->user, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . $this->adm_back_link_exists();
+		$message = call_user_func_array(array($this->language, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . $this->adm_back_link_exists();
 		trigger_error($message, E_USER_WARNING);
 	}
 

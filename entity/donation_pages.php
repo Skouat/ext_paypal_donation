@@ -18,6 +18,7 @@ use phpbb\user;
 /**
  * @property driver_interface db                 phpBB Database object
  * @property user             user               phpBB User object
+ * @property language         language           phpBB Language object
  * @property string           lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string           lang_key_suffix    Suffix for the messages thrown by exceptions
  */
@@ -40,7 +41,6 @@ class donation_pages extends main
 	protected $dp_vars;
 
 	protected $config;
-	protected $language;
 	protected $donation_pages_table;
 
 	/**
@@ -58,11 +58,11 @@ class donation_pages extends main
 	{
 		$this->config = $config;
 		$this->db = $db;
-		$this->language = $language;
 		$this->user = $user;
 		$this->donation_pages_table = $table_name;
 		parent::__construct(
 			$db,
+			$language,
 			$user,
 			'PPDE_DP',
 			'DONATION_PAGES',
