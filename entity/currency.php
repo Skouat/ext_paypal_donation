@@ -50,8 +50,6 @@ class currency extends main
 	 */
 	public function __construct(driver_interface $db, language $language, user $user, $table_name)
 	{
-		$this->db = $db;
-		$this->user = $user;
 		$this->currency_table = $table_name;
 		parent::__construct(
 			$db,

@@ -57,8 +57,6 @@ class donation_pages extends main
 	public function __construct(config $config, driver_interface $db, language $language, user $user, $table_name)
 	{
 		$this->config = $config;
-		$this->db = $db;
-		$this->user = $user;
 		$this->donation_pages_table = $table_name;
 		parent::__construct(
 			$db,
