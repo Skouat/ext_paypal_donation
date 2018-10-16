@@ -80,7 +80,7 @@ class ipn_listener
 		array(  // The Parent transaction ID, in case of refund.
 				'name'            => 'parent_txn_id',
 				'default'         => '',
-				'condition_check' => array('length' => array('value' => 19, 'operator' => '<=')),
+				'condition_check' => array('ascii' => true, 'length' => array('value' => 19, 'operator' => '<=')),
 		),
 		array(  // PayPal sender email address
 				'name'            => 'payer_email',
@@ -90,7 +90,7 @@ class ipn_listener
 		array(  // PayPal sender ID
 				'name'            => 'payer_id',
 				'default'         => '',
-				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
 		),
 		array(  // PayPal sender status (verified or unverified)
 				'name'            => 'payer_status',
@@ -110,7 +110,7 @@ class ipn_listener
 		array(  // Secure Merchant Account ID
 				'name'            => 'receiver_id',
 				'default'         => '',
-				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
 		),
 		array(  // Merchant e-mail address
 				'name'            => 'receiver_email',
@@ -125,7 +125,7 @@ class ipn_listener
 		array(  // Transaction ID
 				'name'            => 'txn_id',
 				'default'         => '',
-				'condition_check' => array('ascii' => true),
+				'condition_check' => array('empty' => false, 'ascii' => true),
 		),
 	);
 
@@ -799,7 +799,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Request predefined variables from super global, then fill in the $this->transaction_data array
+	 * Request predefined variable from super global, then fill in the $this->transaction_data array
 	 *
 	 * @param array $data_ary List of data to request
 	 *
@@ -916,21 +916,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_content($value, $content_ary)
-	{
-		return in_array($value, $content_ary) ? true : false;
-	}
-
-	/**
 	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
 	 *
 	 * @return bool
@@ -977,5 +962,34 @@ class ipn_listener
 		$len = strlen($value);
 
 		return $pos != $len ? false : true;
+	}
+
+	/**
+	 * Check Post data content based on an array list.
+	 * Called by $this->check_post_data() method
+	 *
+	 * @param string $value
+	 * @param array  $content_ary
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_post_data_content($value, $content_ary)
+	{
+		return in_array($value, $content_ary) ? true : false;
+	}
+
+	/**
+	 * Check if Post data is empty.
+	 * Called by $this->check_post_data() method
+	 *
+	 * @param string $value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_post_data_empty($value)
+	{
+		return empty($value) ? false : true;
 	}
 }
