@@ -27,5 +27,6 @@ services:
         class: skouat\ppde\entity\transactions
         arguments:
             - '@dbal.conn'
+            - '@language'
             - '@user'
             - '%skouat.ppde.tables.ppde_transactions%'
