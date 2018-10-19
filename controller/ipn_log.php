@@ -130,27 +130,25 @@ class ipn_log
 		if ($this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']))
 		{
 			$backtrace = get_backtrace();
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br>', "\n\n"), "\n", $backtrace)));
 		}
-
-		$message = str_replace('<br>', ';', $message);
 
 		if (sizeof($args))
 		{
-			$message .= "\n[args]\n";
+			$message .= '<br>[args]<br>';
 			foreach ($args as $key => $value)
 			{
 				$value = urlencode($value);
-				$message .= $key . ' = ' . $value . ";\n";
+				$message .= $key . ' = ' . $value . ';<br>';
 			}
 			unset($value);
 		}
 
 		if ($log_in_file)
 		{
+			$message_in_file = str_replace('<br>', "\n", $message);
+			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br>', "\n\n"), "\n", $backtrace)));
 			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->filesystem, $this->log_path_filename));
-
-			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message, $backtrace));
+			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message_in_file, $backtrace));
 		}
 
 		if ($exit)
