@@ -196,6 +196,12 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
+	/**
+	 * Message to parse to log_error()
+	 *
+	 * @var boolean
+	 */
+	private $error_message;
 
 	/**
 	 * Constructor
@@ -274,6 +280,14 @@ class ipn_listener
 		// Request and populate $this->transaction_data
 		array_map(array($this, 'get_post_data'), $this::$paypal_vars_table);
 
+		// additional checks
+		$this->check_account_id();
+
+		if (!empty($this->error_message))
+		{
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
+		}
+
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
 		foreach ($decode_ary as $key)
 		{
@@ -295,6 +309,32 @@ class ipn_listener
 		}
 
 		return $this->check_response();
+	}
+
+	/**
+	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function check_account_id()
+	{
+		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		if ($account_value != $this->transaction_data['receiver_id'] && $account_value != $this->transaction_data['receiver_email'])
+		{
+			$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_ACCOUNT_ID');
+		}
+	}
+
+	/**
+	 * Check if Sandbox is enabled based on config value
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function ipn_use_sandbox()
+	{
+		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
 
 	/**
@@ -366,7 +406,7 @@ class ipn_listener
 			$this->ppde_ipn_log->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->ppde_ipn_log->is_use_log_error(), true);
 		}
 
-		return $this->verified;
+		return (bool) $this->verified;
 	}
 
 	/**
@@ -807,6 +847,7 @@ class ipn_listener
 	 */
 	private function get_post_data($data_ary = array())
 	{
+		// request variables
 		if (is_array($data_ary['default']))
 		{
 			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
@@ -816,16 +857,8 @@ class ipn_listener
 			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
 		}
 
-		if ($this->validate_post_data($data_ary) === true)
-		{
-			$this->transaction_data[$data_ary['name']] = $data_ary['value'];
-		}
-		else
-		{
-			// The minimum required checks are not met
-			// So we force to log collected data in /store/ext/ppde directory
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_ACCOUNT_ID'), true, true, E_USER_NOTICE, $this->transaction_data);
-		}
+		// assign variable to $this->transaction_data
+		$this->transaction_data[$data_ary['name']] = ($this->check_post_data($data_ary) === true) ? $data_ary['value'] : $data_ary['default'];
 	}
 
 	/**
@@ -836,41 +869,17 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_post_data($data_ary = array())
+	private function check_post_data($data_ary = array())
 	{
 		$check = array();
 
 		// check all conditions declared for this post_data
 		if (isset($data_ary['condition_check']))
 		{
-			$check[] = $this->check_post_data($data_ary);
+			$check = array_merge($check, $this->call_post_data_func($data_ary));
 		}
 
 		return (bool) array_product($check);
-	}
-
-	/**
-	 * Check if value is true
-	 * Return true on success. Otherwise, we send an exit code via log_error()
-	 *
-	 * @param array $checked_ary
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data($checked_ary)
-	{
-		$result = $this->call_post_data_func($checked_ary);
-		if (is_array($result) && !array_product($result))
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_' . strtoupper(key($result)), $checked_ary['name']), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
-		}
-		else if (!$result)
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN_INVALID_CHECK'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
-		}
-
-		return true;
 	}
 
 	/**
@@ -879,25 +888,28 @@ class ipn_listener
 	 * @param array $data_ary
 	 *
 	 * @access public
-	 * @return bool|array
+	 * @return array
 	 */
 	public function call_post_data_func($data_ary)
 	{
+		$check = array();
+
 		foreach ($data_ary['condition_check'] as $control_point => $params)
 		{
 			// Calling the check_post_data_function
 			if (call_user_func_array(array($this, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
 			{
-				return true;
+				$check[] = true;
 			}
 			else
 			{
-				return array($control_point => false);
+				$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
+				$check[] = false;
 			}
 		}
 		unset($data_ary, $control_point, $params);
 
-		return false;
+		return $check;
 	}
 
 	/**
@@ -913,37 +925,6 @@ class ipn_listener
 	private function check_post_data_length($value, $statement)
 	{
 		return $this->ppde_controller_main->compare(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_account_id()
-	{
-		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
-
-		if ($this->check_post_data_ascii($account_value))
-		{
-			return $account_value == $this->transaction_data['receiver_id'];
-		}
-		else
-		{
-			return $account_value == $this->transaction_data['receiver_email'];
-		}
-	}
-
-	/**
-	 * Check if Sandbox is enabled based on config value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function ipn_use_sandbox()
-	{
-		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
 
 	/**
