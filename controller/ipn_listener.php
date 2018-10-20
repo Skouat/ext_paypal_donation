@@ -285,7 +285,7 @@ class ipn_listener
 
 		if (!empty($this->error_message))
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->transaction_data);
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->get_postback_args());
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
@@ -294,6 +294,7 @@ class ipn_listener
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
 		}
 
+		// Get all variables from PayPal to build return URI
 		$this->set_args_return_uri();
 
 		// Get PayPal or Sandbox URI
@@ -305,7 +306,8 @@ class ipn_listener
 
 		if ($this->ppde_ipn_paypal->check_response_status())
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, array($this->ppde_ipn_paypal->get_response_status()));
+			$args = array_merge(array('response_status' => $this->ppde_ipn_paypal->get_response_status()), $this->get_postback_args());
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $args);
 		}
 
 		return $this->check_response();
