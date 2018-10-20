@@ -1,6 +1,21 @@
 # Changelog
-## 2.0.1 - 2018-10-04
-- Change: Enhance CSS compatibility with other styles (thanks to Mazeltof)
+## 2.0.1 - 2018-10-20
+- Add: Multiple checks on PayPal returned variables
+- Change: Enhance CSS compatibility with other styles (thanks to mazeltof)
+- Change: Improve log error
+- Change: Refactor IPN Listener
+- Change: Use the same name for the extension display name and the contribution in the phpBB CDB
+- Fix: Adjust some columns size on database
+- Fix: CSS code style
+- Fix: JS vars not escaped in template
+- Fix: Invalid call for some Langkeys
+- Fix: Invalid operator usage in some PHP condition
+- Fix: Missing revert schema in migration
+- Fix: Missing ACP root path in some `append_sid()`
+- Fix: Remove use of deprecated `$user->lang`
+- Fix: Services injection
+- Fix: Smilies are selectable on Donation Page Management only when preview mode is used
+- Fix: The transaction ID was not colored in Red when transaction status was not "Completed"
 
 ## 2.0.0 - 2018-10-02
 - Add: Minimum amount before auto group donors (#40]
