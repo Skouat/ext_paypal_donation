@@ -325,8 +325,8 @@ abstract class admin_main
 	protected function s_error_assign_template_vars($errors)
 	{
 		$this->template->assign_vars(array(
-			'S_ERROR'   => (sizeof($errors)) ? true : false,
-			'ERROR_MSG' => (sizeof($errors)) ? implode('<br>', $errors) : '',
+			'S_ERROR'   => (count($errors)) ? true : false,
+			'ERROR_MSG' => (count($errors)) ? implode('<br>', $errors) : '',
 		));
 	}
 

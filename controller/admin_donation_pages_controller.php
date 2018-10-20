@@ -330,7 +330,7 @@ class admin_donation_pages_controller extends admin_main
 	 */
 	private function assign_predefined_block_vars($vars)
 	{
-		for ($i = 0, $size = sizeof($vars); $i < $size; $i++)
+		for ($i = 0, $size = count($vars); $i < $size; $i++)
 		{
 			$this->template->assign_block_vars('dp_vars', array(
 					'NAME'     => $vars[$i]['name'],

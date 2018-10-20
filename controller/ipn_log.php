@@ -132,7 +132,7 @@ class ipn_log
 			$backtrace = get_backtrace();
 		}
 
-		if (sizeof($args))
+		if (count($args))
 		{
 			$message .= '<br>[args]<br>';
 			foreach ($args as $key => $value)

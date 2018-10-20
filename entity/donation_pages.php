@@ -126,7 +126,7 @@ class donation_pages extends main
 	private function add_predefined_lang_vars()
 	{
 		//Add language entries for displaying the vars
-		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
 		{
 			$this->dp_vars[$i]['name'] = $this->language->lang($this->lang_key_prefix . '_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1));
 		}
@@ -209,7 +209,7 @@ class donation_pages extends main
 	public function replace_template_vars($message)
 	{
 		$tpl_ary = array();
-		for ($i = 0, $size = sizeof($this->dp_vars); $i < $size; $i++)
+		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
 		{
 			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];
 		}

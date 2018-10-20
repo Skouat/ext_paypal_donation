@@ -126,7 +126,7 @@ class admin_transactions_controller extends admin_main
 			{
 				$where_sql = '';
 
-				if ($deletemark && sizeof($marked))
+				if ($deletemark && count($marked))
 				{
 					$where_sql = $this->ppde_operator->build_marked_where_sql($marked);
 				}
