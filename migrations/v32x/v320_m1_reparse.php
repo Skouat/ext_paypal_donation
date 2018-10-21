@@ -49,7 +49,7 @@ class v320_m1_reparse extends \phpbb\db\migration\container_aware_migration
 			$current = $reparser->get_max_id();
 		}
 
-		$limit = 50; // lets keep the reparsing conservative
+		$limit = 50; // Lets keep the reparsing conservative
 		$start = max(1, $current + 1 - $limit);
 		$end   = max(1, $current);
 

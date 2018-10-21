@@ -42,7 +42,7 @@ class ipn_listener
 	 *
 	 */
 	private static $paypal_vars_table = array(
-		array('name' => 'confirmed', 'default' => false),    // used to check if the payment is confirmed
+		array('name' => 'confirmed', 'default' => false),    // Used to check if the payment is confirmed
 		array('name' => 'exchange_rate', 'default' => ''),   // Exchange rate used if a currency conversion occurred
 		array('name' => 'mc_currency', 'default' => ''),     // Currency
 		array('name' => 'mc_gross', 'default' => 0.00),      // Amt received (before fees)
@@ -50,7 +50,7 @@ class ipn_listener
 		array('name' => 'payment_status', 'default' => ''),  // Payment status. e.g.: 'Completed'
 		array('name' => 'settle_amount', 'default' => 0.00), // Amt received after currency conversion (before fees)
 		array('name' => 'settle_currency', 'default' => ''), // Currency of 'settle_amount'
-		array('name' => 'test_ipn', 'default' => false),     // used when transaction come from Sandbox platform
+		array('name' => 'test_ipn', 'default' => false),     // Used when transaction come from Sandbox platform
 		array('name' => 'txn_type', 'default' => ''),        // Transaction type - Should be: 'web_accept'
 		array(  // Primary merchant e-mail address
 				'name'            => 'business',
@@ -268,7 +268,7 @@ class ipn_listener
 		// Determine which remote connection to use to contact PayPal
 		$this->ppde_ipn_paypal->is_remote_detected();
 
-		// if no connection detected, disable IPN, log error and exit code execution
+		// If no connection detected, disable IPN, log error and exit code execution
 		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
@@ -299,7 +299,7 @@ class ipn_listener
 		// Request and populate $this->transaction_data
 		array_map(array($this, 'get_post_data'), self::$paypal_vars_table);
 
-		// additional checks
+		// Additional checks
 		$this->check_account_id();
 
 		if (!empty($this->error_message))
@@ -380,7 +380,7 @@ class ipn_listener
 			$values[] = $key . '=' . $encoded;
 		}
 
-		// implode the array into a string URI
+		// Implode the array into a string URI
 		$this->args_return_uri .= '&' . implode('&', $values);
 	}
 
@@ -466,15 +466,15 @@ class ipn_listener
 		/** @type \skouat\ppde\entity\transactions $entity */
 		$entity = $this->container->get('skouat.ppde.entity.transactions');
 
-		// the item number contains the user_id
+		// The item number contains the user_id
 		$this->extract_item_number_data();
 		$this->validate_user_id();
 
-		// set username in extra_data property in $entity
+		// Set username in extra_data property in $entity
 		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
 		$entity->set_username($user_ary['username']);
 
-		// list the data to be thrown into the database
+		// List the data to be thrown into the database
 		$data = $this->build_data_ary();
 
 		$this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
@@ -575,7 +575,7 @@ class ipn_listener
 	{
 		if ($this->verified)
 		{
-			// load the ID of the transaction in the entity
+			// Load the ID of the transaction in the entity
 			$entity->set_id($entity->transaction_exists());
 			// Add or edit transaction data
 			$this->ppde_controller_transactions_admin->add_edit_data($entity);
@@ -679,26 +679,26 @@ class ipn_listener
 	{
 		$anonymous_user = false;
 
-		// if the user_id is not anonymous
+		// If the user_id is not anonymous
 		if ($this->transaction_data['user_id'] != ANONYMOUS)
 		{
 			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
 
 			if (!$this->donor_is_member)
 			{
-				// no results, therefore the user is anonymous...
+				// No results, therefore the user is anonymous...
 				$anonymous_user = true;
 			}
 		}
 		else
 		{
-			// the user is anonymous by default
+			// The user is anonymous by default
 			$anonymous_user = true;
 		}
 
 		if ($anonymous_user)
 		{
-			// if the user is anonymous, check their PayPal email address with all known email hashes
+			// If the user is anonymous, check their PayPal email address with all known email hashes
 			// to determine if the user exists in the database with that email
 			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
 		}
@@ -737,7 +737,7 @@ class ipn_listener
 	 */
 	private function donors_group_user_add()
 	{
-		// we add the user to the donors group
+		// We add the user to the donors group
 		$can_use_autogroup = $this->can_use_autogroup();
 		$group_id = (int) $this->config['ppde_ipn_group_id'];
 		$payer_id = (int) $this->payer_data['user_id'];
@@ -771,7 +771,7 @@ class ipn_listener
 				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
 			}
 
-			// add the user to the donors group and set as default.
+			// Adds the user to the donors group and set as default.
 			group_user_add($group_id, array($payer_id), array($payer_username), get_group_name($group_id), $default_group);
 		}
 	}
@@ -873,7 +873,7 @@ class ipn_listener
 	 */
 	private function get_post_data($data_ary = array())
 	{
-		// request variables
+		// Request variables
 		if (is_array($data_ary['default']))
 		{
 			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
@@ -883,12 +883,14 @@ class ipn_listener
 			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
 		}
 
-		// assign variable to $this->transaction_data
+		// Assign variables to $this->transaction_data
 		$this->check_post_data($data_ary);
 		$this->transaction_data[$data_ary['name']] = $this->set_post_data($data_ary);
 	}
 
 	/**
+	 * Set PayPal Postdata.
+	 *
 	 * @param $data_ary
 	 * @return array|string
 	 */
@@ -896,7 +898,7 @@ class ipn_listener
 	{
 		$value = $data_ary['value'];
 
-		// check all conditions declared for this post_data
+		// Set all conditions declared for this post_data
 		if (isset($data_ary['force_settings']))
 		{
 			$value = $this->set_post_data_func($data_ary);
@@ -917,7 +919,7 @@ class ipn_listener
 	{
 		$check = array();
 
-		// check all conditions declared for this post_data
+		// Check all conditions declared for this post_data
 		if (isset($data_ary['condition_check']))
 		{
 			$check = array_merge($check, $this->call_post_data_func($data_ary));
@@ -1004,7 +1006,7 @@ class ipn_listener
 	 */
 	private function check_post_data_ascii($value)
 	{
-		// we ensure that the value contains only ASCII chars...
+		// We ensure that the value contains only ASCII chars...
 		$pos = strspn($value, self::ASCII_RANGE);
 		$len = strlen($value);
 

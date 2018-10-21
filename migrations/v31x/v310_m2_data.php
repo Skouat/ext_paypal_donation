@@ -70,17 +70,17 @@ class v310_m2_data extends \phpbb\db\migration\migration
 			array('config.add', array('ppde_install_date', time())),
 			array('config.add', array('ppde_first_start', true)),
 
-			// add new permissions
+			// Add new permissions
 			array('permission.add', array('a_ppde_manage', true)),
 			array('permission.add', array('u_ppde_use', true)),
 			array('permission.add', array('u_ppde_view_donorlist', true)),
 
-			//assign permissions to roles
+			// Assign permissions to roles
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', array('a_ppde_manage'))),
 			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_use'))),
 			array('permission.permission_set', array('ROLE_USER_FULL', array('u_ppde_view_donorlist'))),
 
-			// add new module
+			// Add new module
 			array('module.add', array(
 				'acp',
 				'ACP_CAT_DOT_MODS',

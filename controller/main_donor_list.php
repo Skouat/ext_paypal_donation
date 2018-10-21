@@ -45,8 +45,8 @@ class main_donor_list extends main_controller
 
 	public function handle()
 	{
-		// If the donorlist is not enabled, redirect users back to the forum index
-		// Else if user is not allowed to view the donors list, disallow access to the extension page
+		// If the donorlist is not enabled, redirect users back to the forum index.
+		// Else if user is not allowed to view the donors list, disallow access to the extension page.
 		if (!$this->donorlist_is_enabled())
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
@@ -72,7 +72,7 @@ class main_donor_list extends main_controller
 
 		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
 
-		// Build a relevant pagination_url and sort_url
+		// Build a relevant pagination_url and sort_url.
 		// We do not use request_var() here directly to save some calls (not all variables are set)
 		$check_params = array(
 			'sk'    => array('sk', $default_key),
@@ -96,7 +96,7 @@ class main_donor_list extends main_controller
 
 		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
 
-		// adds fields to the table schema needed by entity->import()
+		// Adds fields to the table schema needed by entity->import()
 		$additional_table_schema = array(
 			'item_username'    => array('name' => 'username', 'type' => 'string'),
 			'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),

@@ -234,7 +234,7 @@ abstract class main
 
 		if ($this->data === false)
 		{
-			// A item does not exist
+			// An item does not exist
 			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
@@ -410,7 +410,7 @@ abstract class main
 		// Clear out any saved data
 		$this->data = array();
 
-		// add additional field to the table schema
+		// Adds additional field to the table schema
 		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
 
 		// Go through the basic fields and set them to our data array
