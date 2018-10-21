@@ -244,9 +244,9 @@ class main_controller
 	 */
 	public function compare($value1, $value2, $operator)
 	{
-		if (array_key_exists($operator, $this::$operators_table))
+		if (array_key_exists($operator, self::$operators_table))
 		{
-			return call_user_func_array(array($this, $this::$operators_table[$operator]), array($value1, $value2));
+			return call_user_func_array(array($this, self::$operators_table[$operator]), array($value1, $value2));
 		}
 		else
 		{
