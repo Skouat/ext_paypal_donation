@@ -86,24 +86,7 @@ class admin_currency_controller extends admin_main
 		// Grab all the pages from the db
 		$data_ary = $entity->get_data($this->ppde_operator->build_sql_data());
 
-		foreach ($data_ary as $data)
-		{
-			$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
-			$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
-
-			$this->template->assign_block_vars('currency', array(
-				'CURRENCY_NAME'    => $data['currency_name'],
-				'CURRENCY_ENABLED' => (bool) $data['currency_enable'],
-				'L_ENABLE_DISABLE' => $this->language->lang($enable_lang),
-				'S_DEFAULT'        => (int) $data['currency_id'] === (int) $this->config['ppde_default_currency'],
-				'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
-				'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
-				'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
-			));
-		}
-		unset($data_ary, $page);
+		array_map(array($this, 'currency_assign_template_vars'), $data_ary);
 
 		$this->u_action_assign_template_vars();
 	}
@@ -367,5 +350,31 @@ class admin_currency_controller extends admin_main
 		// Log the action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($entity->get_name()));
 		trigger_error($this->language->lang($this->lang_key_prefix . '_DELETED') . adm_back_link($this->u_action));
+	}
+
+	/**
+	 * Set output vars for display in the template
+	 *
+	 * @param array $data
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function currency_assign_template_vars($data)
+	{
+		$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
+		$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
+
+		$this->template->assign_block_vars('currency', array(
+			'CURRENCY_NAME'    => $data['currency_name'],
+			'CURRENCY_ENABLED' => (bool) $data['currency_enable'],
+			'L_ENABLE_DISABLE' => $this->language->lang($enable_lang),
+			'S_DEFAULT'        => (int) $data['currency_id'] === (int) $this->config['ppde_default_currency'],
+			'U_DELETE'         => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+			'U_EDIT'           => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+			'U_ENABLE_DISABLE' => $this->u_action . '&amp;action=' . $enable_value . '&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'],
+			'U_MOVE_DOWN'      => $this->u_action . '&amp;action=move_down&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
+			'U_MOVE_UP'        => $this->u_action . '&amp;action=move_up&amp;' . $this->id_prefix_name . '_id=' . $data['currency_id'] . '&amp;hash=' . generate_link_hash('ppde_move'),
+		));
 	}
 }

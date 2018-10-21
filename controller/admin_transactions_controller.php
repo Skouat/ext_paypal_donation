@@ -313,34 +313,7 @@ class admin_transactions_controller extends admin_main
 			// Grab transaction data
 			$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
-			foreach ($data_ary as $data)
-			{
-				$this->template->assign_vars(array(
-					'BOARD_USERNAME' => $data['username'],
-					'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-					'ITEM_NAME'      => $data['item_name'],
-					'ITEM_NUMBER'    => $data['item_number'],
-					'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
-					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-					'MC_FEE'         => $data['mc_fee'] . ' ' . $data['mc_currency'],
-					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
-					'MEMO'           => $data['memo'],
-					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
-					'PAYER_EMAIL'    => $data['payer_email'],
-					'PAYER_ID'       => $data['payer_id'],
-					'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-					'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
-					'PAYMENT_STATUS' => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status']))),
-					'RECEIVER_EMAIL' => $data['receiver_email'],
-					'RECEIVER_ID'    => $data['receiver_id'],
-					'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
-					'TXN_ID'         => $data['txn_id'],
-
-					'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
-					'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-					'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
-				));
-			}
+			array_map(array($this, 'action_assign_template_vars'), $data_ary);
 
 			$this->template->assign_vars(array(
 				'U_ACTION' => $this->u_action,
@@ -480,6 +453,43 @@ class admin_transactions_controller extends admin_main
 			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
 			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
+		));
+	}
+
+	/**
+	 * Set output vars for display in the template
+	 *
+	 * @param array $data
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function action_assign_template_vars($data)
+	{
+		$this->template->assign_vars(array(
+			'BOARD_USERNAME' => $data['username'],
+			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
+			'ITEM_NAME'      => $data['item_name'],
+			'ITEM_NUMBER'    => $data['item_number'],
+			'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
+			'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
+			'MC_FEE'         => $data['mc_fee'] . ' ' . $data['mc_currency'],
+			'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
+			'MEMO'           => $data['memo'],
+			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
+			'PAYER_EMAIL'    => $data['payer_email'],
+			'PAYER_ID'       => $data['payer_id'],
+			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
+			'PAYMENT_STATUS' => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status']))),
+			'RECEIVER_EMAIL' => $data['receiver_email'],
+			'RECEIVER_ID'    => $data['receiver_id'],
+			'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
+			'TXN_ID'         => $data['txn_id'],
+
+			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
+			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 		));
 	}
 }
