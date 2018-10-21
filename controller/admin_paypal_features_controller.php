@@ -137,7 +137,7 @@ class admin_paypal_features_controller extends admin_main
 		$this->ppde_ipn_paypal->set_curl_info();
 		$this->ppde_ipn_paypal->set_remote_detected();
 		$this->ppde_ipn_paypal->check_tls();
-		if ($this->ppde_controller_main->is_ipn_requirement_satisfied())
+		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
