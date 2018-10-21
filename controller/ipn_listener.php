@@ -77,6 +77,11 @@ class ipn_listener
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
 		),
+		array(  // Memo entered by the donor
+				'name'            => 'memo',
+				'default'         => array('', true),
+				'condition_check' => array('length' => array('value' => 255, 'operator' => '<=')),
+				),
 		array(  // The Parent transaction ID, in case of refund.
 				'name'            => 'parent_txn_id',
 				'default'         => '',
@@ -250,7 +255,7 @@ class ipn_listener
 		$this->ppde_ipn_paypal->is_remote_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
-		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
+		if ($this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
 			$this->ppde_ipn_log->log_error($this->language->lang('REQUIREMENT_NOT_SATISFIED'), true, true, E_USER_WARNING);
@@ -511,6 +516,7 @@ class ipn_listener
 			'payment_date'      => strtotime($this->transaction_data['payment_date']),
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
+			'memo'              => $this->transaction_data['memo'],
 			'receiver_id'       => $this->transaction_data['receiver_id'],
 			'receiver_email'    => strtolower($this->transaction_data['receiver_email']),
 			'residence_country' => $this->transaction_data['residence_country'],

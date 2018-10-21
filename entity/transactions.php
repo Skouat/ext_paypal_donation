@@ -27,31 +27,36 @@ class transactions extends main
 	 * Data for this entity
 	 *
 	 * @var array
-	 *    transaction_id
-	 *    txn_id
-	 *    txn_type
+	 *    business
 	 *    confirmed
-	 *    user_id
+	 *    custom
+	 *    exchange_rate
+	 *    first_name
 	 *    item_name
 	 *    item_number
-	 *    business
-	 *    receiver_id
-	 *    receiver_email
-	 *    payment_status
-	 *    mc_gross
-	 *    mc_fee
+	 *    last_name
 	 *    mc_currency
+	 *    mc_fee
+	 *    mc_gross
+	 *    memo
+	 *    net_amount
+	 *    parent_txn_id
+	 *    payer_email
+	 *    payer_id
+	 *    payer_status
+	 *    payment_date
+	 *    payment_status
+	 *    payment_type
+	 *    receiver_email
+	 *    receiver_id
+	 *    residence_country
 	 *    settle_amount
 	 *    settle_currency
-	 *    net_amount
-	 *    exchange_rate
-	 *    payment_type
-	 *    payment_date
-	 *    payer_id
-	 *    payer_email
-	 *    payer_status
-	 *    first_name
-	 *    last_name
+	 *    transaction_id
+	 *    test_ipn
+	 *    txn_id
+	 *    txn_type
+	 *    user_id
 	 * @access protected
 	 */
 	protected $data;
@@ -80,34 +85,35 @@ class transactions extends main
 			$table_name,
 			array(
 				'item_id'                => array('name' => 'transaction_id', 'type' => 'integer'),
-				'item_receiver_id'       => array('name' => 'receiver_id', 'type' => 'string'),
-				'item_receiver_email'    => array('name' => 'receiver_email', 'type' => 'string'),
-				'item_residence_country' => array('name' => 'residence_country', 'type' => 'string'),
 				'item_business'          => array('name' => 'business', 'type' => 'string'),
 				'item_confirmed'         => array('name' => 'confirmed', 'type' => 'boolean'),
-				'item_test_ipn'          => array('name' => 'test_ipn', 'type' => 'boolean'),
-				'item_txn_id'            => array('name' => 'txn_id', 'type' => 'string'),
-				'item_txn_type'          => array('name' => 'txn_type', 'type' => 'string'),
+				'item_custom'            => array('name' => 'custom', 'type' => 'string'),
+				'item_exchange_rate'     => array('name' => 'exchange_rate', 'type' => 'string'),
+				'item_first_name'        => array('name' => 'first_name', 'type' => 'string'),
+				'item_item_name'         => array('name' => 'item_name', 'type' => 'string'),
+				'item_item_number'       => array('name' => 'item_number', 'type' => 'string'),
+				'item_last_name'         => array('name' => 'last_name', 'type' => 'string'),
+				'item_mc_currency'       => array('name' => 'mc_currency', 'type' => 'string'),
+				'item_mc_fee'            => array('name' => 'mc_fee', 'type' => 'float'),
+				'item_mc_gross'          => array('name' => 'mc_gross', 'type' => 'float'),
+				'item_memo'              => array('name' => 'memo', 'type' => 'string'),
+				'item_net_amount'        => array('name' => 'net_amount', 'type' => 'float'),
 				'item_parent_txn_id'     => array('name' => 'parent_txn_id', 'type' => 'string'),
 				'item_payer_email'       => array('name' => 'payer_email', 'type' => 'string'),
 				'item_payer_id'          => array('name' => 'payer_id', 'type' => 'string'),
 				'item_payer_status'      => array('name' => 'payer_status', 'type' => 'string'),
-				'item_first_name'        => array('name' => 'first_name', 'type' => 'string'),
-				'item_last_name'         => array('name' => 'last_name', 'type' => 'string'),
-				'item_user_id'           => array('name' => 'user_id', 'type' => 'integer'),
-				'item_custom'            => array('name' => 'custom', 'type' => 'string'),
-				'item_item_name'         => array('name' => 'item_name', 'type' => 'string'),
-				'item_item_number'       => array('name' => 'item_number', 'type' => 'string'),
-				'item_mc_currency'       => array('name' => 'mc_currency', 'type' => 'string'),
-				'item_mc_fee'            => array('name' => 'mc_fee', 'type' => 'float'),
-				'item_mc_gross'          => array('name' => 'mc_gross', 'type' => 'float'),
-				'item_net_amount'        => array('name' => 'net_amount', 'type' => 'float'),
 				'item_payment_date'      => array('name' => 'payment_date', 'type' => 'integer'),
 				'item_payment_status'    => array('name' => 'payment_status', 'type' => 'string'),
 				'item_payment_type'      => array('name' => 'payment_type', 'type' => 'string'),
+				'item_receiver_email'    => array('name' => 'receiver_email', 'type' => 'string'),
+				'item_receiver_id'       => array('name' => 'receiver_id', 'type' => 'string'),
+				'item_residence_country' => array('name' => 'residence_country', 'type' => 'string'),
 				'item_settle_amount'     => array('name' => 'settle_amount', 'type' => 'float'),
 				'item_settle_currency'   => array('name' => 'settle_currency', 'type' => 'string'),
-				'item_exchange_rate'     => array('name' => 'exchange_rate', 'type' => 'string'),
+				'item_test_ipn'          => array('name' => 'test_ipn', 'type' => 'boolean'),
+				'item_txn_id'            => array('name' => 'txn_id', 'type' => 'string'),
+				'item_txn_type'          => array('name' => 'txn_type', 'type' => 'string'),
+				'item_user_id'           => array('name' => 'user_id', 'type' => 'integer'),
 			)
 		);
 	}
@@ -416,6 +422,17 @@ class transactions extends main
 	public function get_payment_type()
 	{
 		return (isset($this->data['payment_type'])) ? (string) $this->data['payment_type'] : '';
+	}
+
+	/**
+	 * Get PayPal memo
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_memo()
+	{
+		return (isset($this->data['memo'])) ? (string) $this->data['memo'] : '';
 	}
 
 	/**
@@ -841,6 +858,21 @@ class transactions extends main
 	public function set_payment_type($payment_type)
 	{
 		$this->data['payment_type'] = (string) $payment_type;
+
+		return $this;
+	}
+
+	/**
+	 * Set PayPal memo
+	 *
+	 * @param string $reason_code
+	 *
+	 * @return transactions $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_memo($memo)
+	{
+		$this->data['reason_code'] = (string) $memo;
 
 		return $this;
 	}

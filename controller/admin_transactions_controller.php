@@ -338,6 +338,7 @@ class admin_transactions_controller extends admin_main
 					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
 					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
 					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
+					'MEMO'           => $data['memo'],
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 					'PAYER_EMAIL'    => $data['payer_email'],
 					'PAYER_ID'       => $data['payer_id'],

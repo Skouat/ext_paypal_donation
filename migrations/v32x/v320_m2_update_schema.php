@@ -27,8 +27,11 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_columns'    => array(
-				$this->table_prefix . 'users' => array(
+				$this->table_prefix . 'users'        => array(
 					'user_ppde_donated_amount' => array('DECIMAL:8', 0),
+				),
+				$this->table_prefix . 'ppde_txn_log' => array(
+					'memo' => array('VCHAR:255', ''),
 				),
 			),
 			'change_columns' => array(
@@ -48,6 +51,7 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 		return array(
 			'drop_columns'   => array(
 				$this->table_prefix . 'users' => 'user_ppde_donated_amount',
+				$this->table_prefix . 'memo',
 			),
 			'change_columns' => array(
 				$this->table_prefix . 'ppde_txn_log' => array(
