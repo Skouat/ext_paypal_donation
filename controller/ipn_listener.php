@@ -283,7 +283,7 @@ class ipn_listener
 	private function validate_transaction()
 	{
 		// Request and populate $this->transaction_data
-		array_map(array($this, 'get_post_data'), $this::$paypal_vars_table);
+		array_map(array($this, 'get_post_data'), self::$paypal_vars_table);
 
 		// additional checks
 		$this->check_account_id();
