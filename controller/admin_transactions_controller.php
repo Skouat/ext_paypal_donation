@@ -444,15 +444,16 @@ class admin_transactions_controller extends admin_main
 	protected function display_log_assign_template_vars($row)
 	{
 		$this->template->assign_block_vars('log', array(
-			'TNX_ID'           => $row['txn_id'],
-			'USERNAME'         => $row['username_full'],
+			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'DATE'             => $this->user->format_date($row['payment_date']),
 			'ID'               => $row['transaction_id'],
-			'S_TEST_IPN'       => (bool) $row['test_ipn'],
-			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
+			'TNX_ID'           => $row['txn_id'],
+			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
 			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
+			'S_TXN_ERRORS'     => !empty($row['txn_errors']),
+			'S_TEST_IPN'       => (bool) $row['test_ipn'],
 		));
 	}
 

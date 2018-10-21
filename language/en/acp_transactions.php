@@ -108,5 +108,6 @@ $lang = array_merge($lang, array(
  * Errors
  */
 $lang = array_merge($lang, array(
+	'PPDE_DT_IPN_ERRORS'     => 'You should reconsider this donation because the following errors are detected',
 	'PPDE_DT_NO_TRANSACTION' => 'No transaction found.',
 ));

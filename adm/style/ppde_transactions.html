@@ -10,6 +10,7 @@
 <div class="errorbox">
 	<h3>{{ lang('WARNING') }}</h3>
 
+	<p>{{ lang('PPDE_DT_IPN_ERRORS') }}{{ lang('COLON') }}</p>
 	<p>{{ ERROR_MSG }}</p>
 </div>
 {% endif %}
@@ -135,7 +136,7 @@
 		<tbody>
 		{% for log in loops.log %}
 		<tr>
-			<td>{{ log.TNX_ID }}</td>
+			<td>{{ log.TNX_ID }}{% if log.S_TXN_ERRORS %}&nbsp;<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: #FF0000;"></i>{% endif %}</td>
 			<td>{{ log.USERNAME }}</td>
 			<td{% if not log.S_CONFIRMED %} style="color: #FF0000;"{% endif %}>{{ log.CONFIRMED }}{% if log.S_TEST_IPN %}&nbsp;({{ lang('PPDE_DT_IPN_TEST') }}){% endif %}</td>
 			<td{% if not log.S_PAYMENT_STATUS %} style="color: #FF0000;"{% endif %}>{{ log.PAYMENT_STATUS }}</td>

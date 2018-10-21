@@ -307,7 +307,7 @@ class ipn_listener
 			// If data doesn't meet the requirement, we log in file (if enbaled).
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
 			// We store error message in transaction data for later use.
-			$this->transaction_data['txn_errors'] = $this->language->lang('INVALID_TXN') . $this->error_message;
+			$this->transaction_data['txn_errors'] = $this->error_message;
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business', 'memo');

@@ -172,7 +172,7 @@ class transactions
 		}
 
 		$get_logs_sql_ary = array(
-			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.test_ipn, txn.confirmed, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
+			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.test_ipn, txn.confirmed, txn.txn_errors, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
 			'FROM'     => array(
 				$this->ppde_transactions_log_table => 'txn',
 				USERS_TABLE                        => 'u',
@@ -279,13 +279,13 @@ class transactions
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$log[] = array(
-				'transaction_id' => $row['transaction_id'],
-				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
-				'test_ipn'       => $row['test_ipn'],
 				'confirmed'      => $row['confirmed'],
-				'payment_status' => $row['payment_status'],
 				'payment_date'   => $row['payment_date'],
-
+				'payment_status' => $row['payment_status'],
+				'test_ipn'       => $row['test_ipn'],
+				'transaction_id' => $row['transaction_id'],
+				'txn_errors'     => $row['txn_errors'],
+				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
 				'username_full'  => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $url_ary['profile_url']),
 			);
 		}
