@@ -336,7 +336,7 @@ class admin_transactions_controller extends admin_main
 					'ITEM_NUMBER'    => $data['item_number'],
 					'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
 					'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-					'MC_FEE'         => '-' . $data['mc_fee'] . ' ' . $data['mc_currency'],
+					'MC_FEE'         => $data['mc_fee'] . ' ' . $data['mc_currency'],
 					'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
 					'MEMO'           => $data['memo'],
 					'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
