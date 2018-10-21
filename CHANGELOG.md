@@ -1,7 +1,8 @@
 # Changelog
-## 2.0.1 - 2018-10-20
+## 2.0.1 - 2018-10-21
+- Add: Memo field in transactions log view
 - Add: Multiple checks on PayPal returned variables
-- Change: Enhance CSS compatibility with other styles (thanks to mazeltof)
+- Change: Enhance CSS compatibility with other styles (thanks to Mazeltof)
 - Change: Improve log error
 - Change: Refactor IPN Listener
 - Change: Use the same name for the extension display name and the contribution in the phpBB CDB
@@ -16,6 +17,7 @@
 - Fix: Services injection
 - Fix: Smilies are selectable on Donation Page Management only when preview mode is used
 - Fix: The transaction ID was not colored in Red when transaction status was not "Completed"
+- Code improvement
 
 ## 2.0.0 - 2018-10-02
 - Add: Minimum amount before auto group donors (#40]
