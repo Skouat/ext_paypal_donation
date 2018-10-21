@@ -865,14 +865,14 @@ class transactions extends main
 	/**
 	 * Set PayPal memo
 	 *
-	 * @param string $reason_code
+	 * @param string $memo
 	 *
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_memo($memo)
 	{
-		$this->data['reason_code'] = (string) $memo;
+		$this->data['memo'] = (string) $memo;
 
 		return $this;
 	}
