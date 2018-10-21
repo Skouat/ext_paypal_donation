@@ -56,56 +56,67 @@ class ipn_listener
 				'name'            => 'business',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+				'force_settings'  => array('length' => 127, 'lowercase' => true),
 		),
 		array(  // Sender's First name
 				'name'            => 'first_name',
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
+				'force_settings'  => array('length' => 64),
 		),
 		array(  // Equal to: $this->config['sitename']
 				'name'            => 'item_name',
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+				'force_settings'  => array('length' => 127),
 		),
 		array(  // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
 				'name'            => 'item_number',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+				'force_settings'  => array('length' => 127),
 		),
 		array(  // Sender's Last name
 				'name'            => 'last_name',
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
+				'force_settings'  => array('length' => 64),
 		),
 		array(  // Memo entered by the donor
 				'name'            => 'memo',
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 255, 'operator' => '<=')),
+				'force_settings'  => array('length' => 255),
 		),
 		array(  // The Parent transaction ID, in case of refund.
 				'name'            => 'parent_txn_id',
 				'default'         => '',
 				'condition_check' => array('ascii' => true, 'length' => array('value' => 19, 'operator' => '<=')),
+				'force_settings'  => array('length' => 19),
 		),
 		array(  // PayPal sender email address
 				'name'            => 'payer_email',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+				'force_settings'  => array('length' => 127),
 		),
 		array(  // PayPal sender ID
 				'name'            => 'payer_id',
 				'default'         => '',
 				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
+				'force_settings'  => array('length' => 13),
 		),
 		array(  // PayPal sender status (verified or unverified)
 				'name'            => 'payer_status',
 				'default'         => 'unverified',
 				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
+				'force_settings'  => array('length' => 13),
 		),
 		array(  // Payment Date/Time in the format 'HH:MM:SS Mmm DD, YYYY PDT'
 				'name'            => 'payment_date',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 28, 'operator' => '<=')),
+				'force_settings'  => array('length' => 28, 'strtotime' => true),
 		),
 		array(  // Payment type (echeck or instant)
 				'name'            => 'payment_type',
@@ -116,16 +127,19 @@ class ipn_listener
 				'name'            => 'receiver_id',
 				'default'         => '',
 				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
+				'force_settings'  => array('length' => 13),
 		),
 		array(  // Merchant e-mail address
 				'name'            => 'receiver_email',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+				'force_settings'  => array('length' => 127, 'lowercase' => true),
 		),
 		array(  // Merchant country code
 				'name'            => 'residence_country',
 				'default'         => '',
 				'condition_check' => array('length' => array('value' => 2, 'operator' => '==')),
+				'force_settings'  => array('length' => 2),
 		),
 		array(  // Transaction ID
 				'name'            => 'txn_id',
@@ -290,7 +304,8 @@ class ipn_listener
 
 		if (!empty($this->error_message))
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->get_postback_args());
+			// Write log file error if suspected data error, but we don't stop the code execution.
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business', 'memo');
@@ -498,28 +513,28 @@ class ipn_listener
 	private function build_data_ary()
 	{
 		return array(
-			'business'          => substr(strtolower($this->transaction_data['business']), 0, self::$paypal_vars_table['business']['condition_check']['length']['value']),
+			'business'          => $this->transaction_data['business'],
 			'confirmed'         => (bool) $this->transaction_data['confirmed'],
 			'exchange_rate'     => $this->transaction_data['exchange_rate'],
-			'first_name'        => substr($this->transaction_data['first_name'], 0, self::$paypal_vars_table['first_name']['condition_check']['length']['value']),
-			'item_name'         => substr($this->transaction_data['item_name'], 0, self::$paypal_vars_table['item_name']['condition_check']['length']['value']),
-			'item_number'       => substr($this->transaction_data['item_number'], 0, self::$paypal_vars_table['item_number']['condition_check']['length']['value']),
-			'last_name'         => substr($this->transaction_data['last_name'], 0, self::$paypal_vars_table['last_name']['condition_check']['length']['value']),
+			'first_name'        => $this->transaction_data['first_name'],
+			'item_name'         => $this->transaction_data['item_name'],
+			'item_number'       => $this->transaction_data['item_number'],
+			'last_name'         => $this->transaction_data['last_name'],
 			'mc_currency'       => $this->transaction_data['mc_currency'],
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
 			'net_amount'        => $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
-			'parent_txn_id'     => substr($this->transaction_data['parent_txn_id'], 0, self::$paypal_vars_table['parent_txn_id']['condition_check']['length']['value']),
-			'payer_email'       => substr($this->transaction_data['payer_email'], 0, self::$paypal_vars_table['payer_email']['condition_check']['length']['value']),
-			'payer_id'          => substr($this->transaction_data['payer_id'], 0, self::$paypal_vars_table['payer_id']['condition_check']['length']['value']),
-			'payer_status'      => substr($this->transaction_data['payer_status'], 0, self::$paypal_vars_table['payer_status']['condition_check']['length']['value']),
-			'payment_date'      => strtotime(substr($this->transaction_data['payment_date'], 0, self::$paypal_vars_table['payment_date']['condition_check']['length']['value'])),
+			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
+			'payer_email'       => $this->transaction_data['payer_email'],
+			'payer_id'          => $this->transaction_data['payer_id'],
+			'payer_status'      => $this->transaction_data['payer_status'],
+			'payment_date'      => $this->transaction_data['payment_date'],
 			'payment_status'    => $this->transaction_data['payment_status'],
 			'payment_type'      => $this->transaction_data['payment_type'],
-			'memo'              => substr($this->transaction_data['memo'], 0, self::$paypal_vars_table['memo']['condition_check']['length']['value']),
-			'receiver_id'       => substr($this->transaction_data['receiver_id'], 0, self::$paypal_vars_table['receiver_id']['condition_check']['length']['value']),
-			'receiver_email'    => substr(strtolower($this->transaction_data['receiver_email']), 0, self::$paypal_vars_table['receiver_email']['condition_check']['length']['value']),
-			'residence_country' => substr($this->transaction_data['residence_country'], 0, self::$paypal_vars_table['residence_country']['condition_check']['length']['value']),
+			'memo'              => $this->transaction_data['memo'],
+			'receiver_id'       => $this->transaction_data['receiver_id'],
+			'receiver_email'    => $this->transaction_data['receiver_email'],
+			'residence_country' => $this->transaction_data['residence_country'],
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
 			'test_ipn'          => (bool) $this->transaction_data['test_ipn'],
@@ -866,7 +881,25 @@ class ipn_listener
 		}
 
 		// assign variable to $this->transaction_data
-		$this->transaction_data[$data_ary['name']] = ($this->check_post_data($data_ary) === true) ? $data_ary['value'] : $data_ary['default'];
+		$this->check_post_data($data_ary);
+		$this->transaction_data[$data_ary['name']] = $this->set_post_data($data_ary);
+	}
+
+	/**
+	 * @param $data_ary
+	 * @return array|string
+	 */
+	private function set_post_data($data_ary)
+	{
+		$value = $data_ary['value'];
+
+		// check all conditions declared for this post_data
+		if (isset($data_ary['force_settings']))
+		{
+			$value = $this->set_post_data_func($data_ary);
+		}
+
+		return $value;
 	}
 
 	/**
@@ -918,6 +951,28 @@ class ipn_listener
 		unset($data_ary, $control_point, $params);
 
 		return $check;
+	}
+
+	/**
+	 * Check requirements for data value.
+	 *
+	 * @param array $data_ary
+	 *
+	 * @access public
+	 * @return mixed
+	 */
+	public function set_post_data_func($data_ary)
+	{
+		$value = $data_ary['value'];
+
+		foreach ($data_ary['force_settings'] as $control_point => $params)
+		{
+			// Calling the set_post_data_function
+			$value = call_user_func_array(array($this, 'set_post_data_' . $control_point), array($data_ary['value'], $params));
+		}
+		unset($data_ary, $control_point, $params);
+
+		return $value;
 	}
 
 	/**
@@ -980,5 +1035,50 @@ class ipn_listener
 	private function check_post_data_empty($value)
 	{
 		return empty($value) ? false : true;
+	}
+
+	/**
+	 * Set Post data length.
+	 * Called by $this->set_post_data() method
+	 *
+	 * @param string  $value
+	 * @param integer $length
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_post_data_length($value, $length)
+	{
+		return substr($value, 0, (int) $length);
+	}
+
+	/**
+	 * Set Post data to lowercase.
+	 * Called by $this->set_post_data() method
+	 *
+	 * @param string $value
+	 * @param bool   $force
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_post_data_lowercase($value, $force = false)
+	{
+		return $force ? strtolower($value) : $value;
+	}
+
+	/**
+	 * Set Post data to date/time format.
+	 * Called by $this->set_post_data() method
+	 *
+	 * @param string $value
+	 * @param bool   $force
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function set_post_data_strtotime($value, $force = false)
+	{
+		return $force ? strtotime($value) : $value;
 	}
 }
