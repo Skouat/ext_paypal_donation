@@ -304,8 +304,10 @@ class ipn_listener
 
 		if (!empty($this->error_message))
 		{
-			// Write log file error if suspected data error, but we don't stop the code execution.
+			// If data doesn't meet the requirement, we log in file (if enbaled).
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
+			// We store error message in transaction data for later use.
+			$this->transaction_data['txn_errors'] = $this->language->lang('INVALID_TXN') . $this->error_message;
 		}
 
 		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business', 'memo');
@@ -538,6 +540,7 @@ class ipn_listener
 			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
 			'settle_currency'   => $this->transaction_data['settle_currency'],
 			'test_ipn'          => (bool) $this->transaction_data['test_ipn'],
+			'txn_errors'        => $this->transaction_data['txn_errors'],
 			'txn_id'            => $this->transaction_data['txn_id'],
 			'txn_type'          => $this->transaction_data['txn_type'],
 			'user_id'           => (int) $this->transaction_data['user_id'],

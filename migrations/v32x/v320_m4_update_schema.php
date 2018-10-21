@@ -28,7 +28,8 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 		return array(
 			'add_columns'    => array(
 				$this->table_prefix . 'ppde_txn_log' => array(
-					'memo' => array('TEXT_UNI', ''),
+					'memo'       => array('TEXT_UNI', ''),
+					'txn_errors' => array('TEXT_UNI', ''),
 				),
 			),
 			'change_columns' => array(
@@ -47,7 +48,10 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'drop_columns'   => array(
-				$this->table_prefix . 'ppde_txn_log' => array('memo'),
+				$this->table_prefix . 'ppde_txn_log' => array(
+					'memo',
+					'txn_errors',
+				),
 			),
 			'change_columns' => array(
 				$this->table_prefix . 'ppde_txn_log' => array(

@@ -490,6 +490,8 @@ class admin_transactions_controller extends admin_main
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
+			'S_ERROR'                         => !empty($data['txn_errors']),
+			'ERROR_MSG'                       => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
 		));
 	}
 }

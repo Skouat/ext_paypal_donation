@@ -54,6 +54,7 @@ class transactions extends main
 	 *    settle_currency
 	 *    transaction_id
 	 *    test_ipn
+	 *    txn_errors
 	 *    txn_id
 	 *    txn_type
 	 *    user_id
@@ -111,6 +112,7 @@ class transactions extends main
 				'item_settle_amount'     => array('name' => 'settle_amount', 'type' => 'float'),
 				'item_settle_currency'   => array('name' => 'settle_currency', 'type' => 'string'),
 				'item_test_ipn'          => array('name' => 'test_ipn', 'type' => 'boolean'),
+				'item_txn_errors'        => array('name' => 'txn_errors', 'type' => 'string'),
 				'item_txn_id'            => array('name' => 'txn_id', 'type' => 'string'),
 				'item_txn_type'          => array('name' => 'txn_type', 'type' => 'string'),
 				'item_user_id'           => array('name' => 'user_id', 'type' => 'integer'),
@@ -211,6 +213,17 @@ class transactions extends main
 	public function get_test_ipn()
 	{
 		return (isset($this->data['test_ipn'])) ? (bool) $this->data['test_ipn'] : false;
+	}
+
+	/**
+	 * Get PayPal transaction errors
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_txn_errors()
+	{
+		return (isset($this->data['txn_errors'])) ? (string) $this->data['txn_errors'] : '';
 	}
 
 	/**
@@ -601,6 +614,21 @@ class transactions extends main
 	public function set_parent_txn_id($parent_txn_id)
 	{
 		$this->data['parent_txn_id'] = (string) $parent_txn_id;
+
+		return $this;
+	}
+
+	/**
+	 * Set PayPal transaction errors
+	 *
+	 * @param string $txn_errors
+	 *
+	 * @return transactions $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_txn_errors($txn_errors)
+	{
+		$this->data['txn_errors'] = (string) $txn_errors;
 
 		return $this;
 	}
