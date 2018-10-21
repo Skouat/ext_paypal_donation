@@ -81,7 +81,7 @@ class ipn_listener
 				'name'            => 'memo',
 				'default'         => array('', true),
 				'condition_check' => array('length' => array('value' => 255, 'operator' => '<=')),
-				),
+		),
 		array(  // The Parent transaction ID, in case of refund.
 				'name'            => 'parent_txn_id',
 				'default'         => '',
@@ -368,7 +368,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Get $_POST content as is. This is used to Postback args to PayPal.
+	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
 	 *
 	 * @return array
 	 */
