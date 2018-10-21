@@ -167,11 +167,7 @@ class admin_donation_pages_controller extends admin_main
 		$this->add_edit_donation_page_data($entity, $data);
 
 		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_ADD_DONATION_PAGE' => true,
-			'U_ADD_ACTION'        => $this->u_action . '&amp;action=add',
-			'U_BACK'              => $this->u_action,
-		));
+		$this->add_edit_action_assign_template_vars('add');
 	}
 
 	/**
@@ -464,11 +460,7 @@ class admin_donation_pages_controller extends admin_main
 		$this->add_edit_donation_page_data($entity, $data);
 
 		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_EDIT_DONATION_PAGE' => true,
-			'U_EDIT_ACTION'        => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . (int) $page_id,
-			'U_BACK'               => $this->u_action,
-		));
+		$this->add_edit_action_assign_template_vars('edit', $page_id);
 	}
 
 	/**

@@ -136,11 +136,7 @@ class admin_currency_controller extends admin_main
 		$this->add_edit_currency_data($entity, $data);
 
 		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_ADD'        => true,
-			'U_ADD_ACTION' => $this->u_action . '&amp;action=add',
-			'U_BACK'       => $this->u_action,
-		));
+		$this->add_edit_action_assign_template_vars('add');
 	}
 
 	/**
@@ -253,11 +249,7 @@ class admin_currency_controller extends admin_main
 		$this->add_edit_currency_data($entity, $data);
 
 		// Set output vars for display in the template
-		$this->template->assign_vars(array(
-			'S_EDIT'        => true,
-			'U_EDIT_ACTION' => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $currency_id,
-			'U_BACK'        => $this->u_action,
-		));
+		$this->add_edit_action_assign_template_vars('edit', $currency_id);
 	}
 
 	/**

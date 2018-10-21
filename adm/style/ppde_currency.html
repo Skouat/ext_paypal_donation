@@ -3,7 +3,7 @@
 <h1>{{ lang('PPDE_DC_CONFIG') }}</h1>
 <p>{{ lang('PPDE_DC_CONFIG_EXPLAIN') }}</p>
 
-{% if S_ADD or S_EDIT %}
+{% if S_ADD_EDIT %}
 <a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 
 {% if S_ERROR %}
@@ -14,7 +14,7 @@
 </div>
 {% endif %}
 
-<form id="add_edit_currency" method="post" action="{% if S_ADD %}{{ U_ADD_ACTION }}{% else %}{{ U_EDIT_ACTION }}{% endif %}">
+<form id="add_edit_currency" method="post" action="{{ U_ACTION }}">
 	<fieldset>
 		<legend>{{ lang('GENERAL_OPTIONS') }}</legend>
 		<dl>

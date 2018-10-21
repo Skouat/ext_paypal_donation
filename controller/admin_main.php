@@ -315,6 +315,26 @@ abstract class admin_main
 	}
 
 	/**
+	 * Set add/edit action output vars for display in the template
+	 *
+	 * @param string  $type Action type: 'add' or 'edit'
+	 * @param integer $id   Identifier to Edit. If action = add, then let to '0'.
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function add_edit_action_assign_template_vars($type, $id = 0)
+	{
+		$id_action = !empty($id) ? '&amp;' . $this->id_prefix_name . '_id=' . (int) $id : '';
+
+		$this->template->assign_vars(array(
+			'S_ADD_EDIT' => true,
+			'U_ACTION'   => $this->u_action . '&amp;action=' . $type . $id_action,
+			'U_BACK'     => $this->u_action,
+		));
+	}
+
+	/**
 	 * Set error output vars for display in the template
 	 *
 	 * @param array $errors
