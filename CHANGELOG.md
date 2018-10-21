@@ -1,5 +1,6 @@
 # Changelog
-## 2.0.1 - 2018-10-21
+## 2.0.1 - 2018-10-22
+- Add: PayPal Postdata check and error tracking
 - Add: Memo field in transactions log view
 - Add: Multiple checks on PayPal returned variables
 - Change: Enhance CSS compatibility with other styles (thanks to Mazeltof)
