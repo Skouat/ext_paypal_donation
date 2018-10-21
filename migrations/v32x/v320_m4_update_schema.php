@@ -28,7 +28,7 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 		return array(
 			'add_columns'    => array(
 				$this->table_prefix . 'ppde_txn_log' => array(
-					'memo'       => array('TEXT_UNI', ''),
+					'memo'       => array('VCHAR:255', ''),
 					'txn_errors' => array('TEXT_UNI', ''),
 				),
 			),
