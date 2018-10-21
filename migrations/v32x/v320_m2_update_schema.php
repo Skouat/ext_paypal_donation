@@ -41,7 +41,7 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'drop_columns' => array(
-				$this->table_prefix . 'users' => 'user_ppde_donated_amount',
+				$this->table_prefix . 'users' => array('user_ppde_donated_amount'),
 			),
 		);
 	}

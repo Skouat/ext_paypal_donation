@@ -47,7 +47,7 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'drop_columns'   => array(
-				$this->table_prefix . 'memo',
+				$this->table_prefix . 'ppde_txn_log' => array('memo'),
 			),
 			'change_columns' => array(
 				$this->table_prefix . 'ppde_txn_log' => array(
