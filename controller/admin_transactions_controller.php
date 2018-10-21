@@ -479,7 +479,7 @@ class admin_transactions_controller extends admin_main
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
-			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? false : true,
+			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
 		));
 	}
 }
