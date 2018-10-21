@@ -197,20 +197,7 @@ class admin_transactions_controller extends admin_main
 				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $start,
 			));
 
-			foreach ($log_data as $row)
-			{
-				$this->template->assign_block_vars('log', array(
-					'TNX_ID'           => $row['txn_id'],
-					'USERNAME'         => $row['username_full'],
-					'DATE'             => $this->user->format_date($row['payment_date']),
-					'ID'               => $row['transaction_id'],
-					'S_TEST_IPN'       => $row['test_ipn'],
-					'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-					'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
-					'S_CONFIRMED'      => ($row['confirmed']) ? false : true,
-					'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? false : true,
-				));
-			}
+			array_map(array($this, 'display_log_assign_template_vars'), $log_data);
 		}
 	}
 
@@ -471,5 +458,28 @@ class admin_transactions_controller extends admin_main
 	public function get_suffix_ipn()
 	{
 		return ($this->suffix_ipn) ? $this->suffix_ipn : '';
+	}
+
+	/**
+	 * Set log output vars for display in the template
+	 *
+	 * @param array $row
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function display_log_assign_template_vars($row)
+	{
+		$this->template->assign_block_vars('log', array(
+			'TNX_ID'           => $row['txn_id'],
+			'USERNAME'         => $row['username_full'],
+			'DATE'             => $this->user->format_date($row['payment_date']),
+			'ID'               => $row['transaction_id'],
+			'S_TEST_IPN'       => (bool) $row['test_ipn'],
+			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
+			'S_CONFIRMED'      => (bool) $row['confirmed'],
+			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? false : true,
+		));
 	}
 }
