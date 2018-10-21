@@ -182,10 +182,10 @@ class admin_transactions_controller extends admin_main
 			$log_data = array();
 			$log_count = 0;
 
-			$this->view_txn_log($log_data, $log_count, $this->config['topics_per_page'], $start, $sql_where, $sql_sort, $keywords);
+			$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $start, $sql_where, $sql_sort, $keywords);
 
 			$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
-			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, $this->config['topics_per_page'], $start);
+			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $start);
 
 			$this->template->assign_vars(array(
 				'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
@@ -213,7 +213,6 @@ class admin_transactions_controller extends admin_main
 			}
 		}
 	}
-
 
 	/**
 	 * Updates the Overview module statistics
