@@ -293,7 +293,7 @@ class ipn_listener
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $this->get_postback_args());
 		}
 
-		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business');
+		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business', 'memo');
 		foreach ($decode_ary as $key)
 		{
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
@@ -359,7 +359,7 @@ class ipn_listener
 		// Grab the post data form and set in an array to be used in the URI to PayPal
 		foreach ($this->get_postback_args() as $key => $value)
 		{
-			$encoded = urlencode($value);
+			$encoded = urlencode(htmlspecialchars_decode($value));
 			$values[] = $key . '=' . $encoded;
 		}
 
