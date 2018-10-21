@@ -255,7 +255,7 @@ class ipn_listener
 		$this->ppde_ipn_paypal->is_remote_detected();
 
 		// if no connection detected, disable IPN, log error and exit code execution
-		if ($this->ppde_controller_main->is_ipn_requirement_satisfied())
+		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
 			$this->ppde_ipn_log->log_error($this->language->lang('REQUIREMENT_NOT_SATISFIED'), true, true, E_USER_WARNING);

@@ -123,7 +123,7 @@ class main_controller
 	 */
 	public function use_ipn()
 	{
-		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && !$this->is_ipn_requirement_satisfied();
+		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_ipn_requirement_satisfied();
 	}
 
 	/**
