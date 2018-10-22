@@ -89,7 +89,7 @@ $lang = array_merge($lang, array(
 	// Error
 	'CURL_ERROR'                => 'Erreur cURL : %s',
 	'INVALID_TXN'               => 'Transaction non valide :',
-	'INVALID_TXN_ACCOUNT_ID'    => 'Les ID marchant ne correspondent pas.',
+	'INVALID_TXN_ACCOUNT_ID'    => 'Les ID marchand ne correspondent pas.',
 	'INVALID_TXN_ASCII'         => 'Caractères non ASCII détectés dans « %s ».',
 	'INVALID_TXN_CONTENT'       => 'Contenu inattendu dans « %s ».',
 	'INVALID_TXN_EMPTY'         => 'La variable « %s » est vide.',
