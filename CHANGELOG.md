@@ -1,4 +1,7 @@
 # Changelog
+## 2.0.2 - 2018-11-05
+- Fix: All transactions log are cleared when "Delete marked" is used.
+
 ## 2.0.1 - 2018-10-22
 - Add: PayPal Postdata check and error tracking
 - Add: Memo field in transactions log view
