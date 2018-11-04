@@ -107,8 +107,8 @@ class admin_transactions_controller extends admin_main
 	{
 		// Set up general vars
 		$start = $this->request->variable('start', 0);
-		$deletemark = $this->request->is_set('delmarked');
-		$deleteall = $this->request->is_set('delall');
+		$deletemark = $this->request->is_set('delmarked') ? $this->request->variable('delmarked', false) : false;
+		$deleteall = $this->request->is_set('delall') ? $this->request->variable('delall', false) : false;
 		$marked = $this->request->variable('mark', array(0));
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
