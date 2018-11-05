@@ -304,7 +304,7 @@ class admin_transactions_controller extends admin_main
 			$transaction_id = $this->request->variable('id', 0);
 
 			// Initiate an entity
-			/** @type \skouat\ppde\entity\currency $entity */
+			/** @type \skouat\ppde\entity\transactions $entity */
 			$entity = $this->get_container_entity();
 
 			// add field username to the table schema needed by entity->import()
