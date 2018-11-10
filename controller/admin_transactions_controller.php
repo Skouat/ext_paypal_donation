@@ -110,53 +110,32 @@ class admin_transactions_controller extends admin_main
 		$deletemark = $this->request->is_set('delmarked') ? $this->request->variable('delmarked', false) : false;
 		$deleteall = $this->request->is_set('delall') ? $this->request->variable('delall', false) : false;
 		$marked = $this->request->variable('mark', array(0));
+		$args = array();
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
 		$sort_key = $this->request->variable('sk', 't');
 		$sort_dir = $this->request->variable('sd', 'd');
 
-		// Initiate an entity
-		/** @type \skouat\ppde\entity\transactions $entity */
-		$entity = $this->get_container_entity();
-
-		// Delete entries if requested and able
+		// Prepares args for entries deletion
 		if (($deletemark || $deleteall) && $this->auth->acl_get('a_ppde_manage'))
 		{
-			if (confirm_box(true))
-			{
-				$where_sql = '';
-
-				if ($deletemark && count($marked))
-				{
-					$where_sql = $this->ppde_operator->build_marked_where_sql($marked);
-				}
-
-				if ($where_sql || $deleteall)
-				{
-					$entity->delete(0, '', $where_sql, $deleteall);
-					$this->update_overview_stats();
-					$this->update_overview_stats(true);
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
-				}
-			}
-			else
-			{
-				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
-						'start'     => $start,
-						'delmarked' => $deletemark,
-						'delall'    => $deleteall,
-						'mark'      => $marked,
-						'st'        => $sort_days,
-						'sk'        => $sort_key,
-						'sd'        => $sort_dir,
-						'i'         => $id,
-						'mode'      => $mode,
-						'action'    => $action))
-				);
-			}
+			$action = 'delete';
+			$args = array(
+				'hidden_fields' => array(
+					'start'     => $start,
+					'delmarked' => $deletemark,
+					'mark'      => $marked,
+					'delall'    => $deleteall,
+					'st'        => $sort_days,
+					'sk'        => $sort_key,
+					'sd'        => $sort_dir,
+					'i'         => $id,
+					'mode'      => $mode,
+				),
+			);
 		}
 
-		$this->do_action($action);
+		$action = $this->do_action($action, $args);
 
 		if (!$action)
 		{
@@ -291,36 +270,66 @@ class admin_transactions_controller extends admin_main
 	 * Do action regarding the value of $action
 	 *
 	 * @param string $action Requested action
+	 * @param array  $args   Arguments required for the action
 	 *
-	 * @return void
+	 * @return string
 	 * @access private
 	 */
-	private function do_action($action)
+	private function do_action($action, $args)
 	{
-		// Action: view
-		if ($action == 'view')
+		// Initiate an entity
+		/** @type \skouat\ppde\entity\transactions $entity */
+		$entity = $this->get_container_entity();
+
+		switch ($action)
 		{
-			// Request Identifier of the transaction
-			$transaction_id = $this->request->variable('id', 0);
+			case 'view':
+				// Request Identifier of the transaction
+				$transaction_id = $this->request->variable('id', 0);
 
-			// Initiate an entity
-			/** @type \skouat\ppde\entity\transactions $entity */
-			$entity = $this->get_container_entity();
 
-			// add field username to the table schema needed by entity->import()
-			$additional_table_schema = array('item_username' => array('name' => 'username', 'type' => 'string'));
+				// add field username to the table schema needed by entity->import()
+				$additional_table_schema = array('item_username' => array('name' => 'username', 'type' => 'string'));
 
-			// Grab transaction data
-			$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
+				// Grab transaction data
+				$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
-			array_map(array($this, 'action_assign_template_vars'), $data_ary);
+				array_map(array($this, 'action_assign_template_vars'), $data_ary);
 
-			$this->template->assign_vars(array(
-				'U_ACTION' => $this->u_action,
-				'U_BACK'   => $this->u_action,
-				'S_VIEW'   => true,
-			));
+				$this->template->assign_vars(array(
+					'U_ACTION' => $this->u_action,
+					'U_BACK'   => $this->u_action,
+					'S_VIEW'   => true,
+				));
+			break;
+			case 'delete':
+				if (confirm_box(true))
+				{
+					$where_sql = '';
+
+					if ($args['hidden_fields']['delmarked'] && count($args['hidden_fields']['mark']))
+					{
+						$where_sql = $this->ppde_operator->build_marked_where_sql($args['hidden_fields']['mark']);
+					}
+
+					if ($where_sql || $args['hidden_fields']['delall'])
+					{
+						$entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
+						$this->update_overview_stats();
+						$this->update_overview_stats(true);
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
+					}
+				}
+				else
+				{
+					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
+				}
+				// Clear $action status
+				$action = '';
+			break;
 		}
+
+		return $action;
 	}
 
 	/**
