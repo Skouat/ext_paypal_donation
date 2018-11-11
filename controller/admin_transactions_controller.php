@@ -106,11 +106,13 @@ class admin_transactions_controller extends admin_main
 	public function display_transactions($id, $mode, $action)
 	{
 		// Set up general vars
+		$args = array();
 		$start = $this->request->variable('start', 0);
 		$deletemark = $this->request->is_set('delmarked') ? $this->request->variable('delmarked', false) : false;
 		$deleteall = $this->request->is_set('delall') ? $this->request->variable('delall', false) : false;
 		$marked = $this->request->variable('mark', array(0));
-		$args = array();
+		$txn_approve = $this->request->is_set('approve');
+		$txn_approved = $this->request->variable('txn_errors_approved', 0);
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
 		$sort_key = $this->request->variable('sk', 't');
@@ -123,14 +125,27 @@ class admin_transactions_controller extends admin_main
 			$args = array(
 				'hidden_fields' => array(
 					'start'     => $start,
+					'delall'    => $deleteall,
 					'delmarked' => $deletemark,
 					'mark'      => $marked,
-					'delall'    => $deleteall,
 					'st'        => $sort_days,
 					'sk'        => $sort_key,
 					'sd'        => $sort_dir,
 					'i'         => $id,
 					'mode'      => $mode,
+				),
+			);
+		}
+
+		if ($txn_approve)
+		{
+			$transaction_id = $this->request->variable('id', 0);
+			$action = 'approve';
+			$args = array(
+				'hidden_fields' => array(
+					'approve'             => true,
+					'id'                  => $transaction_id,
+					'txn_errors_approved' => $txn_approved,
 				),
 			);
 		}
@@ -329,6 +344,23 @@ class admin_transactions_controller extends admin_main
 				// Clear $action status
 				$action = '';
 			break;
+			case 'approve':
+				if (confirm_box(true))
+				{
+					$transaction_id = (int) $args['hidden_fields']['id'];
+					$txn_approved = !empty($args['hidden_fields']['txn_errors_approved']) ? false : true;
+
+					$entity->load($transaction_id);
+					$entity->set_txn_errors_approved($txn_approved);
+					$entity->save(false);
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
+				}
+				else
+				{
+					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
+				}
+				// Clear $action status
+				$action = '';
 		}
 
 		return $action;
@@ -478,6 +510,11 @@ class admin_transactions_controller extends admin_main
 	 */
 	protected function action_assign_template_vars($data)
 	{
+		$s_hidden_fields = build_hidden_fields(array(
+			'id'                  => $data['transaction_id'],
+			'txn_errors_approved' => $data['txn_errors_approved'],
+		));
+
 		$this->template->assign_vars(array(
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
@@ -503,6 +540,8 @@ class admin_transactions_controller extends admin_main
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 			'S_ERROR'                         => !empty($data['txn_errors']),
+			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
+			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,
 			'ERROR_MSG'                       => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
 		));
 	}

@@ -40,7 +40,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'PPDE_ACP_DONATION'        => 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'        => 'Vue d’ensemble',
-	'PPDE_ACP_PAYPAL_FEATURES' => 'Fonctionnalitées PayPal IPN',
+	'PPDE_ACP_PAYPAL_FEATURES' => 'Fonctionnalités PayPal IPN',
 	'PPDE_ACP_SETTINGS'        => 'Paramètres généraux',
 	'PPDE_ACP_DONATION_PAGES'  => 'Pages des dons',
 	'PPDE_ACP_CURRENCY'        => 'Gestion des devises',
@@ -62,6 +62,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_DP_DELETED'              => '<strong>PayPal Donation : Page des dons supprimée</strong><br>» « %1$s » pour la langue « %2$s »',
 	'LOG_PPDE_DP_UPDATED'              => '<strong>PayPal Donation : Page de dons mise à jour</strong><br>» « %1$s » pour la langue « %2$s »',
 	'LOG_PPDE_DT_PURGED'               => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
+	'LOG_PPDE_DT_UPDATED'              => '<strong>PayPal Donation : Transaction mise à mise à jour</strong>',
 	'LOG_PPDE_PAYPAL_FEATURES_UPDATED' => '<strong>PayPal Donation : Configuration PayPal mise à jour</strong>',
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation : Configuration mise à jour</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',

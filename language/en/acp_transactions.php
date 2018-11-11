@@ -48,8 +48,10 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_USERNAME'              => 'Donor name',
 
 	// Display transactions
+	'PPDE_DT_APPROVE'               => 'Approve',
 	'PPDE_DT_BOARD_USERNAME'        => 'Donor',
 	'PPDE_DT_DETAILS'               => 'Transaction details',
+	'PPDE_DT_DISAPPROVE'            => 'Disapprove',
 	'PPDE_DT_EXCHANGE_RATE'         => 'Exchange rate',
 	'PPDE_DT_EXCHANGE_RATE_EXPLAIN' => 'Based on the exchange rate in effect at %s.',
 	'PPDE_DT_FEE_AMOUNT'            => 'Fee amount',
@@ -108,6 +110,8 @@ $lang = array_merge($lang, array(
  * Errors
  */
 $lang = array_merge($lang, array(
-	'PPDE_DT_IPN_ERRORS'     => 'You should reconsider this donation because the following errors are detected',
-	'PPDE_DT_NO_TRANSACTION' => 'No transaction found.',
+	'PPDE_DT_IPN_APPROVED'         => 'Transaction manually approved',
+	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'This donation was manually approved with the following errors',
+	'PPDE_DT_IPN_ERRORS'           => 'You should reconsider this donation because the following errors are detected',
+	'PPDE_DT_NO_TRANSACTION'       => 'No transaction found.',
 ));
