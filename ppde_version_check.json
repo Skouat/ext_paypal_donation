@@ -6,7 +6,7 @@
             "announcement": "https://www.phpbb.com/customise/db/extension/paypal_donation_extension/#revisions-panel",
             "eol": null,
             "security": false
-        }
+        },
         "2.0": {
             "current": "2.0.1",
             "download": "https://www.phpbb.com/customise/db/download/161646",
