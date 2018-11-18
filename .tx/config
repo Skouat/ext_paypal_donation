@@ -2,7 +2,7 @@
 host = https://www.transifex.com
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_currency_php]
+[ppde-32x.acp_currency_php]
 file_filter = language/<lang>/acp_currency.php
 minimum_perc = 0
 mode = translator
@@ -10,7 +10,7 @@ source_file = language/en/acp_currency.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_donation_pages_php]
+[ppde-32x.acp_donation_pages_php]
 file_filter = language/<lang>/acp_donation_pages.php
 minimum_perc = 0
 mode = translator
@@ -18,7 +18,7 @@ source_file = language/en/acp_donation_pages.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_overview_php]
+[ppde-32x.acp_overview_php]
 file_filter = language/<lang>/acp_overview.php
 minimum_perc = 0
 mode = translator
@@ -26,7 +26,7 @@ source_file = language/en/acp_overview.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_paypal_features_php]
+[ppde-32x.acp_paypal_features_php]
 file_filter = language/<lang>/acp_paypal_features.php
 minimum_perc = 0
 mode = translator
@@ -34,7 +34,7 @@ source_file = language/en/acp_paypal_features.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_settings_php]
+[ppde-32x.acp_settings_php]
 file_filter = language/<lang>/acp_settings.php
 minimum_perc = 0
 mode = translator
@@ -42,7 +42,7 @@ source_file = language/en/acp_settings.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.acp_transactions_php]
+[ppde-32x.acp_transactions_php]
 file_filter = language/<lang>/acp_transactions.php
 minimum_perc = 0
 mode = translator
@@ -50,7 +50,7 @@ source_file = language/en/acp_transactions.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.donate_php]
+[ppde-32x.donate_php]
 file_filter = language/<lang>/donate.php
 minimum_perc = 0
 mode = translator
@@ -58,7 +58,7 @@ source_file = language/en/donate.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.exceptions_php]
+[ppde-32x.exceptions_php]
 file_filter = language/<lang>/exceptions.php
 minimum_perc = 0
 mode = translator
@@ -66,7 +66,7 @@ source_file = language/en/exceptions.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.info_acp_donation_php]
+[ppde-32x.info_acp_donation_php]
 file_filter = language/<lang>/info_acp_donation.php
 minimum_perc = 0
 mode = translator
@@ -74,7 +74,7 @@ source_file = language/en/info_acp_donation.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.info_ucp_donation_php]
+[ppde-32x.info_ucp_donation_php]
 file_filter = language/<lang>/info_ucp_donation.php
 minimum_perc = 0
 mode = translator
@@ -82,7 +82,7 @@ source_file = language/en/info_ucp_donation.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.permissions_donation_php]
+[ppde-32x.permissions_donation_php]
 file_filter = language/<lang>/permissions_donation.php
 minimum_perc = 0
 mode = translator
@@ -90,7 +90,7 @@ source_file = language/en/permissions_donation.php
 source_lang = en
 type = PHP_ARRAY
 
-[ppde-develop-32x.email_admin_donation_received_txt]
+[ppde-32x.email_admin_donation_received_txt]
 file_filter = language/<lang>/email/admin_donation_received.txt
 minimum_perc = 0
 mode = translator
@@ -98,7 +98,7 @@ source_file = language/en/email/admin_donation_received.txt
 source_lang = en
 type = TXT
 
-[ppde-develop-32x.email_donor_donation_received_txt]
+[ppde-32x.email_donor_donation_received_txt]
 file_filter = language/<lang>/email/donor_donation_received.txt
 minimum_perc = 0
 mode = translator
