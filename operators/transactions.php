@@ -242,7 +242,7 @@ class transactions
 				$sql_where = ' WHERE user_id = ' . (int) $arg;
 			break;
 			case 'email':
-				$sql_where = ' WHERE user_email_hash = ' . crc32(strtolower($arg)) . strlen($arg);
+				$sql_where = " WHERE user_email_hash = '" . $this->db->sql_escape(phpbb_email_hash($arg)) . "'";
 			break;
 			default:
 				$sql_where = '';
