@@ -287,7 +287,6 @@ class admin_transactions_controller extends admin_main
 				// Request Identifier of the transaction
 				$transaction_id = $this->request->variable('id', 0);
 
-
 				// add field username to the table schema needed by entity->import()
 				$additional_table_schema = array('item_username' => array('name' => 'username', 'type' => 'string'));
 
