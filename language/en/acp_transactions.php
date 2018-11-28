@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_USERNAME'              => 'Donor name',
 
 	// Display transactions
-	'PPDE_DT_BOARD_USERNAME'        => 'Donors',
+	'PPDE_DT_BOARD_USERNAME'        => 'Donor',
 	'PPDE_DT_DETAILS'               => 'Transaction details',
 	'PPDE_DT_EXCHANGE_RATE'         => 'Exchange rate',
 	'PPDE_DT_EXCHANGE_RATE_EXPLAIN' => 'Based on the exchange rate in effect at %s.',
