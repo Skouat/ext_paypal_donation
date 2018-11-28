@@ -376,7 +376,7 @@ class transactions
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('payer_id');
-				$sql_ary{'LEFT_JOIN'} = array(
+				$sql_ary['LEFT_JOIN'] = array(
 					array(
 						'FROM' => array(USERS_TABLE => 'u'),
 						'ON'   => 'txn.user_id = u.user_id',
