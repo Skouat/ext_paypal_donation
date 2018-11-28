@@ -47,7 +47,7 @@ class transactions
 	{
 		// Build main sql request
 		$sql_ary = array(
-			'SELECT'    => '*, u.username',
+			'SELECT'    => '*, u.username, u.user_colour',
 			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
 			'LEFT_JOIN' => array(
 				array(
