@@ -287,9 +287,11 @@ class admin_transactions_controller extends admin_main
 				// Request Identifier of the transaction
 				$transaction_id = $this->request->variable('id', 0);
 
-
 				// add field username to the table schema needed by entity->import()
-				$additional_table_schema = array('item_username' => array('name' => 'username', 'type' => 'string'));
+				$additional_table_schema = array(
+					'item_username'		=> array('name' => 'username', 'type' => 'string'),
+					'item_user_colour'	=> array('name' => 'user_colour', 'type' => 'string'),
+				);
 
 				// Grab transaction data
 				$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
@@ -477,7 +479,7 @@ class admin_transactions_controller extends admin_main
 	protected function action_assign_template_vars($data)
 	{
 		$this->template->assign_vars(array(
-			'BOARD_USERNAME' => $data['username'],
+			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
 			'ITEM_NAME'      => $data['item_name'],
 			'ITEM_NUMBER'    => $data['item_number'],
