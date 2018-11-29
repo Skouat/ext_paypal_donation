@@ -156,6 +156,7 @@ class ipn_listener
 	protected $dispatcher;
 	protected $language;
 	protected $notification;
+	protected $notification_core;
 	protected $path_helper;
 	protected $php_ext;
 	protected $ppde_controller_main;
@@ -170,18 +171,6 @@ class ipn_listener
 	 * @var string
 	 */
 	private $args_return_uri = array();
-	/**
-	 * Main currency data
-	 *
-	 * @var array
-	 */
-	private $currency_mc_data = array();
-	/**
-	 * Settle currency data
-	 *
-	 * @var array
-	 */
-	private $currency_settle_data = array();
 	/**
 	 * @var boolean
 	 */
@@ -225,28 +214,30 @@ class ipn_listener
 	/**
 	 * Constructor
 	 *
-	 * @param config                        $config                             Config object
-	 * @param ContainerInterface            $container                          Service container interface
-	 * @param language                      $language                           Language user object
-	 * @param manager                       $notification                       Notification object
-	 * @param path_helper                   $path_helper                        Path helper object
-	 * @param main_controller               $ppde_controller_main               Main controller object
-	 * @param admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
-	 * @param ipn_log                       $ppde_ipn_log                       IPN log
-	 * @param ipn_paypal                    $ppde_ipn_paypal                    IPN PayPal
-	 * @param request                       $request                            Request object
-	 * @param dispatcher_interface          $dispatcher                         Dispatcher object
-	 * @param string                        $php_ext                            phpEx
+	 * @param config                         $config                             Config object
+	 * @param ContainerInterface             $container                          Service container interface
+	 * @param language                       $language                           Language user object
+	 * @param manager                        $notification                       Notification object
+	 * @param \skouat\ppde\notification\core $notification_core
+	 * @param path_helper                    $path_helper                        Path helper object
+	 * @param main_controller                $ppde_controller_main               Main controller object
+	 * @param admin_transactions_controller  $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param ipn_log                        $ppde_ipn_log                       IPN log
+	 * @param ipn_paypal                     $ppde_ipn_paypal                    IPN PayPal
+	 * @param request                        $request                            Request object
+	 * @param dispatcher_interface           $dispatcher                         Dispatcher object
+	 * @param string                         $php_ext                            phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, ContainerInterface $container, language $language, manager $notification, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(config $config, ContainerInterface $container, language $language, manager $notification, \skouat\ppde\notification\core $notification_core, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
+		$this->notification_core = $notification_core;
 		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
@@ -309,7 +300,7 @@ class ipn_listener
 
 		if (!empty($this->error_message))
 		{
-			// If data doesn't meet the requirement, we log in file (if enbaled).
+			// If data doesn't meet the requirement, we log in file (if enabled).
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
 			// We store error message in transaction data for later use.
 			$this->transaction_data['txn_errors'] = $this->error_message;
@@ -637,7 +628,7 @@ class ipn_listener
 				// Do actions
 				$this->update_donor_stats();
 				$this->donors_group_user_add();
-				$this->notify_donation_received();
+				$this->notification_core->notify_donation_received();
 			}
 		}
 	}
@@ -817,60 +808,6 @@ class ipn_listener
 	private function minimum_donation_raised()
 	{
 		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : true;
-	}
-
-	/**
-	 * Notify donors and admin when the donation is received
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function notify_donation_received()
-	{
-		// Initiate a transaction entity
-		/** @type \skouat\ppde\entity\transactions $entity */
-		$entity = $this->container->get('skouat.ppde.entity.transactions');
-
-		// Initiate a currency entity
-		/** @type \skouat\ppde\entity\currency $currency_entity */
-		$currency_entity = $this->container->get('skouat.ppde.entity.currency');
-
-		// Set currency data properties
-		$this->currency_settle_data = $this->get_currency_data($currency_entity, $entity->get_settle_currency());
-		$this->currency_mc_data = $this->get_currency_data($currency_entity, $entity->get_mc_currency());
-
-		$notification_data = array(
-			'net_amount'     => $this->ppde_controller_main->currency_on_left($entity->get_net_amount(), $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
-			'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->transaction_data['mc_gross'], $this->currency_mc_data[0]['currency_symbol'], (bool) $this->currency_mc_data[0]['currency_on_left']),
-			'payer_email'    => $this->transaction_data['payer_email'],
-			'payer_username' => $entity->get_username(),
-			'settle_amount'  => $this->transaction_data['settle_amount'] ? $this->ppde_controller_main->currency_on_left($this->transaction_data['settle_amount'], $this->currency_settle_data[0]['currency_symbol'], (bool) $this->currency_settle_data[0]['currency_on_left']) : '',
-			'transaction_id' => $entity->get_id(),
-			'txn_id'         => $this->transaction_data['txn_id'],
-			'user_from'      => $entity->get_user_id(),
-		);
-
-		// Send admin notification
-		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
-		// Send donor notification
-		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
-	}
-
-	/**
-	 * Get currency data based on currency ISO code
-	 *
-	 * @param \skouat\ppde\entity\currency $entity The currency entity object
-	 * @param string                       $iso_code
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function get_currency_data(\skouat\ppde\entity\currency $entity, $iso_code)
-	{
-		// Retrieve the currency ID for settle
-		$entity->data_exists($entity->build_sql_data_exists($iso_code));
-
-		return $this->ppde_controller_main->get_default_currency_data($entity->get_id());
 	}
 
 	/**
