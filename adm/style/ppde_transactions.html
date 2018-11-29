@@ -111,7 +111,9 @@
 	<fieldset>
 		<p class="submit-buttons">
 			{{ S_HIDDEN_FIELDS }}
+			{% if S_ERROR %}
 			<input class="button1" type="submit" name="approve" value="{% if S_ERROR_APPROVED %}{{ lang('PPDE_DT_DISAPPROVE') }}{% else %}{{ lang('PPDE_DT_APPROVE') }}{% endif %}">&nbsp;
+			{% endif %}
 			<input class="button1" type="submit" name="update" value="{{ lang('BACK') }}">
 			{{ S_FORM_TOKEN }}
 		</p>
