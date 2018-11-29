@@ -26,8 +26,13 @@
         },
         {
             "name": "Mazeltof",
-            "homepage": "http://www.phpbb-fr.com/customise/db/author/mazeltof/",
+            "homepage": "https://www.mazeland.fr/",
             "role": "Sorcerer's Apprentice"
+        },
+        {
+            "name": "kasimi",
+            "homepage": "https://kasimi.net",
+            "role": "Contributor"
         }
     ],
     "require": {
