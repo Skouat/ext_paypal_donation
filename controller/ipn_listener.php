@@ -275,12 +275,17 @@ class ipn_listener
 			$this->ppde_ipn_log->log_error($this->language->lang('REQUIREMENT_NOT_SATISFIED'), true, true, E_USER_WARNING);
 		}
 
-		// Check the transaction returned by PayPal
-		$this->validate_transaction();
+		// Logs in the DB, PayPal verified transactions
+		if ($this->validate_transaction())
+		{
+			$this->log_to_db();
+		}
 
-		$this->log_to_db();
-
-		$this->do_actions();
+		// Do actions only if checks are validated.
+		if ($this->validate_actions())
+		{
+			$this->do_actions();
+		}
 
 		// We stop the execution of the code because nothing need to be returned to phpBB.
 		// And PayPal need it to terminate properly the IPN process.
@@ -477,9 +482,12 @@ class ipn_listener
 		// List the data to be thrown into the database
 		$data = $this->build_data_ary();
 
+		// Load data in the entity
 		$this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
+		$entity->set_id($entity->transaction_exists());
 
-		$this->submit_data($entity);
+		// Add or edit transaction data
+		$this->ppde_controller_transactions_admin->add_edit_data($entity);
 	}
 
 	/**
@@ -564,59 +572,60 @@ class ipn_listener
 	}
 
 	/**
-	 *  Submit data to the database
+	 * Validates actions if the transaction is verified
 	 *
-	 * @param \skouat\ppde\entity\transactions $entity The transactions log entity object
-	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\transactions $entity)
+
+	private function validate_actions()
 	{
-		if ($this->verified)
+		$do_actions = false;
+
+		if (!$this->verified)
 		{
-			// Load the ID of the transaction in the entity
-			$entity->set_id($entity->transaction_exists());
-			// Add or edit transaction data
-			$this->ppde_controller_transactions_admin->add_edit_data($entity);
+			return false;
 		}
+
+		if ($this->payment_status_is_completed())
+		{
+			$do_actions = true;
+		}
+
+		return $do_actions;
 	}
 
 	/**
-	 * Do actions if the transaction is verified
+	 * Do actions for transactions
 	 *
 	 * @return void
 	 * @access private
 	 */
 	private function do_actions()
 	{
-		// If the transaction is not verified do nothing
-		if (!$this->verified)
+		$transaction_data = $this->transaction_data;
+
+		/**
+		 * Event that is triggered when a transaction has been successfully completed
+		 *
+		 * @event skouat.ppde.do_actions_completed_before
+		 * @var array    transaction_data    Array containing transaction data
+		 * @since 1.0.3
+		 */
+		$vars = array(
+			'transaction_data',
+		);
+		extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+
+		$this->transaction_data = $transaction_data;
+		unset($transaction_data);
+
+		// Do actions whether the transaction is real or a test.
+		$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
+
+		// Does errors are reported for the current transaction?
+		if (empty($this->transaction_data['txn_errors']))
 		{
-			return;
-		}
-
-		if ($this->payment_status_is_completed())
-		{
-			$transaction_data = $this->transaction_data;
-
-			/**
-			 * Event that is triggered when a transaction has been successfully completed
-			 *
-			 * @event skouat.ppde.do_actions_completed_before
-			 * @var array    transaction_data    Array containing transaction data
-			 * @since 1.0.3
-			 */
-			$vars = array(
-				'transaction_data',
-			);
-			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
-
-			$this->transaction_data = $transaction_data;
-			unset($transaction_data);
-
-			// Do actions whether the transaction is real or a test.
-			$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
 			$this->update_raised_amount();
 
 			// Do additional actions if the transaction is not a test.
