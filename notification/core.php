@@ -72,7 +72,7 @@ class core
 			$settle_amount = $this->ppde_controller_main->currency_on_left((float) $settle_amount, $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
 		}
 
-		return $notification_data = array(
+		$notification_data = array(
 			'net_amount'     => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 			'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 			'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
@@ -82,5 +82,7 @@ class core
 			'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
 			'user_from'      => $this->ppde_entity_transaction->get_user_id(),
 		);
+
+		return $notification_data;
 	}
 }
