@@ -1,13 +1,17 @@
 # Changelog
-## 2.0.2 - 2018-11-17
-- Fix: All transactions log are cleared when "Delete marked" is used.
-- Fix: Template system returns error when multiple styles are enabled. 
+## 2.0.2 - 2018-11-28
+- Change: Make donor name a link to the profile when viewing a transaction (#61) (thanks kasimi)
+- Change: Use built-in phpbb_email_hash() function (#59) (thanks kasimi)
+- Fix: All transactions log are cleared when "Delete marked" is used
+- Fix: Template system returns error when multiple styles are enabled
+- Fix: Use square brackets for array access (#62) (thanks kasimi)
+- Fix: Use singular form of Donor (#60) (thanks kasimi)
 
 ## 2.0.1 - 2018-10-22
 - Add: PayPal Postdata check and error tracking
 - Add: Memo field in transactions log view
 - Add: Multiple checks on PayPal returned variables
-- Change: Enhance CSS compatibility with other styles (thanks to Mazeltof)
+- Change: Enhance CSS compatibility with other styles (thanks Mazeltof)
 - Change: Improve log error
 - Change: Refactor IPN Listener
 - Change: Use the same name for the extension display name and the contribution in the phpBB CDB
@@ -25,7 +29,7 @@
 - Code improvement
 
 ## 2.0.0 - 2018-10-02
-- Add: Minimum amount before auto group donors (#40]
+- Add: Minimum amount before auto group donors (#40)
 - Change: Improve transaction debug
 - Change: Migrate extension to be compatible with phpBB 3.2
 - Change: Refactor language files
