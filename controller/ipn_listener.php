@@ -615,7 +615,11 @@ class ipn_listener
 		$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
 
 		// Does errors are reported for the current transaction?
-		if (empty($this->transaction_data['txn_errors']))
+		if (!empty($this->transaction_data['txn_errors']))
+		{
+			$this->notification_core->notify_donation_errors();
+		}
+		else
 		{
 			$this->update_raised_amount();
 

@@ -103,6 +103,7 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Notification
+	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => 'Le don effectué par %1$s requiert votre attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ));

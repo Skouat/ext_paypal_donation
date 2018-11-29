@@ -39,6 +39,19 @@ class core
 	}
 
 	/**
+	 * Notify admin when the donation contains errors
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function notify_donation_errors()
+	{
+		$notification_data = $this->notify_donation_core('donation_errors');
+		// Send admin notification
+		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_errors', $notification_data);
+	}
+
+	/**
 	 * Notify donors and admin when the donation is received
 	 *
 	 * @return void
@@ -56,32 +69,41 @@ class core
 	/**
 	 * Build Notification data
 	 *
+	 * @param string $donation_type
+	 *
 	 * @return array
 	 * @access private
 	 */
-	private function notify_donation_core()
+	private function notify_donation_core($donation_type = '')
 	{
-		// Set currency data properties
-		$currency_mc_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
-
-		// Set currency settle data properties if exists
-		$settle_amount = '';
-		if ($this->ppde_entity_transaction->get_settle_amount())
+		switch ($donation_type)
 		{
-			$currency_settle_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
-			$settle_amount = $this->ppde_controller_main->currency_on_left((float) $settle_amount, $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
-		}
+			case 'donation_errors':
+				$notification_data['txn_errors'] = $this->ppde_entity_transaction->get_txn_errors();
+			// No break
+			default:
+				// Set currency data properties
+				$currency_mc_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
 
-		$notification_data = array(
-			'net_amount'     => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
-			'payer_username' => $this->ppde_entity_transaction->get_username(),
-			'settle_amount'  => $settle_amount,
-			'transaction_id' => $this->ppde_entity_transaction->get_id(),
-			'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
-			'user_from'      => $this->ppde_entity_transaction->get_user_id(),
-		);
+				// Set currency settle data properties if exists
+				$settle_amount = '';
+				if ($this->ppde_entity_transaction->get_settle_amount())
+				{
+					$currency_settle_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
+					$settle_amount = $this->ppde_controller_main->currency_on_left((float) $settle_amount, $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+				}
+
+				$notification_data = array(
+					'net_amount'     => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
+					'payer_username' => $this->ppde_entity_transaction->get_username(),
+					'settle_amount'  => $settle_amount,
+					'transaction_id' => $this->ppde_entity_transaction->get_id(),
+					'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
+					'user_from'      => $this->ppde_entity_transaction->get_user_id(),
+				);
+		}
 
 		return $notification_data;
 	}
