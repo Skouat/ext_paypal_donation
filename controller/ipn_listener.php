@@ -213,18 +213,18 @@ class ipn_listener
 	/**
 	 * Constructor
 	 *
-	 * @param config                         $config                             Config object
-	 * @param ContainerInterface             $container                          Service container interface
-	 * @param language                       $language                           Language user object
-	 * @param path_helper                    $path_helper                        Path helper object
-	 * @param core_actions                   $ppde_actions
-	 * @param main_controller                $ppde_controller_main               Main controller object
-	 * @param admin_transactions_controller  $ppde_controller_transactions_admin Admin transactions controller object
-	 * @param ipn_log                        $ppde_ipn_log                       IPN log
-	 * @param ipn_paypal                     $ppde_ipn_paypal                    IPN PayPal
-	 * @param request                        $request                            Request object
-	 * @param dispatcher_interface           $dispatcher                         Dispatcher object
-	 * @param string                         $php_ext                            phpEx
+	 * @param config                        $config                             Config object
+	 * @param ContainerInterface            $container                          Service container interface
+	 * @param language                      $language                           Language user object
+	 * @param path_helper                   $path_helper                        Path helper object
+	 * @param core_actions                  $ppde_actions                       PPDE actions object
+	 * @param main_controller               $ppde_controller_main               Main controller object
+	 * @param admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
+	 * @param ipn_log                       $ppde_ipn_log                       IPN log
+	 * @param ipn_paypal                    $ppde_ipn_paypal                    IPN PayPal
+	 * @param request                       $request                            Request object
+	 * @param dispatcher_interface          $dispatcher                         Dispatcher object
+	 * @param string                        $php_ext                            phpEx
 	 *
 	 * @access public
 	 */
@@ -594,7 +594,8 @@ class ipn_listener
 
 			// Do actions whether the transaction is real or a test.
 			$this->ppde_actions->set_transaction_data($this->transaction_data);
-			$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
+			$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+			$this->ppde_actions->update_overview_stats();
 		}
 
 		if ($this->tasks_list['txn_errors'])
@@ -605,15 +606,15 @@ class ipn_listener
 
 		if ($this->tasks_list['is_not_ipn_test'])
 		{
-			$this->ppde_actions->update_raised_amount($this->transaction_data);
+			$this->ppde_actions->update_raised_amount();
 			$this->ppde_actions->notification->notify_admin_donation_received();
-		}
 
-		if ($this->tasks_list['donor_is_member'])
-		{
-			$this->update_donor_stats();
-			$this->donors_group_user_add();
-			$this->ppde_actions->notification->notify_donor_donation_received();
+			if ($this->tasks_list['donor_is_member'])
+			{
+				$this->update_donor_stats();
+				$this->donors_group_user_add();
+				$this->ppde_actions->notification->notify_donor_donation_received();
+			}
 		}
 	}
 

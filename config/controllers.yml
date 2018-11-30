@@ -3,7 +3,9 @@ services:
         class: skouat\ppde\controller\core_actions
         arguments:
             - '@config'
+            - '@language'
             - '@skouat.ppde.notification.core'
+            - '@skouat.ppde.operator.transactions'
 
     skouat.ppde.extension_manager:
         class: skouat\ppde\controller\extension_manager
@@ -123,6 +125,7 @@ services:
             - '@config'
             - '@language'
             - '@log'
+            - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'

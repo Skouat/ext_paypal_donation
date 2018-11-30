@@ -199,22 +199,6 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * Updates the Overview module statistics
-	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function update_overview_stats($ipn_test = false)
-	{
-		$this->set_ipn_test_properties($ipn_test);
-		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_anonymous_donors_count' . $this->suffix_ipn));
-		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_known_donors_count' . $this->suffix_ipn), true);
-		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->get_count_result('ppde_transactions_count' . $this->suffix_ipn), true);
-	}
-
-	/**
 	 * @param int   $user_id
 	 * @param float $amount
 	 */
@@ -226,62 +210,6 @@ class admin_transactions_controller extends admin_main
 		}
 
 		$this->ppde_operator->sql_update_user_stats($user_id, $amount);
-	}
-
-	/**
-	 * Sets properties related to ipn tests
-	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_ipn_test_properties($ipn_test)
-	{
-		$this->set_ipn_test($ipn_test);
-		$this->set_suffix_ipn();
-	}
-
-	/**
-	 * Sets the property $this->is_ipn_test
-	 *
-	 * @param $ipn_test
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_ipn_test($ipn_test)
-	{
-		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
-	}
-
-	/**
-	 * Sets the property $this->suffix_ipn
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_suffix_ipn()
-	{
-		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
-	}
-
-	/**
-	 * Returns count result for updating stats
-	 *
-	 * @param string $config_name
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function get_count_result($config_name)
-	{
-		if (!$this->config->offsetExists($config_name))
-		{
-			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
-		}
-
-		return $this->ppde_operator->sql_query_count_result($config_name, $this->is_ipn_test);
 	}
 
 	/**
@@ -335,8 +263,10 @@ class admin_transactions_controller extends admin_main
 					if ($where_sql || $args['hidden_fields']['delall'])
 					{
 						$entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
-						$this->update_overview_stats();
-						$this->update_overview_stats(true);
+						$this->ppde_actions->set_ipn_test_properties(true);
+						$this->ppde_actions->update_overview_stats();
+						$this->ppde_actions->set_ipn_test_properties(false);
+						$this->ppde_actions->update_overview_stats();
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 					}
 				}
@@ -360,9 +290,14 @@ class admin_transactions_controller extends admin_main
 
 					// Do the actions related to the approval of the transaction
 					$this->ppde_actions->set_transaction_data($entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
-					$this->update_overview_stats($entity->get_test_ipn());
-					$this->ppde_actions->update_raised_amount($this->get_suffix_ipn());
-					$this->ppde_actions->notification->notify_donor_donation_received();
+					$this->ppde_actions->set_ipn_test_properties($entity->get_test_ipn());
+					$this->ppde_actions->update_overview_stats();
+					$this->ppde_actions->update_raised_amount();
+					if (!$entity->get_test_ipn())
+					{
+						$this->ppde_actions->notification->notify_donor_donation_received();
+					}
+
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
 				else
