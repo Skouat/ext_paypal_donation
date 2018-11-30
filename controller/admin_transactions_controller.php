@@ -44,6 +44,7 @@ class admin_transactions_controller extends admin_main
 	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
+	protected $ppde_actions;
 	protected $table_prefix;
 	protected $table_ppde_transactions;
 	private $is_ipn_test = false;
@@ -57,6 +58,7 @@ class admin_transactions_controller extends admin_main
 	 * @param ContainerInterface $container                  Service container interface
 	 * @param language           $language                   Language user object
 	 * @param log                $log                        The phpBB log system
+	 * @param core_actions       $ppde_actions               PPDE actions object
 	 * @param transactions       $ppde_operator_transactions Operator object
 	 * @param request            $request                    Request object
 	 * @param template           $template                   Template object
@@ -69,13 +71,14 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core_actions $ppde_actions, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_actions = $ppde_actions;
 		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
@@ -304,8 +307,8 @@ class admin_transactions_controller extends admin_main
 
 				// add field username to the table schema needed by entity->import()
 				$additional_table_schema = array(
-					'item_username'		=> array('name' => 'username', 'type' => 'string'),
-					'item_user_colour'	=> array('name' => 'user_colour', 'type' => 'string'),
+					'item_username'     => array('name' => 'username', 'type' => 'string'),
+					'item_user_colour'  => array('name' => 'user_colour', 'type' => 'string'),
 				);
 
 				// Grab transaction data
@@ -350,9 +353,16 @@ class admin_transactions_controller extends admin_main
 					$transaction_id = (int) $args['hidden_fields']['id'];
 					$txn_approved = !empty($args['hidden_fields']['txn_errors_approved']) ? false : true;
 
+					// Update DB record
 					$entity->load($transaction_id);
 					$entity->set_txn_errors_approved($txn_approved);
 					$entity->save(false);
+
+					// Do the actions related to the approval of the transaction
+					$this->ppde_actions->set_transaction_data($entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
+					$this->update_overview_stats($entity->get_test_ipn());
+					$this->ppde_actions->update_raised_amount($this->get_suffix_ipn());
+					$this->ppde_actions->notification->notify_donor_donation_received();
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
 				else
@@ -372,11 +382,11 @@ class admin_transactions_controller extends admin_main
 	 * @param array  &$log         The result array with the logs
 	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
 	 *                             database. Otherwise an integer with the number of total matching entries is returned.
-	 * @param int    $limit        Limit the number of entries that are returned
-	 * @param int    $offset       Offset when fetching the log entries, f.e. when paginating
-	 * @param int    $limit_days
-	 * @param string $sort_by      SQL order option, e.g. 'l.log_time DESC'
-	 * @param string $keywords     Will only return log entries that have the keywords in log_operation or log_data
+	 * @param int     $limit       Limit the number of entries that are returned
+	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
+	 * @param int     $limit_days
+	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
+	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
 	 *
 	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private

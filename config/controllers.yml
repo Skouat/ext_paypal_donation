@@ -1,4 +1,10 @@
 services:
+    skouat.ppde.core_actions:
+        class: skouat\ppde\controller\core_actions
+        arguments:
+            - '@config'
+            - '@skouat.ppde.notification.core'
+
     skouat.ppde.extension_manager:
         class: skouat\ppde\controller\extension_manager
         arguments:
@@ -17,8 +23,8 @@ services:
             - '@config'
             - '@service_container'
             - '@language'
-            - '@skouat.ppde.notification.core'
             - '@path_helper'
+            - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
@@ -159,6 +165,7 @@ services:
             - '@service_container'
             - '@language'
             - '@log'
+            - '@skouat.ppde.core_actions'
             - '@skouat.ppde.operator.transactions'
             - '@request'
             - '@template'

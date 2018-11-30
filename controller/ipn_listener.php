@@ -154,9 +154,9 @@ class ipn_listener
 	protected $container;
 	protected $dispatcher;
 	protected $language;
-	protected $notification_core;
 	protected $path_helper;
 	protected $php_ext;
+	protected $ppde_actions;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
@@ -216,8 +216,8 @@ class ipn_listener
 	 * @param config                         $config                             Config object
 	 * @param ContainerInterface             $container                          Service container interface
 	 * @param language                       $language                           Language user object
-	 * @param \skouat\ppde\notification\core $notification_core                  PPDE Notifications object
 	 * @param path_helper                    $path_helper                        Path helper object
+	 * @param core_actions                   $ppde_actions
 	 * @param main_controller                $ppde_controller_main               Main controller object
 	 * @param admin_transactions_controller  $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param ipn_log                        $ppde_ipn_log                       IPN log
@@ -228,14 +228,14 @@ class ipn_listener
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, ContainerInterface $container, language $language, \skouat\ppde\notification\core $notification_core, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(config $config, ContainerInterface $container, language $language, path_helper $path_helper, core_actions $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
-		$this->notification_core = $notification_core;
 		$this->path_helper = $path_helper;
+		$this->ppde_actions = $ppde_actions;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
@@ -521,7 +521,7 @@ class ipn_listener
 			'mc_currency'       => $this->transaction_data['mc_currency'],
 			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
 			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
-			'net_amount'        => $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
+			'net_amount'        => $this->ppde_actions->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
 			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
 			'payer_email'       => $this->transaction_data['payer_email'],
 			'payer_id'          => $this->transaction_data['payer_id'],
@@ -541,22 +541,6 @@ class ipn_listener
 			'txn_type'          => $this->transaction_data['txn_type'],
 			'user_id'           => (int) $this->transaction_data['user_id'],
 		);
-	}
-
-	/**
-	 * Returns the net amount of a PayPal Transaction
-	 *
-	 * @param float  $amount
-	 * @param float  $fee
-	 * @param string $dec_point
-	 * @param string $thousands_sep
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = '')
-	{
-		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
 	}
 
 	/**
@@ -609,26 +593,27 @@ class ipn_listener
 			unset($transaction_data);
 
 			// Do actions whether the transaction is real or a test.
+			$this->ppde_actions->set_transaction_data($this->transaction_data);
 			$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
 		}
 
 		if ($this->tasks_list['txn_errors'])
 		{
-			$this->notification_core->notify_donation_errors();
+			$this->ppde_actions->notification->notify_donation_errors();
 			return;
 		}
 
 		if ($this->tasks_list['is_not_ipn_test'])
 		{
-			$this->update_raised_amount();
-			$this->notification_core->notify_admin_donation_received();
+			$this->ppde_actions->update_raised_amount($this->transaction_data);
+			$this->ppde_actions->notification->notify_admin_donation_received();
 		}
 
 		if ($this->tasks_list['donor_is_member'])
 		{
 			$this->update_donor_stats();
 			$this->donors_group_user_add();
-			$this->notification_core->notify_donor_donation_received();
+			$this->ppde_actions->notification->notify_donor_donation_received();
 		}
 	}
 
@@ -641,18 +626,6 @@ class ipn_listener
 	private function payment_status_is_completed()
 	{
 		return $this->transaction_data['payment_status'] === 'Completed';
-	}
-
-	/**
-	 * Updates the amount of donation raised
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function update_raised_amount()
-	{
-		$ipn_suffix = $this->ppde_controller_transactions_admin->get_suffix_ipn();
-		$this->config->set('ppde_raised' . $ipn_suffix, (float) $this->config['ppde_raised' . $ipn_suffix] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
 	}
 
 	/**
@@ -724,7 +697,7 @@ class ipn_listener
 	{
 		if ($this->donor_is_member)
 		{
-			$this->ppde_controller_transactions_admin->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
+			$this->ppde_controller_transactions_admin->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->ppde_actions->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
 		}
 	}
 
