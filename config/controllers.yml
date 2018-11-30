@@ -17,7 +17,6 @@ services:
             - '@config'
             - '@service_container'
             - '@language'
-            - '@notification_manager'
             - '@skouat.ppde.notification.core'
             - '@path_helper'
             - '@skouat.ppde.controller'

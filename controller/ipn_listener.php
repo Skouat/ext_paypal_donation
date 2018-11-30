@@ -16,7 +16,6 @@ namespace skouat\ppde\controller;
 use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
-use phpbb\notification\manager;
 use phpbb\path_helper;
 use phpbb\request\request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -155,7 +154,6 @@ class ipn_listener
 	protected $container;
 	protected $dispatcher;
 	protected $language;
-	protected $notification;
 	protected $notification_core;
 	protected $path_helper;
 	protected $php_ext;
@@ -218,8 +216,7 @@ class ipn_listener
 	 * @param config                         $config                             Config object
 	 * @param ContainerInterface             $container                          Service container interface
 	 * @param language                       $language                           Language user object
-	 * @param manager                        $notification                       Notification object
-	 * @param \skouat\ppde\notification\core $notification_core
+	 * @param \skouat\ppde\notification\core $notification_core                  PPDE Notifications object
 	 * @param path_helper                    $path_helper                        Path helper object
 	 * @param main_controller                $ppde_controller_main               Main controller object
 	 * @param admin_transactions_controller  $ppde_controller_transactions_admin Admin transactions controller object
@@ -231,13 +228,12 @@ class ipn_listener
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, ContainerInterface $container, language $language, manager $notification, \skouat\ppde\notification\core $notification_core, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(config $config, ContainerInterface $container, language $language, \skouat\ppde\notification\core $notification_core, path_helper $path_helper, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->container = $container;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
-		$this->notification = $notification;
 		$this->notification_core = $notification_core;
 		$this->path_helper = $path_helper;
 		$this->ppde_controller_main = $ppde_controller_main;
