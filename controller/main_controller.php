@@ -29,7 +29,7 @@ class main_controller
 	private static $operators_table = array(
 		'<'  => 'compare_lt',
 		'<=' => 'compare_lte',
-		'=='  => 'compare_eq',
+		'==' => 'compare_eq',
 		'>=' => 'compare_gte',
 		'>'  => 'compare_gt',
 	);
@@ -231,6 +231,20 @@ class main_controller
 		return $on_left ? $currency . number_format(round($value, 2), 2, $dec_point, $thousands_sep) : number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency;
 	}
 
+	/**
+	 * Get currency data based on currency ISO code
+	 *
+	 * @param string $iso_code
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_currency_data($iso_code)
+	{
+		$this->ppde_entity_currency->data_exists($this->ppde_entity_currency->build_sql_data_exists($iso_code));
+
+		return $this->get_default_currency_data($this->ppde_entity_currency->get_id());
+	}
 
 	/**
 	 * Compare two value

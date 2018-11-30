@@ -1,16 +1,17 @@
-Subject: Notification de nouveau don - « {SITENAME} »
+Subject: Notification de don suspect - "{SITENAME}"
 
 Bonjour {USERNAME},
 
-Un don PayPal a été effectué pour votre forum.
+Votre forum a reçu un don PayPal. Vous devriez reconsidérer ce don car des erreurs ont été détectées.
+Tant que vous n'approuverez pas ce don, il ne sera pas traité par PPDE.
 
 ----------------------------
 ID de transaction : {TXN_ID}
 
 Donateur : {PAYER_USERNAME} ({PAYER_EMAIL})
 
-Montant donné : {MC_GROSS}
-Montant reçu : <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
+Erreurs détectées:
+{TNX_ERRORS}
 
 ----------------------------
 

@@ -6,16 +6,25 @@
 {% if S_VIEW %}
 <a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
 
-{% if S_ERROR %}
-<div class="errorbox">
-	<h3>{{ lang('WARNING') }}</h3>
-
-	<p>{{ lang('PPDE_DT_IPN_ERRORS') }}{{ lang('COLON') }}</p>
-	<p>{{ ERROR_MSG }}</p>
-</div>
-{% endif %}
-
 <form id="view_transactions" method="post" action="{{ U_ACTION }}">
+	{% if S_ERROR %}
+	{% if S_ERROR_APPROVED %}
+	<div class="successbox">
+		<h3><i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: #fca600;"></i>&nbsp;{{ lang('PPDE_DT_IPN_APPROVED') }}</h3>
+
+		<p>{{ lang('PPDE_DT_IPN_APPROVED_EXPLAIN') }}{{ lang('COLON') }}</p>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+	{% else %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+
+		<p>{{ lang('PPDE_DT_IPN_ERRORS') }}{{ lang('COLON') }}</p>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+	{% endif %}
+	{% endif %}
+
 	<fieldset>
 		<legend>{{ lang('PPDE_DT_DETAILS') }}</legend>
 		<dl>
@@ -101,7 +110,11 @@
 
 	<fieldset>
 		<p class="submit-buttons">
-			<input class="button1" type="submit" id="submit" name="update" value="{{ lang('BACK') }}">&nbsp;
+			{{ S_HIDDEN_FIELDS }}
+			{% if S_ERROR %}
+			<input class="button1" type="submit" name="approve" value="{% if S_ERROR_APPROVED %}{{ lang('PPDE_DT_DISAPPROVE') }}{% else %}{{ lang('PPDE_DT_APPROVE') }}{% endif %}">&nbsp;
+			{% endif %}
+			<input class="button1" type="submit" name="update" value="{{ lang('BACK') }}">
 			{{ S_FORM_TOKEN }}
 		</p>
 	</fieldset>

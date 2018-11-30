@@ -44,10 +44,9 @@ class admin_transactions_controller extends admin_main
 	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
+	protected $ppde_actions;
 	protected $table_prefix;
 	protected $table_ppde_transactions;
-	private $is_ipn_test = false;
-	private $suffix_ipn;
 
 	/**
 	 * Constructor
@@ -57,6 +56,7 @@ class admin_transactions_controller extends admin_main
 	 * @param ContainerInterface $container                  Service container interface
 	 * @param language           $language                   Language user object
 	 * @param log                $log                        The phpBB log system
+	 * @param core_actions       $ppde_actions               PPDE actions object
 	 * @param transactions       $ppde_operator_transactions Operator object
 	 * @param request            $request                    Request object
 	 * @param template           $template                   Template object
@@ -69,13 +69,14 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core_actions $ppde_actions, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_actions = $ppde_actions;
 		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
@@ -106,11 +107,13 @@ class admin_transactions_controller extends admin_main
 	public function display_transactions($id, $mode, $action)
 	{
 		// Set up general vars
+		$args = array();
 		$start = $this->request->variable('start', 0);
 		$deletemark = $this->request->is_set('delmarked') ? $this->request->variable('delmarked', false) : false;
 		$deleteall = $this->request->is_set('delall') ? $this->request->variable('delall', false) : false;
 		$marked = $this->request->variable('mark', array(0));
-		$args = array();
+		$txn_approve = $this->request->is_set('approve');
+		$txn_approved = $this->request->variable('txn_errors_approved', 0);
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
 		$sort_key = $this->request->variable('sk', 't');
@@ -123,14 +126,27 @@ class admin_transactions_controller extends admin_main
 			$args = array(
 				'hidden_fields' => array(
 					'start'     => $start,
+					'delall'    => $deleteall,
 					'delmarked' => $deletemark,
 					'mark'      => $marked,
-					'delall'    => $deleteall,
 					'st'        => $sort_days,
 					'sk'        => $sort_key,
 					'sd'        => $sort_dir,
 					'i'         => $id,
 					'mode'      => $mode,
+				),
+			);
+		}
+
+		if ($txn_approve)
+		{
+			$transaction_id = $this->request->variable('id', 0);
+			$action = 'approve';
+			$args = array(
+				'hidden_fields' => array(
+					'approve'             => true,
+					'id'                  => $transaction_id,
+					'txn_errors_approved' => $txn_approved,
 				),
 			);
 		}
@@ -181,92 +197,6 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * Updates the Overview module statistics
-	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function update_overview_stats($ipn_test = false)
-	{
-		$this->set_ipn_test_properties($ipn_test);
-		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_anonymous_donors_count' . $this->suffix_ipn));
-		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_known_donors_count' . $this->suffix_ipn), true);
-		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->get_count_result('ppde_transactions_count' . $this->suffix_ipn), true);
-	}
-
-	/**
-	 * @param int   $user_id
-	 * @param float $amount
-	 */
-	public function update_user_stats($user_id, $amount)
-	{
-		if (!$user_id)
-		{
-			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
-		}
-
-		$this->ppde_operator->sql_update_user_stats($user_id, $amount);
-	}
-
-	/**
-	 * Sets properties related to ipn tests
-	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_ipn_test_properties($ipn_test)
-	{
-		$this->set_ipn_test($ipn_test);
-		$this->set_suffix_ipn();
-	}
-
-	/**
-	 * Sets the property $this->is_ipn_test
-	 *
-	 * @param $ipn_test
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_ipn_test($ipn_test)
-	{
-		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
-	}
-
-	/**
-	 * Sets the property $this->suffix_ipn
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_suffix_ipn()
-	{
-		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
-	}
-
-	/**
-	 * Returns count result for updating stats
-	 *
-	 * @param string $config_name
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function get_count_result($config_name)
-	{
-		if (!$this->config->offsetExists($config_name))
-		{
-			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
-		}
-
-		return $this->ppde_operator->sql_query_count_result($config_name, $this->is_ipn_test);
-	}
-
-	/**
 	 * Do action regarding the value of $action
 	 *
 	 * @param string $action Requested action
@@ -289,8 +219,8 @@ class admin_transactions_controller extends admin_main
 
 				// add field username to the table schema needed by entity->import()
 				$additional_table_schema = array(
-					'item_username'		=> array('name' => 'username', 'type' => 'string'),
-					'item_user_colour'	=> array('name' => 'user_colour', 'type' => 'string'),
+					'item_username'     => array('name' => 'username', 'type' => 'string'),
+					'item_user_colour'  => array('name' => 'user_colour', 'type' => 'string'),
 				);
 
 				// Grab transaction data
@@ -317,8 +247,10 @@ class admin_transactions_controller extends admin_main
 					if ($where_sql || $args['hidden_fields']['delall'])
 					{
 						$entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
-						$this->update_overview_stats();
-						$this->update_overview_stats(true);
+						$this->ppde_actions->set_ipn_test_properties(true);
+						$this->ppde_actions->update_overview_stats();
+						$this->ppde_actions->set_ipn_test_properties(false);
+						$this->ppde_actions->update_overview_stats();
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 					}
 				}
@@ -329,6 +261,40 @@ class admin_transactions_controller extends admin_main
 				// Clear $action status
 				$action = '';
 			break;
+			case 'approve':
+				if (confirm_box(true))
+				{
+					$transaction_id = (int) $args['hidden_fields']['id'];
+					$txn_approved = !empty($args['hidden_fields']['txn_errors_approved']) ? false : true;
+
+					// Update DB record
+					$entity->load($transaction_id);
+					$entity->set_txn_errors_approved($txn_approved);
+					$entity->save(false);
+
+					// Prepare transaction settings before doing actions
+					$this->ppde_actions->set_transaction_data($entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
+					$this->ppde_actions->set_ipn_test_properties($entity->get_test_ipn());
+					$this->ppde_actions->is_donor_is_member();
+
+					// Do the actions related to the approval of the transaction
+					$this->ppde_actions->update_overview_stats();
+					$this->ppde_actions->update_raised_amount();
+					if (!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member())
+					{
+						$this->ppde_actions->update_donor_stats();
+						$this->ppde_actions->donors_group_user_add();
+						$this->ppde_actions->notification->notify_donor_donation_received();
+					}
+
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
+				}
+				else
+				{
+					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
+				}
+				// Clear $action status
+				$action = '';
 		}
 
 		return $action;
@@ -340,11 +306,11 @@ class admin_transactions_controller extends admin_main
 	 * @param array  &$log         The result array with the logs
 	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
 	 *                             database. Otherwise an integer with the number of total matching entries is returned.
-	 * @param int    $limit        Limit the number of entries that are returned
-	 * @param int    $offset       Offset when fetching the log entries, f.e. when paginating
-	 * @param int    $limit_days
-	 * @param string $sort_by      SQL order option, e.g. 'l.log_time DESC'
-	 * @param string $keywords     Will only return log entries that have the keywords in log_operation or log_data
+	 * @param int     $limit       Limit the number of entries that are returned
+	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
+	 * @param int     $limit_days
+	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
+	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
 	 *
 	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
@@ -429,22 +395,6 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * @return boolean
-	 */
-	public function get_ipn_test()
-	{
-		return ($this->is_ipn_test) ? (bool) $this->is_ipn_test : false;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_suffix_ipn()
-	{
-		return ($this->suffix_ipn) ? $this->suffix_ipn : '';
-	}
-
-	/**
 	 * Set log output vars for display in the template
 	 *
 	 * @param array $row
@@ -478,6 +428,11 @@ class admin_transactions_controller extends admin_main
 	 */
 	protected function action_assign_template_vars($data)
 	{
+		$s_hidden_fields = build_hidden_fields(array(
+			'id'                  => $data['transaction_id'],
+			'txn_errors_approved' => $data['txn_errors_approved'],
+		));
+
 		$this->template->assign_vars(array(
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
@@ -503,6 +458,8 @@ class admin_transactions_controller extends admin_main
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
 			'S_ERROR'                         => !empty($data['txn_errors']),
+			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
+			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,
 			'ERROR_MSG'                       => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
 		));
 	}

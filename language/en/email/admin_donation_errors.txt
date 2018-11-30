@@ -1,16 +1,17 @@
-Subject: New donation notification  - "{SITENAME}"
+Subject: Suspicious donation notification  - "{SITENAME}"
 
 Hello {USERNAME},
 
-A donation has been made for your board.
+Your board has received a PayPal donation. You should reconsider this one because errors have been detected.
+Until you approve this donation, it will not be handled by PPDE.
 
 ----------------------------
 Transaction ID: {TXN_ID}
 
 Donor: {PAYER_USERNAME} ({PAYER_EMAIL})
 
-Amount donated: {MC_GROSS}
-Amount received: <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NET_AMOUNT}<!-- ENDIF -->
+Errors detected:
+{TNX_ERRORS}
 
 ----------------------------
 
