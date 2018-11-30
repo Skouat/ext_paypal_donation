@@ -47,8 +47,6 @@ class admin_transactions_controller extends admin_main
 	protected $ppde_actions;
 	protected $table_prefix;
 	protected $table_ppde_transactions;
-	private $is_ipn_test = false;
-	private $suffix_ipn;
 
 	/**
 	 * Constructor
@@ -199,20 +197,6 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * @param int   $user_id
-	 * @param float $amount
-	 */
-	public function update_user_stats($user_id, $amount)
-	{
-		if (!$user_id)
-		{
-			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
-		}
-
-		$this->ppde_operator->sql_update_user_stats($user_id, $amount);
-	}
-
-	/**
 	 * Do action regarding the value of $action
 	 *
 	 * @param string $action Requested action
@@ -288,13 +272,18 @@ class admin_transactions_controller extends admin_main
 					$entity->set_txn_errors_approved($txn_approved);
 					$entity->save(false);
 
-					// Do the actions related to the approval of the transaction
+					// Prepare transaction settings before doing actions
 					$this->ppde_actions->set_transaction_data($entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
 					$this->ppde_actions->set_ipn_test_properties($entity->get_test_ipn());
+					$this->ppde_actions->is_donor_is_member();
+
+					// Do the actions related to the approval of the transaction
 					$this->ppde_actions->update_overview_stats();
 					$this->ppde_actions->update_raised_amount();
-					if (!$entity->get_test_ipn())
+					if (!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member())
 					{
+						$this->ppde_actions->update_donor_stats();
+						$this->ppde_actions->donors_group_user_add();
 						$this->ppde_actions->notification->notify_donor_donation_received();
 					}
 
@@ -403,22 +392,6 @@ class admin_transactions_controller extends admin_main
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function get_ipn_test()
-	{
-		return ($this->is_ipn_test) ? (bool) $this->is_ipn_test : false;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_suffix_ipn()
-	{
-		return ($this->suffix_ipn) ? $this->suffix_ipn : '';
 	}
 
 	/**

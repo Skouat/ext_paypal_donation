@@ -4,8 +4,11 @@ services:
         arguments:
             - '@config'
             - '@language'
+            - '@path_helper'
             - '@skouat.ppde.notification.core'
             - '@skouat.ppde.operator.transactions'
+            - '@dispatcher'
+            - '%core.php_ext%'
 
     skouat.ppde.extension_manager:
         class: skouat\ppde\controller\extension_manager
@@ -25,7 +28,6 @@ services:
             - '@config'
             - '@service_container'
             - '@language'
-            - '@path_helper'
             - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
@@ -33,7 +35,6 @@ services:
             - '@skouat.ppde.ipn_paypal'
             - '@request'
             - '@dispatcher'
-            - '%core.php_ext%'
 
     skouat.ppde.ipn_log:
         class: skouat\ppde\controller\ipn_log
