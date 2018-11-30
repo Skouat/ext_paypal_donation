@@ -164,6 +164,7 @@ class ipn_listener
 	protected $ppde_ipn_log;
 	protected $ppde_ipn_paypal;
 	protected $request;
+	protected $tasks_list;
 
 	/**
 	 * Args from PayPal notify return URL
@@ -571,19 +572,17 @@ class ipn_listener
 
 	private function validate_actions()
 	{
-		$do_actions = false;
-
 		if (!$this->verified)
 		{
 			return false;
 		}
 
-		if ($this->payment_status_is_completed())
-		{
-			$do_actions = true;
-		}
+		$this->tasks_list['payment_completed'] = $validate[] = $this->payment_status_is_completed() ? true : false;
+		$this->tasks_list['donor_is_member'] = $this->donor_is_member() ? true : false;
+		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']) ? true : false;
+		$this->tasks_list['is_not_ipn_test'] = !$this->ppde_controller_transactions_admin->get_ipn_test() ? true : false;
 
-		return $do_actions;
+		return array_product($validate);
 	}
 
 	/**
@@ -594,46 +593,46 @@ class ipn_listener
 	 */
 	private function do_actions()
 	{
-		$transaction_data = $this->transaction_data;
+		if ($this->tasks_list['payment_completed'])
+		{
+			$transaction_data = $this->transaction_data;
 
-		/**
-		 * Event that is triggered when a transaction has been successfully completed
-		 *
-		 * @event skouat.ppde.do_actions_completed_before
-		 * @var array    transaction_data    Array containing transaction data
-		 * @since 1.0.3
-		 */
-		$vars = array(
-			'transaction_data',
-		);
-		extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+			/**
+			 * Event that is triggered when a transaction has been successfully completed
+			 *
+			 * @event skouat.ppde.do_actions_completed_before
+			 * @var array    transaction_data    Array containing transaction data
+			 * @since 1.0.3
+			 */
+			$vars = array(
+				'transaction_data',
+			);
+			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
 
-		$this->transaction_data = $transaction_data;
-		unset($transaction_data);
+			$this->transaction_data = $transaction_data;
+			unset($transaction_data);
 
-		// Do actions whether the transaction is real or a test.
-		$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
+			// Do actions whether the transaction is real or a test.
+			$this->ppde_controller_transactions_admin->update_overview_stats((bool) $this->transaction_data['test_ipn']);
+		}
 
-		// Does errors are reported for the current transaction?
-		if (!empty($this->transaction_data['txn_errors']))
+		if ($this->tasks_list['txn_errors'])
 		{
 			$this->notification_core->notify_donation_errors();
+			return;
 		}
-		else
+
+		if ($this->tasks_list['is_not_ipn_test'])
 		{
 			$this->update_raised_amount();
+			$this->notification_core->notify_admin_donation_received();
+		}
 
-			// Do additional actions if the transaction is not a test.
-			if (!$this->ppde_controller_transactions_admin->get_ipn_test())
-			{
-				// Set donor_is_member property
-				$this->donor_is_member();
-
-				// Do actions
-				$this->update_donor_stats();
-				$this->donors_group_user_add();
-				$this->notification_core->notify_donation_received();
-			}
+		if($this->tasks_list['donor_is_member'])
+		{
+			$this->update_donor_stats();
+			$this->donors_group_user_add();
+			$this->notification_core->notify_donor_donation_received();
 		}
 	}
 

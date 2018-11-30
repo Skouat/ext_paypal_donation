@@ -2,7 +2,7 @@ Subject: Notification de nouveau don - « {SITENAME} »
 
 Bonjour {USERNAME},
 
-Vous avez reçu un don PayPal.
+Un don PayPal a été effectué pour votre forum.
 
 ----------------------------
 ID de transaction : {TXN_ID}

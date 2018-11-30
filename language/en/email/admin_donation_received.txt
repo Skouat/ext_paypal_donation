@@ -2,7 +2,7 @@ Subject: New donation notification  - "{SITENAME}"
 
 Hello {USERNAME},
 
-You have received a donation.
+A donation has been made for your board.
 
 ----------------------------
 Transaction ID: {TXN_ID}
@@ -14,7 +14,7 @@ Amount received: <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NE
 
 ----------------------------
 
-View the transaction log for more details.
+View the transactions log for more details.
 
 -----
 

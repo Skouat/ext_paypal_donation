@@ -47,22 +47,30 @@ class core
 	public function notify_donation_errors()
 	{
 		$notification_data = $this->notify_donation_core('donation_errors');
-		// Send admin notification
 		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_errors', $notification_data);
 	}
 
 	/**
-	 * Notify donors and admin when the donation is received
+	 * Notify admin when the donation is received
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function notify_donation_received()
+	public function notify_admin_donation_received()
 	{
 		$notification_data = $this->notify_donation_core();
-		// Send admin notification
 		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
-		// Send donor notification
+	}
+
+	/**
+	 * Notify donor when the donation is received
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function notify_donor_donation_received()
+	{
+		$notification_data = $this->notify_donation_core();
 		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
 	}
 
