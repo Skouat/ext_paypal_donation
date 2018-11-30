@@ -1,11 +1,13 @@
 # Changelog
-## 2.0.2 - 2018-11-28
+## 2.1.0 - 2018-12-01
+- Add: Donation on error can be manually approved.
 - Change: Make donor name a link to the profile when viewing a transaction (#61) (thanks kasimi)
 - Change: Use built-in phpbb_email_hash() function (#59) (thanks kasimi)
 - Fix: All transactions log are cleared when "Delete marked" is used
 - Fix: Template system returns error when multiple styles are enabled
 - Fix: Use square brackets for array access (#62) (thanks kasimi)
 - Fix: Use singular form of Donor (#60) (thanks kasimi)
+- Major code improvement
 
 ## 2.0.1 - 2018-10-22
 - Add: PayPal Postdata check and error tracking
