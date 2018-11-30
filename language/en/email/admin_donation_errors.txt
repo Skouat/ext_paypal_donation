@@ -10,7 +10,7 @@ Transaction ID: {TXN_ID}
 
 Donor: {PAYER_USERNAME} ({PAYER_EMAIL})
 
-Errors detectes:
+Errors detected:
 {TNX_ERRORS}
 
 ----------------------------
