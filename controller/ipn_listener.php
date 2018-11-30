@@ -577,10 +577,10 @@ class ipn_listener
 			return false;
 		}
 
-		$this->tasks_list['payment_completed'] = $validate[] = $this->payment_status_is_completed() ? true : false;
-		$this->tasks_list['donor_is_member'] = $this->donor_is_member() ? true : false;
+		$this->tasks_list['payment_completed'] = $validate[] = $this->payment_status_is_completed();
+		$this->tasks_list['donor_is_member'] = $this->donor_is_member();
 		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']) ? true : false;
-		$this->tasks_list['is_not_ipn_test'] = !$this->ppde_controller_transactions_admin->get_ipn_test() ? true : false;
+		$this->tasks_list['is_not_ipn_test'] = !$this->transaction_data['test_ipn'];
 
 		return array_product($validate);
 	}
@@ -628,7 +628,7 @@ class ipn_listener
 			$this->notification_core->notify_admin_donation_received();
 		}
 
-		if($this->tasks_list['donor_is_member'])
+		if ($this->tasks_list['donor_is_member'])
 		{
 			$this->update_donor_stats();
 			$this->donors_group_user_add();
