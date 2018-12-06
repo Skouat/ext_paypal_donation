@@ -4,8 +4,8 @@ services:
         arguments:
             - '@config'
             - '@language'
-            - '@path_helper'
             - '@skouat.ppde.notification.core'
+            - '@path_helper'
             - '@skouat.ppde.operator.transactions'
             - '@dispatcher'
             - '%core.php_ext%'
