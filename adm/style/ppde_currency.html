@@ -31,8 +31,8 @@
 		</dl>
 		<dl>
 			<dt><label for="currency_on_left">{{ lang('PPDE_DC_POSITION') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_POSITION_EXPLAIN') }}</span></dt>
-			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"{% if CURRENCY_POS %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
-				<label><input name="currency_on_left" type="radio" class="radio" value="0"{% if not CURRENCY_POS %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label></dd>
+			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"{% if CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
+				<label><input name="currency_on_left" type="radio" class="radio" value="0"{% if not CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label></dd>
 		</dl>
 		<hr>
 		<div id="itemoptions">
