@@ -17,6 +17,7 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\request\request;
+use skouat\ppde\actions\core;
 
 class ipn_listener
 {

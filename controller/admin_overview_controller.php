@@ -17,6 +17,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\core;
 
 /**
  * @property config   config             Config object
