@@ -14,7 +14,6 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
-use skouat\ppde\operators\transactions;
 
 class core_actions
 {
@@ -27,6 +26,7 @@ class core_actions
 	protected $language;
 	protected $path_helper;
 	protected $php_ext;
+	protected $ppde_entity_transaction;
 	protected $ppde_operator_transaction;
 	protected $transaction_data;
 
@@ -56,40 +56,29 @@ class core_actions
 	/**
 	 * Constructor
 	 *
-	 * @param config                         $config                    Config object
-	 * @param language                       $language                  Language user object
-	 * @param \skouat\ppde\notification\core $notification              PPDE Notification object
-	 * @param path_helper                    $path_helper               Path helper object
-	 * @param transactions                   $ppde_operator_transaction Operator object
-	 * @param dispatcher_interface           $dispatcher                Dispatcher object
-	 * @param string                         $php_ext                   phpEx
+	 * @param config                              $config                    Config object
+	 * @param language                            $language                  Language user object
+	 * @param \skouat\ppde\notification\core      $notification              PPDE Notification object
+	 * @param path_helper                         $path_helper               Path helper object
+	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transaction   Transaction entity object
+	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
+	 * @param dispatcher_interface                $dispatcher                Dispatcher object
+	 * @param string                              $php_ext                   phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, \skouat\ppde\notification\core $notification, path_helper $path_helper, transactions $ppde_operator_transaction, dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(config $config, language $language, \skouat\ppde\notification\core $notification, path_helper $path_helper, \skouat\ppde\entity\transactions $ppde_entity_transaction, \skouat\ppde\operators\transactions $ppde_operator_transaction, dispatcher_interface $dispatcher, $php_ext)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
 		$this->path_helper = $path_helper;
+		$this->ppde_entity_transaction = $ppde_entity_transaction;
 		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
 
 		$this->root_path = $this->path_helper->get_phpbb_root_path();
-	}
-
-	/**
-	 * Set Transaction Data array
-	 *
-	 * @param array $transaction_data Array of the donation transaction.
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_transaction_data($transaction_data)
-	{
-		$this->transaction_data = $transaction_data;
 	}
 
 	/**
@@ -396,5 +385,84 @@ class core_actions
 	public function minimum_donation_raised()
 	{
 		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : false;
+	}
+
+	/**
+	 * Log the transaction to the database
+	 *
+	 * @param array $data Transaction data array
+	 *
+	 * @access public
+	 */
+	public function log_to_db($data)
+	{
+		// Set the property $this->transaction_data
+		$this->set_transaction_data($data);
+
+		// The item number contains the user_id
+		$this->extract_item_number_data();
+		$this->validate_user_id();
+
+		// Set username in extra_data property in $entity
+		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$this->ppde_entity_transaction->set_username($user_ary['username']);
+
+		// Set 'net_amount' in $this->transaction_data
+		$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+
+		// List the data to be thrown into the database
+		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
+
+		// Load data in the entity
+		$this->ppde_entity_transaction->set_entity_data($data);
+		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
+
+		// Add or edit transaction data
+		$this->ppde_entity_transaction->add_edit_data();
+	}
+
+	/**
+	 * Set Transaction Data array
+	 *
+	 * @param array $transaction_data Array of the donation transaction.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_transaction_data($transaction_data)
+	{
+		if (!empty($this->transaction_data))
+		{
+			array_merge($this->transaction_data, $transaction_data);
+		}
+		else
+		{
+			$this->transaction_data = $transaction_data;
+		}
+	}
+
+	/**
+	 * Retrieve user_id from item_number args
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function extract_item_number_data()
+	{
+		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+	}
+
+	/**
+	 * Avoid the user_id to be set to 0
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function validate_user_id()
+	{
+		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
+		{
+			$this->transaction_data['user_id'] = ANONYMOUS;
+		}
 	}
 }

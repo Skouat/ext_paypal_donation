@@ -134,7 +134,7 @@ class currency extends main
 	 *
 	 * @param bool $on_left
 	 *
-	 * @return \skouat\ppde\entity\currency
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_currency_position($on_left)
@@ -150,7 +150,7 @@ class currency extends main
 	 *
 	 * @param bool $enable
 	 *
-	 * @return \skouat\ppde\entity\currency
+	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function set_currency_enable($enable)
@@ -208,9 +208,9 @@ class currency extends main
 	 * Set Currency order number
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access protected
+	 * @access public
 	 */
-	protected function set_order()
+	public function set_order()
 	{
 		$order = (int) $this->get_max_order() + 1;
 

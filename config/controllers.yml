@@ -6,6 +6,7 @@ services:
             - '@language'
             - '@skouat.ppde.notification.core'
             - '@path_helper'
+            - '@skouat.ppde.entity.transactions'
             - '@skouat.ppde.operator.transactions'
             - '@dispatcher'
             - '%core.php_ext%'
@@ -26,7 +27,6 @@ services:
         class: skouat\ppde\controller\ipn_listener
         arguments:
             - '@config'
-            - '@service_container'
             - '@language'
             - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
