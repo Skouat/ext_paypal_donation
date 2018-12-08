@@ -90,7 +90,6 @@ class ipn_paypal
 		if ($this->curl_fsock['curl'])
 		{
 			$this->curl_post($args_return_uri);
-			$this->response;
 		}
 		else
 		{
