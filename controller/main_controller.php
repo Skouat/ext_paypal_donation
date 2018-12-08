@@ -31,8 +31,7 @@ class main_controller
 	protected $container;
 	protected $helper;
 	protected $language;
-	protected $ppde_entity_currency;
-	protected $ppde_operator_currency;
+	protected $ppde_actions_currency;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -47,8 +46,7 @@ class main_controller
 	 * @param ContainerInterface              $container              Service container interface
 	 * @param helper                          $helper                 Controller helper object
 	 * @param language                        $language               Language user object
-	 * @param \skouat\ppde\entity\currency    $ppde_entity_currency   Currency entity object
-	 * @param \skouat\ppde\operators\currency $ppde_operator_currency Currency operator object
+	 * @param \skouat\ppde\actions\currency   $ppde_actions_currency  Currency actions object
 	 * @param request                         $request                Request object
 	 * @param template                        $template               Template object
 	 * @param user                            $user                   User object
@@ -57,15 +55,14 @@ class main_controller
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, helper $helper, language $language, \skouat\ppde\entity\currency $ppde_entity_currency, \skouat\ppde\operators\currency $ppde_operator_currency, request $request, template $template, user $user, $root_path, $php_ext)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, helper $helper, language $language, \skouat\ppde\actions\currency $ppde_actions_currency, request $request, template $template, user $user, $root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->helper = $helper;
 		$this->language = $language;
-		$this->ppde_entity_currency = $ppde_entity_currency;
-		$this->ppde_operator_currency = $ppde_operator_currency;
+		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -130,34 +127,6 @@ class main_controller
 	}
 
 	/**
-	 * Build pull down menu options of available currency
-	 *
-	 * @param int $config_value Currency identifier; default: 0
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function build_currency_select_menu($config_value = 0)
-	{
-		// Grab the list of all enabled currencies; 0 is for all data
-		$currency_items = $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data(0, true));
-
-		// Process each rule menu item for pull-down
-		foreach ($currency_items as $currency_item)
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', array(
-				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
-				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
-				'CURRENCY_NAME'      => $currency_item['currency_name'],
-				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
-			));
-		}
-		unset ($currency_items, $currency_item);
-	}
-
-	/**
 	 * Get PayPal URI
 	 * Used in form and in IPN process
 	 *
@@ -191,50 +160,5 @@ class main_controller
 	public function is_sandbox_founder_enable()
 	{
 		return (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
-	}
-
-	/**
-	 * Get default currency symbol
-	 *
-	 * @param int $id Currency identifier; default: 0
-	 *
-	 * @return array
-	 * @access public
-	 */
-	public function get_default_currency_data($id = 0)
-	{
-		return $this->ppde_entity_currency->get_data($this->ppde_operator_currency->build_sql_data($id, true));
-	}
-
-	/**
-	 * Put the currency on the left or on the right of the amount
-	 *
-	 * @param int|float $value
-	 * @param string    $currency
-	 * @param bool      $on_left
-	 * @param string    $dec_point
-	 * @param string    $thousands_sep
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function currency_on_left($value, $currency, $on_left = true, $dec_point = '.', $thousands_sep = '')
-	{
-		return $on_left ? $currency . number_format(round($value, 2), 2, $dec_point, $thousands_sep) : number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency;
-	}
-
-	/**
-	 * Get currency data based on currency ISO code
-	 *
-	 * @param string $iso_code
-	 *
-	 * @return array
-	 * @access public
-	 */
-	public function get_currency_data($iso_code)
-	{
-		$this->ppde_entity_currency->data_exists($this->ppde_entity_currency->build_sql_data_exists($iso_code));
-
-		return $this->get_default_currency_data($this->ppde_entity_currency->get_id());
 	}
 }

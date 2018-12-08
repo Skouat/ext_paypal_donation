@@ -8,14 +8,14 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\actions;
 
 use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
 
-class core_actions
+class core
 {
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

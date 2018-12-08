@@ -16,6 +16,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\currency;
 
 /**
  * @property config   config             Config object
@@ -32,27 +33,27 @@ use phpbb\user;
  */
 class admin_settings_controller extends admin_main
 {
-	protected $ppde_controller_main;
+	protected $ppde_actions_currency;
 
 	/**
 	 * Constructor
 	 *
-	 * @param config          $config               Config object
-	 * @param language        $language             Language user object
-	 * @param log             $log                  The phpBB log system
-	 * @param main_controller $ppde_controller_main Main controller object
-	 * @param request         $request              Request object
-	 * @param template        $template             Template object
-	 * @param user            $user                 User object
+	 * @param config   $config                Config object
+	 * @param language $language              Language user object
+	 * @param log      $log                   The phpBB log system
+	 * @param currency $ppde_actions_currency Main controller object
+	 * @param request  $request               Request object
+	 * @param template $template              Template object
+	 * @param user     $user                  User object
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, log $log, main_controller $ppde_controller_main, request $request, template $template, user $user)
+	public function __construct(config $config, language $language, log $log, currency $ppde_actions_currency, request $request, template $template, user $user)
 	{
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
-		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -82,7 +83,7 @@ class admin_settings_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
-		$this->ppde_controller_main->build_currency_select_menu($this->config['ppde_default_currency']);
+		$this->ppde_actions_currency->build_currency_select_menu($this->config['ppde_default_currency']);
 		$this->template->assign_vars(array(
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),

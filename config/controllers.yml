@@ -1,16 +1,4 @@
 services:
-    skouat.ppde.core_actions:
-        class: skouat\ppde\controller\core_actions
-        arguments:
-            - '@config'
-            - '@language'
-            - '@skouat.ppde.notification.core'
-            - '@path_helper'
-            - '@skouat.ppde.entity.transactions'
-            - '@skouat.ppde.operator.transactions'
-            - '@dispatcher'
-            - '%core.php_ext%'
-
     skouat.ppde.extension_manager:
         class: skouat\ppde\controller\extension_manager
         arguments:
@@ -61,8 +49,7 @@ services:
             - '@service_container'
             - '@controller.helper'
             - '@language'
-            - '@skouat.ppde.entity.currency'
-            - '@skouat.ppde.operator.currency'
+            - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
             - '@user'
@@ -74,7 +61,7 @@ services:
         arguments:
             - '@config'
             - '@language'
-            - '@skouat.ppde.controller'
+            - '@skouat.ppde.actions.currency'
             - '@template'
 
     skouat.ppde.controller.main.donate:
@@ -144,7 +131,7 @@ services:
             - '@config'
             - '@language'
             - '@log'
-            - '@skouat.ppde.controller'
+            - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
             - '@user'

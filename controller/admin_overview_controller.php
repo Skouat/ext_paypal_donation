@@ -50,7 +50,7 @@ class admin_overview_controller extends admin_main
 	 * @param config                        $config                       Config object
 	 * @param language                      $language                     Language user object
 	 * @param log                           $log                          The phpBB log system
-	 * @param core_actions                  $ppde_actions                 PPDE actions object
+	 * @param core                          $ppde_actions                 PPDE actions object
 	 * @param main_controller               $ppde_controller_main         Main controller object
 	 * @param admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager             $ppde_ext_manager             Extension manager object
@@ -64,7 +64,7 @@ class admin_overview_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, language $language, log $log, core_actions $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
+	public function __construct(auth $auth, config $config, language $language, log $log, core $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
