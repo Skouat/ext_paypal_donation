@@ -20,8 +20,6 @@ use phpbb\request\request;
 
 class ipn_listener
 {
-	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
 	/** Setup the PayPal variables list with default values and conditions to check.
 	 * Example:
 	 *      array(
@@ -558,7 +556,7 @@ class ipn_listener
 		// Set all conditions declared for this post_data
 		if (isset($data_ary['force_settings']))
 		{
-			$value = $this->set_post_data_func($data_ary);
+			$value = $this->ppde_actions->set_post_data_func($data_ary);
 		}
 
 		return $value;
@@ -613,134 +611,5 @@ class ipn_listener
 		unset($data_ary, $control_point, $params);
 
 		return $check;
-	}
-
-	/**
-	 * Check requirements for data value.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	public function set_post_data_func($data_ary)
-	{
-		$value = $data_ary['value'];
-
-		foreach ($data_ary['force_settings'] as $control_point => $params)
-		{
-			// Calling the set_post_data_function
-			$value = call_user_func_array(array($this, 'set_post_data_' . $control_point), array($data_ary['value'], $params));
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $value;
-	}
-
-	/**
-	 * Check Post data length.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $statement
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_length($value, $statement)
-	{
-		return $this->ppde_actions->compare(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param $value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_ascii($value)
-	{
-		// We ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		return $pos != $len ? false : true;
-	}
-
-	/**
-	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_content($value, $content_ary)
-	{
-		return in_array($value, $content_ary) ? true : false;
-	}
-
-	/**
-	 * Check if Post data is empty.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_empty($value)
-	{
-		return empty($value) ? false : true;
-	}
-
-	/**
-	 * Set Post data length.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string  $value
-	 * @param integer $length
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_length($value, $length)
-	{
-		return substr($value, 0, (int) $length);
-	}
-
-	/**
-	 * Set Post data to lowercase.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_lowercase($value, $force = false)
-	{
-		return $force ? strtolower($value) : $value;
-	}
-
-	/**
-	 * Set Post data to date/time format.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_strtotime($value, $force = false)
-	{
-		return $force ? strtotime($value) : $value;
 	}
 }
