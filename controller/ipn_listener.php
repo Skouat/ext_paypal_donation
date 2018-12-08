@@ -32,9 +32,10 @@ class ipn_listener
 	 *          'name' => 'business'
 	 *          'default' => ''
 	 *          'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
+	 *          'force_settings'  => array('length' => 127, 'lowercase' => true),
 	 *      ),
 	 * The index 'name' and 'default' are mandatory.
-	 * The index 'condition_check' is optional
+	 * The index 'condition_check' and 'force_settings' are optional
 	 *
 	 */
 	private static $paypal_vars_table = array(
