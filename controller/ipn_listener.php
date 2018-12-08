@@ -598,7 +598,7 @@ class ipn_listener
 		foreach ($data_ary['condition_check'] as $control_point => $params)
 		{
 			// Calling the check_post_data_function
-			if (call_user_func_array(array($this, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
+			if (call_user_func_array(array($this->ppde_actions, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
 			{
 				$check[] = true;
 			}
