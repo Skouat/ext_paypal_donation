@@ -107,7 +107,7 @@ class main_donor_list extends main_controller
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_donorlist_sql_ary), $additional_table_schema, $this->config['topics_per_page'], $start);
 
 		// Get default currency data from the database
-		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data($this->config['ppde_default_currency']);
+		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
 		// Assign vars to the template
 		$this->template->assign_vars(array(

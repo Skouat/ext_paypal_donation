@@ -83,7 +83,7 @@ class admin_settings_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
-		$this->ppde_actions_currency->build_currency_select_menu($this->config['ppde_default_currency']);
+		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->template->assign_vars(array(
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
@@ -163,8 +163,8 @@ class admin_settings_controller extends admin_main
 	/**
 	 * Add integer data in an array()
 	 *
-	 * @param array $array
-	 * @param int   $var
+	 * @param array  &$array
+	 * @param string  $var
 	 *
 	 * @return void
 	 * @access private

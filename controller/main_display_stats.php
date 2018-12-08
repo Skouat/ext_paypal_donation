@@ -51,7 +51,7 @@ class main_display_stats
 		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
 		{
 			// Get data from the database
-			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data($this->config['ppde_default_currency']);
+			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
 			$this->template->assign_vars(array(
 				'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
