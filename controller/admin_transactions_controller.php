@@ -18,6 +18,8 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\core;
+use skouat\ppde\actions\currency;
+use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -46,6 +48,7 @@ class admin_transactions_controller extends admin_main
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
 	protected $ppde_actions;
+	protected $ppde_actions_currency;
 	protected $table_prefix;
 	protected $table_ppde_transactions;
 
@@ -58,6 +61,7 @@ class admin_transactions_controller extends admin_main
 	 * @param language           $language                   Language user object
 	 * @param log                $log                        The phpBB log system
 	 * @param core               $ppde_actions               PPDE actions object
+	 * @param currency           $ppde_actions_currency      PPDE currency actions object
 	 * @param transactions       $ppde_operator_transactions Operator object
 	 * @param request            $request                    Request object
 	 * @param template           $template                   Template object
@@ -70,7 +74,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -78,6 +82,7 @@ class admin_transactions_controller extends admin_main
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
+		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
@@ -115,6 +120,7 @@ class admin_transactions_controller extends admin_main
 		$marked = $this->request->variable('mark', array(0));
 		$txn_approve = $this->request->is_set('approve');
 		$txn_approved = $this->request->variable('txn_errors_approved', 0);
+		$txn_add = $this->request->is_set('add');
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
 		$sort_key = $this->request->variable('sk', 't');
@@ -150,6 +156,11 @@ class admin_transactions_controller extends admin_main
 					'txn_errors_approved' => $txn_approved,
 				),
 			);
+		}
+
+		if ($txn_add)
+		{
+			$action = 'add';
 		}
 
 		$action = $this->do_action($action, $args);
@@ -296,6 +307,57 @@ class admin_transactions_controller extends admin_main
 				}
 				// Clear $action status
 				$action = '';
+			break;
+			case 'add':
+				$errors = array();
+
+				$transaction_data = array(
+					'MT_ANONYMOUS'          => $this->request->is_set('u'),
+					'MT_USERNAME'           => $this->request->variable('username', '', true),
+					'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
+					'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
+					'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
+					'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
+					'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
+					'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
+					'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
+					'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
+					'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
+					'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
+					'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
+					'MT_MEMO'               => $this->request->variable('memo', '', true),
+				);
+
+				if ($this->request->is_set_post('submit'))
+				{
+					try
+					{
+						$data_ary = $this->build_data_ary($transaction_data);
+						$this->ppde_actions->log_to_db($data_ary);
+
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED');
+						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+					}
+					catch (transaction_exception $e)
+					{
+						$errors = $e->get_errors();
+					}
+				}
+
+				$this->ppde_actions_currency->build_currency_select_menu($this->config['ppde_default_currency']);
+
+				$this->s_error_assign_template_vars($errors);
+
+				$this->template->assign_vars($transaction_data);
+
+				$this->template->assign_vars(array(
+					'U_ACTION'           => $this->u_action,
+					'U_BACK'             => $this->u_action,
+					'S_ADD'              => true,
+					'ANONYMOUS_USER_ID'  => ANONYMOUS,
+					'U_FIND_USERNAME'    => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
+				));
+			break;
 		}
 
 		return $action;
@@ -393,6 +455,96 @@ class admin_transactions_controller extends admin_main
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
+	}
+
+	/**
+	 * Prepare data array() before send it to $entity
+	 *
+	 * @param array $transaction_data
+	 *
+	 * @return array
+	 * @throws transaction_exception
+	 */
+	private function build_data_ary($transaction_data)
+	{
+		$errors = array();
+
+		if ($this->request->is_set('u' && $transaction_data['MT_USERNAME'] === ''))
+		{
+			$user_id = ANONYMOUS;
+		}
+		else
+		{
+			$user_ary = $this->ppde_operator->query_donor_user_data('username', $transaction_data['MT_USERNAME']);
+
+			if (!$user_ary)
+			{
+				$errors[] = $this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $transaction_data['MT_USERNAME']);
+			}
+
+			$user_id = $user_ary['user_id'];
+		}
+
+		$payment_date = implode('-', [
+			$transaction_data['MT_PAYMENT_DATE_YEAR'],
+			$transaction_data['MT_PAYMENT_DATE_MONTH'],
+			$transaction_data['MT_PAYMENT_DATE_DAY'],
+		]);
+
+		$payment_date_timestamp_at_midnight = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $payment_date . ' 00:00:00');
+
+		if ($payment_date_timestamp_at_midnight === false)
+		{
+			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_DATE_ERROR', $payment_date);
+		}
+
+		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
+		$payment_time_timestamp = strtotime($payment_time);
+
+		if ($payment_time_timestamp === false)
+		{
+			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_TIME_ERROR', $payment_time);
+		}
+
+		// Normalize payment time to start from today at midnight
+		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
+
+		if ($errors)
+		{
+			throw (new transaction_exception())->set_errors($errors);
+		}
+
+		return array(
+			'business'          => $this->config['ppde_account_id'],
+			'confirmed'         => true,
+			'exchange_rate'     => '',
+			'first_name'        => $transaction_data['MT_FIRST_NAME'],
+			'item_name'         => '',
+			'item_number'       => implode('_', ['uid', $user_id, time()]),
+			'last_name'         => $transaction_data['MT_LAST_NAME'],
+			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
+			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
+			'mc_fee'            => $transaction_data['MT_MC_FEE'],
+			'net_amount'        => (float) 0, // This value is calculated in core_actions:log_to_db()
+			'parent_txn_id'     => '',
+			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
+			'payer_id'          => '',
+			'payer_status'      => '',
+			'payment_date'      => $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight,
+			'payment_status'    => 'Completed',
+			'payment_type'      => '',
+			'memo'              => $transaction_data['MT_MEMO'],
+			'receiver_id'       => '',
+			'receiver_email'    => '',
+			'residence_country' => $transaction_data['MT_RESIDENCE_COUNTRY'],
+			'settle_amount'     => (float) 0,
+			'settle_currency'   => '',
+			'test_ipn'          => false,
+			'txn_errors'        => '',
+			'txn_id'            => 'PPDE' . gen_rand_string(13),
+			'txn_type'          => '',
+			'user_id'           => $user_id,
+		);
 	}
 
 	/**

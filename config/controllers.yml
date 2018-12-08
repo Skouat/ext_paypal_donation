@@ -157,6 +157,7 @@ services:
             - '@language'
             - '@log'
             - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.currency'
             - '@skouat.ppde.operator.transactions'
             - '@request'
             - '@template'

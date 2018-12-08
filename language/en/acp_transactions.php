@@ -76,6 +76,30 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TOTAL_AMOUNT'          => 'Total amount',
 	'PPDE_DT_UNVERIFIED'            => 'Not verified',
 	'PPDE_DT_VERIFIED'              => 'Verified',
+
+	'PPDE_MT_TITLE'                     => 'Manual Transaction',
+	'PPDE_MT_TITLE_EXPLAIN'             => 'Here you can add a transaction manually, for example if you received a donation by means other than PayPal.',
+	'PPDE_MT_REQUIRED_CHARACTER'        => '*',
+	'PPDE_MT_REQUIRED_EXPLAIN'          => 'Required field',
+	'PPDE_MT_DETAILS'                   => 'Transaction details',
+	'PPDE_MT_USERNAME'                  => 'Donor',
+	'PPDE_MT_USERNAME_EXPLAIN'		    => 'Select the anonymous user if the donation was made by a guest.',
+	'PPDE_MT_FIRST_NAME'                => 'First name',
+	'PPDE_MT_LAST_NAME'                 => 'Last name',
+	'PPDE_MT_PAYER_EMAIL'               => 'Email',
+	'PPDE_MT_RESIDENCE_COUNTRY'	        => 'Country',
+	'PPDE_MT_RESIDENCE_COUNTRY_EXPLAIN' => 'ISO 3166 alpha-2 code, 2 characters, see <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/2796" target="_blank" rel="noreferrer">FAQ.</a>',
+	'PPDE_MT_TOTAL_AMOUNT'              => 'Total amount',
+	'PPDE_MT_FEE_AMOUNT'                => 'Fee amount',
+	'PPDE_MT_NET_AMOUNT'                => 'Net amount',
+	'PPDE_MT_PAYMENT_DATE'              => 'Donation date',
+	'PPDE_MT_PAYMENT_DATE_PICK'		    => 'Pick a date',
+	'PPDE_MT_PAYMENT_TIME'			    => 'Donation time',
+	'PPDE_MT_MEMO'                      => 'Memo',
+	'PPDE_MT_ADDED'                     => 'The transaction has been added successfully.',
+
+	// List of available translations: https://github.com/fengyuanchen/datepicker/tree/master/i18n
+	'PPDE_MT_DATEPICKER_LANG'           => 'en-GB',
 ));
 
 /**
@@ -114,4 +138,8 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'This donation was manually approved with the following errors',
 	'PPDE_DT_IPN_ERRORS'           => 'You should reconsider this donation because the following errors are detected',
 	'PPDE_DT_NO_TRANSACTION'       => 'No transaction found.',
+
+	'PPDE_MT_DONOR_NOT_FOUND'      => 'The donor user “%1$s” was not found.',
+	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'The donation date “%1$s” could not be parsed.',
+	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'The donation time “%1$s” could not be parsed.',
 ));
