@@ -25,10 +25,10 @@ class main_display_stats
 	/**
 	 * Constructor
 	 *
-	 * @param config          $config                Config object
-	 * @param language        $language              Language user object
-	 * @param currency        $ppde_actions_currency Currency actions object
-	 * @param template        $template              Template object
+	 * @param config   $config                Config object
+	 * @param language $language              Language user object
+	 * @param currency $ppde_actions_currency Currency actions object
+	 * @param template $template              Template object
 	 *
 	 * @access public
 	 */
@@ -236,37 +236,40 @@ class main_display_stats
 	private function ppde_css_classname($value, $reverse = false)
 	{
 		$css_reverse = '';
+		// Array of CSS class name
+		$css_data_ary = array(
+			10  => 'ten',
+			20  => 'twenty',
+			30  => 'thirty',
+			40  => 'forty',
+			50  => 'fifty',
+			60  => 'sixty',
+			70  => 'seventy',
+			80  => 'eighty',
+			90  => 'ninety',
+			100 => 'hundred',
+		);
 
+		// Determine the index based on the value rounded up to the next highest
+		$index = ceil($value / 10) * 10;
+
+		// Reverse the CSS color
 		if ($reverse && $value < 100)
 		{
+			// Determine the index based on the value rounded to the next lowest integer.
+			$index = floor($value / 10) * 10;
+
 			$value = 100 - $value;
 			$css_reverse = '-reverse';
 		}
 
-		switch ($value)
+		if (isset($css_data_ary[$index]) && $value < 100)
 		{
-			case ($value <= 10):
-				return 'ten' . $css_reverse;
-			case ($value <= 20):
-				return 'twenty' . $css_reverse;
-			case ($value <= 30):
-				return 'thirty' . $css_reverse;
-			case ($value <= 40):
-				return 'forty' . $css_reverse;
-			case ($value <= 50):
-				return 'fifty' . $css_reverse;
-			case ($value <= 60):
-				return 'sixty' . $css_reverse;
-			case ($value <= 70):
-				return 'seventy' . $css_reverse;
-			case ($value <= 80):
-				return 'eighty' . $css_reverse;
-			case ($value <= 90):
-				return 'ninety' . $css_reverse;
-			case ($value < 100):
-				return 'hundred' . $css_reverse;
-			default:
-				return $reverse ? 'red' : 'green';
+			return $css_data_ary[$index] . $css_reverse;
+		}
+		else
+		{
+			return $reverse ? 'red' : 'green';
 		}
 	}
 }
