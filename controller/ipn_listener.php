@@ -649,7 +649,7 @@ class ipn_listener
 	 */
 	private function check_post_data_length($value, $statement)
 	{
-		return $this->ppde_controller_main->compare(strlen($value), $statement['value'], $statement['operator']);
+		return $this->ppde_actions->compare(strlen($value), $statement['value'], $statement['operator']);
 	}
 
 	/**

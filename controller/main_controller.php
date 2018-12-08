@@ -25,14 +25,6 @@ class main_controller
 	const VERIFY_URI = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 	/** Sandbox Postback URL */
 	const SANDBOX_VERIFY_URI = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
-	/** @var array */
-	private static $operators_table = array(
-		'<'  => 'compare_lt',
-		'<=' => 'compare_lte',
-		'==' => 'compare_eq',
-		'>=' => 'compare_gte',
-		'>'  => 'compare_gt',
-	);
 
 	protected $auth;
 	protected $config;
@@ -244,97 +236,5 @@ class main_controller
 		$this->ppde_entity_currency->data_exists($this->ppde_entity_currency->build_sql_data_exists($iso_code));
 
 		return $this->get_default_currency_data($this->ppde_entity_currency->get_id());
-	}
-
-	/**
-	 * Compare two value
-	 *
-	 * @param int    $value1
-	 * @param int    $value2
-	 * @param string $operator
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function compare($value1, $value2, $operator)
-	{
-		if (array_key_exists($operator, self::$operators_table))
-		{
-			return call_user_func_array(array($this, self::$operators_table[$operator]), array($value1, $value2));
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_lt($a, $b)
-	{
-		return $a < $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_lte($a, $b)
-	{
-		return $a <= $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_eq($a, $b)
-	{
-		return $a == $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gte($a, $b)
-	{
-		return $a >= $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gt($a, $b)
-	{
-		return $a > $b;
 	}
 }
