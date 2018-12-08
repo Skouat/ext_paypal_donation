@@ -17,6 +17,7 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\request\request;
+use skouat\ppde\actions\core;
 
 class ipn_listener
 {
@@ -202,7 +203,7 @@ class ipn_listener
 	 *
 	 * @param config                        $config                             Config object
 	 * @param language                      $language                           Language user object
-	 * @param core_actions                  $ppde_actions                       PPDE actions object
+	 * @param core                          $ppde_actions                       PPDE actions object
 	 * @param main_controller               $ppde_controller_main               Main controller object
 	 * @param admin_transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param ipn_log                       $ppde_ipn_log                       IPN log
@@ -212,7 +213,7 @@ class ipn_listener
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, core_actions $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher)
+	public function __construct(config $config, language $language, core $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;

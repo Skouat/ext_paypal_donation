@@ -17,6 +17,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\core;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -56,7 +57,7 @@ class admin_transactions_controller extends admin_main
 	 * @param ContainerInterface $container                  Service container interface
 	 * @param language           $language                   Language user object
 	 * @param log                $log                        The phpBB log system
-	 * @param core_actions       $ppde_actions               PPDE actions object
+	 * @param core               $ppde_actions               PPDE actions object
 	 * @param transactions       $ppde_operator_transactions Operator object
 	 * @param request            $request                    Request object
 	 * @param template           $template                   Template object
@@ -69,7 +70,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core_actions $ppde_actions, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

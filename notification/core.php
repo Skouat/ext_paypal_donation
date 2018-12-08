@@ -11,14 +11,13 @@
 namespace skouat\ppde\notification;
 
 use phpbb\notification\manager;
-use skouat\ppde\controller\main_controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class core
 {
 	protected $notification;
 	protected $container;
-	protected $ppde_controller_main;
+	protected $ppde_actions_currency;
 	protected $ppde_entity_transaction;
 
 	/**
@@ -26,15 +25,15 @@ class core
 	 *
 	 * @param ContainerInterface               $container               Service container interface
 	 * @param manager                          $notification            Notification object
-	 * @param main_controller                  $ppde_controller_main    Main controller object
+	 * @param \skouat\ppde\actions\currency    $ppde_actions_currency   Currency actions object
 	 * @param \skouat\ppde\entity\transactions $ppde_entity_transaction Transaction entity object
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, manager $notification, main_controller $ppde_controller_main, \skouat\ppde\entity\transactions $ppde_entity_transaction)
+	public function __construct(ContainerInterface $container, manager $notification, \skouat\ppde\actions\currency $ppde_actions_currency, \skouat\ppde\entity\transactions $ppde_entity_transaction)
 	{
 		$this->container = $container;
 		$this->notification = $notification;
-		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
 	}
 
@@ -91,19 +90,19 @@ class core
 			// No break
 			default:
 				// Set currency data properties
-				$currency_mc_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
+				$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
 
 				// Set currency settle data properties if exists
 				$settle_amount = '';
 				if ($this->ppde_entity_transaction->get_settle_amount())
 				{
-					$currency_settle_data = $this->ppde_controller_main->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
-					$settle_amount = $this->ppde_controller_main->currency_on_left((float) $settle_amount, $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+					$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
+					$settle_amount = $this->ppde_actions_currency->currency_on_left((float) $settle_amount, $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
 				}
 
 				$notification_data = array(
-					'net_amount'     => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-					'mc_gross'       => $this->ppde_controller_main->currency_on_left($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'net_amount'     => $this->ppde_actions_currency->currency_on_left($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'mc_gross'       => $this->ppde_actions_currency->currency_on_left($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
 					'payer_username' => $this->ppde_entity_transaction->get_username(),
 					'settle_amount'  => $settle_amount,
