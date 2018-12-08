@@ -56,58 +56,6 @@ abstract class admin_main
 	}
 
 	/**
-	 * Parse data to the entity
-	 *
-	 * @param \skouat\ppde\entity\main $entity            The entity object
-	 * @param string                   $run_before_insert Name of the function to call before SQL INSERT
-	 *
-	 * @return string $log_action
-	 * @access public
-	 */
-	public function add_edit_data(\skouat\ppde\entity\main $entity, $run_before_insert = '')
-	{
-		if ($entity->get_id())
-		{
-			// Save the edited item entity to the database
-			$entity->save($entity->check_required_field());
-			$log_action = 'UPDATED';
-		}
-		else
-		{
-			// Insert the data to the database
-			$entity->insert($run_before_insert);
-
-			// Get the newly inserted identifier
-			$id = $entity->get_id();
-
-			// Reload the data to return a fresh entity
-			$entity->load($id);
-			$log_action = 'ADDED';
-		}
-
-		return $log_action;
-	}
-
-	/**
-	 * Set data in the $entity object.
-	 * Use call_user_func_array() to call $entity function
-	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param array                    $data_ary
-	 *
-	 * @access public
-	 */
-	public function set_entity_data(\skouat\ppde\entity\main $entity, $data_ary)
-	{
-		foreach ($data_ary as $entity_function => $data)
-		{
-			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
-		}
-		unset($data_ary, $entity_function, $data);
-	}
-
-	/**
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action

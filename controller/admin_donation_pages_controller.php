@@ -231,7 +231,7 @@ class admin_donation_pages_controller extends admin_main
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		);
-		$this->set_entity_data($entity, $item_fields);
+		$entity->set_entity_data($item_fields);
 
 		// Check some settings before loading and submitting form
 		$errors = array_merge($errors,
@@ -354,7 +354,7 @@ class admin_donation_pages_controller extends admin_main
 			// Grab the local language name
 			$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
 
-			$log_action = $this->add_edit_data($entity);
+			$log_action = $entity->add_edit_data();
 			// Log and show user confirmation of the saved item and provide link back to the previous page
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
 			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));

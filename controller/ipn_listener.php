@@ -17,12 +17,9 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\request\request;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ipn_listener
 {
-	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
 	/** Setup the PayPal variables list with default values and conditions to check.
 	 * Example:
 	 *      array(
@@ -150,7 +147,6 @@ class ipn_listener
 	 * Services properties declaration
 	 */
 	protected $config;
-	protected $container;
 	protected $dispatcher;
 	protected $language;
 	protected $ppde_actions;
@@ -205,7 +201,6 @@ class ipn_listener
 	 * Constructor
 	 *
 	 * @param config                        $config                             Config object
-	 * @param ContainerInterface            $container                          Service container interface
 	 * @param language                      $language                           Language user object
 	 * @param core_actions                  $ppde_actions                       PPDE actions object
 	 * @param main_controller               $ppde_controller_main               Main controller object
@@ -217,10 +212,9 @@ class ipn_listener
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, ContainerInterface $container, language $language, core_actions $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher)
+	public function __construct(config $config, language $language, core_actions $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher)
 	{
 		$this->config = $config;
-		$this->container = $container;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->ppde_actions = $ppde_actions;
@@ -251,7 +245,7 @@ class ipn_listener
 		// Logs in the DB, PayPal verified transactions
 		if ($this->validate_transaction())
 		{
-			$this->log_to_db();
+			$this->ppde_actions->log_to_db($this->transaction_data);
 		}
 
 		// Do actions only if checks are validated.
@@ -435,101 +429,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Log the transaction to the database
-	 *
-	 * @access private
-	 */
-	private function log_to_db()
-	{
-		// Initiate a transaction log entity
-		/** @type \skouat\ppde\entity\transactions $entity */
-		$entity = $this->container->get('skouat.ppde.entity.transactions');
-
-		// The item number contains the user_id
-		$this->extract_item_number_data();
-		$this->validate_user_id();
-
-		// Set username in extra_data property in $entity
-		$user_ary = $this->ppde_controller_transactions_admin->ppde_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
-		$entity->set_username($user_ary['username']);
-
-		// List the data to be thrown into the database
-		$data = $this->build_data_ary();
-
-		// Load data in the entity
-		$this->ppde_controller_transactions_admin->set_entity_data($entity, $data);
-		$entity->set_id($entity->transaction_exists());
-
-		// Add or edit transaction data
-		$this->ppde_controller_transactions_admin->add_edit_data($entity);
-	}
-
-	/**
-	 * Retrieve user_id from item_number args
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function extract_item_number_data()
-	{
-		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
-	}
-
-	/**
-	 * Avoid the user_id to be set to 0
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function validate_user_id()
-	{
-		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
-		{
-			$this->transaction_data['user_id'] = ANONYMOUS;
-		}
-	}
-
-	/**
-	 * Prepare data array() before send it to $entity
-	 *
-	 * @return array
-	 */
-	private function build_data_ary()
-	{
-		return array(
-			'business'          => $this->transaction_data['business'],
-			'confirmed'         => (bool) $this->transaction_data['confirmed'],
-			'exchange_rate'     => $this->transaction_data['exchange_rate'],
-			'first_name'        => $this->transaction_data['first_name'],
-			'item_name'         => $this->transaction_data['item_name'],
-			'item_number'       => $this->transaction_data['item_number'],
-			'last_name'         => $this->transaction_data['last_name'],
-			'mc_currency'       => $this->transaction_data['mc_currency'],
-			'mc_gross'          => floatval($this->transaction_data['mc_gross']),
-			'mc_fee'            => floatval($this->transaction_data['mc_fee']),
-			'net_amount'        => $this->ppde_actions->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']),
-			'parent_txn_id'     => $this->transaction_data['parent_txn_id'],
-			'payer_email'       => $this->transaction_data['payer_email'],
-			'payer_id'          => $this->transaction_data['payer_id'],
-			'payer_status'      => $this->transaction_data['payer_status'],
-			'payment_date'      => $this->transaction_data['payment_date'],
-			'payment_status'    => $this->transaction_data['payment_status'],
-			'payment_type'      => $this->transaction_data['payment_type'],
-			'memo'              => $this->transaction_data['memo'],
-			'receiver_id'       => $this->transaction_data['receiver_id'],
-			'receiver_email'    => $this->transaction_data['receiver_email'],
-			'residence_country' => $this->transaction_data['residence_country'],
-			'settle_amount'     => floatval($this->transaction_data['settle_amount']),
-			'settle_currency'   => $this->transaction_data['settle_currency'],
-			'test_ipn'          => (bool) $this->transaction_data['test_ipn'],
-			'txn_errors'        => $this->transaction_data['txn_errors'],
-			'txn_id'            => $this->transaction_data['txn_id'],
-			'txn_type'          => $this->transaction_data['txn_type'],
-			'user_id'           => (int) $this->transaction_data['user_id'],
-		);
-	}
-
-	/**
 	 * Some work to do before doing actions.
 	 *
 	 * @return void
@@ -657,7 +556,7 @@ class ipn_listener
 		// Set all conditions declared for this post_data
 		if (isset($data_ary['force_settings']))
 		{
-			$value = $this->set_post_data_func($data_ary);
+			$value = $this->ppde_actions->set_post_data_func($data_ary);
 		}
 
 		return $value;
@@ -699,7 +598,7 @@ class ipn_listener
 		foreach ($data_ary['condition_check'] as $control_point => $params)
 		{
 			// Calling the check_post_data_function
-			if (call_user_func_array(array($this, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
+			if (call_user_func_array(array($this->ppde_actions, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
 			{
 				$check[] = true;
 			}
@@ -712,134 +611,5 @@ class ipn_listener
 		unset($data_ary, $control_point, $params);
 
 		return $check;
-	}
-
-	/**
-	 * Check requirements for data value.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @access public
-	 * @return mixed
-	 */
-	public function set_post_data_func($data_ary)
-	{
-		$value = $data_ary['value'];
-
-		foreach ($data_ary['force_settings'] as $control_point => $params)
-		{
-			// Calling the set_post_data_function
-			$value = call_user_func_array(array($this, 'set_post_data_' . $control_point), array($data_ary['value'], $params));
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $value;
-	}
-
-	/**
-	 * Check Post data length.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $statement
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_length($value, $statement)
-	{
-		return $this->ppde_controller_main->compare(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param $value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_ascii($value)
-	{
-		// We ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		return $pos != $len ? false : true;
-	}
-
-	/**
-	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_content($value, $content_ary)
-	{
-		return in_array($value, $content_ary) ? true : false;
-	}
-
-	/**
-	 * Check if Post data is empty.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data_empty($value)
-	{
-		return empty($value) ? false : true;
-	}
-
-	/**
-	 * Set Post data length.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string  $value
-	 * @param integer $length
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_length($value, $length)
-	{
-		return substr($value, 0, (int) $length);
-	}
-
-	/**
-	 * Set Post data to lowercase.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_lowercase($value, $force = false)
-	{
-		return $force ? strtolower($value) : $value;
-	}
-
-	/**
-	 * Set Post data to date/time format.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function set_post_data_strtotime($value, $force = false)
-	{
-		return $force ? strtotime($value) : $value;
 	}
 }

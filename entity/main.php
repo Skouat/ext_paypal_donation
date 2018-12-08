@@ -55,6 +55,56 @@ abstract class main
 	}
 
 	/**
+	 * Set data in the $entity object.
+	 * Use call_user_func_array() to call $entity function
+	 *
+	 * @param array $data_ary
+	 *
+	 * @access public
+	 */
+	public function set_entity_data($data_ary)
+	{
+		foreach ($data_ary as $entity_function => $data)
+		{
+			// Calling the set_$entity_function on the entity and passing it $currency_data
+			call_user_func_array(array($this, 'set_' . $entity_function), array($data));
+		}
+		unset($data_ary, $entity_function, $data);
+	}
+
+	/**
+	 * Parse data to the entity
+	 *
+	 * @param string $run_before_insert Name of the function to call before SQL INSERT
+	 *
+	 * @return string $log_action
+	 * @access public
+	 */
+	public function add_edit_data($run_before_insert = '')
+	{
+		if ($this->get_id())
+		{
+			// Save the edited item entity to the database
+			$this->save($this->check_required_field());
+			$log_action = 'UPDATED';
+		}
+		else
+		{
+			// Insert the data to the database
+			$this->insert($run_before_insert);
+
+			// Get the newly inserted identifier
+			$id = $this->get_id();
+
+			// Reload the data to return a fresh entity
+			$this->load($id);
+			$log_action = 'ADDED';
+		}
+
+		return $log_action;
+	}
+
+	/**
 	 * Insert the item for the first time
 	 *
 	 * Will throw an exception if the item was already inserted (call save() instead)
@@ -141,7 +191,7 @@ abstract class main
 	 *
 	 * @param bool $required_fields
 	 *
-	 * @return \skouat\ppde\entity\main $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function save($required_fields)

@@ -148,7 +148,7 @@ class admin_currency_controller extends admin_main
 			'currency_enable'   => $data['currency_enable'],
 		);
 
-		$this->set_entity_data($entity, $item_fields);
+		$entity->set_entity_data($item_fields);
 
 		// Check some settings before submitting data
 		$errors = array_merge($errors,
@@ -192,7 +192,7 @@ class admin_currency_controller extends admin_main
 
 		if ($this->can_submit_data($errors))
 		{
-			$log_action = $this->add_edit_data($entity, 'set_order');
+			$log_action = $entity->add_edit_data('set_order');
 			// Log and show user confirmation of the saved item and provide link back to the previous page
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($entity->get_name()));
 			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
