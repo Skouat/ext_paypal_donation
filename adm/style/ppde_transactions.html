@@ -75,7 +75,10 @@
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="payment_time">{{ lang('PPDE_MT_PAYMENT_TIME') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label></dt>
+			<dt>
+				<label for="payment_time">{{ lang('PPDE_MT_PAYMENT_TIME') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label>
+				<br><span>{{ lang('PPDE_MT_PAYMENT_TIME_EXPLAIN') ~ lang('COLON') }} {{ PAYMENT_TIME_FORMATS | join(lang('COMMA_SEPARATOR')) }}</span>
+			</dt>
 			<dd><input type="text" class="narrow" id="payment_time" name="payment_time" value="{{ MT_PAYMENT_TIME }}"></dd>
 		</dl>
 		<dl>

@@ -95,6 +95,7 @@ $lang = array_merge($lang, array(
 	'PPDE_MT_PAYMENT_DATE'              => 'Donation date',
 	'PPDE_MT_PAYMENT_DATE_PICK'		    => 'Pick a date',
 	'PPDE_MT_PAYMENT_TIME'			    => 'Donation time',
+	'PPDE_MT_PAYMENT_TIME_EXPLAIN'      => 'Examples of allowed time formats',
 	'PPDE_MT_MEMO'                      => 'Memo',
 	'PPDE_MT_ADDED'                     => 'The transaction has been added successfully.',
 

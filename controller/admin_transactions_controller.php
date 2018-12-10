@@ -351,16 +351,42 @@ class admin_transactions_controller extends admin_main
 				$this->template->assign_vars($transaction_data);
 
 				$this->template->assign_vars(array(
-					'U_ACTION'           => $this->u_action,
-					'U_BACK'             => $this->u_action,
-					'S_ADD'              => true,
-					'ANONYMOUS_USER_ID'  => ANONYMOUS,
-					'U_FIND_USERNAME'    => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
+					'U_ACTION'             => $this->u_action,
+					'U_BACK'               => $this->u_action,
+					'S_ADD'                => true,
+					'ANONYMOUS_USER_ID'    => ANONYMOUS,
+					'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
+					'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
 				));
 			break;
 		}
 
 		return $action;
+	}
+
+	/**
+	 * Returns a list of valid times that the user can provide in the manual transaction form
+	 *
+	 * @return array Array of strings representing the current time, each in a different format
+	 * @access private
+	 */
+	private function get_payment_time_examples()
+	{
+		$formats = array(
+			'H:i:s',
+			'G:i',
+			'h:i:s a',
+			'g:i A',
+		);
+
+		$examples = array();
+
+		foreach ($formats as $format)
+		{
+			$examples[] = $this->user->format_date(time(), $format);
+		}
+
+		return $examples;
 	}
 
 	/**
