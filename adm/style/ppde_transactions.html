@@ -42,7 +42,7 @@
 		</dl>
 		<hr>
 		<dl>
-			<dt><label for="mc_gross">{{ lang('PPDE_MT_TOTAL_AMOUNT') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label></dt>
+			<dt><label for="mc_gross">{{ lang('PPDE_MT_TOTAL_AMOUNT') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
 			<dd>
 				<input type="text" class="narrow" id="mc_gross" name="mc_gross" value="{{ MT_MC_GROSS }}">
 				<select id="mc_currency" name="mc_currency">
@@ -53,7 +53,7 @@
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="mc_fee">{{ lang('PPDE_MT_FEE_AMOUNT') ~ lang('COLON') }}</label></dt>
+			<dt><label for="mc_fee">{{ lang('PPDE_MT_FEE_AMOUNT') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
 			<dd><input type="text" class="narrow" id="mc_fee" name="mc_fee" value="{{ MT_MC_FEE }}"> <span id="mc_fee_currency"></span></dd>
 		</dl>
 		<dl>

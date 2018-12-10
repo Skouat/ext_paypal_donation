@@ -90,6 +90,7 @@ $lang = array_merge($lang, array(
 	'PPDE_MT_RESIDENCE_COUNTRY'	        => 'Country',
 	'PPDE_MT_RESIDENCE_COUNTRY_EXPLAIN' => 'ISO 3166 alpha-2 code, 2 characters, see <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/2796" target="_blank" rel="noreferrer">FAQ.</a>',
 	'PPDE_MT_TOTAL_AMOUNT'              => 'Total amount',
+	'PPDE_DECIMAL_EXPLAIN'              => 'Use “.” as decimal symbol.', // Note for translator: do not translate the decimal symbol
 	'PPDE_MT_FEE_AMOUNT'                => 'Fee amount',
 	'PPDE_MT_NET_AMOUNT'                => 'Net amount',
 	'PPDE_MT_PAYMENT_DATE'              => 'Donation date',
