@@ -503,12 +503,14 @@ class admin_transactions_controller extends admin_main
 		{
 			$user_ary = $this->ppde_operator->query_donor_user_data('username', $transaction_data['MT_USERNAME']);
 
-			if (!$user_ary)
+			if ($user_ary)
+			{
+				$user_id = $user_ary['user_id'];
+			}
+			else
 			{
 				$errors[] = $this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $transaction_data['MT_USERNAME']);
 			}
-
-			$user_id = $user_ary['user_id'];
 		}
 
 		$payment_date = implode('-', [
