@@ -495,7 +495,7 @@ class admin_transactions_controller extends admin_main
 	{
 		$errors = array();
 
-		if ($this->request->is_set('u' && $transaction_data['MT_USERNAME'] === ''))
+		if ($this->request->is_set('u') && $transaction_data['MT_USERNAME'] === '')
 		{
 			$user_id = ANONYMOUS;
 		}
