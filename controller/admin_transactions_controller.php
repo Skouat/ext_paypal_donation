@@ -335,7 +335,7 @@ class admin_transactions_controller extends admin_main
 						$data_ary = $this->build_data_ary($transaction_data);
 						$this->ppde_actions->log_to_db($data_ary);
 
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', array($transaction_data['MT_USERNAME']));
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), array($transaction_data['MT_USERNAME']));
 						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
 					}
 					catch (transaction_exception $e)
