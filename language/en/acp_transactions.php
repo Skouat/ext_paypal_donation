@@ -142,6 +142,8 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_NO_TRANSACTION'       => 'No transaction found.',
 
 	'PPDE_MT_DONOR_NOT_FOUND'      => 'The donor user “%1$s” was not found.',
+	'PPDE_MT_MC_FEE_NEGATIVE'      => 'The fee cannot be negative.',
+	'PPDE_MT_MC_FEE_TOO_LARGE'     => 'The fee cannot be larger than the total amount.',
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'The donation date “%1$s” could not be parsed.',
 	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'The donation time “%1$s” could not be parsed.',
 ));

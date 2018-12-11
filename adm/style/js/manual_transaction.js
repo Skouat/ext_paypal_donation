@@ -13,7 +13,7 @@
 		var mcGross = parseFloat($('#mc_gross').val());
 		var mcFee = parseFloat($('#mc_fee').val());
 		var netAmount = truncateToDecimals(mcGross - mcFee, 2);
-		$('#net_amount').text(isNaN(netAmount) ? '-' : netAmount);
+		$('#net_amount').text(isNaN(netAmount) || mcFee < 0 || mcFee > mcGross ? '-' : netAmount);
 	}).trigger('input');
 
 	// Update currency of fee and net amount when currency of total amount changes

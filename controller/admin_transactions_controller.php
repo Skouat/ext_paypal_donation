@@ -523,6 +523,16 @@ class admin_transactions_controller extends admin_main
 			}
 		}
 
+		if ($transaction_data['MT_MC_FEE'] < 0)
+		{
+			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_NEGATIVE');
+		}
+
+		if ($transaction_data['MT_MC_FEE'] > $transaction_data['MT_MC_GROSS'])
+		{
+			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_TOO_LARGE');
+		}
+
 		$payment_date = implode('-', [
 			$transaction_data['MT_PAYMENT_DATE_YEAR'],
 			$transaction_data['MT_PAYMENT_DATE_MONTH'],
