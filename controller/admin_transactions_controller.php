@@ -333,7 +333,17 @@ class admin_transactions_controller extends admin_main
 					try
 					{
 						$data_ary = $this->build_data_ary($transaction_data);
+
 						$this->ppde_actions->log_to_db($data_ary);
+						$this->ppde_actions->update_overview_stats();
+						$this->ppde_actions->update_raised_amount();
+
+						if ($this->ppde_actions->get_donor_is_member())
+						{
+							$this->ppde_actions->update_donor_stats();
+							$this->ppde_actions->donors_group_user_add();
+							$this->ppde_actions->notification->notify_donor_donation_received();
+						}
 
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), array($transaction_data['MT_USERNAME']));
 						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
