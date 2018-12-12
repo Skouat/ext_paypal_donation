@@ -525,14 +525,19 @@ class admin_transactions_controller extends admin_main
 			}
 		}
 
+		if ($transaction_data['MT_MC_GROSS'] <= 0)
+		{
+			$errors[] = $this->language->lang('PPDE_MT_MC_GROSS_TOO_LOW');
+		}
+
 		if ($transaction_data['MT_MC_FEE'] < 0)
 		{
 			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_NEGATIVE');
 		}
 
-		if ($transaction_data['MT_MC_FEE'] > $transaction_data['MT_MC_GROSS'])
+		if ($transaction_data['MT_MC_FEE'] >= $transaction_data['MT_MC_GROSS'])
 		{
-			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_TOO_LARGE');
+			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_TOO_HIGH');
 		}
 
 		$payment_date = implode('-', [
