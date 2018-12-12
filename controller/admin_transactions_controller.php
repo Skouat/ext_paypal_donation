@@ -335,6 +335,8 @@ class admin_transactions_controller extends admin_main
 						$data_ary = $this->build_data_ary($transaction_data);
 
 						$this->ppde_actions->log_to_db($data_ary);
+						$this->ppde_actions->set_transaction_data($transaction_data);
+						$this->ppde_actions->is_donor_is_member();
 						$this->ppde_actions->update_overview_stats();
 						$this->ppde_actions->update_raised_amount();
 
