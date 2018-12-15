@@ -356,7 +356,7 @@ class admin_transactions_controller extends admin_main
 					}
 				}
 
-				$this->ppde_actions_currency->build_currency_select_menu($this->config['ppde_default_currency']);
+				$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 
 				$this->s_error_assign_template_vars($errors);
 
