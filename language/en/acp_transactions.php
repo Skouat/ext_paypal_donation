@@ -147,4 +147,5 @@ $lang = array_merge($lang, array(
 	'PPDE_MT_MC_FEE_TOO_HIGH'      => 'The fee must be lower than the total amount.',
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'The donation date “%1$s” could not be parsed.',
 	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'The donation time “%1$s” could not be parsed.',
+	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'The donation date must be in the past, but it was “%1$s”.',
 ));

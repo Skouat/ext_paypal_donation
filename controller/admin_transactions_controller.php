@@ -564,6 +564,13 @@ class admin_transactions_controller extends admin_main
 		// Normalize payment time to start from today at midnight
 		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
 
+		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
+
+		if ($payment_date_time > time())
+		{
+			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_DATE_FUTURE', $this->user->format_date($payment_date_time));
+		}
+
 		if ($errors)
 		{
 			throw (new transaction_exception())->set_errors($errors);
@@ -585,7 +592,7 @@ class admin_transactions_controller extends admin_main
 			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
 			'payer_id'          => '',
 			'payer_status'      => '',
-			'payment_date'      => $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight,
+			'payment_date'      => $payment_date_time,
 			'payment_status'    => 'Completed',
 			'payment_type'      => '',
 			'memo'              => $transaction_data['MT_MEMO'],
