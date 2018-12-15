@@ -597,7 +597,7 @@ class admin_transactions_controller extends admin_main
 			'test_ipn'          => false,
 			'txn_errors'        => '',
 			'txn_id'            => 'PPDE' . gen_rand_string(13),
-			'txn_type'          => '',
+			'txn_type'          => 'ppde_manual_donation',
 			'user_id'           => $user_id,
 		);
 	}
