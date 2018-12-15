@@ -591,7 +591,7 @@ class admin_transactions_controller extends admin_main
 			'memo'              => $transaction_data['MT_MEMO'],
 			'receiver_id'       => '',
 			'receiver_email'    => '',
-			'residence_country' => $transaction_data['MT_RESIDENCE_COUNTRY'],
+			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
 			'settle_amount'     => (float) 0,
 			'settle_currency'   => '',
 			'test_ipn'          => false,
