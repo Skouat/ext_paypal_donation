@@ -141,11 +141,11 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_IPN_ERRORS'           => 'Vous devriez reconsidérer ce don car les erreurs suivantes ont été détectées',
 	'PPDE_DT_NO_TRANSACTION'       => 'Aucune transaction n’a été trouvée.',
 
-	'PPDE_MT_DONOR_NOT_FOUND'      => 'Le nom d’utilsateur « %1$s » d’un donateur n’a pas été trouvé.',
+	'PPDE_MT_DONOR_NOT_FOUND'      => 'Le nom d’utilisateur « %1$s » d’un donateur n’a pas été trouvé.',
 	'PPDE_MT_MC_GROSS_TOO_LOW'     => 'Le montant total doit être supérieure à zéro.',
 	'PPDE_MT_MC_FEE_NEGATIVE'      => 'Le montant de la commission ne peut être négatif.',
 	'PPDE_MT_MC_FEE_TOO_HIGH'      => 'Le montant de la commission doit être inférieur au montant total.',
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'La date du don « %1$s » n’est pas valide.',
 	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'L’heure du don « %1$s » n’est pas valide.',
-	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'The donation date must be in the past, but it was “%1$s”.',
+	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'La date du don doit être une date échue, mais vous avez renseigné « %1$s ».',
 ));
