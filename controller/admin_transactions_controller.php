@@ -340,7 +340,7 @@ class admin_transactions_controller extends admin_main
 						$this->ppde_actions->update_overview_stats();
 						$this->ppde_actions->update_raised_amount();
 
-						if ($this->ppde_actions->get_donor_is_member())
+						if ($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS'])
 						{
 							$this->ppde_actions->update_donor_stats();
 							$this->ppde_actions->donors_group_user_add();
