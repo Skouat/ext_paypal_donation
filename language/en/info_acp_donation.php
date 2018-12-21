@@ -63,6 +63,7 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_DP_UPDATED'              => '<strong>PayPal Donation: Donation page updated</strong><br>» “%1$s” for the language “%2$s”',
 	'LOG_PPDE_DT_PURGED'               => '<strong>PayPal Donation: Transactions log purged</strong>',
 	'LOG_PPDE_DT_UPDATED'              => '<strong>PayPal Donation: Transactions updated</strong>',
+	'LOG_PPDE_MT_ADDED'                => '<strong>PayPal Donation: Manual transaction added</strong><br>» Donor: %s',
 	'LOG_PPDE_PAYPAL_FEATURES_UPDATED' => '<strong>PayPal Donation: PayPal settings updated</strong>',
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation: Installation date reset</strong>',

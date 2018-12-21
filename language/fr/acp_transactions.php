@@ -62,7 +62,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_NAME'                  => 'Nom',
 	'PPDE_DT_NET_AMOUNT'            => 'Montant net',
 	'PPDE_DT_PAYER_ID'              => 'Identifiant de l’émetteur du paiement',
-	'PPDE_DT_PAYER_EMAIL'           => 'E-mail',
+	'PPDE_DT_PAYER_EMAIL'           => 'Courriel',
 	'PPDE_DT_PAYER_STATUS'          => 'État de l’émetteur du paiement',
 	'PPDE_DT_PAYMENT_DATE'          => 'Date du paiement',
 	'PPDE_DT_RECEIVER_EMAIL'        => 'Paiement envoyé à',
@@ -76,6 +76,32 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TOTAL_AMOUNT'          => 'Montant total',
 	'PPDE_DT_UNVERIFIED'            => 'Non vérifié',
 	'PPDE_DT_VERIFIED'              => 'Vérifié',
+
+	'PPDE_MT_TITLE'                     => 'Transaction manuelle',
+	'PPDE_MT_TITLE_EXPLAIN'             => 'Depuis cette page vous pouvez ajouter une transaction manuellement, par exemple si vous avez reçu un don par un moyen autre que PayPal.',
+	'PPDE_MT_REQUIRED_CHARACTER'        => '*',
+	'PPDE_MT_REQUIRED_EXPLAIN'          => 'Champs requis',
+	'PPDE_MT_DETAILS'                   => 'Transaction details',
+	'PPDE_MT_USERNAME'                  => 'Donateur',
+	'PPDE_MT_USERNAME_EXPLAIN'          => 'Sélectionnez le compte invité si le don a été effectué par un utilisateur non enregistré.',
+	'PPDE_MT_FIRST_NAME'                => 'Prénom',
+	'PPDE_MT_LAST_NAME'                 => 'Nom',
+	'PPDE_MT_PAYER_EMAIL'               => 'Courriel',
+	'PPDE_MT_RESIDENCE_COUNTRY'         => 'Pays',
+	'PPDE_MT_RESIDENCE_COUNTRY_EXPLAIN' => 'Code ISO 3166 alpha-2, 2 caractères, consulter la <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/2796" target="_blank" rel="noreferrer">FAQ</a>.',
+	'PPDE_MT_TOTAL_AMOUNT'              => 'Montant total',
+	'PPDE_DECIMAL_EXPLAIN'              => 'Utiliser le « . » comme symbole décimal.', // Note for translator: do not translate the decimal symbol
+	'PPDE_MT_FEE_AMOUNT'                => 'Montant de la commission',
+	'PPDE_MT_NET_AMOUNT'                => 'Montant net',
+	'PPDE_MT_PAYMENT_DATE'              => 'Date du don',
+	'PPDE_MT_PAYMENT_DATE_PICK'         => 'Choisir une date',
+	'PPDE_MT_PAYMENT_TIME'              => 'Heure du don',
+	'PPDE_MT_PAYMENT_TIME_EXPLAIN'      => 'Exemples de format horaires autorisés',
+	'PPDE_MT_MEMO'                      => 'Message',
+	'PPDE_MT_ADDED'                     => 'La transaction a été ajoutée.',
+
+	// List of available translations: https://github.com/fengyuanchen/datepicker/tree/master/i18n
+	'PPDE_MT_DATEPICKER_LANG'           => 'fr-FR',
 ));
 
 /**
@@ -114,4 +140,12 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'Cette donation a été approuvée manuellement avec les erreurs suivantes',
 	'PPDE_DT_IPN_ERRORS'           => 'Vous devriez reconsidérer ce don car les erreurs suivantes ont été détectées',
 	'PPDE_DT_NO_TRANSACTION'       => 'Aucune transaction n’a été trouvée.',
+
+	'PPDE_MT_DONOR_NOT_FOUND'      => 'Le nom d’utilisateur « %1$s » d’un donateur n’a pas été trouvé.',
+	'PPDE_MT_MC_GROSS_TOO_LOW'     => 'Le montant total doit être supérieure à zéro.',
+	'PPDE_MT_MC_FEE_NEGATIVE'      => 'Le montant de la commission ne peut être négatif.',
+	'PPDE_MT_MC_FEE_TOO_HIGH'      => 'Le montant de la commission doit être inférieur au montant total.',
+	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'La date du don « %1$s » n’est pas valide.',
+	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'L’heure du don « %1$s » n’est pas valide.',
+	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'La date du don doit être une date échue, mais vous avez renseigné « %1$s ».',
 ));
