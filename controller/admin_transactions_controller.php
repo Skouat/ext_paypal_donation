@@ -289,15 +289,7 @@ class admin_transactions_controller extends admin_main
 					$this->ppde_actions->set_ipn_test_properties($entity->get_test_ipn());
 					$this->ppde_actions->is_donor_is_member();
 
-					// Do the actions related to the approval of the transaction
-					$this->ppde_actions->update_overview_stats();
-					$this->ppde_actions->update_raised_amount();
-					if (!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member())
-					{
-						$this->ppde_actions->update_donor_stats();
-						$this->ppde_actions->donors_group_user_add();
-						$this->ppde_actions->notification->notify_donor_donation_received();
-					}
+					$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
@@ -311,22 +303,7 @@ class admin_transactions_controller extends admin_main
 			case 'add':
 				$errors = array();
 
-				$transaction_data = array(
-					'MT_ANONYMOUS'          => $this->request->is_set('u'),
-					'MT_USERNAME'           => $this->request->variable('username', '', true),
-					'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
-					'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
-					'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
-					'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
-					'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
-					'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
-					'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
-					'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
-					'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
-					'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
-					'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
-					'MT_MEMO'               => $this->request->variable('memo', '', true),
-				);
+				$transaction_data = $this->request_transaction_vars();
 
 				if ($this->request->is_set_post('submit'))
 				{
@@ -335,17 +312,12 @@ class admin_transactions_controller extends admin_main
 						$data_ary = $this->build_data_ary($transaction_data);
 
 						$this->ppde_actions->log_to_db($data_ary);
+
+						// Prepare transaction settings before doing actions
 						$this->ppde_actions->set_transaction_data($transaction_data);
 						$this->ppde_actions->is_donor_is_member();
-						$this->ppde_actions->update_overview_stats();
-						$this->ppde_actions->update_raised_amount();
 
-						if ($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS'])
-						{
-							$this->ppde_actions->update_donor_stats();
-							$this->ppde_actions->donors_group_user_add();
-							$this->ppde_actions->notification->notify_donor_donation_received();
-						}
+						$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
 
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), array($transaction_data['MT_USERNAME']));
 						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
@@ -374,6 +346,53 @@ class admin_transactions_controller extends admin_main
 		}
 
 		return $action;
+	}
+
+	/**
+	 * Does actions for validated transaction
+	 *
+	 * @param bool $is_member
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function do_transactions_actions($is_member)
+	{
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+
+		if ($is_member)
+		{
+			$this->ppde_actions->update_donor_stats();
+			$this->ppde_actions->donors_group_user_add();
+			$this->ppde_actions->notification->notify_donor_donation_received();
+		}
+	}
+
+	/**
+	 * Returns requested data from manual transaction form
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function request_transaction_vars()
+	{
+		return array(
+			'MT_ANONYMOUS'          => $this->request->is_set('u'),
+			'MT_USERNAME'           => $this->request->variable('username', '', true),
+			'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
+			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
+			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
+			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
+			'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
+			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
+			'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
+			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
+			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
+			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
+			'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
+			'MT_MEMO'               => $this->request->variable('memo', '', true),
+		);
 	}
 
 	/**
