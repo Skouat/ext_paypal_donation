@@ -264,7 +264,7 @@ class core
 	{
 		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
 
-		return count($this->payer_data) == 0;
+		return (bool) count($this->payer_data);
 	}
 
 	/**
