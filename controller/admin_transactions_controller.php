@@ -17,6 +17,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
 use skouat\ppde\exception\transaction_exception;
@@ -36,12 +37,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property template           template           Template object
  * @property string             u_action           Action URL
  * @property user               user               User object.
+ * @property user_loader        user_loader        User loader object
  */
 class admin_transactions_controller extends admin_main
 {
 	public $ppde_operator;
 	protected $adm_relative_path;
 	protected $auth;
+	protected $user_loader;
 	protected $entry_count;
 	protected $last_page_offset;
 	protected $php_ext;
@@ -66,6 +69,7 @@ class admin_transactions_controller extends admin_main
 	 * @param request            $request                    Request object
 	 * @param template           $template                   Template object
 	 * @param user               $user                       User object.
+	 * @param user_loader        $user_loader                User loader object
 	 * @param string             $adm_relative_path          phpBB admin relative path
 	 * @param string             $phpbb_root_path            phpBB root path
 	 * @param string             $php_ext                    phpEx
@@ -74,7 +78,7 @@ class admin_transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, transactions $ppde_operator_transactions, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, transactions $ppde_operator_transactions, request $request, template $template, user $user, user_loader $user_loader, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -87,6 +91,7 @@ class admin_transactions_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->adm_relative_path = $adm_relative_path;
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
@@ -121,6 +126,7 @@ class admin_transactions_controller extends admin_main
 		$txn_approve = $this->request->is_set('approve');
 		$txn_approved = $this->request->variable('txn_errors_approved', 0);
 		$txn_add = $this->request->is_set('add');
+		$txn_change = $this->request->is_set_post('change');
 		// Sort keys
 		$sort_days = $this->request->variable('st', 0);
 		$sort_key = $this->request->variable('sk', 't');
@@ -161,6 +167,10 @@ class admin_transactions_controller extends admin_main
 		if ($txn_add)
 		{
 			$action = 'add';
+		}
+		else if ($txn_change)
+		{
+			$action = 'change';
 		}
 
 		$action = $this->do_action($action, $args);
@@ -241,9 +251,10 @@ class admin_transactions_controller extends admin_main
 				array_map(array($this, 'action_assign_template_vars'), $data_ary);
 
 				$this->template->assign_vars(array(
-					'U_ACTION' => $this->u_action,
-					'U_BACK'   => $this->u_action,
-					'S_VIEW'   => true,
+					'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
+					'U_ACTION'        => $this->u_action,
+					'U_BACK'          => $this->u_action,
+					'S_VIEW'          => true,
 				));
 			break;
 			case 'delete':
@@ -342,6 +353,43 @@ class admin_transactions_controller extends admin_main
 					'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
 					'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
 				));
+			break;
+			case 'change':
+
+				$username = $this->request->variable('username', '', true);
+
+				if ($this->request->is_set('u') && $username === '')
+				{
+					$user_id = ANONYMOUS;
+				}
+				else
+				{
+					$user_id = $this->user_loader->load_user_by_username($username);
+
+					if ($user_id == ANONYMOUS)
+					{
+						trigger_error($this->language->lang('NO_USER') . adm_back_link($this->u_action), E_USER_WARNING);
+					}
+				}
+
+				// Request Identifier of the transaction
+				$transaction_id = $this->request->variable('id', 0);
+
+				/** @type \skouat\ppde\entity\transactions $entity */
+				$entity = $this->get_container_entity();
+				$entity->load($transaction_id);
+
+				if (!$entity->data_exists($entity->build_sql_data_exists()))
+				{
+					trigger_error($this->language->lang('PPDE_DT_NO_TRANSACTION') . adm_back_link($this->u_action), E_USER_WARNING);
+				}
+
+				$log_action = $entity
+					->set_user_id($user_id)
+					->add_edit_data();
+
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action));
+				trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 			break;
 		}
 
