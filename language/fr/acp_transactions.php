@@ -50,8 +50,8 @@ $lang = array_merge($lang, array(
 	// Display transactions
 	'PPDE_DT_APPROVE'                       => 'Approuver',
 	'PPDE_DT_BOARD_USERNAME'                => 'Donateur',
-	'PPDE_DT_CHANGE_BOARD_USERNAME'         => 'Change donor',
-	'PPDE_DT_CHANGE_BOARD_USERNAME_EXPLAIN' => 'This changes the user account this donation is associated with.',
+	'PPDE_DT_CHANGE_BOARD_USERNAME'         => 'Modifier le donateur',
+	'PPDE_DT_CHANGE_BOARD_USERNAME_EXPLAIN' => 'Permet de modifier le nom du donateur auquel ce don est associé.',
 	'PPDE_DT_DETAILS'                       => 'Détails de la transaction',
 	'PPDE_DT_DISAPPROVE'                    => 'Désapprouver',
 	'PPDE_DT_EXCHANGE_RATE'                 => 'Taux de change',
@@ -78,7 +78,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DT_TOTAL_AMOUNT'                  => 'Montant total',
 	'PPDE_DT_UNVERIFIED'                    => 'Non vérifié',
 	'PPDE_DT_VERIFIED'                      => 'Vérifié',
-	'PPDE_DT_UPDATED'                       => 'The transaction has been updated.',
+	'PPDE_DT_UPDATED'                       => 'La transaction a été mise à jour.',
 
 	'PPDE_MT_TITLE'                     => 'Transaction manuelle',
 	'PPDE_MT_TITLE_EXPLAIN'             => 'Depuis cette page vous pouvez ajouter une transaction manuellement, par exemple si vous avez reçu un don par un moyen autre que PayPal.',
