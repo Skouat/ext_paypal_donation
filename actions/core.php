@@ -622,10 +622,8 @@ class core
 		{
 			return call_user_func_array(array($this, self::$operators_table[$operator]), array($value1, $value2));
 		}
-		else
-		{
-			return false;
-		}
+
+		return false;
 	}
 
 	/**

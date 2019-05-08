@@ -34,9 +34,9 @@ class ppde_module
 	 * @param string $id
 	 * @param string $mode
 	 *
-	 * @throws \Exception
 	 * @return void
 	 * @access public
+	 * @throws \Exception
 	 */
 	public function main($id, $mode)
 	{
@@ -53,7 +53,7 @@ class ppde_module
 			$language->add_lang('acp_' . $mode, 'skouat/ppde');
 
 			// Get an instance of the admin controller
-			/** @type \skouat\ppde\controller\admin_main $admin_controller */
+			/** @type \skouat\ppde\controller\admin\admin_main $admin_controller */
 			$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
 
 			// Make the $u_action url available in the admin controller
@@ -124,13 +124,13 @@ class ppde_module
 	/**
 	 * Switch to the mode selected
 	 *
-	 * @param int                                $id
-	 * @param string                             $mode
-	 * @param \skouat\ppde\controller\admin_main $admin_controller
+	 * @param int                                      $id
+	 * @param string                                   $mode
+	 * @param \skouat\ppde\controller\admin\admin_main $admin_controller
 	 *
-	 * @throws \Exception
 	 * @return void
 	 * @access private
+	 * @throws \Exception
 	 */
 	private function switch_mode($id, $mode, $admin_controller)
 	{
@@ -160,17 +160,17 @@ class ppde_module
 			case 'paypal_features':
 			case 'settings':
 				// Load the display handle in the admin controller
-				/** @type \skouat\ppde\controller\admin_settings_controller|\skouat\ppde\controller\admin_paypal_features_controller $admin_controller */
+				/** @type \skouat\ppde\controller\admin\settings_controller|\skouat\ppde\controller\admin\paypal_features_controller $admin_controller */
 				$admin_controller->display_settings();
 			break;
 			case 'overview':
 				// Load the display overview handle in the admin controller
-				/** @type \skouat\ppde\controller\admin_overview_controller $admin_controller */
+				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
 			break;
 			case 'transactions':
 				// Load the display transactions log handle in the admin controller
-				/** @type \skouat\ppde\controller\admin_transactions_controller $admin_controller */
+				/** @type \skouat\ppde\controller\admin\transactions_controller $admin_controller */
 				$admin_controller->display_transactions($id, $mode, $action);
 			break;
 		}
@@ -179,14 +179,14 @@ class ppde_module
 	/**
 	 * Performs action requested by the module
 	 *
-	 * @param int                                $id
-	 * @param string                             $mode
-	 * @param string                             $action
-	 * @param \skouat\ppde\controller\admin_main $controller
+	 * @param int                                      $id
+	 * @param string                                   $mode
+	 * @param string                                   $action
+	 * @param \skouat\ppde\controller\admin\admin_main $controller
 	 *
-	 * @throws \Exception
 	 * @return void
 	 * @access private
+	 * @throws \Exception
 	 */
 	private function do_action($id, $mode, $action, $controller)
 	{
@@ -231,16 +231,15 @@ class ppde_module
 				{
 					// Delete a currency
 					$controller->delete($id);
+					break;
 				}
-				else
-				{
-					// Request confirmation from the user to delete the selected item
-					confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields(array(
-						'id'     => $id,
-						'mode'   => $mode,
-						'action' => $action,
-					)));
-				}
+
+				// Request confirmation from the user to delete the selected item
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields(array(
+					'id'     => $id,
+					'mode'   => $mode,
+					'action' => $action,
+				)));
 			break;
 		}
 

@@ -43,7 +43,15 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, language $language, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(
+		driver_interface $db,
+		language $language,
+		user $user,
+		$lang_key_prefix = '',
+		$lang_key_suffix = '',
+		$table_name = '',
+		$table_schema = array()
+	)
 	{
 		$this->db = $db;
 		$this->language = $language;
@@ -77,7 +85,7 @@ abstract class main
 	 *
 	 * @param string $run_before_insert Name of the function to call before SQL INSERT
 	 *
-	 * @return string $log_action
+	 * @return string
 	 * @access public
 	 */
 	public function add_edit_data($run_before_insert = '')
@@ -86,22 +94,18 @@ abstract class main
 		{
 			// Save the edited item entity to the database
 			$this->save($this->check_required_field());
-			$log_action = 'UPDATED';
-		}
-		else
-		{
-			// Insert the data to the database
-			$this->insert($run_before_insert);
-
-			// Get the newly inserted identifier
-			$id = $this->get_id();
-
-			// Reload the data to return a fresh entity
-			$this->load($id);
-			$log_action = 'ADDED';
+			return 'UPDATED';
 		}
 
-		return $log_action;
+		// Insert the data to the database
+		$this->insert($run_before_insert);
+
+		// Get the newly inserted identifier
+		$id = $this->get_id();
+
+		// Reload the data to return a fresh entity
+		$this->load($id);
+		return 'ADDED';
 	}
 
 	/**
@@ -449,8 +453,8 @@ abstract class main
 	 * Any existing data on this item is over-written.
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
-	 * @param  array $data Data array, typically from the database
-	 * @param array  $additional_table_schema
+	 * @param array $data Data array, typically from the database
+	 * @param array $additional_table_schema
 	 *
 	 * @return array $this->data
 	 * @access public

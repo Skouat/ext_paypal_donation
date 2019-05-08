@@ -41,21 +41,33 @@ class main_controller
 	/**
 	 * Constructor
 	 *
-	 * @param auth                            $auth                   Auth object
-	 * @param config                          $config                 Config object
-	 * @param ContainerInterface              $container              Service container interface
-	 * @param helper                          $helper                 Controller helper object
-	 * @param language                        $language               Language user object
-	 * @param \skouat\ppde\actions\currency   $ppde_actions_currency  Currency actions object
-	 * @param request                         $request                Request object
-	 * @param template                        $template               Template object
-	 * @param user                            $user                   User object
-	 * @param string                          $root_path              phpBB root path
-	 * @param string                          $php_ext                phpEx
+	 * @param auth                          $auth                  Auth object
+	 * @param config                        $config                Config object
+	 * @param ContainerInterface            $container             Service container interface
+	 * @param helper                        $helper                Controller helper object
+	 * @param language                      $language              Language user object
+	 * @param \skouat\ppde\actions\currency $ppde_actions_currency Currency actions object
+	 * @param request                       $request               Request object
+	 * @param template                      $template              Template object
+	 * @param user                          $user                  User object
+	 * @param string                        $root_path             phpBB root path
+	 * @param string                        $php_ext               phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, helper $helper, language $language, \skouat\ppde\actions\currency $ppde_actions_currency, request $request, template $template, user $user, $root_path, $php_ext)
+	public function __construct(
+		auth $auth,
+		config $config,
+		ContainerInterface $container,
+		helper $helper,
+		language $language,
+		\skouat\ppde\actions\currency $ppde_actions_currency,
+		request $request,
+		template $template,
+		user $user,
+		$root_path,
+		$php_ext
+	)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

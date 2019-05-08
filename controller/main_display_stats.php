@@ -32,7 +32,12 @@ class main_display_stats
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, currency $ppde_actions_currency, template $template)
+	public function __construct(
+		config $config,
+		language $language,
+		currency $ppde_actions_currency,
+		template $template
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;
@@ -267,9 +272,7 @@ class main_display_stats
 		{
 			return $css_data_ary[$index] . $css_reverse;
 		}
-		else
-		{
-			return $reverse ? 'red' : 'green';
-		}
+
+		return $reverse ? 'red' : 'green';
 	}
 }

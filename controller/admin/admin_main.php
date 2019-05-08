@@ -8,7 +8,9 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
+
+use skouat\ppde\entity\main;
 
 abstract class admin_main
 {
@@ -155,7 +157,7 @@ abstract class admin_main
 	 *
 	 * @access protected
 	 */
-	protected function trigger_error_data_already_exists(\skouat\ppde\entity\main $entity)
+	protected function trigger_error_data_already_exists(main $entity)
 	{
 		if ($this->is_added_data_exists($entity))
 		{
@@ -173,7 +175,7 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function is_added_data_exists(\skouat\ppde\entity\main $entity)
+	protected function is_added_data_exists(main $entity)
 	{
 		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
@@ -189,7 +191,7 @@ abstract class admin_main
 	 * @return array $errors
 	 * @access protected
 	 */
-	protected function is_empty_data(\skouat\ppde\entity\main $entity, $field_name, $value_cmp, $submit_or_preview = false)
+	protected function is_empty_data(main $entity, $field_name, $value_cmp, $submit_or_preview = false)
 	{
 		$errors = array();
 
@@ -236,17 +238,6 @@ abstract class admin_main
 				),
 			));
 		}
-	}
-
-	/**
-	 * Return the entity ContainerInterface used by the ACP module in use
-	 *
-	 * @return object
-	 * @access protected
-	 */
-	protected function get_container_entity()
-	{
-		return $this->container->get('skouat.ppde.entity.' . $this->module_name);
 	}
 
 	/**

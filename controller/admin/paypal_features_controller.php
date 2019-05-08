@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\config\config;
 use phpbb\language\language;
@@ -16,6 +16,8 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\controller\main_controller;
 
 /**
  * @property config   config             Config object
@@ -30,7 +32,7 @@ use phpbb\user;
  * @property string   u_action           Action URL
  * @property user     user               User object
  */
-class admin_paypal_features_controller extends admin_main
+class paypal_features_controller extends admin_main
 {
 	protected $ppde_controller_main;
 	protected $ppde_ipn_paypal;
@@ -49,7 +51,16 @@ class admin_paypal_features_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, log $log, main_controller $ppde_controller_main, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user)
+	public function __construct(
+		config $config,
+		language $language,
+		log $log,
+		main_controller $ppde_controller_main,
+		ipn_paypal $ppde_ipn_paypal,
+		request $request,
+		template $template,
+		user $user
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;
@@ -79,7 +90,7 @@ class admin_paypal_features_controller extends admin_main
 			$this->ppde_ipn_paypal->set_curl_info();
 			$this->ppde_ipn_paypal->set_remote_detected();
 			$this->ppde_ipn_paypal->check_tls();
-			$this->config->set('ppde_first_start', false);
+			$this->config->set('ppde_first_start', (string) false);
 		}
 
 		// Define the name of the form for use as a form key
@@ -139,7 +150,7 @@ class admin_paypal_features_controller extends admin_main
 		$this->ppde_ipn_paypal->check_tls();
 		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
-			$this->config->set('ppde_ipn_enable', false);
+			$this->config->set('ppde_ipn_enable', (string) false);
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
 		};
 

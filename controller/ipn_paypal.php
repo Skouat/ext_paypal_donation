@@ -66,7 +66,13 @@ class ipn_paypal
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, extension_manager $ppde_ext_manager, ipn_log $ppde_ipn_log, request $request)
+	public function __construct(
+		config $config,
+		language $language,
+		extension_manager $ppde_ext_manager,
+		ipn_log $ppde_ipn_log,
+		request $request
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;
@@ -104,7 +110,7 @@ class ipn_paypal
 	 * the validate_transaction() method if the curl_fsock['curl'] property is true.
 	 * Throws an exception if the post fails. Populates the response and response_status properties on success.
 	 *
-	 * @param  string $encoded_data The post data as a URL encoded string
+	 * @param string $encoded_data The post data as a URL encoded string
 	 *
 	 * @return void
 	 * @access private

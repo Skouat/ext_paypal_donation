@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\config\config;
 use phpbb\language\language;
@@ -31,7 +31,7 @@ use skouat\ppde\actions\currency;
  * @property string   u_action           Action URL
  * @property user     user               User object
  */
-class admin_settings_controller extends admin_main
+class settings_controller extends admin_main
 {
 	protected $ppde_actions_currency;
 
@@ -48,7 +48,15 @@ class admin_settings_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, log $log, currency $ppde_actions_currency, request $request, template $template, user $user)
+	public function __construct(
+		config $config,
+		language $language,
+		log $log,
+		currency $ppde_actions_currency,
+		request $request,
+		template $template,
+		user $user
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;

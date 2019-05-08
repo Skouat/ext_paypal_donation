@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\auth\auth;
 use phpbb\config\config;
@@ -18,6 +18,9 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\core;
+use skouat\ppde\controller\extension_manager;
+use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\controller\main_controller;
 
 /**
  * @property config   config             Config object
@@ -31,7 +34,7 @@ use skouat\ppde\actions\core;
  * @property string   u_action           Action URL
  * @property user     user               User object
  */
-class admin_overview_controller extends admin_main
+class overview_controller extends admin_main
 {
 	protected $adm_relative_path;
 	protected $auth;
@@ -47,25 +50,41 @@ class admin_overview_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param auth                          $auth                         Authentication object
-	 * @param config                        $config                       Config object
-	 * @param language                      $language                     Language user object
-	 * @param log                           $log                          The phpBB log system
-	 * @param core                          $ppde_actions                 PPDE actions object
-	 * @param main_controller               $ppde_controller_main         Main controller object
-	 * @param admin_transactions_controller $ppde_controller_transactions Admin transactions controller object
-	 * @param extension_manager             $ppde_ext_manager             Extension manager object
-	 * @param ipn_paypal                    $ppde_ipn_paypal              IPN PayPal object
-	 * @param request                       $request                      Request object
-	 * @param template                      $template                     Template object
-	 * @param user                          $user                         User object
-	 * @param string                        $adm_relative_path            phpBB admin relative path
-	 * @param string                        $phpbb_root_path              phpBB root path
-	 * @param string                        $php_ext                      phpEx
+	 * @param auth                    $auth                         Authentication object
+	 * @param config                  $config                       Config object
+	 * @param language                $language                     Language user object
+	 * @param log                     $log                          The phpBB log system
+	 * @param core                    $ppde_actions                 PPDE actions object
+	 * @param main_controller         $ppde_controller_main         Main controller object
+	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
+	 * @param extension_manager       $ppde_ext_manager             Extension manager object
+	 * @param ipn_paypal              $ppde_ipn_paypal              IPN PayPal object
+	 * @param request                 $request                      Request object
+	 * @param template                $template                     Template object
+	 * @param user                    $user                         User object
+	 * @param string                  $adm_relative_path            phpBB admin relative path
+	 * @param string                  $phpbb_root_path              phpBB root path
+	 * @param string                  $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, language $language, log $log, core $ppde_actions, main_controller $ppde_controller_main, admin_transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
+	public function __construct(
+		auth $auth,
+		config $config,
+		language $language,
+		log $log,
+		core $ppde_actions,
+		main_controller $ppde_controller_main,
+		transactions_controller $ppde_controller_transactions,
+		extension_manager $ppde_ext_manager,
+		ipn_paypal $ppde_ipn_paypal,
+		request $request,
+		template $template,
+		user $user,
+		$adm_relative_path,
+		$phpbb_root_path,
+		$php_ext
+	)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -105,7 +124,7 @@ class admin_overview_controller extends admin_main
 			$this->ppde_ipn_paypal->set_curl_info();
 			$this->ppde_ipn_paypal->set_remote_detected();
 			$this->ppde_ipn_paypal->check_tls();
-			$this->config->set('ppde_first_start', false);
+			$this->config->set('ppde_first_start', (string) false);
 		}
 
 		$this->do_action($action);
@@ -166,11 +185,10 @@ class admin_overview_controller extends admin_main
 			if (!confirm_box(true))
 			{
 				$this->display_confirm($action);
+				return;
 			}
-			else
-			{
-				$this->exec_action($action);
-			}
+
+			$this->exec_action($action);
 		}
 	}
 
