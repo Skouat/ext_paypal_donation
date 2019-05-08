@@ -52,33 +52,35 @@ class admin_transactions_controller extends admin_main
 	protected $phpbb_root_path;
 	protected $ppde_actions;
 	protected $ppde_actions_currency;
+	protected $ppde_entity;
 	protected $table_prefix;
 	protected $table_ppde_transactions;
 
 	/**
 	 * Constructor
 	 *
-	 * @param auth               $auth                       Authentication object
-	 * @param config             $config                     Config object
-	 * @param ContainerInterface $container                  Service container interface
-	 * @param language           $language                   Language user object
-	 * @param log                $log                        The phpBB log system
-	 * @param core               $ppde_actions               PPDE actions object
-	 * @param currency           $ppde_actions_currency      PPDE currency actions object
-	 * @param transactions       $ppde_operator_transactions Operator object
-	 * @param request            $request                    Request object
-	 * @param template           $template                   Template object
-	 * @param user               $user                       User object.
+	 * @param auth                             $auth                       Authentication object
+	 * @param config                           $config                     Config object
+	 * @param ContainerInterface               $container                  Service container interface
+	 * @param language                         $language                   Language user object
+	 * @param log                              $log                        The phpBB log system
+	 * @param core                             $ppde_actions               PPDE actions object
+	 * @param currency                         $ppde_actions_currency      PPDE currency actions object
+	 * @param \skouat\ppde\entity\transactions $ppde_entity_transactions   Entity object
+	 * @param transactions                     $ppde_operator_transactions Operator object
+	 * @param request                          $request                    Request object
+	 * @param template                         $template                   Template object
+	 * @param user                             $user                       User object.
 	 * @param user_loader        $user_loader                User loader object
-	 * @param string             $adm_relative_path          phpBB admin relative path
-	 * @param string             $phpbb_root_path            phpBB root path
-	 * @param string             $php_ext                    phpEx
-	 * @param string             $table_prefix               The table prefix
-	 * @param string             $table_ppde_transactions    Name of the table used to store data
+	 * @param string                           $adm_relative_path          phpBB admin relative path
+	 * @param string                           $phpbb_root_path            phpBB root path
+	 * @param string                           $php_ext                    phpEx
+	 * @param string                           $table_prefix               The table prefix
+	 * @param string                           $table_ppde_transactions    Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, transactions $ppde_operator_transactions, request $request, template $template, user $user, user_loader $user_loader, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, \skouat\ppde\entity\transactions $ppde_entity_transactions, transactions $ppde_operator_transactions, request $request, template $template, user $user, user_loader $user_loader, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -87,6 +89,7 @@ class admin_transactions_controller extends admin_main
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
 		$this->ppde_actions_currency = $ppde_actions_currency;
+		$this->ppde_entity = $ppde_entity_transactions;
 		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
@@ -229,10 +232,6 @@ class admin_transactions_controller extends admin_main
 	 */
 	private function do_action($action, $args)
 	{
-		// Initiate an entity
-		/** @type \skouat\ppde\entity\transactions $entity */
-		$entity = $this->get_container_entity();
-
 		switch ($action)
 		{
 			case 'view':
@@ -241,12 +240,12 @@ class admin_transactions_controller extends admin_main
 
 				// add field username to the table schema needed by entity->import()
 				$additional_table_schema = array(
-					'item_username'     => array('name' => 'username', 'type' => 'string'),
-					'item_user_colour'  => array('name' => 'user_colour', 'type' => 'string'),
+					'item_username'    => array('name' => 'username', 'type' => 'string'),
+					'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
 				);
 
 				// Grab transaction data
-				$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
+				$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
 				array_map(array($this, 'action_assign_template_vars'), $data_ary);
 
@@ -269,7 +268,7 @@ class admin_transactions_controller extends admin_main
 
 					if ($where_sql || $args['hidden_fields']['delall'])
 					{
-						$entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
+						$this->ppde_entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
 						$this->ppde_actions->set_ipn_test_properties(true);
 						$this->ppde_actions->update_overview_stats();
 						$this->ppde_actions->set_ipn_test_properties(false);
@@ -291,13 +290,13 @@ class admin_transactions_controller extends admin_main
 					$txn_approved = !empty($args['hidden_fields']['txn_errors_approved']) ? false : true;
 
 					// Update DB record
-					$entity->load($transaction_id);
-					$entity->set_txn_errors_approved($txn_approved);
-					$entity->save(false);
+					$this->ppde_entity->load($transaction_id);
+					$this->ppde_entity->set_txn_errors_approved($txn_approved);
+					$this->ppde_entity->save(false);
 
 					// Prepare transaction settings before doing actions
-					$this->ppde_actions->set_transaction_data($entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
-					$this->ppde_actions->set_ipn_test_properties($entity->get_test_ipn());
+					$this->ppde_actions->set_transaction_data($this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
+					$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
 					$this->ppde_actions->is_donor_is_member();
 
 					$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
@@ -375,16 +374,14 @@ class admin_transactions_controller extends admin_main
 				// Request Identifier of the transaction
 				$transaction_id = $this->request->variable('id', 0);
 
-				/** @type \skouat\ppde\entity\transactions $entity */
-				$entity = $this->get_container_entity();
-				$entity->load($transaction_id);
+				$this->entity->load($transaction_id);
 
-				if (!$entity->data_exists($entity->build_sql_data_exists()))
+				if (!$this->entity->data_exists($this->entity->build_sql_data_exists()))
 				{
 					trigger_error($this->language->lang('PPDE_DT_NO_TRANSACTION') . adm_back_link($this->u_action), E_USER_WARNING);
 				}
 
-				$log_action = $entity
+				$log_action = $this->entity
 					->set_user_id($user_id)
 					->add_edit_data();
 
@@ -510,7 +507,7 @@ class admin_transactions_controller extends admin_main
 		$this->last_page_offset = $offset;
 		$url_ary = array();
 
-		if ($this->get_container_entity()->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->ppde_entity->is_in_admin() && $this->phpbb_admin_path)
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
@@ -563,7 +560,7 @@ class admin_transactions_controller extends admin_main
 	}
 
 	/**
-	 * Prepare data array() before send it to $entity
+	 * Prepare data array() before send it to $this->entity
 	 *
 	 * @param array $transaction_data
 	 *

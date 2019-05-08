@@ -35,29 +35,32 @@ class admin_donation_pages_controller extends admin_main
 {
 	protected $phpbb_root_path;
 	protected $php_ext;
+	protected $ppde_entity;
 	protected $ppde_operator;
 	protected $lang_local_name;
 
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container                    Service container interface
-	 * @param language           $language                     Language user object
-	 * @param log                $log                          The phpBB log system
-	 * @param donation_pages     $ppde_operator_donation_pages Operator object
-	 * @param request            $request                      Request object
-	 * @param template           $template                     Template object
-	 * @param user               $user                         User object
-	 * @param string             $phpbb_root_path              phpBB root path
-	 * @param string             $php_ext                      phpEx
+	 * @param ContainerInterface                 $container                    Service container interface
+	 * @param language                           $language                     Language user object
+	 * @param log                                $log                          The phpBB log system
+	 * @param \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages   PPDE Entity object
+	 * @param donation_pages                     $ppde_operator_donation_pages Operator object
+	 * @param request                            $request                      Request object
+	 * @param template                           $template                     Template object
+	 * @param user                               $user                         User object
+	 * @param string                             $phpbb_root_path              phpBB root path
+	 * @param string                             $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, language $language, log $log, donation_pages $ppde_operator_donation_pages, request $request, template $template, user $user, $phpbb_root_path, $php_ext)
+	public function __construct(ContainerInterface $container, language $language, log $log, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, donation_pages $ppde_operator_donation_pages, request $request, template $template, user $user, $phpbb_root_path, $php_ext)
 	{
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_entity = $ppde_entity_donation_pages;
 		$this->ppde_operator = $ppde_operator_donation_pages;
 		$this->request = $request;
 		$this->template = $template;
@@ -82,17 +85,13 @@ class admin_donation_pages_controller extends admin_main
 		// Get list of available language packs
 		$langs = $this->ppde_operator->get_languages();
 
-		// Initiate an entity
-		/** @type \skouat\ppde\entity\donation_pages $entity */
-		$entity = $this->get_container_entity();
-
 		// Set output vars
 		foreach ($langs as $lang => $entry)
 		{
 			$this->assign_langs_template_vars($entry);
 
 			// Grab all the pages from the db
-			$data_ary = $entity->get_data($this->ppde_operator->build_sql_data($entry['id']));
+			$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($entry['id']));
 
 			foreach ($data_ary as $data)
 			{
@@ -146,10 +145,6 @@ class admin_donation_pages_controller extends admin_main
 		// Add form key
 		add_form_key('add_edit_donation_pages');
 
-		// Initiate a page donation entity
-		/** @type \skouat\ppde\entity\donation_pages $entity */
-		$entity = $this->get_container_entity();
-
 		// Collect the form data
 		$data = array(
 			'page_title'   => $this->request->variable('page_title', ''),
@@ -164,7 +159,7 @@ class admin_donation_pages_controller extends admin_main
 		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_donation_page_data($entity, $data);
+		$this->add_edit_donation_page_data($this->ppde_entity, $data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('add');
@@ -437,17 +432,15 @@ class admin_donation_pages_controller extends admin_main
 		// Add form key
 		add_form_key('add_edit_donation_pages');
 
-		// Initiate a page donation entity
-		/** @type \skouat\ppde\entity\donation_pages $entity */
-		$entity = $this->get_container_entity();
-		$entity->load($page_id);
+		// Load data
+		$this->ppde_entity->load($page_id);
 
 		// Collect the form data
 		$data = array(
 			'page_id'      => (int) $page_id,
-			'page_title'   => $this->request->variable('page_title', $entity->get_name(), false),
-			'page_lang_id' => $this->request->variable('page_lang_id', $entity->get_lang_id()),
-			'page_content' => $this->request->variable('page_content', $entity->get_message_for_edit(), true),
+			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name(), false),
+			'page_lang_id' => $this->request->variable('page_lang_id', $this->ppde_entity->get_lang_id()),
+			'page_content' => $this->request->variable('page_content', $this->ppde_entity->get_message_for_edit(), true),
 			'bbcode'       => !$this->request->variable('disable_bbcode', false),
 			'magic_url'    => !$this->request->variable('disable_magic_url', false),
 			'smilies'      => !$this->request->variable('disable_smilies', false),
@@ -457,7 +450,7 @@ class admin_donation_pages_controller extends admin_main
 		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_donation_page_data($entity, $data);
+		$this->add_edit_donation_page_data($this->ppde_entity, $data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('edit', $page_id);
@@ -473,18 +466,16 @@ class admin_donation_pages_controller extends admin_main
 	 */
 	public function delete($page_id)
 	{
-		// Initiate an entity and load data
-		/** @type \skouat\ppde\entity\donation_pages $entity */
-		$entity = $this->get_container_entity();
-		$entity->load($page_id);
+		// Load data
+		$this->ppde_entity->load($page_id);
 
 		// Before deletion, grab the local language name
-		$this->get_lang_local_name($this->ppde_operator->get_languages($entity->get_lang_id()));
+		$this->get_lang_local_name($this->ppde_operator->get_languages($this->ppde_entity->get_lang_id()));
 
-		$entity->delete($page_id);
+		$this->ppde_entity->delete($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($this->ppde_entity->get_name())), $this->lang_local_name));
 
 		// If AJAX was used, show user a result message
 		$message = $this->language->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);
