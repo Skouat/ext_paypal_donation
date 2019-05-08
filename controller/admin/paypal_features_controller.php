@@ -51,7 +51,16 @@ class paypal_features_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, log $log, main_controller $ppde_controller_main, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user)
+	public function __construct(
+		config $config,
+		language $language,
+		log $log,
+		main_controller $ppde_controller_main,
+		ipn_paypal $ppde_ipn_paypal,
+		request $request,
+		template $template,
+		user $user
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;

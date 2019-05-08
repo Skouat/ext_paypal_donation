@@ -59,7 +59,12 @@ class ipn_log
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, filesystem_interface $filesystem, path_helper $path_helper, main_controller $ppde_controller_main)
+	public function __construct(
+		config $config,
+		filesystem_interface $filesystem,
+		path_helper $path_helper,
+		main_controller $ppde_controller_main
+	)
 	{
 		$this->config = $config;
 		$this->filesystem = $filesystem;

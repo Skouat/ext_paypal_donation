@@ -29,7 +29,12 @@ class currency
 	 *
 	 * @access public
 	 */
-	public function __construct(\phpbb\cache\driver\driver_interface $cache, ContainerInterface $container, \phpbb\db\driver\driver_interface $db, $ppde_currency_table)
+	public function __construct(
+		\phpbb\cache\driver\driver_interface $cache,
+		ContainerInterface $container,
+		\phpbb\db\driver\driver_interface $db,
+		$ppde_currency_table
+	)
 	{
 		$this->cache = $cache;
 		$this->container = $container;

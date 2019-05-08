@@ -53,7 +53,17 @@ class currency_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, ContainerInterface $container, language $language, log $log, \skouat\ppde\entity\currency $ppde_entity_currency, currency $ppde_operator_currency, request $request, template $template, user $user)
+	public function __construct(
+		config $config,
+		ContainerInterface $container,
+		language $language,
+		log $log,
+		\skouat\ppde\entity\currency $ppde_entity_currency,
+		currency $ppde_operator_currency,
+		request $request,
+		template $template,
+		user $user
+	)
 	{
 		$this->config = $config;
 		$this->container = $container;

@@ -43,7 +43,15 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, language $language, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(
+		driver_interface $db,
+		language $language,
+		user $user,
+		$lang_key_prefix = '',
+		$lang_key_suffix = '',
+		$table_name = '',
+		$table_schema = array()
+	)
 	{
 		$this->db = $db;
 		$this->language = $language;
@@ -449,8 +457,8 @@ abstract class main
 	 * Any existing data on this item is over-written.
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
-	 * @param  array $data Data array, typically from the database
-	 * @param array  $additional_table_schema
+	 * @param array $data Data array, typically from the database
+	 * @param array $additional_table_schema
 	 *
 	 * @return array $this->data
 	 * @access public

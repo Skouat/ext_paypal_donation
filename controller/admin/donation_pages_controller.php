@@ -55,7 +55,18 @@ class donation_pages_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, language $language, log $log, \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages, donation_pages $ppde_operator_donation_pages, request $request, template $template, user $user, $phpbb_root_path, $php_ext)
+	public function __construct(
+		ContainerInterface $container,
+		language $language,
+		log $log,
+		\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages,
+		donation_pages $ppde_operator_donation_pages,
+		request $request,
+		template $template,
+		user $user,
+		$phpbb_root_path,
+		$php_ext
+	)
 	{
 		$this->container = $container;
 		$this->language = $language;

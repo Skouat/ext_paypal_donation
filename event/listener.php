@@ -44,7 +44,15 @@ class listener implements EventSubscriberInterface
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, helper $controller_helper, language $language, main_controller $ppde_controller_main, main_display_stats $ppde_controller_display_stats, template $template, $php_ext)
+	public function __construct(
+		config $config,
+		helper $controller_helper,
+		language $language,
+		main_controller $ppde_controller_main,
+		main_display_stats $ppde_controller_display_stats,
+		template $template,
+		$php_ext
+	)
 	{
 		$this->config = $config;
 		$this->controller_helper = $controller_helper;

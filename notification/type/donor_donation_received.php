@@ -16,7 +16,6 @@ use skouat\ppde\notification\donation_received;
  * PayPal Donation notifications class
  * This class handles notifications for Admin received donation
  */
-
 class donor_donation_received extends donation_received
 {
 	/**

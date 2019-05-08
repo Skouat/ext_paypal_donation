@@ -80,7 +80,26 @@ class transactions_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, ContainerInterface $container, language $language, log $log, core $ppde_actions, currency $ppde_actions_currency, \skouat\ppde\entity\transactions $ppde_entity_transactions, transactions $ppde_operator_transactions, request $request, template $template, user $user, user_loader $user_loader, $adm_relative_path, $phpbb_root_path, $php_ext, $table_prefix, $table_ppde_transactions)
+	public function __construct(
+		auth $auth,
+		config $config,
+		ContainerInterface $container,
+		language $language,
+		log $log,
+		core $ppde_actions,
+		currency $ppde_actions_currency,
+		\skouat\ppde\entity\transactions $ppde_entity_transactions,
+		transactions $ppde_operator_transactions,
+		request $request,
+		template $template,
+		user $user,
+		user_loader $user_loader,
+		$adm_relative_path,
+		$phpbb_root_path,
+		$php_ext,
+		$table_prefix,
+		$table_ppde_transactions
+	)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

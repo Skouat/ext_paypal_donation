@@ -32,7 +32,12 @@ class main_display_stats
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, currency $ppde_actions_currency, template $template)
+	public function __construct(
+		config $config,
+		language $language,
+		currency $ppde_actions_currency,
+		template $template
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;

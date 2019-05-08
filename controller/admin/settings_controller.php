@@ -48,7 +48,15 @@ class settings_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, log $log, currency $ppde_actions_currency, request $request, template $template, user $user)
+	public function __construct(
+		config $config,
+		language $language,
+		log $log,
+		currency $ppde_actions_currency,
+		request $request,
+		template $template,
+		user $user
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;

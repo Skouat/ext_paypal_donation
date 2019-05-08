@@ -215,7 +215,16 @@ class ipn_listener
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, core $ppde_actions, main_controller $ppde_controller_main, transactions_controller $ppde_controller_transactions_admin, ipn_log $ppde_ipn_log, ipn_paypal $ppde_ipn_paypal, request $request, dispatcher_interface $dispatcher)
+	public function __construct(
+		config $config,
+		language $language,
+		core $ppde_actions,
+		main_controller $ppde_controller_main,
+		transactions_controller $ppde_controller_transactions_admin,
+		ipn_log $ppde_ipn_log,
+		ipn_paypal $ppde_ipn_paypal,
+		request $request,
+		dispatcher_interface $dispatcher)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;

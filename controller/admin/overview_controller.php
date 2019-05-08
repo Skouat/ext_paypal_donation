@@ -68,7 +68,23 @@ class overview_controller extends admin_main
 	 *
 	 * @access public
 	 */
-	public function __construct(auth $auth, config $config, language $language, log $log, core $ppde_actions, main_controller $ppde_controller_main, transactions_controller $ppde_controller_transactions, extension_manager $ppde_ext_manager, ipn_paypal $ppde_ipn_paypal, request $request, template $template, user $user, $adm_relative_path, $phpbb_root_path, $php_ext)
+	public function __construct(
+		auth $auth,
+		config $config,
+		language $language,
+		log $log,
+		core $ppde_actions,
+		main_controller $ppde_controller_main,
+		transactions_controller $ppde_controller_transactions,
+		extension_manager $ppde_ext_manager,
+		ipn_paypal $ppde_ipn_paypal,
+		request $request,
+		template $template,
+		user $user,
+		$adm_relative_path,
+		$phpbb_root_path,
+		$php_ext
+	)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

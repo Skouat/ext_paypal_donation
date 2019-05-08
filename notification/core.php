@@ -11,6 +11,8 @@
 namespace skouat\ppde\notification;
 
 use phpbb\notification\manager;
+use skouat\ppde\actions\currency;
+use skouat\ppde\entity\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class core
@@ -29,7 +31,12 @@ class core
 	 * @param \skouat\ppde\entity\transactions $ppde_entity_transaction Transaction entity object
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, manager $notification, \skouat\ppde\actions\currency $ppde_actions_currency, \skouat\ppde\entity\transactions $ppde_entity_transaction)
+	public function __construct(
+		ContainerInterface $container,
+		manager $notification,
+		currency $ppde_actions_currency,
+		transactions $ppde_entity_transaction
+	)
 	{
 		$this->container = $container;
 		$this->notification = $notification;
