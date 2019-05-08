@@ -231,16 +231,15 @@ class ppde_module
 				{
 					// Delete a currency
 					$controller->delete($id);
+					break;
 				}
-				else
-				{
-					// Request confirmation from the user to delete the selected item
-					confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields(array(
-						'id'     => $id,
-						'mode'   => $mode,
-						'action' => $action,
-					)));
-				}
+
+				// Request confirmation from the user to delete the selected item
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields(array(
+					'id'     => $id,
+					'mode'   => $mode,
+					'action' => $action,
+				)));
 			break;
 		}
 

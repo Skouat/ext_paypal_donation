@@ -613,12 +613,11 @@ class ipn_listener
 			if (call_user_func_array(array($this->ppde_actions, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
 			{
 				$check[] = true;
+				continue;
 			}
-			else
-			{
-				$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
-				$check[] = false;
-			}
+
+			$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
+			$check[] = false;
 		}
 		unset($data_ary, $control_point, $params);
 

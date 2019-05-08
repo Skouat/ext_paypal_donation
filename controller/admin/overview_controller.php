@@ -185,11 +185,10 @@ class overview_controller extends admin_main
 			if (!confirm_box(true))
 			{
 				$this->display_confirm($action);
+				return;
 			}
-			else
-			{
-				$this->exec_action($action);
-			}
+
+			$this->exec_action($action);
 		}
 	}
 

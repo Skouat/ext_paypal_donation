@@ -272,9 +272,7 @@ class main_display_stats
 		{
 			return $css_data_ary[$index] . $css_reverse;
 		}
-		else
-		{
-			return $reverse ? 'red' : 'green';
-		}
+
+		return $reverse ? 'red' : 'green';
 	}
 }
