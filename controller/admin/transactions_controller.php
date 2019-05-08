@@ -71,7 +71,7 @@ class transactions_controller extends admin_main
 	 * @param request                          $request                    Request object
 	 * @param template                         $template                   Template object
 	 * @param user                             $user                       User object.
-	 * @param user_loader        $user_loader                User loader object
+	 * @param user_loader                      $user_loader                User loader object
 	 * @param string                           $adm_relative_path          phpBB admin relative path
 	 * @param string                           $phpbb_root_path            phpBB root path
 	 * @param string                           $php_ext                    phpEx
@@ -374,14 +374,14 @@ class transactions_controller extends admin_main
 				// Request Identifier of the transaction
 				$transaction_id = $this->request->variable('id', 0);
 
-				$this->entity->load($transaction_id);
+				$this->ppde_entity->load($transaction_id);
 
-				if (!$this->entity->data_exists($this->entity->build_sql_data_exists()))
+				if (!$this->ppde_entity->data_exists($this->ppde_entity->build_sql_data_exists()))
 				{
 					trigger_error($this->language->lang('PPDE_DT_NO_TRANSACTION') . adm_back_link($this->u_action), E_USER_WARNING);
 				}
 
-				$log_action = $this->entity
+				$log_action = $this->ppde_entity
 					->set_user_id($user_id)
 					->add_edit_data();
 
