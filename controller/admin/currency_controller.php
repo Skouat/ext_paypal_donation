@@ -217,7 +217,6 @@ class currency_controller extends admin_main
 		// Add form key
 		add_form_key('add_edit_currency');
 
-
 		$this->ppde_entity->set_page_url($this->u_action);
 		$this->ppde_entity->load($currency_id);
 
