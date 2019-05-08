@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use skouat\ppde\entity\main;
 

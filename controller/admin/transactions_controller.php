@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\auth\auth;
 use phpbb\config\config;
@@ -39,7 +39,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property user               user               User object.
  * @property user_loader        user_loader        User loader object
  */
-class admin_transactions_controller extends admin_main
+class transactions_controller extends admin_main
 {
 	public $ppde_operator;
 	protected $adm_relative_path;

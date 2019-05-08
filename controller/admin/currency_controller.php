@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\config\config;
 use phpbb\language\language;
@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string             u_action           Action URL
  * @property user               user               User object
  */
-class admin_currency_controller extends admin_main
+class currency_controller extends admin_main
 {
 	protected $ppde_entity;
 	protected $ppde_operator;

@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\language\language;
 use phpbb\log\log;
@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property template           template          Template object
  * @property user               user              User object.
  */
-class admin_donation_pages_controller extends admin_main
+class donation_pages_controller extends admin_main
 {
 	protected $phpbb_root_path;
 	protected $php_ext;

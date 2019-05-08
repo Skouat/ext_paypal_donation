@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
 
 use phpbb\config\config;
 use phpbb\language\language;
@@ -16,6 +16,8 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\controller\main_controller;
 
 /**
  * @property config   config             Config object
@@ -30,7 +32,7 @@ use phpbb\user;
  * @property string   u_action           Action URL
  * @property user     user               User object
  */
-class admin_paypal_features_controller extends admin_main
+class paypal_features_controller extends admin_main
 {
 	protected $ppde_controller_main;
 	protected $ppde_ipn_paypal;
