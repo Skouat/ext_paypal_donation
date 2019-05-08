@@ -162,6 +162,7 @@ services:
             - '@request'
             - '@template'
             - '@user'
+            - '@user_loader'
             - '%core.adm_relative_path%'
             - '%core.root_path%'
             - '%core.php_ext%'
