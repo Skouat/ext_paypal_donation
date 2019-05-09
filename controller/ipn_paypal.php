@@ -19,6 +19,17 @@ use phpbb\request\request;
 
 class ipn_paypal
 {
+	/** Production and Sandbox Postback URL
+	 *
+	 * @var array
+	 */
+	private static $remote_uri = array(
+		array('hostname' => 'www.paypal.com', 'uri' => 'https://www.paypal.com/cgi-bin/webscr', 'type' => 'live'),
+		array('hostname' => 'www.sandbox.paypal.com', 'uri' => 'https://www.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
+		array('hostname' => 'ipnpb.paypal.com', 'uri' => 'https://ipnpb.paypal.com/cgi-bin/webscr', 'type' => 'live'),
+		array('hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
+	);
+
 	protected $config;
 	protected $language;
 	protected $ppde_ext_manager;
@@ -79,6 +90,14 @@ class ipn_paypal
 		$this->ppde_ext_manager = $ppde_ext_manager;
 		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function get_remote_uri()
+	{
+		return self::$remote_uri;
 	}
 
 	/**

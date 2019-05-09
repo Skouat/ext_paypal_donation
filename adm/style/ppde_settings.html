@@ -34,7 +34,7 @@
 			<dt><label for="ppde_default_currency">{{ lang('PPDE_DEFAULT_CURRENCY') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_CURRENCY_EXPLAIN') }}</span></dt>
 			<dd><select name="ppde_default_currency" id="ppde_default_currency">
 				{% for options in loops.options %}
-				<option value="{{ options.CURRENCY_ID }}"{% if options.S_CURRENCY_DEFAULT %} selected="selected"{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }} &bull; {{ options.CURRENCY_NAME }}</option>
+				<option value="{{ options.CURRENCY_ID }}"{% if options.S_CURRENCY_DEFAULT %} selected{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }} &bull; {{ options.CURRENCY_NAME }}</option>
 				{% endfor %}
 			</select>
 			</dd>
@@ -53,7 +53,18 @@
 			<dd><input type="text" class="text" id="ppde_dropbox_value" name="ppde_dropbox_value" size="40" maxlength="50" value="{{ PPDE_DROPBOX_VALUE }}"></dd>
 		</dl>
 	</fieldset>
-
+	<fieldset>
+		<legend>{{ lang('PPDE_LEGEND_ADVANCED_SETTINGS') }}</legend>
+		<dl>
+			<dt><label for="ppde_default_remote">{{ lang('PPDE_DEFAULT_REMOTE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_REMOTE_EXPLAIN') }}</span></dt>
+			<dd><select name="ppde_default_remote" id="ppde_default_remote">
+				{% for remote_options in loops.remote_options %}
+				<option value="{{ remote_options.REMOTE_ID }}"{% if remote_options.S_DEFAULT %} selected{% endif %}>{{ remote_options.REMOTE_NAME }}</option>
+				{% endfor %}
+			</select>
+			</dd>
+		</dl>
+	</fieldset>
 	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_STATS_SETTINGS') }}</legend>
 		<dl>

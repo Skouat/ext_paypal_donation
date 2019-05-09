@@ -57,6 +57,11 @@ $lang = array_merge($lang, array(
 	'PPDE_HEADER_LINK'                => 'Display the “Donations” link in the header',
 	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'General Settings',
 
+	// Advanced settings
+	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Advanced settings',
+	'PPDE_DEFAULT_REMOTE'             => 'PayPal URL',
+	'PPDE_DEFAULT_REMOTE_EXPLAIN'     => 'Do not change this setting, unless this extension encounters errors to contact the remote host.',
+
 	// Stats Donation settings
 	'PPDE_AMOUNT'                     => 'Amount',
 	'PPDE_DECIMAL_EXPLAIN'            => 'Use “.” as decimal symbol.', // Note for translator: do not translate the decimal symbol
