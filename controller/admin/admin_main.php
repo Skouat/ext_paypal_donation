@@ -10,6 +10,7 @@
 
 namespace skouat\ppde\controller\admin;
 
+use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\entity\main;
 
 abstract class admin_main
@@ -338,5 +339,52 @@ abstract class admin_main
 	protected function depend_on($config_name)
 	{
 		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
+	}
+
+	/**
+	 * Build pull down menu options of available currency
+	 *
+	 * @param mixed  $default ID of the selected value.
+	 * @param string $type    Can be 'live' or 'sandbox'
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function build_remote_uri_select_menu($default, $type)
+	{
+		$type = $this->force_type($type);
+
+		// Grab the list of remote uri for selected type
+		$remote_list = ipn_paypal::get_remote_uri();
+
+		// Process each menu item for pull-down
+		foreach ($remote_list as $id => $remote)
+		{
+			if ($remote['type'] !== $type)
+			{
+				continue;
+			}
+
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('remote_options', array(
+				'REMOTE_ID'   => $id,
+				'REMOTE_NAME' => $remote['hostname'],
+				'S_DEFAULT'   => $default == $id,
+			));
+		}
+		unset ($remote_list, $remote);
+	}
+
+	/**
+	 * Enforce the type of remote provided
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function force_type($type)
+	{
+		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
 }

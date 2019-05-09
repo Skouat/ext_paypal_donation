@@ -104,6 +104,7 @@ class paypal_features_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
+		$this->build_remote_uri_select_menu($this->config['ppde_sandbox_remote'], 'sandbox');
 		$this->template->assign_vars(array(
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
@@ -143,6 +144,7 @@ class paypal_features_controller extends admin_main
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
+		$this->config->set('ppde_sandbox_remote', $this->request->variable('ppde_sandbox_remote', 1));
 
 		// Set misc settings
 		$this->ppde_ipn_paypal->set_curl_info();

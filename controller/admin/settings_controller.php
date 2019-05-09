@@ -92,6 +92,7 @@ class settings_controller extends admin_main
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
+		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
 		$this->template->assign_vars(array(
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
@@ -127,6 +128,9 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
+
+		// Set options for Advanced settings
+		$this->config->set('ppde_default_remote', $this->request->variable('ppde_default_remote', 0));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
