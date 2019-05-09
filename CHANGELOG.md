@@ -5,6 +5,7 @@
   - Change: Make donor name a link to the profile when viewing a transaction (#61) (thanks kasimi)
   - Change: Use built-in phpbb_email_hash() function (#59) (thanks kasimi)
   - Fix: All transactions log are cleared when "Delete marked" is used
+  - Fix: Allow modification of PayPal remote hosts
   - Fix: Template system returns error when multiple styles are enabled
   - Fix: Use square brackets for array access (#62) (thanks kasimi)
   - Fix: Use singular form of Donor (#60) (thanks kasimi)
