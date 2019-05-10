@@ -15,17 +15,14 @@ services:
         class: skouat\ppde\controller\ipn_listener
         arguments:
             - '@config'
-            - '@service_container'
             - '@language'
-            - '@notification_manager'
-            - '@path_helper'
+            - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
             - '@skouat.ppde.ipn_paypal'
             - '@request'
             - '@dispatcher'
-            - '%core.php_ext%'
 
     skouat.ppde.ipn_log:
         class: skouat\ppde\controller\ipn_log
@@ -52,8 +49,7 @@ services:
             - '@service_container'
             - '@controller.helper'
             - '@language'
-            - '@skouat.ppde.entity.currency'
-            - '@skouat.ppde.operator.currency'
+            - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
             - '@user'
@@ -65,7 +61,7 @@ services:
         arguments:
             - '@config'
             - '@language'
-            - '@skouat.ppde.controller'
+            - '@skouat.ppde.actions.currency'
             - '@template'
 
     skouat.ppde.controller.main.donate:
@@ -86,23 +82,25 @@ services:
             - [set_path_helper, ['@path_helper']]
 
     skouat.ppde.controller.admin.currency:
-        class: skouat\ppde\controller\admin_currency_controller
+        class: skouat\ppde\controller\admin\currency_controller
         arguments:
             - '@config'
             - '@service_container'
             - '@language'
             - '@log'
+            - '@skouat.ppde.entity.currency'
             - '@skouat.ppde.operator.currency'
             - '@request'
             - '@template'
             - '@user'
 
     skouat.ppde.controller.admin.donation_pages:
-        class: skouat\ppde\controller\admin_donation_pages_controller
+        class: skouat\ppde\controller\admin\donation_pages_controller
         arguments:
             - '@service_container'
             - '@language'
             - '@log'
+            - '@skouat.ppde.entity.donation_pages'
             - '@skouat.ppde.operator.donation_pages'
             - '@request'
             - '@template'
@@ -111,12 +109,13 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.controller.admin.overview:
-        class: skouat\ppde\controller\admin_overview_controller
+        class: skouat\ppde\controller\admin\overview_controller
         arguments:
             - '@auth'
             - '@config'
             - '@language'
             - '@log'
+            - '@skouat.ppde.core_actions'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'
@@ -129,18 +128,18 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.controller.admin.settings:
-        class: skouat\ppde\controller\admin_settings_controller
+        class: skouat\ppde\controller\admin\settings_controller
         arguments:
             - '@config'
             - '@language'
             - '@log'
-            - '@skouat.ppde.controller'
+            - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
             - '@user'
 
     skouat.ppde.controller.admin.paypal_features:
-        class: skouat\ppde\controller\admin_paypal_features_controller
+        class: skouat\ppde\controller\admin\paypal_features_controller
         arguments:
             - '@config'
             - '@language'
@@ -152,17 +151,21 @@ services:
             - '@user'
 
     skouat.ppde.controller.admin.transactions:
-        class: skouat\ppde\controller\admin_transactions_controller
+        class: skouat\ppde\controller\admin\transactions_controller
         arguments:
             - '@auth'
             - '@config'
             - '@service_container'
             - '@language'
             - '@log'
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.currency'
+            - '@skouat.ppde.entity.transactions'
             - '@skouat.ppde.operator.transactions'
             - '@request'
             - '@template'
             - '@user'
+            - '@user_loader'
             - '%core.adm_relative_path%'
             - '%core.root_path%'
             - '%core.php_ext%'

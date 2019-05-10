@@ -42,6 +42,15 @@
 				<dt><label for="ppde_sandbox_address">{{ lang('PPDE_SANDBOX_ADDRESS') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ADDRESS_EXPLAIN') }}</span></dt>
 				<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="127" value="{{ PPDE_SANDBOX_ADDRESS }}"></dd>
 			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_remote">{{ lang('PPDE_SANDBOX_REMOTE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_REMOTE_EXPLAIN') }}</span></dt>
+				<dd><select name="ppde_sandbox_remote" id="ppde_sandbox_remote">
+					{% for remote_options in loops.remote_options %}
+					<option value="{{ remote_options.REMOTE_ID }}"{% if remote_options.S_DEFAULT %} selected{% endif %}>{{ remote_options.REMOTE_NAME }}</option>
+					{% endfor %}
+				</select>
+				</dd>
+			</dl>
 		</fieldset>
 		<fieldset class="ppde_toggle"{% if not S_PPDE_IPN_ENABLE %} style="display: none;"{% endif %}>
 			<legend>{{ lang('PPDE_LEGEND_IPN_AUTOGROUP') }}</legend>
@@ -88,5 +97,5 @@
 		{{ S_FORM_TOKEN }}
 	</fieldset>
 </form>
-{% INCLUDEJS '@skouat_ppde/ppde_adm.js' %}
+{% INCLUDEJS '@skouat_ppde/js/paypal_features.js' %}
 {% INCLUDE 'overall_footer.html' %}

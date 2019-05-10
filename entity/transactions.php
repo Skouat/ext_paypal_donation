@@ -85,37 +85,38 @@ class transactions extends main
 			'TRANSACTION',
 			$table_name,
 			array(
-				'item_id'                => array('name' => 'transaction_id', 'type' => 'integer'),
-				'item_business'          => array('name' => 'business', 'type' => 'string'),
-				'item_confirmed'         => array('name' => 'confirmed', 'type' => 'boolean'),
-				'item_custom'            => array('name' => 'custom', 'type' => 'string'),
-				'item_exchange_rate'     => array('name' => 'exchange_rate', 'type' => 'string'),
-				'item_first_name'        => array('name' => 'first_name', 'type' => 'string'),
-				'item_item_name'         => array('name' => 'item_name', 'type' => 'string'),
-				'item_item_number'       => array('name' => 'item_number', 'type' => 'string'),
-				'item_last_name'         => array('name' => 'last_name', 'type' => 'string'),
-				'item_mc_currency'       => array('name' => 'mc_currency', 'type' => 'string'),
-				'item_mc_fee'            => array('name' => 'mc_fee', 'type' => 'float'),
-				'item_mc_gross'          => array('name' => 'mc_gross', 'type' => 'float'),
-				'item_memo'              => array('name' => 'memo', 'type' => 'string'),
-				'item_net_amount'        => array('name' => 'net_amount', 'type' => 'float'),
-				'item_parent_txn_id'     => array('name' => 'parent_txn_id', 'type' => 'string'),
-				'item_payer_email'       => array('name' => 'payer_email', 'type' => 'string'),
-				'item_payer_id'          => array('name' => 'payer_id', 'type' => 'string'),
-				'item_payer_status'      => array('name' => 'payer_status', 'type' => 'string'),
-				'item_payment_date'      => array('name' => 'payment_date', 'type' => 'integer'),
-				'item_payment_status'    => array('name' => 'payment_status', 'type' => 'string'),
-				'item_payment_type'      => array('name' => 'payment_type', 'type' => 'string'),
-				'item_receiver_email'    => array('name' => 'receiver_email', 'type' => 'string'),
-				'item_receiver_id'       => array('name' => 'receiver_id', 'type' => 'string'),
-				'item_residence_country' => array('name' => 'residence_country', 'type' => 'string'),
-				'item_settle_amount'     => array('name' => 'settle_amount', 'type' => 'float'),
-				'item_settle_currency'   => array('name' => 'settle_currency', 'type' => 'string'),
-				'item_test_ipn'          => array('name' => 'test_ipn', 'type' => 'boolean'),
-				'item_txn_errors'        => array('name' => 'txn_errors', 'type' => 'string'),
-				'item_txn_id'            => array('name' => 'txn_id', 'type' => 'string'),
-				'item_txn_type'          => array('name' => 'txn_type', 'type' => 'string'),
-				'item_user_id'           => array('name' => 'user_id', 'type' => 'integer'),
+				'item_id'                  => array('name' => 'transaction_id', 'type' => 'integer'),
+				'item_business'            => array('name' => 'business', 'type' => 'string'),
+				'item_confirmed'           => array('name' => 'confirmed', 'type' => 'boolean'),
+				'item_custom'              => array('name' => 'custom', 'type' => 'string'),
+				'item_exchange_rate'       => array('name' => 'exchange_rate', 'type' => 'string'),
+				'item_first_name'          => array('name' => 'first_name', 'type' => 'string'),
+				'item_item_name'           => array('name' => 'item_name', 'type' => 'string'),
+				'item_item_number'         => array('name' => 'item_number', 'type' => 'string'),
+				'item_last_name'           => array('name' => 'last_name', 'type' => 'string'),
+				'item_mc_currency'         => array('name' => 'mc_currency', 'type' => 'string'),
+				'item_mc_fee'              => array('name' => 'mc_fee', 'type' => 'float'),
+				'item_mc_gross'            => array('name' => 'mc_gross', 'type' => 'float'),
+				'item_memo'                => array('name' => 'memo', 'type' => 'string'),
+				'item_net_amount'          => array('name' => 'net_amount', 'type' => 'float'),
+				'item_parent_txn_id'       => array('name' => 'parent_txn_id', 'type' => 'string'),
+				'item_payer_email'         => array('name' => 'payer_email', 'type' => 'string'),
+				'item_payer_id'            => array('name' => 'payer_id', 'type' => 'string'),
+				'item_payer_status'        => array('name' => 'payer_status', 'type' => 'string'),
+				'item_payment_date'        => array('name' => 'payment_date', 'type' => 'integer'),
+				'item_payment_status'      => array('name' => 'payment_status', 'type' => 'string'),
+				'item_payment_type'        => array('name' => 'payment_type', 'type' => 'string'),
+				'item_receiver_email'      => array('name' => 'receiver_email', 'type' => 'string'),
+				'item_receiver_id'         => array('name' => 'receiver_id', 'type' => 'string'),
+				'item_residence_country'   => array('name' => 'residence_country', 'type' => 'string'),
+				'item_settle_amount'       => array('name' => 'settle_amount', 'type' => 'float'),
+				'item_settle_currency'     => array('name' => 'settle_currency', 'type' => 'string'),
+				'item_test_ipn'            => array('name' => 'test_ipn', 'type' => 'boolean'),
+				'item_txn_errors'          => array('name' => 'txn_errors', 'type' => 'string'),
+				'item_txn_errors_approved' => array('name' => 'txn_errors_approved', 'type' => 'string'),
+				'item_txn_id'              => array('name' => 'txn_id', 'type' => 'string'),
+				'item_txn_type'            => array('name' => 'txn_type', 'type' => 'string'),
+				'item_user_id'             => array('name' => 'user_id', 'type' => 'integer'),
 			)
 		);
 	}
@@ -224,6 +225,17 @@ class transactions extends main
 	public function get_txn_errors()
 	{
 		return (isset($this->data['txn_errors'])) ? (string) $this->data['txn_errors'] : '';
+	}
+
+	/**
+	 * Get PayPal transaction errors approval status
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function get_txn_errors_approved()
+	{
+		return (isset($this->data['txn_errors_approved'])) ? (bool) $this->data['txn_errors_approved'] : '';
 	}
 
 	/**
@@ -629,6 +641,21 @@ class transactions extends main
 	public function set_txn_errors($txn_errors)
 	{
 		$this->data['txn_errors'] = (string) $txn_errors;
+
+		return $this;
+	}
+
+	/**
+	 * Set PayPal transaction errors approval status
+	 *
+	 * @param bool $txn_errors_approved
+	 *
+	 * @return transactions $this object for chaining calls; load()->set()->save()
+	 * @access public
+	 */
+	public function set_txn_errors_approved($txn_errors_approved)
+	{
+		$this->data['txn_errors_approved'] = (bool) $txn_errors_approved;
 
 		return $this;
 	}

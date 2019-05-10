@@ -13,29 +13,35 @@ namespace skouat\ppde\controller;
 use phpbb\config\config;
 use phpbb\language\language;
 use phpbb\template\template;
+use skouat\ppde\actions\currency;
 
 class main_display_stats
 {
 	protected $config;
 	protected $language;
-	protected $ppde_controller_main;
+	protected $ppde_actions_currency;
 	protected $template;
 
 	/**
 	 * Constructor
 	 *
-	 * @param config                   $config               Config object
-	 * @param language                 $language             Language user object
-	 * @param main_controller          $ppde_controller_main PPDE main controller object
-	 * @param \phpbb\template\template $template             Template object
+	 * @param config   $config                Config object
+	 * @param language $language              Language user object
+	 * @param currency $ppde_actions_currency Currency actions object
+	 * @param template $template              Template object
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, main_controller $ppde_controller_main, template $template)
+	public function __construct(
+		config $config,
+		language $language,
+		currency $ppde_actions_currency,
+		template $template
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;
-		$this->ppde_controller_main = $ppde_controller_main;
+		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->template = $template;
 	}
 
@@ -50,7 +56,7 @@ class main_display_stats
 		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
 		{
 			// Get data from the database
-			$default_currency_data = $this->ppde_controller_main->get_default_currency_data($this->config['ppde_default_currency']);
+			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
 			$this->template->assign_vars(array(
 				'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
@@ -88,7 +94,7 @@ class main_display_stats
 		}
 		else
 		{
-			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_goal'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_goal;
@@ -111,7 +117,7 @@ class main_display_stats
 		}
 		else
 		{
-			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_raised;
@@ -134,11 +140,11 @@ class main_display_stats
 		}
 		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
 		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left), $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left), $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
 		}
 		else
 		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_controller_main->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left));
+			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left));
 		}
 
 		return $l_ppde_used;
@@ -235,37 +241,38 @@ class main_display_stats
 	private function ppde_css_classname($value, $reverse = false)
 	{
 		$css_reverse = '';
+		// Array of CSS class name
+		$css_data_ary = array(
+			10  => 'ten',
+			20  => 'twenty',
+			30  => 'thirty',
+			40  => 'forty',
+			50  => 'fifty',
+			60  => 'sixty',
+			70  => 'seventy',
+			80  => 'eighty',
+			90  => 'ninety',
+			100 => 'hundred',
+		);
 
+		// Determine the index based on the value rounded up to the next highest
+		$index = ceil($value / 10) * 10;
+
+		// Reverse the CSS color
 		if ($reverse && $value < 100)
 		{
+			// Determine the index based on the value rounded to the next lowest integer.
+			$index = floor($value / 10) * 10;
+
 			$value = 100 - $value;
 			$css_reverse = '-reverse';
 		}
 
-		switch ($value)
+		if (isset($css_data_ary[$index]) && $value < 100)
 		{
-			case ($value <= 10):
-				return 'ten' . $css_reverse;
-			case ($value <= 20):
-				return 'twenty' . $css_reverse;
-			case ($value <= 30):
-				return 'thirty' . $css_reverse;
-			case ($value <= 40):
-				return 'forty' . $css_reverse;
-			case ($value <= 50):
-				return 'fifty' . $css_reverse;
-			case ($value <= 60):
-				return 'sixty' . $css_reverse;
-			case ($value <= 70):
-				return 'seventy' . $css_reverse;
-			case ($value <= 80):
-				return 'eighty' . $css_reverse;
-			case ($value <= 90):
-				return 'ninety' . $css_reverse;
-			case ($value < 100):
-				return 'hundred' . $css_reverse;
-			default:
-				return $reverse ? 'red' : 'green';
+			return $css_data_ary[$index] . $css_reverse;
 		}
+
+		return $reverse ? 'red' : 'green';
 	}
 }

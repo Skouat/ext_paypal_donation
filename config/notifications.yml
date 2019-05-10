@@ -1,4 +1,22 @@
 services:
+    skouat.ppde.notification.core:
+        class: skouat\ppde\notification\core
+        arguments:
+            - '@service_container'
+            - '@notification_manager'
+            - '@skouat.ppde.actions.currency'
+            - '@skouat.ppde.entity.transactions'
+
+    skouat.ppde.notification.type.admin_donation_errors:
+        class: skouat\ppde\notification\type\admin_donation_errors
+        shared: false # service MUST not be shared for this to work!
+        parent: notification.type.base
+        calls:
+            - [set_user_loader, ['@user_loader']]
+            - [set_config, ['@config']]
+        tags:
+            - { name: notification.type }
+
     skouat.ppde.notification.type.admin_donation_received:
         class: skouat\ppde\notification\type\admin_donation_received
         shared: false # service MUST not be shared for this to work!

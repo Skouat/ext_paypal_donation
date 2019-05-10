@@ -43,7 +43,15 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, language $language, user $user, $lang_key_prefix = '', $lang_key_suffix = '', $table_name = '', $table_schema = array())
+	public function __construct(
+		driver_interface $db,
+		language $language,
+		user $user,
+		$lang_key_prefix = '',
+		$lang_key_suffix = '',
+		$table_name = '',
+		$table_schema = array()
+	)
 	{
 		$this->db = $db;
 		$this->language = $language;
@@ -52,6 +60,52 @@ abstract class main
 		$this->lang_key_suffix = $lang_key_suffix;
 		$this->table_name = $table_name;
 		$this->table_schema = $table_schema;
+	}
+
+	/**
+	 * Set data in the $entity object.
+	 * Use call_user_func_array() to call $entity function
+	 *
+	 * @param array $data_ary
+	 *
+	 * @access public
+	 */
+	public function set_entity_data($data_ary)
+	{
+		foreach ($data_ary as $entity_function => $data)
+		{
+			// Calling the set_$entity_function on the entity and passing it $currency_data
+			call_user_func_array(array($this, 'set_' . $entity_function), array($data));
+		}
+		unset($data_ary, $entity_function, $data);
+	}
+
+	/**
+	 * Parse data to the entity
+	 *
+	 * @param string $run_before_insert Name of the function to call before SQL INSERT
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function add_edit_data($run_before_insert = '')
+	{
+		if ($this->get_id())
+		{
+			// Save the edited item entity to the database
+			$this->save($this->check_required_field());
+			return 'UPDATED';
+		}
+
+		// Insert the data to the database
+		$this->insert($run_before_insert);
+
+		// Get the newly inserted identifier
+		$id = $this->get_id();
+
+		// Reload the data to return a fresh entity
+		$this->load($id);
+		return 'ADDED';
 	}
 
 	/**
@@ -141,7 +195,7 @@ abstract class main
 	 *
 	 * @param bool $required_fields
 	 *
-	 * @return \skouat\ppde\entity\main $this object for chaining calls; load()->set()->save()
+	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
 	public function save($required_fields)
@@ -399,8 +453,8 @@ abstract class main
 	 * Any existing data on this item is over-written.
 	 * All data is validated and an exception is thrown if any data is invalid.
 	 *
-	 * @param  array $data Data array, typically from the database
-	 * @param array  $additional_table_schema
+	 * @param array $data Data array, typically from the database
+	 * @param array $additional_table_schema
 	 *
 	 * @return array $this->data
 	 * @access public

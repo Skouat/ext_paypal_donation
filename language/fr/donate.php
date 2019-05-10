@@ -89,7 +89,7 @@ $lang = array_merge($lang, array(
 	// Error
 	'CURL_ERROR'                => 'Erreur cURL : %s',
 	'INVALID_TXN'               => 'Transaction non valide :',
-	'INVALID_TXN_ACCOUNT_ID'    => 'Les ID marchant ne correspondent pas.',
+	'INVALID_TXN_ACCOUNT_ID'    => 'Les ID marchand ne correspondent pas.',
 	'INVALID_TXN_ASCII'         => 'Caractères non ASCII détectés dans « %s ».',
 	'INVALID_TXN_CONTENT'       => 'Contenu inattendu dans « %s ».',
 	'INVALID_TXN_EMPTY'         => 'La variable « %s » est vide.',
@@ -103,6 +103,7 @@ $lang = array_merge($lang, array(
 
 $lang = array_merge($lang, array(
 	// Notification
+	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => 'Le don effectué par %1$s requiert votre attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ));
