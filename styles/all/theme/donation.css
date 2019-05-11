@@ -41,37 +41,11 @@
 	animation: paypal_loader 0.7s infinite linear;
 }
 
-@-webkit-keyframes paypal_loader {
-	from {
-		-webkit-transform: rotate(0deg);
-	}
-	to {
-		-webkit-transform: rotate(359deg);
-	}
-}
-
-@-moz-keyframes paypal_loader {
-	from {
-		-moz-transform: rotate(0deg);
-	}
-	to {
-		-moz-transform: rotate(359deg);
-	}
-}
-
-@-o-keyframes paypal_loader {
-	from {
-		-o-transform: rotate(0deg);
-	}
-	to {
-		-o-transform: rotate(359deg);
-	}
-}
-
 @keyframes paypal_loader {
 	from {
 		transform: rotate(0deg);
 	}
+
 	to {
 		transform: rotate(359deg);
 	}
@@ -87,7 +61,7 @@
 }
 
 .progress-value {
-	font-size: 1.2em;
+	font-size: 12px;
 	font-weight: bold;
 	line-height: 26px;
 	text-align: center;
@@ -116,25 +90,15 @@
 .prog-color {
 	border-radius: 13px;
 	box-shadow:
-			inset 0 10px 10px rgba(255, 255, 255, 0.3),
-			inset 0 -10px 10px rgba(0, 0, 0, 0.5);
+		inset 0 10px 10px rgba(255, 255, 255, 0.3),
+		inset 0 -10px 10px rgba(0, 0, 0, 0.5);
 	position: relative;
 	overflow: hidden;
 	height: 26px;
 }
 
 .prog-color:before {
-	background-image:
-		linear-gradient(
-			-45deg,
-			rgba(255, 255, 255, 0.2) 25%,
-			transparent 25%,
-			transparent 50%,
-			rgba(255, 255, 255, 0.2) 50%,
-			rgba(255, 255, 255, 0.2) 75%,
-			transparent 75%,
-			transparent
-		);
+	background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
 	background-size: 26px 26px;
 	position: absolute;
 	z-index: 1;
@@ -335,13 +299,13 @@
 }
 
 /* Text donation stats */
-p.donation_stats {
+.donation_stats {
 	text-align: center;
 	margin-top: 10px;
 }
 
 /* form displaying */
-div.donate_value {
+.donate_value {
 	text-align: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
