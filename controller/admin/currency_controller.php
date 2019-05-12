@@ -16,6 +16,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\locale_icu;
 use skouat\ppde\operators\currency;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,6 +37,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class currency_controller extends admin_main
 {
 	protected $ppde_entity;
+	protected $ppde_locale;
 	protected $ppde_operator;
 
 	/**
@@ -45,6 +47,7 @@ class currency_controller extends admin_main
 	 * @param ContainerInterface           $container
 	 * @param language                     $language
 	 * @param log                          $log
+	 * @param locale_icu                   $ppde_action_locale     PPDE Locale object
 	 * @param \skouat\ppde\entity\currency $ppde_entity_currency   PPDE Entity object
 	 * @param currency                     $ppde_operator_currency PPDE Operator object
 	 * @param request                      $request
@@ -58,6 +61,7 @@ class currency_controller extends admin_main
 		ContainerInterface $container,
 		language $language,
 		log $log,
+		locale_icu $ppde_action_locale,
 		\skouat\ppde\entity\currency $ppde_entity_currency,
 		currency $ppde_operator_currency,
 		request $request,
@@ -69,6 +73,7 @@ class currency_controller extends admin_main
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_locale = $ppde_action_locale;
 		$this->ppde_entity = $ppde_entity_currency;
 		$this->ppde_operator = $ppde_operator_currency;
 		$this->request = $request;
@@ -175,7 +180,9 @@ class currency_controller extends admin_main
 			'CURRENCY_POSITION' => $entity->get_currency_position(),
 			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
+			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
+			'S_PPDE_LOCALE_AVAILABLE'  => $this->ppde_locale->icu_requirements(),
+			'S_PPDE_LOCALE_CONFIGURED' => $this->ppde_locale->is_locale_configured(),
 		));
 	}
 

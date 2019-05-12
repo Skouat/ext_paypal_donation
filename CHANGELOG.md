@@ -1,4 +1,7 @@
 # Changelog
+## 2.2.0 - 2019-05-12
+  - Add: Implement support money format, based on PHP Intl extension.
+
 ## 2.1.2 - 2019-11-19
   - Change: Temporarily disable TLS check because PayPal TLS website is down  
   - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks Dark❶)

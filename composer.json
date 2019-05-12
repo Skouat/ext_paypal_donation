@@ -40,6 +40,9 @@
         "ext-curl": "*",
         "composer/installers": "~1.0"
     },
+    "suggest": {
+        "ext-intl": "Needed to support Currencies number format"
+    },
     "extra": {
         "display-name": "PayPal Donation Extension",
         "soft-require": {

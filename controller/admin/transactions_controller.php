@@ -731,15 +731,17 @@ class transactions_controller extends admin_main
 			'txn_errors_approved' => $data['txn_errors_approved'],
 		));
 
+		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
+		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+
 		$this->template->assign_vars(array(
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
 			'ITEM_NAME'      => $data['item_name'],
 			'ITEM_NUMBER'    => $data['item_number'],
-			'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
-			'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-			'MC_FEE'         => $data['mc_fee'] . ' ' . $data['mc_currency'],
-			'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
+			'MC_GROSS'       => $this->ppde_actions_currency->format_currency($data['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_FEE'         => $this->ppde_actions_currency->format_currency($data['mc_fee'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_NET'         => $this->ppde_actions_currency->format_currency($data['net_amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 			'MEMO'           => $data['memo'],
 			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 			'PAYER_EMAIL'    => $data['payer_email'],
@@ -749,7 +751,7 @@ class transactions_controller extends admin_main
 			'PAYMENT_STATUS' => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status']))),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
+			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency($data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
 			'TXN_ID'         => $data['txn_id'],
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
