@@ -149,6 +149,12 @@ class currency_controller extends admin_main
 		// Create an array to collect errors that will be output to the user
 		$errors = array();
 
+		// As currency symbol is deprecated, this is a temporary workaround until the code deletion.
+		if ($this->ppde_locale->is_locale_configured())
+		{
+			$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);
+		}
+
 		// Set the currency's data in the entity
 		$item_fields = array(
 			'name'              => $data['currency_name'],

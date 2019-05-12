@@ -81,6 +81,20 @@ class locale_icu
 	}
 
 	/**
+	 * Get The currency symbol based on ISO code
+	 *
+	 * @param $currency_iso_code
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_currency_symbol($currency_iso_code)
+	{
+		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . "@currency=" . $currency_iso_code, \NumberFormatter::CURRENCY);
+		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+	}
+
+	/**
 	 * Check if the PPDE locale feature is configured
 	 *
 	 * @return bool.
