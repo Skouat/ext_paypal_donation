@@ -15,5 +15,13 @@ services:
         class: skouat\ppde\actions\currency
         arguments:
             - '@skouat.ppde.entity.currency'
+            - '@skouat.ppde.actions.locale_icu'
             - '@skouat.ppde.operator.currency'
             - '@template'
+
+    skouat.ppde.actions.locale_icu:
+        class: skouat\ppde\actions\locale_icu
+        arguments:
+            - '@config'
+            - '@template'
+            - '@user'
