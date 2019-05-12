@@ -24,9 +24,16 @@
             "security": false
         },
         "2.0": {
-            "current": "2.0.1-dev",
+            "current": "2.1.0-dev",
             "announcement": "http://skouat.github.io/ext_paypal_donation/",
             "download": "https://github.com/Skouat/ext_paypal_donation/archive/develop-3.2.x.zip",
+            "eol": null,
+            "security": false
+        },
+        "3.0": {
+            "current": "3.0.0-dev",
+            "announcement": "http://skouat.github.io/ext_paypal_donation/",
+            "download": "https://github.com/Skouat/ext_paypal_donation/archive/develop-3.3.x.zip",
             "eol": null,
             "security": false
         }
