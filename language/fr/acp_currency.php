@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_ENABLE'             => 'Activer la devise',
 	'PPDE_DC_ENABLE_EXPLAIN'     => 'Si activée, la devise sera disponible dans la liste de sélection.',
 	'PPDE_DC_ISO_CODE'           => 'Code ISO 4217',
-	'PPDE_DC_ISO_CODE_EXPLAIN'   => 'Code alphabétique de la devise.<br>En savoir plus sur la norme ISO 4217… Consultez la <a href="https://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
+	'PPDE_DC_ISO_CODE_EXPLAIN'   => 'Code alphabétique de la devise.<br>En savoir plus sur la norme ISO 4217… Consultez la <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/1841" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
 	'PPDE_DC_LOCALE_AVAILABLE'   => 'L’extension PHP <code>intl</code> a été détectée. Allez dans le module « Paramètres généraux » pour sélectionner vos paramètres régionnaux.',
 	'PPDE_DC_LOCALE_DEPRECATED'  => 'Cette option est obsolète car votre server permet l’utilisation de l’extension PHP <code>intl</code>.<br>Cette option sera supprimée dans PPDE 3.0.0.',
 	'PPDE_DC_LOCALE_UNAVAILABLE' => 'PPDE ne détecte pas l’extension PHP <code>intl</code>. Songez à installer cette extension PHP pour profiter d’une meilleure expérience.',
