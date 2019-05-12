@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_ENABLE'             => 'Enable currency',
 	'PPDE_DC_ENABLE_EXPLAIN'     => 'If enabled, the currency will be displayed in the dropbox.',
 	'PPDE_DC_ISO_CODE'           => 'ISO 4217 code',
-	'PPDE_DC_ISO_CODE_EXPLAIN'   => 'Alphabetic code of the currency.<br>For more information about ISO 4217, please refer to the <a href="https://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="PayPal Donation MOD FAQ">PayPal Donation MOD FAQ</a> (external link).',
+	'PPDE_DC_ISO_CODE_EXPLAIN'   => 'Alphabetic code of the currency.<br>For more information about ISO 4217, please refer to the PayPal Donation Extension <a href="https://www.phpbb.com/customise/db/mod/paypal_donation_mod/faq/f_746" title="PayPal Donation MOD FAQ">FAQ</a> (external link).',
 	'PPDE_DC_LOCALE_AVAILABLE'   => 'PHP <code>intl</code> extension detected. Go to the PPDE “General settings” module to select your locale settings.',
 	'PPDE_DC_LOCALE_DEPRECATED'  => 'This option is deprecated because your server allows the use of PHP <code>intl</code> extension.<br>This option will be removed in PPDE 3.0.0.',
 	'PPDE_DC_LOCALE_UNAVAILABLE' => 'PPDE doesn’t detect PHP <code>intl</code> extension. Consider installing this PHP extension for a better experience.',
