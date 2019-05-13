@@ -166,9 +166,9 @@ class locale_icu
 	 * Checks if some function/class are available.
 	 *
 	 * @return bool
-	 * @access public
+	 * @access private
 	 */
-	public function icu_available_features()
+	private function icu_available_features()
 	{
 		return class_exists('\ResourceBundle') && function_exists('\locale_get_default');
 	}
@@ -176,8 +176,9 @@ class locale_icu
 	/**
 	 * @return bool
 	 * @throws \ReflectionException
+	 * @access private
 	 */
-	public function icu_version_compare()
+	private function icu_version_compare()
 	{
 		$icu_min_version = '1.1.0';
 		$icu_version = $this->get_php_extension_version('intl', $this->icu_available_features());
