@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2018 Skouat
+ * @copyright (c) 2019 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -23,7 +23,7 @@ class locale_icu
 	protected $user;
 
 	/**
-	 * currency constructor.
+	 * locale_icu constructor.
 	 *
 	 * @param config   $config
 	 * @param template $template Template object
@@ -86,6 +86,16 @@ class locale_icu
 	}
 
 	/**
+	 * Gets the default Locale
+	 *
+	 * @return string A string with the current Locale.
+	 */
+	public function locale_get_default()
+	{
+		return $this->icu_requirements() ? \locale_get_default() : '';
+	}
+
+	/**
 	 * Checks if the PHP PECL intl extension is fully available
 	 *
 	 * @return bool
@@ -97,17 +107,7 @@ class locale_icu
 	}
 
 	/**
-	 * Get the default Locale
-	 *
-	 * @return string A string with the current Locale.
-	 */
-	public function locale_get_default()
-	{
-		return $this->icu_requirements() ? \locale_get_default() : '';
-	}
-
-	/**
-	 * Get The currency symbol based on ISO code
+	 * Gets the currency symbol based on ISO code
 	 *
 	 * @param $currency_iso_code
 	 *
@@ -121,7 +121,7 @@ class locale_icu
 	}
 
 	/**
-	 * Check if the PPDE locale feature is configured
+	 * Checks if the PPDE locale feature is configured
 	 *
 	 * @return bool.
 	 * @access public
@@ -132,7 +132,7 @@ class locale_icu
 	}
 
 	/**
-	 * Create a number formatter
+	 * Creates a number formatter
 	 *
 	 * @return \NumberFormatter NumberFormatter object or FALSE on error.
 	 * @access public
@@ -158,7 +158,7 @@ class locale_icu
 	}
 
 	/**
-	 * Set config value for PHP Intl extension version
+	 * Sets config value for PHP Intl extension version
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -171,11 +171,14 @@ class locale_icu
 	}
 
 	/**
+	 * Gets extension version
+	 *
 	 * @param string $name
 	 * @param bool   $proceed
 	 *
 	 * @return string
 	 * @throws \ReflectionException
+	 * @access private
 	 */
 	private function get_php_extension_version($name, $proceed)
 	{
@@ -189,7 +192,7 @@ class locale_icu
 	}
 
 	/**
-	 * Checks if some function/class are available.
+	 * Checks if the required function/class are available.
 	 *
 	 * @return bool
 	 * @access private
@@ -200,6 +203,8 @@ class locale_icu
 	}
 
 	/**
+	 * Checks if ICU version matches with requirement
+	 *
 	 * @return bool
 	 * @throws \ReflectionException
 	 * @access private
@@ -212,7 +217,7 @@ class locale_icu
 	}
 
 	/**
-	 * Set config value for cURL and fsockopen
+	 * Sets config value for cURL and fsockopen
 	 *
 	 * @return void
 	 * @access public
