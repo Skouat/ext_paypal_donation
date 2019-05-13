@@ -39,24 +39,50 @@ class locale_icu
 		$this->user = $user;
 	}
 
+	/**
+	 * Build pull down menu options of available locales
+	 *
+	 * @param string $config_value Locale identifier; default: ''
+	 *
+	 * @return void
+	 * @access public
+	 */
 	public function build_locale_select_menu($config_value = '')
 	{
 		// Grab the list of all available locales
-		$locale_items = ResourceBundle::getLocales('');
-		natsort($locale_items);
+		$locale_list = $this->get_locale_list();
 
 		// Process each locale item for pull-down
-		foreach ($locale_items as $locale)
+		foreach ($locale_list as $locale => $locale_name)
 		{
 			// Set output block vars for display in the template
 			$this->template->assign_block_vars('locale_options', array(
-
 				'LOCALE_ID'        => $locale,
-				'LOCALE_NAME'      => Locale::getDisplayName($locale, $this->user->lang_name),
+				'LOCALE_NAME'      => $locale_name,
 				'S_LOCALE_DEFAULT' => $config_value === $locale,
 			));
 		}
-		unset ($currency_items, $currency_item);
+		unset ($locale, $locale_list, $locale_name);
+	}
+
+	/**
+	 * Build an array of all locales
+	 *
+	 * @return mixed
+	 * @access private
+	 */
+	private function get_locale_list()
+	{
+		$locale_items = ResourceBundle::getLocales('');
+		foreach ($locale_items as $locale)
+		{
+			$locale_ary[$locale] = Locale::getDisplayName($locale, $this->user->lang_name);
+		}
+		unset ($locale_items, $locale);
+
+		natsort($locale_ary);
+
+		return $locale_ary;
 	}
 
 	/**
