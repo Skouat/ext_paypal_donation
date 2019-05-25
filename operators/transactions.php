@@ -47,7 +47,7 @@ class transactions
 	{
 		// Build main sql request
 		$sql_ary = array(
-			'SELECT'    => '*, u.username',
+			'SELECT'    => '*, u.username, u.user_colour',
 			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
 			'LEFT_JOIN' => array(
 				array(
@@ -241,8 +241,11 @@ class transactions
 			case 'user':
 				$sql_where = ' WHERE user_id = ' . (int) $arg;
 			break;
+			case 'username':
+				$sql_where = " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
+			break;
 			case 'email':
-				$sql_where = ' WHERE user_email_hash = ' . crc32(strtolower($arg)) . strlen($arg);
+				$sql_where = " WHERE user_email_hash = '" . $this->db->sql_escape(phpbb_email_hash($arg)) . "'";
 			break;
 			default:
 				$sql_where = '';
@@ -376,7 +379,7 @@ class transactions
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('payer_id');
-				$sql_ary{'LEFT_JOIN'} = array(
+				$sql_ary['LEFT_JOIN'] = array(
 					array(
 						'FROM' => array(USERS_TABLE => 'u'),
 						'ON'   => 'txn.user_id = u.user_id',
@@ -401,6 +404,22 @@ class transactions
 	}
 
 	/**
+	 * Make body of SQL query for stats calculation.
+	 *
+	 * @param string $field_name Name of the field
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function sql_select_stats_main($field_name)
+	{
+		return array(
+			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
+			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+		);
+	}
+
+	/**
 	 * Updates the user donated amount
 	 *
 	 * @param int    $user_id
@@ -418,18 +437,45 @@ class transactions
 	}
 
 	/**
-	 * Make body of SQL query for stats calculation.
+	 * Prepare data array() before send it to $entity
 	 *
-	 * @param string $field_name Name of the field
+	 * @param array $data
 	 *
 	 * @return array
-	 * @access private
+	 * @access public
 	 */
-	private function sql_select_stats_main($field_name)
+	public function build_data_ary($data)
 	{
 		return array(
-			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
-			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+			'business'          => $data['business'],
+			'confirmed'         => (bool) $data['confirmed'],
+			'exchange_rate'     => $data['exchange_rate'],
+			'first_name'        => $data['first_name'],
+			'item_name'         => $data['item_name'],
+			'item_number'       => $data['item_number'],
+			'last_name'         => $data['last_name'],
+			'mc_currency'       => $data['mc_currency'],
+			'mc_gross'          => floatval($data['mc_gross']),
+			'mc_fee'            => floatval($data['mc_fee']),
+			'net_amount'        => floatval($data['net_amount']),
+			'parent_txn_id'     => $data['parent_txn_id'],
+			'payer_email'       => $data['payer_email'],
+			'payer_id'          => $data['payer_id'],
+			'payer_status'      => $data['payer_status'],
+			'payment_date'      => $data['payment_date'],
+			'payment_status'    => $data['payment_status'],
+			'payment_type'      => $data['payment_type'],
+			'memo'              => $data['memo'],
+			'receiver_id'       => $data['receiver_id'],
+			'receiver_email'    => $data['receiver_email'],
+			'residence_country' => $data['residence_country'],
+			'settle_amount'     => floatval($data['settle_amount']),
+			'settle_currency'   => $data['settle_currency'],
+			'test_ipn'          => (bool) $data['test_ipn'],
+			'txn_errors'        => $data['txn_errors'],
+			'txn_id'            => $data['txn_id'],
+			'txn_type'          => $data['txn_type'],
+			'user_id'           => (int) $data['user_id'],
 		);
 	}
 }

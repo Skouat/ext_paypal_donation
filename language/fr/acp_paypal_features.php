@@ -71,6 +71,8 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'Compte PayPal Sandbox',
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Inscrire l’adresse e-mail ou l’ID de vendeur PayPal Sandbox.',
+	'PPDE_SANDBOX_REMOTE'                  => 'URL PayPal Sandbox',
+	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Ne changez pas ce paramètre, sauf si cette extension a des difficultés pour contacter les serveurs Sandbox de PayPal.',
 ));
 
 /**

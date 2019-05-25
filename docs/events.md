@@ -6,6 +6,6 @@ skouat.ppde.do_actions_completed_before
 
 skouat.ppde.donors_group_user_add_before
 ===
-* Location: ext/skouat/ppde/controller/ipn_listener.php
+* Location: ext/skouat/ppde/controller/core_actions.php
 * Since: 1.0.3
 * Purpose: Modify data before a user is added to the donors group

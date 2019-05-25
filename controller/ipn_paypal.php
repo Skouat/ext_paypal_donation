@@ -19,6 +19,17 @@ use phpbb\request\request;
 
 class ipn_paypal
 {
+	/** Production and Sandbox Postback URL
+	 *
+	 * @var array
+	 */
+	private static $remote_uri = array(
+		array('hostname' => 'www.paypal.com', 'uri' => 'https://www.paypal.com/cgi-bin/webscr', 'type' => 'live'),
+		array('hostname' => 'www.sandbox.paypal.com', 'uri' => 'https://www.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
+		array('hostname' => 'ipnpb.paypal.com', 'uri' => 'https://ipnpb.paypal.com/cgi-bin/webscr', 'type' => 'live'),
+		array('hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
+	);
+
 	protected $config;
 	protected $language;
 	protected $ppde_ext_manager;
@@ -66,13 +77,27 @@ class ipn_paypal
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, extension_manager $ppde_ext_manager, ipn_log $ppde_ipn_log, request $request)
+	public function __construct(
+		config $config,
+		language $language,
+		extension_manager $ppde_ext_manager,
+		ipn_log $ppde_ipn_log,
+		request $request
+	)
 	{
 		$this->config = $config;
 		$this->language = $language;
 		$this->ppde_ext_manager = $ppde_ext_manager;
 		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function get_remote_uri()
+	{
+		return self::$remote_uri;
 	}
 
 	/**
@@ -90,7 +115,6 @@ class ipn_paypal
 		if ($this->curl_fsock['curl'])
 		{
 			$this->curl_post($args_return_uri);
-			$this->response;
 		}
 		else
 		{
@@ -105,7 +129,7 @@ class ipn_paypal
 	 * the validate_transaction() method if the curl_fsock['curl'] property is true.
 	 * Throws an exception if the post fails. Populates the response and response_status properties on success.
 	 *
-	 * @param  string $encoded_data The post data as a URL encoded string
+	 * @param string $encoded_data The post data as a URL encoded string
 	 *
 	 * @return void
 	 * @access private

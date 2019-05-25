@@ -22,7 +22,7 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 	}
 
 	/**
-	 * Run migration if donation_mod_version config exists
+	 * Run migration if donation_item table exists
 	 *
 	 * @return bool
 	 */
@@ -41,5 +41,14 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 				$this->table_prefix . 'donation_item',
 			),
 		);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function revert_schema()
+	{
+		// Do not revert the table because it requires a complete reinstall of PPDM for phpBB 3.0
+		return array();
 	}
 }

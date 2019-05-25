@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "An extension which adds a PayPal donation page to your phpBB board",
     "homepage": "https://skouat.github.io/ext_paypal_donation",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "keywords": [
         "phpbb",
         "extension",
@@ -26,8 +26,13 @@
         },
         {
             "name": "Mazeltof",
-            "homepage": "http://www.phpbb-fr.com/customise/db/author/mazeltof/",
+            "homepage": "https://www.mazeland.fr/",
             "role": "Sorcerer's Apprentice"
+        },
+        {
+            "name": "kasimi",
+            "homepage": "https://kasimi.net",
+            "role": "Contributor"
         }
     ],
     "require": {

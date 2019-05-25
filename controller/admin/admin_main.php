@@ -8,7 +8,10 @@
  *
  */
 
-namespace skouat\ppde\controller;
+namespace skouat\ppde\controller\admin;
+
+use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\entity\main;
 
 abstract class admin_main
 {
@@ -53,58 +56,6 @@ abstract class admin_main
 		$this->module_name = $module_name;
 		$this->lang_key_prefix = $lang_key_prefix;
 		$this->id_prefix_name = $id_prefix_name;
-	}
-
-	/**
-	 * Parse data to the entity
-	 *
-	 * @param \skouat\ppde\entity\main $entity            The entity object
-	 * @param string                   $run_before_insert Name of the function to call before SQL INSERT
-	 *
-	 * @return string $log_action
-	 * @access public
-	 */
-	public function add_edit_data(\skouat\ppde\entity\main $entity, $run_before_insert = '')
-	{
-		if ($entity->get_id())
-		{
-			// Save the edited item entity to the database
-			$entity->save($entity->check_required_field());
-			$log_action = 'UPDATED';
-		}
-		else
-		{
-			// Insert the data to the database
-			$entity->insert($run_before_insert);
-
-			// Get the newly inserted identifier
-			$id = $entity->get_id();
-
-			// Reload the data to return a fresh entity
-			$entity->load($id);
-			$log_action = 'ADDED';
-		}
-
-		return $log_action;
-	}
-
-	/**
-	 * Set data in the $entity object.
-	 * Use call_user_func_array() to call $entity function
-	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 * @param array                    $data_ary
-	 *
-	 * @access public
-	 */
-	public function set_entity_data(\skouat\ppde\entity\main $entity, $data_ary)
-	{
-		foreach ($data_ary as $entity_function => $data)
-		{
-			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array(array($entity, 'set_' . $entity_function), array($data));
-		}
-		unset($data_ary, $entity_function, $data);
 	}
 
 	/**
@@ -207,7 +158,7 @@ abstract class admin_main
 	 *
 	 * @access protected
 	 */
-	protected function trigger_error_data_already_exists(\skouat\ppde\entity\main $entity)
+	protected function trigger_error_data_already_exists(main $entity)
 	{
 		if ($this->is_added_data_exists($entity))
 		{
@@ -225,7 +176,7 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function is_added_data_exists(\skouat\ppde\entity\main $entity)
+	protected function is_added_data_exists(main $entity)
 	{
 		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
@@ -241,7 +192,7 @@ abstract class admin_main
 	 * @return array $errors
 	 * @access protected
 	 */
-	protected function is_empty_data(\skouat\ppde\entity\main $entity, $field_name, $value_cmp, $submit_or_preview = false)
+	protected function is_empty_data(main $entity, $field_name, $value_cmp, $submit_or_preview = false)
 	{
 		$errors = array();
 
@@ -288,17 +239,6 @@ abstract class admin_main
 				),
 			));
 		}
-	}
-
-	/**
-	 * Return the entity ContainerInterface used by the ACP module in use
-	 *
-	 * @return object
-	 * @access protected
-	 */
-	protected function get_container_entity()
-	{
-		return $this->container->get('skouat.ppde.entity.' . $this->module_name);
 	}
 
 	/**
@@ -399,5 +339,52 @@ abstract class admin_main
 	protected function depend_on($config_name)
 	{
 		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
+	}
+
+	/**
+	 * Build pull down menu options of available currency
+	 *
+	 * @param mixed  $default ID of the selected value.
+	 * @param string $type    Can be 'live' or 'sandbox'
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function build_remote_uri_select_menu($default, $type)
+	{
+		$type = $this->force_type($type);
+
+		// Grab the list of remote uri for selected type
+		$remote_list = ipn_paypal::get_remote_uri();
+
+		// Process each menu item for pull-down
+		foreach ($remote_list as $id => $remote)
+		{
+			if ($remote['type'] !== $type)
+			{
+				continue;
+			}
+
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('remote_options', array(
+				'REMOTE_ID'   => $id,
+				'REMOTE_NAME' => $remote['hostname'],
+				'S_DEFAULT'   => $default == $id,
+			));
+		}
+		unset ($remote_list, $remote);
+	}
+
+	/**
+	 * Enforce the type of remote provided
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function force_type($type)
+	{
+		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
 }

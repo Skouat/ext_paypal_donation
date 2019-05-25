@@ -57,6 +57,11 @@ $lang = array_merge($lang, array(
 	'PPDE_HEADER_LINK'                => 'Afficher le lien « Faire un don » dans l’entête du forum',
 	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'Paramètres généraux',
 
+	// Advanced settings
+	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Paramètres avancés',
+	'PPDE_DEFAULT_REMOTE'             => 'URL PayPal',
+	'PPDE_DEFAULT_REMOTE_EXPLAIN'     => 'Ne changez pas ce paramètre, sauf si cette extension a des difficultés pour contacter les serveurs de PayPal.',
+
 	// Stats Donation settings
 	'PPDE_AMOUNT'                     => 'Montant',
 	'PPDE_DECIMAL_EXPLAIN'            => 'Utiliser le « . » comme symbole décimal.', // Note for translator: do not translate the decimal symbol

@@ -1,0 +1,19 @@
+services:
+    skouat.ppde.core_actions:
+        class: skouat\ppde\actions\core
+        arguments:
+            - '@config'
+            - '@language'
+            - '@skouat.ppde.notification.core'
+            - '@path_helper'
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.transactions'
+            - '@dispatcher'
+            - '%core.php_ext%'
+
+    skouat.ppde.actions.currency:
+        class: skouat\ppde\actions\currency
+        arguments:
+            - '@skouat.ppde.entity.currency'
+            - '@skouat.ppde.operator.currency'
+            - '@template'

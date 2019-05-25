@@ -38,6 +38,7 @@ if (empty($lang) || !is_array($lang))
  * UCP notification system
  */
 $lang = array_merge($lang, array(
+	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_ERRORS'   => 'Someone makes a donation with errors',
 	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED' => 'Someone makes a donation',
 	'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED'       => 'A donation you made was received',
 ));
