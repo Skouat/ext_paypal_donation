@@ -10,11 +10,9 @@
 
 namespace skouat\ppde\actions;
 
-use Locale;
 use phpbb\config\config;
 use phpbb\template\template;
 use phpbb\user;
-use ResourceBundle;
 
 class locale_icu
 {
@@ -73,10 +71,10 @@ class locale_icu
 	 */
 	private function get_locale_list()
 	{
-		$locale_items = ResourceBundle::getLocales('');
+		$locale_items = \ResourceBundle::getLocales('');
 		foreach ($locale_items as $locale)
 		{
-			$locale_ary[$locale] = Locale::getDisplayName($locale, $this->user->lang_name);
+			$locale_ary[$locale] = \Locale::getDisplayName($locale, $this->user->lang_name);
 		}
 		unset ($locale_items, $locale);
 
