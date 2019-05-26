@@ -37,11 +37,9 @@
     ],
     "require": {
         "php": ">=5.4",
+        "composer/installers": "~1.0",
         "ext-curl": "*",
-        "composer/installers": "~1.0"
-    },
-    "suggest": {
-        "ext-intl": "Needed to support Currencies number format"
+        "ext-intl": "*"
     },
     "extra": {
         "display-name": "PayPal Donation Extension",
