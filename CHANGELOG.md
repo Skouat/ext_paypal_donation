@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.0 - 2019-05-12
+  - Add: Implement support money format, based on PHP Intl extension.
+
 ## 2.1.1 - 2019-05-26
   - Fix: The button `Add` for adding manual transaction is not visible when logs are empty
   - Code changes following phpBB Customisation Team reports

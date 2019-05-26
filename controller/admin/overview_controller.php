@@ -18,6 +18,7 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\core;
+use skouat\ppde\actions\locale_icu;
 use skouat\ppde\controller\extension_manager;
 use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\controller\main_controller;
@@ -38,9 +39,10 @@ class overview_controller extends admin_main
 {
 	protected $adm_relative_path;
 	protected $auth;
+	protected $ppde_actions;
+	protected $ppde_actions_locale;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
-	protected $ppde_actions;
 	protected $ppde_ext_manager;
 	protected $ppde_ipn_paypal;
 	protected $php_ext;
@@ -54,7 +56,8 @@ class overview_controller extends admin_main
 	 * @param config                  $config                       Config object
 	 * @param language                $language                     Language user object
 	 * @param log                     $log                          The phpBB log system
-	 * @param core                    $ppde_actions                 PPDE actions object
+	 * @param core                    $ppde_actions                 PPDE core actions object
+	 * @param locale_icu              $ppde_actions_locale          PPDE Locale actions object
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
@@ -74,6 +77,7 @@ class overview_controller extends admin_main
 		language $language,
 		log $log,
 		core $ppde_actions,
+		locale_icu $ppde_actions_locale,
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions,
 		extension_manager $ppde_ext_manager,
@@ -91,6 +95,7 @@ class overview_controller extends admin_main
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
+		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->ppde_ext_manager = $ppde_ext_manager;
@@ -115,6 +120,7 @@ class overview_controller extends admin_main
 	 * @param string $action Action name
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 * @access public
 	 */
 	public function display_overview($action)
@@ -124,6 +130,8 @@ class overview_controller extends admin_main
 			$this->ppde_ipn_paypal->set_curl_info();
 			$this->ppde_ipn_paypal->set_remote_detected();
 			$this->ppde_ipn_paypal->check_tls();
+			$this->ppde_actions_locale->set_intl_info();
+			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');
 		}
 
@@ -140,9 +148,11 @@ class overview_controller extends admin_main
 			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
 			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
 			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
-			'S_ACTION_OPTIONS'               => ($this->auth->acl_get('a_ppde_manage')) ? true : false,
+			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
 			'S_CURL'                         => $this->config['ppde_curl_detected'],
+			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
 			'S_SSL'                          => $this->config['ppde_curl_detected'],
 			'S_TLS'                          => $this->config['ppde_tls_detected'],
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
@@ -176,6 +186,7 @@ class overview_controller extends admin_main
 	 * @param string $action Requested action
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 * @access private
 	 */
 	private function do_action($action)
@@ -237,6 +248,7 @@ class overview_controller extends admin_main
 	 * @param string $action Requested action
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 * @access private
 	 */
 	private function exec_action($action)
@@ -256,6 +268,8 @@ class overview_controller extends admin_main
 				$this->ppde_ipn_paypal->set_curl_info();
 				$this->ppde_ipn_paypal->set_remote_detected();
 				$this->ppde_ipn_paypal->check_tls();
+				$this->ppde_actions_locale->set_intl_info();
+				$this->ppde_actions_locale->set_intl_detected();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':
