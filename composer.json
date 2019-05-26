@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "An extension which adds a PayPal donation page to your phpBB board",
     "homepage": "https://skouat.github.io/ext_paypal_donation",
-    "version": "2.1.0-dev",
+    "version": "2.2.0-dev",
     "keywords": [
         "phpbb",
         "extension",
@@ -39,6 +39,9 @@
         "php": ">=5.4",
         "ext-curl": "*",
         "composer/installers": "~1.0"
+    },
+    "suggest": {
+        "ext-intl": "Needed to support Currencies number format"
     },
     "extra": {
         "display-name": "PayPal Donation Extension",

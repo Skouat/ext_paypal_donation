@@ -27,12 +27,24 @@
 		</dl>
 		<dl>
 			<dt><label for="currency_symbol">{{ lang('PPDE_DC_SYMBOL') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_SYMBOL_EXPLAIN') }}</span></dt>
-			<dd><input id="currency_symbol" name="currency_symbol" type="text" class="text medium" value="{{ CURRENCY_SYMBOL }}"></dd>
+			<dd>{% if S_PPDE_LOCALE_CONFIGURED %}
+				<span style="font-weight: bold">{{ lang('PPDE_DC_LOCALE_DEPRECATED') }}</span>
+				{% else %}
+				<input id="currency_symbol" name="currency_symbol" type="text" class="text medium" value="{{ CURRENCY_SYMBOL }}">
+				<br><span style="font-weight: bold">{% if S_PPDE_LOCALE_AVAILABLE %}{{ lang('PPDE_DC_LOCALE_AVAILABLE') }}{% else %}{{ lang('PPDE_DC_LOCALE_UNAVAILABLE') }}{% endif %}</span>
+				{% endif %}
+			</dd>
 		</dl>
 		<dl>
 			<dt><label for="currency_on_left">{{ lang('PPDE_DC_POSITION') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_POSITION_EXPLAIN') }}</span></dt>
-			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"{% if CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
-				<label><input name="currency_on_left" type="radio" class="radio" value="0"{% if not CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label></dd>
+			<dd>{% if S_PPDE_LOCALE_CONFIGURED %}
+				<span style="font-weight: bold">{{ lang('PPDE_DC_LOCALE_DEPRECATED') }}</span>
+				{% else %}
+				<label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"{% if CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
+				<label><input name="currency_on_left" type="radio" class="radio" value="0"{% if not CURRENCY_POS %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label>
+				<br><span style="font-weight: bold">{% if S_PPDE_LOCALE_AVAILABLE %}{{ lang('PPDE_DC_LOCALE_AVAILABLE') }}{% else %}{{ lang('PPDE_DC_LOCALE_UNAVAILABLE') }}{% endif %}</span>
+				{% endif %}
+			</dd>
 		</dl>
 		<hr>
 		<div id="itemoptions">

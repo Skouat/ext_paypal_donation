@@ -1,6 +1,14 @@
 # Changelog
+
+## 2.2.0 - 2019-05-12
+  - Add: Implement support money format, based on PHP Intl extension.
+
+## 2.1.1 - 2019-05-26
+  - Fix: The button `Add` for adding manual transaction is not visible when logs are empty
+  - Code changes following phpBB Customisation Team reports
+
 ## 2.1.0 - 2019-05-09
-  - Add: Donation on error can be manually approved.
+  - Add: Donation on error can be manually approved
   - Add: Allow to change transactions donor (thanks kasimi)
   - Change: Make donor name a link to the profile when viewing a transaction (#61) (thanks kasimi)
   - Change: Use built-in phpbb_email_hash() function (#59) (thanks kasimi)
