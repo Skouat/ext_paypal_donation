@@ -124,7 +124,7 @@ class overview_controller extends admin_main
 			$this->ppde_ipn_paypal->set_curl_info();
 			$this->ppde_ipn_paypal->set_remote_detected();
 			$this->ppde_ipn_paypal->check_tls();
-			$this->config->set('ppde_first_start', (string) false);
+			$this->config->set('ppde_first_start', '0');
 		}
 
 		$this->do_action($action);
