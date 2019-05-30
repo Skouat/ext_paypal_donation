@@ -142,8 +142,8 @@ class transactions_controller extends admin_main
 		// Set up general vars
 		$args = array();
 		$start = $this->request->variable('start', 0);
-		$deletemark = $this->request->is_set('delmarked') ? $this->request->variable('delmarked', false) : false;
-		$deleteall = $this->request->is_set('delall') ? $this->request->variable('delall', false) : false;
+		$deletemark = $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST);
+		$deleteall = $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST);
 		$marked = $this->request->variable('mark', array(0));
 		$txn_approve = $this->request->is_set('approve');
 		$txn_approved = $this->request->variable('txn_errors_approved', 0);
