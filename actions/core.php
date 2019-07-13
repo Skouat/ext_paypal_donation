@@ -285,7 +285,7 @@ class core
 	{
 		if ($this->donor_is_member)
 		{
-			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
+			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross']);
 		}
 	}
 
