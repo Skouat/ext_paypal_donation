@@ -283,6 +283,7 @@ class ipn_listener
 		// Additional checks
 		$this->check_account_id();
 
+		$this->transaction_data['txn_errors'] = '';
 		if (!empty($this->error_message))
 		{
 			// If data doesn't meet the requirement, we log in file (if enabled).
