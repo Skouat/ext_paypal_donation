@@ -167,10 +167,6 @@ class ipn_listener
 	 */
 	private $args_return_uri = array();
 	/**
-	 * @var array
-	 */
-	private $payer_data;
-	/**
 	 * Data from PayPal transaction
 	 *
 	 * @var array
@@ -449,7 +445,6 @@ class ipn_listener
 		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
 		$this->ppde_actions->is_donor_is_member();
 		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
-		$this->payer_data = $this->ppde_actions->get_payer_data();
 	}
 
 	/**
