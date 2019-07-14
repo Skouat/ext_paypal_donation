@@ -1,4 +1,6 @@
 # Changelog
+## 2.1.2 - 2019-07-14
+  - Fix: Auto group feature does not work (#75)
 
 ## 2.1.1 - 2019-05-26
   - Fix: The button `Add` for adding manual transaction is not visible when logs are empty
