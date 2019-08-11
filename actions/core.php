@@ -330,6 +330,7 @@ class core
 		 * @var bool    default_group          Whether or not the group should be made default for the user
 		 * @var float   payer_donated_amount   The user donated amount
 		 * @since 1.0.3
+		 * @changed 2.1.2 Added var $payer_donated_amount
 		 */
 		$vars = array(
 			'can_use_autogroup',
