@@ -1,6 +1,8 @@
 # Changelog
 ## 2.1.2 - 2019-07-14
+  - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks Dark❶)
   - Fix: Auto group feature does not work (#75)
+  - Remove: Remove abilities to enable/disable text formatting on Donation Pages
 
 ## 2.1.1 - 2019-05-26
   - Fix: The button `Add` for adding manual transaction is not visible when logs are empty
