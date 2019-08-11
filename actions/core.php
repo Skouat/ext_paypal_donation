@@ -317,17 +317,20 @@ class core
 		$payer_id = (int) $this->payer_data['user_id'];
 		$payer_username = $this->payer_data['username'];
 		$default_group = $this->config['ppde_ipn_group_as_default'];
+		$payer_donated_amount = $this->payer_data['user_ppde_donated_amount'];
 
 		/**
 		 * Event to modify data before a user is added to the donors group
 		 *
 		 * @event skouat.ppde.donors_group_user_add_before
-		 * @var bool    can_use_autogroup   Whether or not to add the user to the group
-		 * @var int     group_id            The ID of the group to which the user will be added
-		 * @var int     payer_id            The ID of the user who will we added to the group
-		 * @var string  payer_username      The user name
-		 * @var bool    default_group       Whether or not the group should be made default for the user
+		 * @var bool    can_use_autogroup      Whether or not to add the user to the group
+		 * @var int     group_id               The ID of the group to which the user will be added
+		 * @var int     payer_id               The ID of the user who will we added to the group
+		 * @var string  payer_username         The user name
+		 * @var bool    default_group          Whether or not the group should be made default for the user
+		 * @var float   payer_donated_amount   The user donated amount
 		 * @since 1.0.3
+		 * @changed 2.1.2 Added var $payer_donated_amount
 		 */
 		$vars = array(
 			'can_use_autogroup',
@@ -335,6 +338,7 @@ class core
 			'payer_id',
 			'payer_username',
 			'default_group',
+			'payer_donated_amount',
 		);
 		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
 
