@@ -53,6 +53,7 @@ services:
             - '@request'
             - '@template'
             - '@user'
+            - '@user_loader'
             - '%core.root_path%'
             - '%core.php_ext%'
 

@@ -17,6 +17,7 @@ use phpbb\language\language;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use phpbb\user_loader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
@@ -30,6 +31,7 @@ class main_controller
 	protected $request;
 	protected $template;
 	protected $user;
+	protected $user_loader;
 	protected $root_path;
 	protected $php_ext;
 
@@ -60,6 +62,7 @@ class main_controller
 		request $request,
 		template $template,
 		user $user,
+		user_loader $user_loader,
 		$root_path,
 		$php_ext
 	)
@@ -73,6 +76,7 @@ class main_controller
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}
