@@ -85,16 +85,16 @@ class main_donor_list extends main_controller
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
-		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
+		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, (bool) $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
 		$sql_count_donors = $this->ppde_operator_transactions->sql_donorlist_ary();
 		$total_donors = $this->ppde_operator_transactions->query_sql_count($sql_count_donors, 'txn.user_id');
-		$start = $this->pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
+		$start = $this->pagination->validate_start($start, (int) $this->config['topics_per_page'], $total_donors);
 
-		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
+		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, (int) $this->config['topics_per_page'], $start);
 
 		// Get default currency data from the database
 		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);

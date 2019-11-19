@@ -66,7 +66,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DONATE_NOT_RECEIVED'  => 'We haven’t received any donations.',
 	'PPDE_DONATE_NOT_USED'      => 'We haven’t used any donations.',
 	'PPDE_DONATE_RECEIVED'      => 'We received <strong>%s</strong> in donations.',
-	'PPDE_DONATE_USED'          => 'We used <strong>%1$s</strong> out of a total of <strong>%2$s</strong> received in dontaions.',
+	'PPDE_DONATE_USED'          => 'We used <strong>%1$s</strong> out of a total of <strong>%2$s</strong> received in donations.',
 	'PPDE_DONATE_USED_EXCEEDED' => 'We used <strong>%s</strong>. All donations have been used.',
 
 	// Viewonline
