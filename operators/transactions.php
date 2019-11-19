@@ -69,46 +69,60 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to return the donors list
+	 * SQL Query to count how many donated
 	 *
-	 * @param int    $max_txn_id Identifier of the transaction logged in the DB
+	 * @param bool   $detailed
 	 * @param string $order_by
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function get_sql_donorlist_ary($max_txn_id = 0, $order_by = '')
+	public function sql_donorlist_ary($detailed = false, $order_by = '')
 	{
-		// Build main sql request
-		$donorlist_sql_ary = array(
-			'SELECT'    => 'txn.*, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, u.username, u.user_colour',
-			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
-			'LEFT_JOIN' => array(
-				array(
-					'FROM' => array(USERS_TABLE => 'u'),
-					'ON'   => 'u.user_id = txn.user_id',
-				),
-			),
-			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
+		// Build sql request
+		$sql_donorslist_ary = array(
+			'SELECT'   => 'txn.user_id',
+			'FROM'     => array($this->ppde_transactions_log_table => 'txn'),
+			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
 							AND txn.payment_status = 'Completed'
 							AND txn.test_ipn = 0",
-			'GROUP_BY'  => 'txn.user_id',
-			'ORDER_BY'  => 'txn.transaction_id DESC',
+			'GROUP_BY' => 'txn.user_id',
 		);
 
 		if ($order_by)
 		{
-			$donorlist_sql_ary['ORDER_BY'] = $order_by;
+			$sql_donorslist_ary['ORDER_BY'] = $order_by;
 		}
 
-		if ($max_txn_id)
+		if ($detailed)
 		{
-			$donorlist_sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $max_txn_id;
-			unset($donorlist_sql_ary['GROUP_BY'], $donorlist_sql_ary['ORDER_BY']);
+			$sql_donorslist_ary['SELECT'] = 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
+			$sql_donorslist_ary['LEFT_JOIN'] = array(
+				array(
+					'FROM' => array(USERS_TABLE => 'u'),
+					'ON'   => 'u.user_id = txn.user_id',
+				));
 		}
 
-		// Return all transactions entities
-		return $donorlist_sql_ary;
+		return $sql_donorslist_ary;
+	}
+
+	/**
+	 * SQL Query to return information of the last donation of the donor
+	 *
+	 * @param $transaction_id
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_last_donation_ary($transaction_id)
+	{
+		// Build sql request
+		return array(
+			'SELECT' => 'txn.payment_date, txn.mc_gross',
+			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+			'WHERE'  => 'txn.transaction_id = ' . (int) $transaction_id,
+		);
 	}
 
 	/**
