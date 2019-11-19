@@ -115,7 +115,7 @@ class main_donor_list extends main_controller
 			'item_user_id'    => array('name' => 'user_id', 'type' => 'integer'),
 		);
 
-		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true);
+		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, $this->config['topics_per_page'], $start, true);
 
 		// Adds fields to the table schema needed by entity->import()

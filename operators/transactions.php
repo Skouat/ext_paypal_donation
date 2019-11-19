@@ -71,12 +71,13 @@ class transactions
 	/**
 	 * SQL Query to count how many donated
 	 *
-	 * @param bool $detailed
+	 * @param bool   $detailed
+	 * @param string $order_by
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function sql_donorlist_ary($detailed = false)
+	public function sql_donorlist_ary($detailed = false, $order_by = '')
 	{
 		// Build sql request
 		$sql_donorslist_ary = array(
@@ -88,9 +89,19 @@ class transactions
 			'GROUP_BY' => 'txn.user_id',
 		);
 
+		if ($order_by)
+		{
+			$sql_donorslist_ary['ORDER_BY'] = $order_by;
+		}
+
 		if ($detailed)
 		{
-			$sql_donorslist_ary['SELECT'] = 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount';
+			$sql_donorslist_ary['SELECT'] = 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
+			$sql_donorslist_ary['LEFT_JOIN'] = array(
+				array(
+					'FROM' => array(USERS_TABLE => 'u'),
+					'ON'   => 'u.user_id = txn.user_id',
+				));
 		}
 
 		return $sql_donorslist_ary;
