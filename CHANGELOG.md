@@ -1,7 +1,9 @@
 # Changelog
-## 2.1.2 - 2019-07-14
+## 2.1.2 - 2019-11-19
   - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks Dark❶)
   - Fix: Auto group feature does not work (#75)
+  - Fix: SQL Error when accessing on list of donors (#78)
+  - Fix: English wording 
   - Remove: Remove abilities to enable/disable text formatting on Donation Pages
 
 ## 2.1.1 - 2019-05-26
