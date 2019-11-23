@@ -137,7 +137,10 @@ class overview_controller extends admin_main
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			// Test temporarily disabled because of PayPal issue.
+			// Refer to https://github.com/paypal/TLS-update/issues/51
+			// 'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_TLS'                   => $this->language->lang('PPDE_ESI_NOT_CHECKED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
 			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
