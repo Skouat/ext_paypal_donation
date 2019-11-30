@@ -1,6 +1,6 @@
 services:
     skouat.ppde.operator.compare:
-        class: skouat\ppde\operators\currency
+        class: skouat\ppde\operators\compare
 
     skouat.ppde.operator.currency:
         class: skouat\ppde\operators\currency

@@ -7,6 +7,7 @@ services:
             - '@skouat.ppde.notification.core'
             - '@path_helper'
             - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.compare'
             - '@skouat.ppde.operator.transactions'
             - '@dispatcher'
             - '%core.php_ext%'
