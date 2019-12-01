@@ -14,7 +14,7 @@ Amount received: <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NE
 
 ----------------------------
 
-View the transactions log for more details.
+View the PPDE transactions log for more details.
 
 -----
 
