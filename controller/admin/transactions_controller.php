@@ -240,13 +240,11 @@ class transactions_controller extends admin_main
 		// Prepares args depending actions
 		if (($args['hidden_fields']['delmarked'] || $args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
-			$args = [
-				'action'        => 'delete',
-				'hidden_fields' => [
-					'i'    => $id,
-					'mode' => $mode,
-				],
-			];
+			$args['action'] = 'delete';
+			$args['hidden_fields'] = array_merge($args['hidden_fields'], [
+				'i'    => $id,
+				'mode' => $mode,
+			]);
 		}
 		else if ($this->request->is_set('approve'))
 		{
