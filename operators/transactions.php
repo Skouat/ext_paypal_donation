@@ -81,12 +81,12 @@ class transactions
 	{
 		// Build sql request
 		$sql_donorslist_ary = [
-			'SELECT'   => 'txn.user_id',
+			'SELECT'   => 'txn.user_id, txn.mc_currency',
 			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
 							AND txn.payment_status = 'Completed'
 							AND txn.test_ipn = 0",
-			'GROUP_BY' => 'txn.user_id',
+			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
 		];
 
 		if ($order_by)
@@ -96,7 +96,7 @@ class transactions
 
 		if ($detailed)
 		{
-			$sql_donorslist_ary['SELECT'] = 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
+			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
 			$sql_donorslist_ary['LEFT_JOIN'] = [
 				[
 					'FROM' => [USERS_TABLE => 'u'],
