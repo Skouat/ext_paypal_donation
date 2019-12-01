@@ -54,11 +54,11 @@ class locale_icu
 		foreach ($locale_list as $locale => $locale_name)
 		{
 			// Set output block vars for display in the template
-			$this->template->assign_block_vars('locale_options', array(
+			$this->template->assign_block_vars('locale_options', [
 				'LOCALE_ID'        => $locale,
 				'LOCALE_NAME'      => $locale_name,
 				'S_LOCALE_DEFAULT' => $config_value === $locale,
-			));
+			]);
 		}
 		unset ($locale, $locale_list, $locale_name);
 	}

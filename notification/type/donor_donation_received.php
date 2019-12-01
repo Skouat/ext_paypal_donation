@@ -21,10 +21,10 @@ class donor_donation_received extends donation_received
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $notification_option = array(
+	public static $notification_option = [
 		'lang'  => 'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED',
 		'group' => 'NOTIFICATION_GROUP_MISCELLANEOUS',
-	);
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -45,19 +45,19 @@ class donor_donation_received extends donation_received
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find_users_for_notification($data, $options = array())
+	public function find_users_for_notification($data, $options = [])
 	{
-		$options = array_merge(array(
-			'ignore_users' => array(),
-		), $options);
+		$options = array_merge([
+			'ignore_users' => [],
+		], $options);
 
 		// Grab members that have permission to use extension.
 		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use', false);
-		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : array();
+		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : [];
 
 		if (empty($users))
 		{
-			return array();
+			return [];
 		}
 
 		sort($users);

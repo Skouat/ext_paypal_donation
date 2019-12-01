@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: settings
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS'                   => 'Paramètres généraux',
 	'PPDE_SETTINGS_EXPLAIN'           => 'Depuis cette page vous pouvez configurer les paramètres généraux de PayPal Donation.',
 
@@ -78,18 +78,18 @@ $lang = array_merge($lang, array(
 	'PPDE_STATS_INDEX_ENABLE_EXPLAIN' => 'Activez cette option si vous voulez afficher les statistiques des dons sur l’index du forum.',
 	'PPDE_USED'                       => 'Dons utilisés',
 	'PPDE_USED_EXPLAIN'               => 'Inscrire le montant des dons déjà utilisés.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS_SAVED' => 'Les paramètres de PayPal Donation ont été sauvegardés.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS_MISSING' => 'Veuillez vérifier le paramètre « ID du compte PayPal ».',
-));
+]);

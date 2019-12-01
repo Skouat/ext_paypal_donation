@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: transactions
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Transactions log
 	'PPDE_DT_CONFIG'                => 'Transactions Log',
 	'PPDE_DT_CONFIG_EXPLAIN'        => 'Here you can see transaction details.',
@@ -105,13 +105,13 @@ $lang = array_merge($lang, array(
 
 	// List of available translations: https://github.com/fengyuanchen/datepicker/tree/master/i18n
 	'PPDE_MT_DATEPICKER_LANG'           => 'en-GB',
-));
+]);
 
 /**
  * mode: transactions
  * Info: This array is out of the previous because there is an issue with Transifex platform
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	/**
 	 * TRANSLATORS PLEASE NOTE
 	 * The line below has a special note.
@@ -120,7 +120,7 @@ $lang = array_merge($lang, array(
 	 */
 
 	## For translate:					Don't					Yes
-	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => [
 										'canceled_reversal' => 'Canceled Reversal',
 										'completed'         => 'Completed',
 										'created'           => 'Created',
@@ -132,13 +132,13 @@ $lang = array_merge($lang, array(
 										'reversed'          => 'Reversed',
 										'processed'         => 'Processed',
 										'voided'            => 'Voided',
-	),
-));
+	],
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DT_IPN_APPROVED'         => 'Transaction manually approved',
 	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'This donation was manually approved with the following errors',
 	'PPDE_DT_IPN_ERRORS'           => 'You should reconsider this donation because the following errors are detected',
@@ -151,4 +151,4 @@ $lang = array_merge($lang, array(
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'The donation date “%1$s” could not be parsed.',
 	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'The donation time “%1$s” could not be parsed.',
 	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'The donation date must be in the past, but it was “%1$s”.',
-));
+]);

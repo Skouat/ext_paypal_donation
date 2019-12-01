@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: PayPal features
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN Features',
 	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure all features that use the PayPal Instant Payment Notification (IPN).',
 
@@ -73,19 +73,19 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter the PayPal Sandbox email address or Merchant ID.',
 	'PPDE_SANDBOX_REMOTE'                  => 'PayPal sandbox URL',
 	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Do not change this setting, unless this extension encounters errors to contact the sandbox remote host.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal IPN features saved.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Please check “Sandbox address”.',
 	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'IPN PayPal cannot be enabled. Check the system requirements from the “Overview” module.',
-));
+]);

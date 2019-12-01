@@ -23,12 +23,12 @@ class ipn_paypal
 	 *
 	 * @var array
 	 */
-	private static $remote_uri = array(
-		array('hostname' => 'www.paypal.com', 'uri' => 'https://www.paypal.com/cgi-bin/webscr', 'type' => 'live'),
-		array('hostname' => 'www.sandbox.paypal.com', 'uri' => 'https://www.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
-		array('hostname' => 'ipnpb.paypal.com', 'uri' => 'https://ipnpb.paypal.com/cgi-bin/webscr', 'type' => 'live'),
-		array('hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
-	);
+	private static $remote_uri = [
+		['hostname' => 'www.paypal.com', 'uri' => 'https://www.paypal.com/cgi-bin/webscr', 'type' => 'live'],
+		['hostname' => 'www.sandbox.paypal.com', 'uri' => 'https://www.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'],
+		['hostname' => 'ipnpb.paypal.com', 'uri' => 'https://ipnpb.paypal.com/cgi-bin/webscr', 'type' => 'live'],
+		['hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'],
+	];
 
 	protected $config;
 	protected $language;
@@ -38,8 +38,7 @@ class ipn_paypal
 	/**
 	 * @var array
 	 */
-	private $curl_fsock = array('curl' => false,
-								'none' => true);
+	private $curl_fsock = ['curl' => false, 'none' => true];
 	/**
 	 * Full PayPal response for include in text report
 	 *
@@ -146,10 +145,10 @@ class ipn_paypal
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
 			'User-Agent: PHP-IPN-Verification-Script',
 			'Connection: Close',
-		));
+		]);
 
 		if ($this->ppde_ipn_log->is_use_log_error())
 		{
@@ -187,10 +186,10 @@ class ipn_paypal
 	{
 		if ($this->config['ppde_curl_detected'])
 		{
-			$this->curl_fsock = array(
+			$this->curl_fsock = [
 				'curl' => true,
 				'none' => false,
-			);
+			];
 		}
 
 		return array_search(true, $this->curl_fsock);

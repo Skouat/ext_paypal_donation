@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: overview
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_OVERVIEW' => 'Overview',
 
 	'PPDE_ESI'                   => 'Extension and System Information',
@@ -77,4 +77,4 @@ $lang = array_merge($lang, array(
 	'STATS_KNOWN_DONORS_PER_DAY'     => 'Known donors per day',
 	'STATS_TRANSACTIONS_COUNT'       => 'Number of transactions',
 	'STATS_TRANSACTIONS_PER_DAY'     => 'Transactions per day',
-));
+]);

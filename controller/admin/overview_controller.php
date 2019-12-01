@@ -141,7 +141,7 @@ class overview_controller extends admin_main
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
 		// Set output block vars for display in the template
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
@@ -166,12 +166,12 @@ class overview_controller extends admin_main
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
 			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
 			'U_ACTION'                       => $this->u_action,
-		));
+		]);
 
 		if ($this->ppde_controller_main->use_sandbox())
 		{
 			// Set output block vars for display in the template
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'S_IPN_TEST'                       => true,
 				'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
 				'SANDBOX_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count_ipn'),
@@ -179,7 +179,7 @@ class overview_controller extends admin_main
 				'SANDBOX_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count_ipn'),
 				'SANDBOX_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count_ipn'],
 				'SANDBOX_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count_ipn'),
-			));
+			]);
 		}
 	}
 
@@ -241,9 +241,9 @@ class overview_controller extends admin_main
 
 		if ($confirm)
 		{
-			confirm_box(false, $this->language->lang($confirm_lang), build_hidden_fields(array(
+			confirm_box(false, $this->language->lang($confirm_lang), build_hidden_fields([
 				'action' => $action,
-			)));
+			]));
 		}
 	}
 

@@ -58,7 +58,7 @@ class main_display_stats
 			// Get data from the database
 			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
 				'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
 				'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
@@ -66,7 +66,7 @@ class main_display_stats
 				'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'L_PPDE_USED'   => $this->get_ppde_used_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-			));
+			]);
 
 			// Generate statistics percent for display
 			$this->generate_stats_percent();
@@ -219,11 +219,11 @@ class main_display_stats
 		// Force $varname to be in upper case
 		$varname = strtoupper($varname);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent, 0),
 			'PPDE_CSS_' . $varname => $this->ppde_css_classname($percent, $reverse_css),
 			'S_' . $varname        => true,
-		));
+		]);
 	}
 
 	/**
@@ -239,7 +239,7 @@ class main_display_stats
 	{
 		$css_reverse = '';
 		// Array of CSS class name
-		$css_data_ary = array(
+		$css_data_ary = [
 			10  => 'ten',
 			20  => 'twenty',
 			30  => 'thirty',
@@ -250,7 +250,7 @@ class main_display_stats
 			80  => 'eighty',
 			90  => 'ninety',
 			100 => 'hundred',
-		);
+		];
 
 		// Determine the index based on the value rounded up to the next highest
 		$index = ceil($value / 10) * 10;

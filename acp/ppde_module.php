@@ -13,14 +13,14 @@ namespace skouat\ppde\acp;
 class ppde_module
 {
 	/** @var array */
-	private static $available_mode = array(
-		array('module_name' => 'currency', 'lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'),
-		array('module_name' => 'donation_pages', 'lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'),
-		array('module_name' => 'overview'),
-		array('module_name' => 'paypal_features'),
-		array('module_name' => 'settings'),
-		array('module_name' => 'transactions'),
-	);
+	private static $available_mode = [
+		['module_name' => 'currency', 'lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'],
+		['module_name' => 'donation_pages', 'lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'],
+		['module_name' => 'overview'],
+		['module_name' => 'paypal_features'],
+		['module_name' => 'settings'],
+		['module_name' => 'transactions'],
+	];
 	/** @var string */
 	public $u_action;
 	/** @var string */
@@ -118,7 +118,7 @@ class ppde_module
 		}
 		unset($item);
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -235,11 +235,11 @@ class ppde_module
 				}
 
 				// Request confirmation from the user to delete the selected item
-				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields(array(
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields([
 					'id'     => $id,
 					'mode'   => $mode,
 					'action' => $action,
-				)));
+				]));
 			break;
 		}
 

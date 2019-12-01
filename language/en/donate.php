@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -34,7 +34,7 @@ if (empty($lang) || !is_array($lang))
 // ’ « » “ ” …
 //
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Header
 	'PPDE_HEADER_LINK_TITLE'           => 'Donations',
 	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donors',
@@ -72,20 +72,20 @@ $lang = array_merge($lang, array(
 	// Viewonline
 	'PPDE_VIEWONLINE'           => 'Viewing Donation page',
 	'PPDE_VIEWONLINE_DONORLIST' => 'Viewing the list of donors',
-));
+]);
 
 /**
  * Note: This array is out of the previous because there is an issue with Transifex platform
  * Note for translators: Before pushing your translation on Transifex, please surround array indexes with ''.
  */
-$lang = array_merge($lang, array(
-	'PPDE_DONORS' => array(
+$lang = array_merge($lang, [
+	'PPDE_DONORS' => [
 		1 => '%d donor',  // 1
 		2 => '%d donors', // 2+
-	),
-));
+	],
+]);
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Error
 	'CURL_ERROR'                => 'cURL error: %s',
 	'INVALID_TXN'               => 'Invalid transaction:',
@@ -99,11 +99,11 @@ $lang = array_merge($lang, array(
 	'NO_CONNECTION_DETECTED'    => 'cURL has not been detected. Please contact the administrator of your web server.',
 	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 have not been detected. Please contact the administrator of your web server.',
 	'UNEXPECTED_RESPONSE'       => 'Unexpected response from PayPal.',
-));
+]);
 
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Notification
 	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => '%1$s’s donation requires your attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donated “%2$s”.',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Your donation of “%1$s” has been received.',
-));
+]);

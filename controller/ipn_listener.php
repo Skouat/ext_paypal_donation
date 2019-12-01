@@ -24,127 +24,127 @@ class ipn_listener
 {
 	/** Setup the PayPal variables list with default values and conditions to check.
 	 * Example:
-	 *      array(
+	 *      [
 	 *          'name' => 'txn_id'
 	 *          'default' => ''
-	 *          'condition_check' => array('ascii' => true),
-	 *      ),
-	 *      array(
+	 *          'condition_check' => ['ascii' => true],
+	 *      ],
+	 *      [
 	 *          'name' => 'business'
 	 *          'default' => ''
-	 *          'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-	 *          'force_settings'  => array('length' => 127, 'lowercase' => true),
-	 *      ),
+	 *          'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+	 *          'force_settings'  => ['length' => 127, 'lowercase' => true],
+	 *      ],
 	 * The index 'name' and 'default' are mandatory.
 	 * The index 'condition_check' and 'force_settings' are optional
 	 *
 	 */
-	private static $paypal_vars_table = array(
-		array('name' => 'confirmed', 'default' => false),    // Used to check if the payment is confirmed
-		array('name' => 'exchange_rate', 'default' => ''),   // Exchange rate used if a currency conversion occurred
-		array('name' => 'mc_currency', 'default' => ''),     // Currency
-		array('name' => 'mc_gross', 'default' => 0.00),      // Amt received (before fees)
-		array('name' => 'mc_fee', 'default' => 0.00),        // Amt of fees
-		array('name' => 'payment_status', 'default' => ''),  // Payment status. e.g.: 'Completed'
-		array('name' => 'settle_amount', 'default' => 0.00), // Amt received after currency conversion (before fees)
-		array('name' => 'settle_currency', 'default' => ''), // Currency of 'settle_amount'
-		array('name' => 'test_ipn', 'default' => false),     // Used when transaction come from Sandbox platform
-		array('name' => 'txn_type', 'default' => ''),        // Transaction type - Should be: 'web_accept'
-		array(  // Primary merchant e-mail address
-				'name'            => 'business',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-				'force_settings'  => array('length' => 127, 'lowercase' => true),
-		),
-		array(  // Sender's First name
-				'name'            => 'first_name',
-				'default'         => array('', true),
-				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
-				'force_settings'  => array('length' => 64),
-		),
-		array(  // Equal to: $this->config['sitename']
-				'name'            => 'item_name',
-				'default'         => array('', true),
-				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-				'force_settings'  => array('length' => 127),
-		),
-		array(  // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
-				'name'            => 'item_number',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-				'force_settings'  => array('length' => 127),
-		),
-		array(  // Sender's Last name
-				'name'            => 'last_name',
-				'default'         => array('', true),
-				'condition_check' => array('length' => array('value' => 64, 'operator' => '<=')),
-				'force_settings'  => array('length' => 64),
-		),
-		array(  // Memo entered by the donor
-				'name'            => 'memo',
-				'default'         => array('', true),
-				'condition_check' => array('length' => array('value' => 255, 'operator' => '<=')),
-				'force_settings'  => array('length' => 255),
-		),
-		array(  // The Parent transaction ID, in case of refund.
-				'name'            => 'parent_txn_id',
-				'default'         => '',
-				'condition_check' => array('ascii' => true, 'length' => array('value' => 19, 'operator' => '<=')),
-				'force_settings'  => array('length' => 19),
-		),
-		array(  // PayPal sender email address
-				'name'            => 'payer_email',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-				'force_settings'  => array('length' => 127),
-		),
-		array(  // PayPal sender ID
-				'name'            => 'payer_id',
-				'default'         => '',
-				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
-				'force_settings'  => array('length' => 13),
-		),
-		array(  // PayPal sender status (verified or unverified)
-				'name'            => 'payer_status',
-				'default'         => 'unverified',
-				'condition_check' => array('length' => array('value' => 13, 'operator' => '<=')),
-				'force_settings'  => array('length' => 13),
-		),
-		array(  // Payment Date/Time in the format 'HH:MM:SS Mmm DD, YYYY PDT'
-				'name'            => 'payment_date',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 28, 'operator' => '<=')),
-				'force_settings'  => array('length' => 28, 'strtotime' => true),
-		),
-		array(  // Payment type (echeck or instant)
-				'name'            => 'payment_type',
-				'default'         => '',
-				'condition_check' => array('content' => array('echeck', 'instant')),
-		),
-		array(  // Secure Merchant Account ID
-				'name'            => 'receiver_id',
-				'default'         => '',
-				'condition_check' => array('ascii' => true, 'length' => array('value' => 13, 'operator' => '<=')),
-				'force_settings'  => array('length' => 13),
-		),
-		array(  // Merchant e-mail address
-				'name'            => 'receiver_email',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
-				'force_settings'  => array('length' => 127, 'lowercase' => true),
-		),
-		array(  // Merchant country code
-				'name'            => 'residence_country',
-				'default'         => '',
-				'condition_check' => array('length' => array('value' => 2, 'operator' => '==')),
-				'force_settings'  => array('length' => 2),
-		),
-		array(  // Transaction ID
-				'name'            => 'txn_id',
-				'default'         => '',
-				'condition_check' => array('empty' => false, 'ascii' => true),
-		),
-	);
+	private static $paypal_vars_table = [
+		['name' => 'confirmed', 'default' => false],    // Used to check if the payment is confirmed
+		['name' => 'exchange_rate', 'default' => ''],   // Exchange rate used if a currency conversion occurred
+		['name' => 'mc_currency', 'default' => ''],     // Currency
+		['name' => 'mc_gross', 'default' => 0.00],      // Amt received (before fees)
+		['name' => 'mc_fee', 'default' => 0.00],        // Amt of fees
+		['name' => 'payment_status', 'default' => ''],  // Payment status. e.g.: 'Completed'
+		['name' => 'settle_amount', 'default' => 0.00], // Amt received after currency conversion (before fees)
+		['name' => 'settle_currency', 'default' => ''], // Currency of 'settle_amount'
+		['name' => 'test_ipn', 'default' => false],     // Used when transaction come from Sandbox platform
+		['name' => 'txn_type', 'default' => ''],        // Transaction type - Should be: 'web_accept'
+		[   // Primary merchant e-mail address
+			'name'            => 'business',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+			'force_settings'  => ['length' => 127, 'lowercase' => true],
+		],
+		[   // Sender's First name
+			'name'            => 'first_name',
+			'default'         => ['', true],
+			'condition_check' => ['length' => ['value' => 64, 'operator' => '<=']],
+			'force_settings'  => ['length' => 64],
+		],
+		[   // Equal to: $this->config['sitename']
+			'name'            => 'item_name',
+			'default'         => ['', true],
+			'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+			'force_settings'  => ['length' => 127],
+		],
+		[   // Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+			'name'            => 'item_number',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+			'force_settings'  => ['length' => 127],
+		],
+		[   // Sender's Last name
+			'name'            => 'last_name',
+			'default'         => ['', true],
+			'condition_check' => ['length' => ['value' => 64, 'operator' => '<=']],
+			'force_settings'  => ['length' => 64],
+		],
+		[   // Memo entered by the donor
+			'name'            => 'memo',
+			'default'         => ['', true],
+			'condition_check' => ['length' => ['value' => 255, 'operator' => '<=']],
+			'force_settings'  => ['length' => 255],
+		],
+		[   // The Parent transaction ID, in case of refund.
+			'name'            => 'parent_txn_id',
+			'default'         => '',
+			'condition_check' => ['ascii' => true, 'length' => ['value' => 19, 'operator' => '<=']],
+			'force_settings'  => ['length' => 19],
+		],
+		[   // PayPal sender email address
+			'name'            => 'payer_email',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+			'force_settings'  => ['length' => 127],
+		],
+		[   // PayPal sender ID
+			'name'            => 'payer_id',
+			'default'         => '',
+			'condition_check' => ['ascii' => true, 'length' => ['value' => 13, 'operator' => '<=']],
+			'force_settings'  => ['length' => 13],
+		],
+		[   // PayPal sender status (verified or unverified)
+			'name'            => 'payer_status',
+			'default'         => 'unverified',
+			'condition_check' => ['length' => ['value' => 13, 'operator' => '<=']],
+			'force_settings'  => ['length' => 13],
+		],
+		[   // Payment Date/Time in the format 'HH:MM:SS Mmm DD, YYYY PDT'
+			'name'            => 'payment_date',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 28, 'operator' => '<=']],
+			'force_settings'  => ['length' => 28, 'strtotime' => true],
+		],
+		[   // Payment type (echeck or instant)
+			'name'            => 'payment_type',
+			'default'         => '',
+			'condition_check' => ['content' => ['echeck', 'instant']],
+		],
+		[   // Secure Merchant Account ID
+			'name'            => 'receiver_id',
+			'default'         => '',
+			'condition_check' => ['ascii' => true, 'length' => ['value' => 13, 'operator' => '<=']],
+			'force_settings'  => ['length' => 13],
+		],
+		[   // Merchant e-mail address
+			'name'            => 'receiver_email',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 127, 'operator' => '<=']],
+			'force_settings'  => ['length' => 127, 'lowercase' => true],
+		],
+		[   // Merchant country code
+			'name'            => 'residence_country',
+			'default'         => '',
+			'condition_check' => ['length' => ['value' => 2, 'operator' => '==']],
+			'force_settings'  => ['length' => 2],
+		],
+		[   // Transaction ID
+			'name'            => 'txn_id',
+			'default'         => '',
+			'condition_check' => ['empty' => false, 'ascii' => true],
+		],
+	];
 
 	/**
 	 * Services properties declaration
@@ -165,13 +165,13 @@ class ipn_listener
 	 *
 	 * @var string
 	 */
-	private $args_return_uri = array();
+	private $args_return_uri = [];
 	/**
 	 * Data from PayPal transaction
 	 *
 	 * @var array
 	 */
-	private $transaction_data = array();
+	private $transaction_data = [];
 	/**
 	 * PayPal URL
 	 * Could be Sandbox URL ou normal PayPal URL.
@@ -274,7 +274,7 @@ class ipn_listener
 	private function validate_transaction()
 	{
 		// Request and populate $this->transaction_data
-		array_map(array($this, 'get_post_data'), self::$paypal_vars_table);
+		array_map([$this, 'get_post_data'], self::$paypal_vars_table);
 
 		// Additional checks
 		$this->check_account_id();
@@ -288,7 +288,7 @@ class ipn_listener
 			$this->transaction_data['txn_errors'] = $this->error_message;
 		}
 
-		$decode_ary = array('receiver_email', 'payer_email', 'payment_date', 'business', 'memo');
+		$decode_ary = ['receiver_email', 'payer_email', 'payment_date', 'business', 'memo'];
 		foreach ($decode_ary as $key)
 		{
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
@@ -306,7 +306,7 @@ class ipn_listener
 
 		if ($this->ppde_ipn_paypal->check_response_status())
 		{
-			$args = array_merge(array('response_status' => $this->ppde_ipn_paypal->get_response_status()), $this->get_postback_args());
+			$args = array_merge(['response_status' => $this->ppde_ipn_paypal->get_response_status()], $this->get_postback_args());
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $args);
 		}
 
@@ -347,7 +347,7 @@ class ipn_listener
 	 */
 	private function set_args_return_uri()
 	{
-		$values = array();
+		$values = [];
 		// Add the cmd=_notify-validate for PayPal
 		$this->args_return_uri = 'cmd=_notify-validate';
 
@@ -369,7 +369,7 @@ class ipn_listener
 	 */
 	private function get_postback_args()
 	{
-		$data_ary = array();
+		$data_ary = [];
 
 		foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
 		{
@@ -488,9 +488,9 @@ class ipn_listener
 			 * @var array    transaction_data    Array containing transaction data
 			 * @since 1.0.3
 			 */
-			$vars = array(
+			$vars = [
 				'transaction_data',
-			);
+			];
 			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
 
 			$this->transaction_data = $transaction_data;
@@ -530,7 +530,7 @@ class ipn_listener
 	 *
 	 * @return void
 	 */
-	private function get_post_data($data_ary = array())
+	private function get_post_data($data_ary = [])
 	{
 		// Request variables
 		if (is_array($data_ary['default']))
@@ -574,9 +574,9 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function check_post_data($data_ary = array())
+	private function check_post_data($data_ary = [])
 	{
-		$check = array();
+		$check = [];
 
 		// Check all conditions declared for this post_data
 		if (isset($data_ary['condition_check']))
@@ -597,12 +597,12 @@ class ipn_listener
 	 */
 	public function call_post_data_func($data_ary)
 	{
-		$check = array();
+		$check = [];
 
 		foreach ($data_ary['condition_check'] as $control_point => $params)
 		{
 			// Calling the check_post_data_function
-			if (call_user_func_array(array($this->ppde_actions, 'check_post_data_' . $control_point), array($data_ary['value'], $params)))
+			if (call_user_func_array([$this->ppde_actions, 'check_post_data_' . $control_point], [$data_ary['value'], $params]))
 			{
 				$check[] = true;
 				continue;

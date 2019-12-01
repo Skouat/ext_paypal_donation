@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,9 +37,9 @@ if (empty($lang) || !is_array($lang))
 /**
  * logs
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'EXCEPTION_INVALID_CONFIG_NAME' => 'The config name “%s” does not exist.',
 	'EXCEPTION_INVALID_FIELD'       => 'The field “%s” does not exist.',
 	'EXCEPTION_INVALID_USER_ID'     => 'The user ID “%d” does not exist.',
 	'EXCEPTION_OUT_OF_BOUNDS'       => 'The field “%1$s” received data beyond its bounds.',
-));
+]);

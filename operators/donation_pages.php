@@ -91,16 +91,16 @@ class donation_pages
 		// Request by id if provided, otherwise request all
 		$sql_where = ($lang_id != 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
 
-		$langs = array();
+		$langs = [];
 
 		$sql = 'SELECT * FROM ' . LANG_TABLE . ' ' . $sql_where;
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$langs[$row['lang_iso']] = array(
+			$langs[$row['lang_iso']] = [
 				'name' => $row['lang_local_name'],
 				'id'   => (int) $row['lang_id'],
-			);
+			];
 		}
 		$this->db->sql_freeresult($result);
 

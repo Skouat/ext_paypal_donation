@@ -17,7 +17,7 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 	 */
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v32x\v320_m2_update_schema');
+		return ['\skouat\ppde\migrations\v32x\v320_m2_update_schema'];
 	}
 
 	/**
@@ -25,20 +25,20 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function update_schema()
 	{
-		return array(
-			'add_columns'    => array(
-				$this->table_prefix . 'ppde_txn_log' => array(
-					'memo'       => array('VCHAR:255', ''),
-					'txn_errors' => array('TEXT_UNI', ''),
-				),
-			),
-			'change_columns' => array(
-				$this->table_prefix . 'ppde_txn_log' => array(
-					'item_name'   => array('VCHAR:127', ''),
-					'item_number' => array('VCHAR:127', ''),
-				),
-			),
-		);
+		return [
+			'add_columns'    => [
+				$this->table_prefix . 'ppde_txn_log' => [
+					'memo'       => ['VCHAR:255', ''],
+					'txn_errors' => ['TEXT_UNI', ''],
+				],
+			],
+			'change_columns' => [
+				$this->table_prefix . 'ppde_txn_log' => [
+					'item_name'   => ['VCHAR:127', ''],
+					'item_number' => ['VCHAR:127', ''],
+				],
+			],
+		];
 	}
 
 	/**
@@ -46,19 +46,19 @@ class v320_m4_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function revert_schema()
 	{
-		return array(
-			'drop_columns'   => array(
-				$this->table_prefix . 'ppde_txn_log' => array(
+		return [
+			'drop_columns'   => [
+				$this->table_prefix . 'ppde_txn_log' => [
 					'memo',
 					'txn_errors',
-				),
-			),
-			'change_columns' => array(
-				$this->table_prefix . 'ppde_txn_log' => array(
-					'item_name'   => array('VCHAR:128', ''),
-					'item_number' => array('VCHAR:128', ''),
-				),
-			),
-		);
+				],
+			],
+			'change_columns' => [
+				$this->table_prefix . 'ppde_txn_log' => [
+					'item_name'   => ['VCHAR:128', ''],
+					'item_number' => ['VCHAR:128', ''],
+				],
+			],
+		];
 	}
 }

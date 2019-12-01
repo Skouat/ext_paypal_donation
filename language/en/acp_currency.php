@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: currency
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DC_CONFIG'             => 'Currency Management',
 	'PPDE_DC_CONFIG_EXPLAIN'     => 'Here you can manage currencies.',
 	'PPDE_DC_CREATE_CURRENCY'    => 'Add currency',
@@ -57,23 +57,23 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_POSITION_RIGHT'     => 'Right',
 	'PPDE_DC_SYMBOL'             => 'Currency symbol',
 	'PPDE_DC_SYMBOL_EXPLAIN'     => 'Define the currency symbol.<br>eg: <strong>$</strong> for U.S. Dollar, <strong>€</strong> for Euro.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DC_ADDED'          => 'A currency has been added.',
 	'PPDE_DC_CONFIRM_DELETE' => 'Are you sure you want to delete the selected currency?',
 	'PPDE_DC_DELETED'        => 'A currency has been deleted.',
 	'PPDE_DC_GO_TO_PAGE'     => '%sEdit existing currency%s',
 	'PPDE_DC_UPDATED'        => 'A currency has been updated.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_CANNOT_DISABLE_DEFAULT_CURRENCY' => 'You cannot disable the default currency.',
 	'PPDE_DC_EMPTY_NAME'                   => 'Enter a currency name.',
 	'PPDE_DC_EMPTY_ISO_CODE'               => 'Enter an ISO code.',
@@ -82,4 +82,4 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_INVALID_HASH'                 => 'The link is corrupted. The hash is invalid.',
 	'PPDE_DC_NO_CURRENCY'                  => 'No currency found.',
 	'PPDE_DISABLE_BEFORE_DELETION'         => 'You must disable this currency before deleting it.',
-));
+]);

@@ -18,7 +18,7 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v31x\v313');
+		return ['\phpbb\db\migration\data\v31x\v313'];
 	}
 
 	/**
@@ -36,33 +36,33 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 	 */
 	public function update_data()
 	{
-		return array(
-			array('if', array(
-				array('module.exists', array('acp', false, 'DONATION_OVERVIEW')),
-				array('module.remove', array('acp', false, 'DONATION_OVERVIEW')),
-			)),
-			array('if', array(
-				array('module.exists', array('acp', false, 'DONATION_CONFIG')),
-				array('module.remove', array('acp', false, 'DONATION_CONFIG')),
-			)),
-			array('if', array(
-				array('module.exists', array('acp', false, 'DONATION_DP_CONFIG')),
-				array('module.remove', array('acp', false, 'DONATION_DP_CONFIG')),
-			)),
-			array('if', array(
-				array('module.exists', array('acp', false, 'DONATION_DC_CONFIG')),
-				array('module.remove', array('acp', false, 'DONATION_DC_CONFIG')),
-			)),
-			array('if', array(
-				array('module.exists', array('acp', false, 'ACP_DONATION_MOD')),
-				array('module.remove', array('acp', false, 'ACP_DONATION_MOD')),
-			)),
+		return [
+			['if', [
+				['module.exists', ['acp', false, 'DONATION_OVERVIEW']],
+				['module.remove', ['acp', false, 'DONATION_OVERVIEW']],
+			]],
+			['if', [
+				['module.exists', ['acp', false, 'DONATION_CONFIG']],
+				['module.remove', ['acp', false, 'DONATION_CONFIG']],
+			]],
+			['if', [
+				['module.exists', ['acp', false, 'DONATION_DP_CONFIG']],
+				['module.remove', ['acp', false, 'DONATION_DP_CONFIG']],
+			]],
+			['if', [
+				['module.exists', ['acp', false, 'DONATION_DC_CONFIG']],
+				['module.remove', ['acp', false, 'DONATION_DC_CONFIG']],
+			]],
+			['if', [
+				['module.exists', ['acp', false, 'ACP_DONATION_MOD']],
+				['module.remove', ['acp', false, 'ACP_DONATION_MOD']],
+			]],
 
 			// Custom functions
-			array('custom', array(array($this, 'rename_ppdm_configs'))),
-			array('custom', array(array($this, 'remove_ppdm_configs'))),
-			array('custom', array(array($this, 'rename_ppdm_permissions'))),
-		);
+			['custom', [[$this, 'rename_ppdm_configs']]],
+			['custom', [[$this, 'remove_ppdm_configs']]],
+			['custom', [[$this, 'rename_ppdm_permissions']]],
+		];
 	}
 
 	/**
@@ -70,7 +70,7 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 	 */
 	public function rename_ppdm_configs()
 	{
-		$ppdm_config_names = array(
+		$ppdm_config_names = [
 			'donation_account_id'         => 'ppde_account_id',
 			'donation_default_value'      => 'ppde_default_value',
 			'donation_dropbox_enable'     => 'ppde_dropbox_enable',
@@ -84,7 +84,7 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 			'donation_used'               => 'ppde_used',
 			'donation_used_enable'        => 'ppde_used_enable',
 			'paypal_sandbox_address'      => 'ppde_sandbox_address',
-		);
+		];
 
 		foreach ($ppdm_config_names as $old_name => $new_name)
 		{
@@ -106,14 +106,14 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 	 */
 	public function remove_ppdm_configs()
 	{
-		$ppdm_config_names = array(
+		$ppdm_config_names = [
 			'donation_currency_enable',
 			'donation_default_currency',
 			'donation_enable',
 			'donation_mod_version',
 			'paypal_sandbox_enable',
 			'paypal_sandbox_founder_enable',
-		);
+		];
 
 		// Delete all the unwanted configs
 		$sql = 'DELETE FROM ' . $this->table_prefix . 'config
@@ -126,10 +126,10 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 	 */
 	public function rename_ppdm_permissions()
 	{
-		$ppdm_permissions_names = array(
+		$ppdm_permissions_names = [
 			'a_pdm_manage' => 'a_ppde_manage',
 			'u_pdm_use'    => 'u_ppde_use',
-		);
+		];
 
 		// Update all the configs kept in PPDE
 		foreach ($ppdm_permissions_names as $old_name => $new_name)

@@ -13,13 +13,13 @@ namespace skouat\ppde\operators;
 class compare
 {
 	/** @var array */
-	private static $operators_table = array(
+	private static $operators_table = [
 		'<'  => 'compare_lt',
 		'<=' => 'compare_lte',
 		'==' => 'compare_eq',
 		'>=' => 'compare_gte',
 		'>'  => 'compare_gt',
-	);
+	];
 
 	/**
 	 * Compare two value
@@ -35,7 +35,7 @@ class compare
 	{
 		if (array_key_exists($operator, self::$operators_table))
 		{
-			return call_user_func_array(array($this, self::$operators_table[$operator]), array($value1, $value2));
+			return call_user_func_array([$this, self::$operators_table[$operator]], [$value1, $value2]);
 		}
 
 		return false;

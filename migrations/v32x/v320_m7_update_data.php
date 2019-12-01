@@ -14,18 +14,18 @@ class v320_m7_update_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v32x\v320_m6_update_data');
+		return ['\skouat\ppde\migrations\v32x\v320_m6_update_data'];
 	}
 
 	public function update_data()
 	{
-		return array(
+		return [
 			// INTL Settings
-			array('config.add', array('ppde_default_locale', '')),
-			array('config.add', array('ppde_intl_detected', false)),
-			array('config.add', array('ppde_intl_version', '')),
-			array('config.add', array('ppde_intl_version_valid', false)),
-			array('config.update', array('ppde_first_start', true)),
-		);
+			['config.add', ['ppde_default_locale', '']],
+			['config.add', ['ppde_intl_detected', false]],
+			['config.add', ['ppde_intl_version', '']],
+			['config.add', ['ppde_intl_version_valid', false]],
+			['config.update', ['ppde_first_start', true]],
+		];
 	}
 }

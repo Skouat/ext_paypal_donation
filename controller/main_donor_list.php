@@ -63,7 +63,7 @@ class main_donor_list extends main_controller
 		$start = $this->request->variable('start', 0);
 
 		// Sorting and order
-		$sort_key_sql = array('a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean');
+		$sort_key_sql = ['a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean'];
 
 		if (!isset($sort_key_sql[$sort_key]))
 		{
@@ -74,14 +74,14 @@ class main_donor_list extends main_controller
 
 		// Build a relevant pagination_url and sort_url.
 		// We do not use request_var() here directly to save some calls (not all variables are set)
-		$check_params = array(
-			'sk'    => array('sk', $default_key),
-			'sd'    => array('sd', 'a'),
-			'start' => array('start', 0),
-		);
+		$check_params = [
+			'sk'    => ['sk', $default_key],
+			'sd'    => ['sd', 'a'],
+			'start' => ['start', 0],
+		];
 
-		$params = $this->check_params($check_params, array('start'));
-		$sort_params = $this->check_params($check_params, array('sk', 'sd'));
+		$params = $this->check_params($check_params, ['start']);
+		$sort_params = $this->check_params($check_params, ['sk', 'sd']);
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
@@ -100,40 +100,40 @@ class main_donor_list extends main_controller
 		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
 		// Assign vars to the template
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
 			'TOTAL_DONORS'           => $this->language->lang('PPDE_DONORS', $total_donors),
 			'U_SORT_AMOUNT'          => $sort_url . 'sk=a&amp;sd=' . $this->set_sort_key($sort_key, 'a', $sort_dir),
 			'U_SORT_DONATED'         => $sort_url . 'sk=d&amp;sd=' . $this->set_sort_key($sort_key, 'd', $sort_dir),
 			'U_SORT_USERNAME'        => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
-		));
+		]);
 
 		// Adds fields to the table schema needed by entity->import()
-		$donorlist_table_schema = array(
-			'item_amount'     => array('name' => 'amount', 'type' => 'float'),
-			'item_max_txn_id' => array('name' => 'max_txn_id', 'type' => 'integer'),
-			'item_user_id'    => array('name' => 'user_id', 'type' => 'integer'),
-		);
+		$donorlist_table_schema = [
+			'item_amount'     => ['name' => 'amount', 'type' => 'float'],
+			'item_max_txn_id' => ['name' => 'max_txn_id', 'type' => 'integer'],
+			'item_user_id'    => ['name' => 'user_id', 'type' => 'integer'],
+		];
 
 		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, $this->config['topics_per_page'], $start, true);
 
 		// Adds fields to the table schema needed by entity->import()
-		$last_donation_table_schema = array(
-			'item_payment_date' => array('name' => 'payment_date', 'type' => 'integer'),
-			'item_mc_gross'     => array('name' => 'mc_gross', 'type' => 'float'),
-		);
+		$last_donation_table_schema = [
+			'item_payment_date' => ['name' => 'payment_date', 'type' => 'integer'],
+			'item_mc_gross'     => ['name' => 'mc_gross', 'type' => 'float'],
+		];
 
 		foreach ($data_ary as $data)
 		{
 			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
-			$this->template->assign_block_vars('donorrow', array(
+			$this->template->assign_block_vars('donorrow', [
 				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
 				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency($last_donation_data[0]['mc_gross'], $default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
 				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency($data['amount'], $default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-			));
+			]);
 		}
 
 		// Send all data to the template file
@@ -149,7 +149,7 @@ class main_donor_list extends main_controller
 	 */
 	private function check_params($params_ary, $excluded_keys)
 	{
-		$params = array();
+		$params = [];
 
 		foreach ($params_ary as $key => $call)
 		{

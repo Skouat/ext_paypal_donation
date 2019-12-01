@@ -17,7 +17,7 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	 */
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v32x\v320_m1_reparse');
+		return ['\skouat\ppde\migrations\v32x\v320_m1_reparse'];
 	}
 
 	/**
@@ -25,13 +25,13 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function update_schema()
 	{
-		return array(
-			'add_columns' => array(
-				$this->table_prefix . 'users' => array(
-					'user_ppde_donated_amount' => array('DECIMAL:8', 0),
-				),
-			),
-		);
+		return [
+			'add_columns' => [
+				$this->table_prefix . 'users' => [
+					'user_ppde_donated_amount' => ['DECIMAL:8', 0],
+				],
+			],
+		];
 	}
 
 	/**
@@ -39,10 +39,10 @@ class v320_m2_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function revert_schema()
 	{
-		return array(
-			'drop_columns' => array(
-				$this->table_prefix . 'users' => array('user_ppde_donated_amount'),
-			),
-		);
+		return [
+			'drop_columns' => [
+				$this->table_prefix . 'users' => ['user_ppde_donated_amount'],
+			],
+		];
 	}
 }

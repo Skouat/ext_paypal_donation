@@ -65,15 +65,15 @@ class donation_pages extends main
 			'PPDE_DP',
 			'DONATION_PAGES',
 			$table_name,
-			array(
-				'item_id'                      => array('name' => 'page_id', 'type' => 'integer'),
-				'item_name'                    => array('name' => 'page_title', 'type' => 'string'),
-				'item_lang_id'                 => array('name' => 'page_lang_id', 'type' => 'integer'),
-				'item_content'                 => array('name' => 'page_content', 'type' => 'string'),
-				'item_content_bbcode_bitfield' => array('name' => 'page_content_bbcode_bitfield', 'type' => 'string'),
-				'item_content_bbcode_uid'      => array('name' => 'page_content_bbcode_uid', 'type' => 'string'),
-				'item_content_bbcode_options'  => array('name' => 'page_content_bbcode_options', 'type' => 'integer'),
-			)
+			[
+				'item_id'                      => ['name' => 'page_id', 'type' => 'integer'],
+				'item_name'                    => ['name' => 'page_title', 'type' => 'string'],
+				'item_lang_id'                 => ['name' => 'page_lang_id', 'type' => 'integer'],
+				'item_content'                 => ['name' => 'page_content', 'type' => 'string'],
+				'item_content_bbcode_bitfield' => ['name' => 'page_content_bbcode_bitfield', 'type' => 'string'],
+				'item_content_bbcode_uid'      => ['name' => 'page_content_bbcode_uid', 'type' => 'string'],
+				'item_content_bbcode_options'  => ['name' => 'page_content_bbcode_options', 'type' => 'integer'],
+			]
 		);
 	}
 
@@ -85,29 +85,29 @@ class donation_pages extends main
 	 */
 	public function get_vars()
 	{
-		$this->dp_vars = array(
-			0 => array('var'   => '{USER_ID}',
-					   'value' => $this->user->data['user_id'],
-			),
-			1 => array('var'   => '{USERNAME}',
-					   'value' => $this->user->data['username'],
-			),
-			2 => array('var'   => '{SITE_NAME}',
-					   'value' => $this->config['sitename'],
-			),
-			3 => array('var'   => '{SITE_DESC}',
-					   'value' => $this->config['site_desc'],
-			),
-			4 => array('var'   => '{BOARD_CONTACT}',
-					   'value' => $this->config['board_contact'],
-			),
-			5 => array('var'   => '{BOARD_EMAIL}',
-					   'value' => $this->config['board_email'],
-			),
-			6 => array('var'   => '{BOARD_SIG}',
-					   'value' => $this->config['board_email_sig'],
-			),
-		);
+		$this->dp_vars = [
+			0 => ['var'   => '{USER_ID}',
+				  'value' => $this->user->data['user_id'],
+			],
+			1 => ['var'   => '{USERNAME}',
+				  'value' => $this->user->data['username'],
+			],
+			2 => ['var'   => '{SITE_NAME}',
+				  'value' => $this->config['sitename'],
+			],
+			3 => ['var'   => '{SITE_DESC}',
+				  'value' => $this->config['site_desc'],
+			],
+			4 => ['var'   => '{BOARD_CONTACT}',
+				  'value' => $this->config['board_contact'],
+			],
+			5 => ['var'   => '{BOARD_EMAIL}',
+				  'value' => $this->config['board_email'],
+			],
+			6 => ['var'   => '{BOARD_SIG}',
+				  'value' => $this->config['board_email_sig'],
+			],
+		];
 
 		if ($this->is_in_admin())
 		{
@@ -208,7 +208,7 @@ class donation_pages extends main
 	 */
 	public function replace_template_vars($message)
 	{
-		$tpl_ary = array();
+		$tpl_ary = [];
 		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
 		{
 			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];

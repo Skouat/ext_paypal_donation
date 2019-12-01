@@ -19,10 +19,10 @@ class admin_donation_errors extends \phpbb\notification\type\base
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $notification_option = array(
+	public static $notification_option = [
 		'lang'  => 'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_ERRORS',
 		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
-	);
+	];
 	/** @var \phpbb\config\config */
 	protected $config;
 	/** @var \phpbb\user_loader */
@@ -74,19 +74,19 @@ class admin_donation_errors extends \phpbb\notification\type\base
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find_users_for_notification($data, $options = array())
+	public function find_users_for_notification($data, $options = [])
 	{
-		$options = array_merge(array(
-			'ignore_users' => array(),
-		), $options);
+		$options = array_merge([
+			'ignore_users' => [],
+		], $options);
 
 		// Grab admins that have permission to administer extension.
 		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
-		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : array();
+		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : [];
 
 		if (empty($users))
 		{
-			return array();
+			return [];
 		}
 
 		sort($users);
@@ -126,12 +126,12 @@ class admin_donation_errors extends \phpbb\notification\type\base
 	 */
 	public function get_email_template_variables()
 	{
-		return array(
+		return [
 			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
 			'PAYER_USERNAME' => $this->get_data('payer_username'),
 			'TXN_ERRORS'     => $this->get_data('txn_errors'),
 			'TXN_ID'         => $this->get_data('txn_id'),
-		);
+		];
 	}
 
 	/**
@@ -147,13 +147,13 @@ class admin_donation_errors extends \phpbb\notification\type\base
 	 */
 	public function users_to_query()
 	{
-		return array($this->get_data('user_from'));
+		return [$this->get_data('user_from')];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function create_insert_array($data, $pre_create_data = array())
+	public function create_insert_array($data, $pre_create_data = [])
 	{
 		$this->set_data('payer_email', $data['payer_email']);
 		$this->set_data('payer_username', $data['payer_username']);

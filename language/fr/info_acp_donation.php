@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: main
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_ACP_DONATION'        => 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'        => 'Vue d’ensemble',
 	'PPDE_ACP_PAYPAL_FEATURES' => 'Fonctionnalités PayPal IPN',
@@ -45,12 +45,12 @@ $lang = array_merge($lang, array(
 	'PPDE_ACP_DONATION_PAGES'  => 'Pages des dons',
 	'PPDE_ACP_CURRENCY'        => 'Gestion des devises',
 	'PPDE_ACP_TRANSACTIONS'    => 'Journal des transactions',
-));
+]);
 
 /**
  * logs
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'LOG_PPDE_DC_ACTIVATED'            => '<strong>PayPal Donation : Devise activée</strong><br>» %s',
 	'LOG_PPDE_DC_ADDED'                => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br>» %s',
 	'LOG_PPDE_DC_DEACTIVATED'          => '<strong>PayPal Donation : Devise désactivée</strong><br>» %s',
@@ -70,4 +70,4 @@ $lang = array_merge($lang, array(
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation : Actualisation des statistiques</strong>',
 	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation : Vérification des prérequis</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation : Actualisation des statistiques PayPal Sandbox</strong>',
-));
+]);
