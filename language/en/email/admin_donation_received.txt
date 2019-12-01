@@ -1,4 +1,4 @@
-Subject: New donation notification  - "{SITENAME}"
+Subject: New donation notification  - {SITENAME}
 
 Hello {USERNAME},
 

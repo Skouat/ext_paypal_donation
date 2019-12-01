@@ -96,8 +96,8 @@ $lang = array_merge($lang, [
 	'INVALID_TXN_INVALID_CHECK' => 'Unknown Postdata.',
 	'INVALID_TXN_LENGTH'        => 'The expected number of chars for “%s” does not match.',
 	'INVALID_RESPONSE_STATUS'   => 'Invalid response status: ',
-	'NO_CONNECTION_DETECTED'    => 'cURL has not been detected. Please contact the administrator of your web server.',
-	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 have not been detected. Please contact the administrator of your web server.',
+	'NO_CONNECTION_DETECTED'    => 'cURL not detected. Please contact the administrator of your web server.',
+	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 not detected. Please contact the administrator of your web server.',
 	'UNEXPECTED_RESPONSE'       => 'Unexpected response from PayPal.',
 ]);
 
