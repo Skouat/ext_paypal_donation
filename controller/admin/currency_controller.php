@@ -97,7 +97,7 @@ class currency_controller extends admin_main
 		// Check if currency_order is valid and fix it if necessary
 		$this->ppde_operator->fix_currency_order();
 
-		// Grab all the pages from the db
+		// Grab all the currencies from the db
 		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data());
 
 		array_map([$this, 'currency_assign_template_vars'], $data_ary);
