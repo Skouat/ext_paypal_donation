@@ -10,13 +10,13 @@
 
 namespace skouat\ppde\notification\type;
 
-use skouat\ppde\notification\donation_received;
+use skouat\ppde\notification\donation;
 
 /**
  * PayPal Donation notifications class
  * This class handles notifications for Admin received donation
  */
-class donor_donation_received extends donation_received
+class donor_donation_received extends donation
 {
 	/**
 	 * {@inheritdoc}
@@ -82,13 +82,5 @@ class donor_donation_received extends donation_received
 	public function get_email_template()
 	{
 		return '@skouat_ppde/donor_donation_received';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_url()
-	{
-		return '';
 	}
 }

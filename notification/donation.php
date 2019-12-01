@@ -14,8 +14,7 @@ namespace skouat\ppde\notification;
  * PayPal Donation notifications class
  * This class handles notifications for Admin received donation
  */
-
-abstract class donation_received extends \phpbb\notification\type\base
+abstract class donation extends \phpbb\notification\type\base
 {
 	/**
 	 * {@inheritdoc}
@@ -90,6 +89,29 @@ abstract class donation_received extends \phpbb\notification\type\base
 	public function get_url()
 	{
 		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function find_users_for_notification($data, $options = [])
+	{
+		$options = array_merge([
+			'ignore_users' => [],
+		], $options);
+
+		// Grab admins that have permission to administer extension.
+		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
+		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : [];
+
+		if (empty($users))
+		{
+			return [];
+		}
+
+		sort($users);
+
+		return $this->check_user_notification_options($users, $options);
 	}
 
 	/**

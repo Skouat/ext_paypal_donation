@@ -10,13 +10,13 @@
 
 namespace skouat\ppde\notification\type;
 
-use skouat\ppde\notification\donation_received;
+use skouat\ppde\notification\donation;
 
 /**
  * PayPal Donation notifications class
  * This class handles notifications for Admin received donation
  */
-class admin_donation_received extends donation_received
+class admin_donation_received extends donation
 {
 	/**
 	 * {@inheritdoc}
@@ -45,30 +45,6 @@ class admin_donation_received extends donation_received
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find_users_for_notification($data, $options = [])
-	{
-		$options = array_merge([
-			'ignore_users' => [],
-		], $options);
-
-		// Grab admins that have permission to administer extension.
-		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
-		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : [];
-
-		if (empty($users))
-		{
-			return [];
-		}
-
-		sort($users);
-
-		return $this->check_user_notification_options($users, $options);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-
 	public function get_title()
 	{
 		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
@@ -83,13 +59,5 @@ class admin_donation_received extends donation_received
 	public function get_email_template()
 	{
 		return '@skouat_ppde/admin_donation_received';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_url()
-	{
-		return '';
 	}
 }
