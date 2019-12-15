@@ -410,12 +410,13 @@ abstract class main
 	 * @param string $sql
 	 * @param array  $additional_table_schema
 	 * @param int    $limit
-	 * @param        $limit_offset
+	 * @param int    $limit_offset
+	 * @param bool   $override
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = array(), $limit = 0, $limit_offset = 0)
+	public function get_data($sql, $additional_table_schema = array(), $limit = 0, $limit_offset = 0, $override = false)
 	{
 		$entities = array();
 		$result = $this->limit_query($sql, $limit, $limit_offset);
@@ -423,7 +424,7 @@ abstract class main
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			// Import each row into an entity
-			$entities[] = $this->import($row, $additional_table_schema);
+			$entities[] = $this->import($row, $additional_table_schema, $override);
 		}
 		$this->db->sql_freeresult($result);
 
@@ -455,17 +456,18 @@ abstract class main
 	 *
 	 * @param array $data Data array, typically from the database
 	 * @param array $additional_table_schema
+	 * @param bool  $override
 	 *
 	 * @return array $this->data
 	 * @access public
 	 */
-	public function import($data, $additional_table_schema = array())
+	public function import($data, $additional_table_schema = array(), $override = false)
 	{
 		// Clear out any saved data
 		$this->data = array();
 
 		// Adds additional field to the table schema
-		$this->table_schema = array_merge($this->table_schema, $additional_table_schema);
+		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
 
 		// Go through the basic fields and set them to our data array
 		foreach ($this->table_schema as $generic_field => $field)

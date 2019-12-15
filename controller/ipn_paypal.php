@@ -276,7 +276,9 @@ class ipn_paypal
 	public function check_tls()
 	{
 		// Reset settings to false
-		$this->config->set('ppde_tls_detected', false);
+		// Since August 2019 the PayPal website is down. So we temporarily set to true this value,
+		// until a alternative solution is found.
+		$this->config->set('ppde_tls_detected', true);
 
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{

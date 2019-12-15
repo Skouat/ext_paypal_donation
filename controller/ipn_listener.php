@@ -167,14 +167,6 @@ class ipn_listener
 	 */
 	private $args_return_uri = array();
 	/**
-	 * @var boolean
-	 */
-	private $donor_is_member = false;
-	/**
-	 * @var array
-	 */
-	private $payer_data;
-	/**
 	 * Data from PayPal transaction
 	 *
 	 * @var array
@@ -287,6 +279,7 @@ class ipn_listener
 		// Additional checks
 		$this->check_account_id();
 
+		$this->transaction_data['txn_errors'] = '';
 		if (!empty($this->error_message))
 		{
 			// If data doesn't meet the requirement, we log in file (if enabled).
@@ -451,8 +444,7 @@ class ipn_listener
 		$this->ppde_actions->set_transaction_data($this->transaction_data);
 		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
 		$this->ppde_actions->is_donor_is_member();
-		$this->donor_is_member = $this->ppde_actions->get_donor_is_member();
-		$this->payer_data = $this->ppde_actions->get_payer_data();
+		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
 	}
 
 	/**
@@ -469,12 +461,12 @@ class ipn_listener
 			return false;
 		}
 
-		$this->tasks_list['payment_completed'] = $validate[] = $this->ppde_actions->payment_status_is_completed();
-		$this->tasks_list['donor_is_member'] = $this->donor_is_member;
-		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']) ? true : false;
+		$this->tasks_list['payment_completed'] = $mandatory[] = $this->ppde_actions->payment_status_is_completed();
+		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
 		$this->tasks_list['is_not_ipn_test'] = !$this->transaction_data['test_ipn'];
+		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']) ? true : false;
 
-		return array_product($validate);
+		return array_product($mandatory);
 	}
 
 	/**

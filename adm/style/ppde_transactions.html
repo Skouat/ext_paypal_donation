@@ -302,6 +302,10 @@
 		<input class="button2" type="submit" name="delmarked" value="{{ lang('DELETE_MARKED') }}"><br>
 		<p class="small"><a href="#" onclick="marklist('ppde_transactions', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('ppde_transactions', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
 	</fieldset>
+	{% else %}
+	<fieldset class="quick">
+		<input class="button2" type="submit" name="add" value="{{ lang('ADD') }}">
+	</fieldset>
 	{% endif %}
 </form>
 {% endif %}
