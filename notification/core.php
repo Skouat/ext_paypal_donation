@@ -108,8 +108,8 @@ class core
 				}
 
 				$notification_data = [
-					'net_amount'     => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 					'mc_gross'       => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'net_amount'     => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
 					'payer_username' => $this->ppde_entity_transaction->get_username(),
 					'settle_amount'  => $settle_amount,
