@@ -30,6 +30,8 @@ class ipn_paypal
 		array('hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'),
 	);
 
+	private static $tls_version = ['TLS 1.2', 'TLS 1.3'];
+
 	protected $config;
 	protected $language;
 	protected $ppde_ext_manager;
@@ -276,13 +278,11 @@ class ipn_paypal
 	public function check_tls()
 	{
 		// Reset settings to false
-		// Since August 2019 the PayPal website is down. So we temporarily set to true this value,
-		// until a alternative solution is found.
-		$this->config->set('ppde_tls_detected', true);
+		$this->config->set('ppde_tls_detected', false);
 
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
-			$ch = curl_init('https://tlstest.paypal.com/');
+			$ch = curl_init('https://www.howsmyssl.com/a/check');
 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -290,7 +290,9 @@ class ipn_paypal
 
 			curl_close($ch);
 
-			if ($response === 'PayPal_Connection_OK')
+			$json = json_decode($response);
+
+			if (in_array($json->tls_version, $this::$tls_version))
 			{
 				$this->config->set('ppde_tls_detected', true);
 			}

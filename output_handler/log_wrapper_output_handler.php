@@ -14,6 +14,9 @@ use phpbb\filesystem\filesystem_interface;
 
 class log_wrapper_output_handler
 {
+	/**
+	 * @var filesystem_interface
+	 */
 	protected $filesystem;
 	/**
 	 * Log file handle
