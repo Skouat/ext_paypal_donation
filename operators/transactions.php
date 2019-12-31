@@ -46,17 +46,17 @@ class transactions
 	public function build_sql_data($transaction_id = 0)
 	{
 		// Build main sql request
-		$sql_ary = array(
+		$sql_ary = [
 			'SELECT'    => '*, u.username, u.user_colour',
-			'FROM'      => array($this->ppde_transactions_log_table => 'txn'),
-			'LEFT_JOIN' => array(
-				array(
-					'FROM' => array(USERS_TABLE => 'u'),
+			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
+			'LEFT_JOIN' => [
+				[
+					'FROM' => [USERS_TABLE => 'u'],
 					'ON'   => 'u.user_id = txn.user_id',
-				),
-			),
+				],
+			],
 			'ORDER_BY'  => 'txn.transaction_id',
-		);
+		];
 
 		// Use WHERE clause when $currency_id is different from 0
 		if ((int) $transaction_id)
@@ -80,14 +80,14 @@ class transactions
 	public function sql_donorlist_ary($detailed = false, $order_by = '')
 	{
 		// Build sql request
-		$sql_donorslist_ary = array(
+		$sql_donorslist_ary = [
 			'SELECT'   => 'txn.user_id',
-			'FROM'     => array($this->ppde_transactions_log_table => 'txn'),
+			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
 							AND txn.payment_status = 'Completed'
 							AND txn.test_ipn = 0",
 			'GROUP_BY' => 'txn.user_id',
-		);
+		];
 
 		if ($order_by)
 		{
@@ -97,11 +97,11 @@ class transactions
 		if ($detailed)
 		{
 			$sql_donorslist_ary['SELECT'] = 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
-			$sql_donorslist_ary['LEFT_JOIN'] = array(
-				array(
-					'FROM' => array(USERS_TABLE => 'u'),
+			$sql_donorslist_ary['LEFT_JOIN'] = [
+				[
+					'FROM' => [USERS_TABLE => 'u'],
 					'ON'   => 'u.user_id = txn.user_id',
-				));
+				]];
 		}
 
 		return $sql_donorslist_ary;
@@ -118,11 +118,11 @@ class transactions
 	public function sql_last_donation_ary($transaction_id)
 	{
 		// Build sql request
-		return array(
+		return [
 			'SELECT' => 'txn.payment_date, txn.mc_gross',
-			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
+			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'  => 'txn.transaction_id = ' . (int) $transaction_id,
-		);
+		];
 	}
 
 	/**
@@ -185,15 +185,15 @@ class transactions
 			$sql_keywords = $this->generate_sql_keyword($keywords);
 		}
 
-		$get_logs_sql_ary = array(
+		$get_logs_sql_ary = [
 			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.test_ipn, txn.confirmed, txn.txn_errors, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
-			'FROM'     => array(
+			'FROM'     => [
 				$this->ppde_transactions_log_table => 'txn',
 				USERS_TABLE                        => 'u',
-			),
+			],
 			'WHERE'    => 'txn.user_id = u.user_id ' . $sql_keywords,
 			'ORDER_BY' => $sort_by,
-		);
+		];
 
 		if ($log_time)
 		{
@@ -291,11 +291,11 @@ class transactions
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
 
-		$log = array();
+		$log = [];
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$log[] = array(
+			$log[] = [
 				'confirmed'      => $row['confirmed'],
 				'payment_date'   => $row['payment_date'],
 				'payment_status' => $row['payment_status'],
@@ -304,7 +304,7 @@ class transactions
 				'txn_errors'     => $row['txn_errors'],
 				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
 				'username_full'  => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $url_ary['profile_url']),
-			);
+			];
 		}
 
 		$this->db->sql_freeresult($result);
@@ -350,7 +350,7 @@ class transactions
 			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
 		}
 
-		return str_replace(array('{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'), array($txn_url, 'color: #FF0000;', $txn_id), (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
+		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #FF0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
 	}
 
 	/**
@@ -363,7 +363,7 @@ class transactions
 	 */
 	public function build_marked_where_sql($marked)
 	{
-		$sql_in = array();
+		$sql_in = [];
 		foreach ($marked as $mark)
 		{
 			$sql_in[] = $mark;
@@ -393,12 +393,12 @@ class transactions
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('payer_id');
-				$sql_ary['LEFT_JOIN'] = array(
-					array(
-						'FROM' => array(USERS_TABLE => 'u'),
+				$sql_ary['LEFT_JOIN'] = [
+					[
+						'FROM' => [USERS_TABLE => 'u'],
 						'ON'   => 'txn.user_id = u.user_id',
-					),
-				);
+					],
+				];
 				$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . (int) $test_ipn;
 			break;
 			case 'ppde_anonymous_donors_count':
@@ -427,10 +427,10 @@ class transactions
 	 */
 	private function sql_select_stats_main($field_name)
 	{
-		return array(
+		return [
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
-			'FROM'   => array($this->ppde_transactions_log_table => 'txn'),
-		);
+			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
+		];
 	}
 
 	/**
@@ -460,7 +460,7 @@ class transactions
 	 */
 	public function build_data_ary($data)
 	{
-		return array(
+		return [
 			'business'          => $data['business'],
 			'confirmed'         => (bool) $data['confirmed'],
 			'exchange_rate'     => $data['exchange_rate'],
@@ -490,6 +490,6 @@ class transactions
 			'txn_id'            => $data['txn_id'],
 			'txn_type'          => $data['txn_type'],
 			'user_id'           => (int) $data['user_id'],
-		);
+		];
 	}
 }

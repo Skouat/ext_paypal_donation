@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: settings
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS'                   => 'General Settings',
 	'PPDE_SETTINGS_EXPLAIN'           => 'Here you can configure the main settings for PayPal Donation.',
 
@@ -74,18 +74,18 @@ $lang = array_merge($lang, array(
 	'PPDE_STATS_INDEX_ENABLE_EXPLAIN' => 'Enable this if you want to display the donation stats on index.',
 	'PPDE_USED'                       => 'Donations used',
 	'PPDE_USED_EXPLAIN'               => 'The amount of donations that you have already used.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS_SAVED' => 'Donation settings saved.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_SETTINGS_MISSING' => 'Please check “Account ID”.',
-));
+]);

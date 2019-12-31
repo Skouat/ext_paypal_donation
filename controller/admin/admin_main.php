@@ -137,7 +137,7 @@ abstract class admin_main
 	 */
 	protected function is_invalid_form($form_name, $submit_or_preview = false)
 	{
-		return (!check_form_key($form_name) && $submit_or_preview) ? array($this->language->lang('FORM_INVALID')) : array();
+		return (!check_form_key($form_name) && $submit_or_preview) ? [$this->language->lang('FORM_INVALID')] : [];
 	}
 
 	/**
@@ -194,9 +194,9 @@ abstract class admin_main
 	 */
 	protected function is_empty_data(main $entity, $field_name, $value_cmp, $submit_or_preview = false)
 	{
-		$errors = array();
+		$errors = [];
 
-		if (call_user_func(array($entity, 'get_' . $field_name)) == $value_cmp && $submit_or_preview)
+		if (call_user_func([$entity, 'get_' . $field_name]) == $value_cmp && $submit_or_preview)
 		{
 			$errors[] = $this->language->lang($this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name));
 		}
@@ -231,13 +231,13 @@ abstract class admin_main
 		if ($this->request->is_ajax())
 		{
 			$json_response = new \phpbb\json_response;
-			$json_response->send(array(
+			$json_response->send([
 				'MESSAGE_TITLE' => $this->language->lang('INFORMATION'),
 				'MESSAGE_TEXT'  => $message,
-				'REFRESH_DATA'  => array(
+				'REFRESH_DATA'  => [
 					'time' => 3,
-				),
-			));
+				],
+			]);
 		}
 	}
 
@@ -249,9 +249,9 @@ abstract class admin_main
 	 */
 	protected function u_action_assign_template_vars()
 	{
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'U_ACTION' => $this->u_action,
-		));
+		]);
 	}
 
 	/**
@@ -267,11 +267,11 @@ abstract class admin_main
 	{
 		$id_action = !empty($id) ? '&amp;' . $this->id_prefix_name . '_id=' . (int) $id : '';
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'S_ADD_EDIT' => true,
 			'U_ACTION'   => $this->u_action . '&amp;action=' . $type . $id_action,
 			'U_BACK'     => $this->u_action,
-		));
+		]);
 	}
 
 	/**
@@ -284,10 +284,10 @@ abstract class admin_main
 	 */
 	protected function s_error_assign_template_vars($errors)
 	{
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'S_ERROR'   => (count($errors)) ? true : false,
 			'ERROR_MSG' => (count($errors)) ? implode('<br>', $errors) : '',
-		));
+		]);
 	}
 
 	/**
@@ -366,11 +366,11 @@ abstract class admin_main
 			}
 
 			// Set output block vars for display in the template
-			$this->template->assign_block_vars('remote_options', array(
+			$this->template->assign_block_vars('remote_options', [
 				'REMOTE_ID'   => $id,
 				'REMOTE_NAME' => $remote['hostname'],
 				'S_DEFAULT'   => $default == $id,
-			));
+			]);
 		}
 		unset ($remote_list, $remote);
 	}

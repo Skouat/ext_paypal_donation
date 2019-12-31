@@ -21,10 +21,10 @@ class admin_donation_received extends donation_received
 	/**
 	 * {@inheritdoc}
 	 */
-	public static $notification_option = array(
+	public static $notification_option = [
 		'lang'  => 'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED',
 		'group' => 'NOTIFICATION_GROUP_ADMINISTRATION',
-	);
+	];
 
 	/**
 	 * {@inheritdoc}
@@ -45,19 +45,19 @@ class admin_donation_received extends donation_received
 	/**
 	 * {@inheritdoc}
 	 */
-	public function find_users_for_notification($data, $options = array())
+	public function find_users_for_notification($data, $options = [])
 	{
-		$options = array_merge(array(
-			'ignore_users' => array(),
-		), $options);
+		$options = array_merge([
+			'ignore_users' => [],
+		], $options);
 
 		// Grab admins that have permission to administer extension.
 		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
-		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : array();
+		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : [];
 
 		if (empty($users))
 		{
-			return array();
+			return [];
 		}
 
 		sort($users);

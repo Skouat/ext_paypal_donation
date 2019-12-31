@@ -43,11 +43,12 @@ class ipn_log
 	private $use_log_error = false;
 
 	/** @var array */
-	private $report_data = array('remote_uri'             => '',
-								 'remote_type'            => '',
-								 'remote_report_response' => '',
-								 'remote_response_status' => '',
-								 'remote_data'            => array());
+	private $report_data = ['remote_uri'             => '',
+							'remote_type'            => '',
+							'remote_report_response' => '',
+							'remote_response_status' => '',
+							'remote_data'            => []
+	];
 
 	/**
 	 * Constructor
@@ -106,13 +107,13 @@ class ipn_log
 	 */
 	public function set_report_data($remote_uri, $remote_type, $remote_report_response, $remote_response_status, $remote_data)
 	{
-		$this->report_data = array(
+		$this->report_data = [
 			'remote_uri'             => (string) $remote_uri,
 			'remote_type'            => (string) $remote_type,
 			'remote_report_response' => (string) $remote_report_response,
 			'remote_response_status' => (string) $remote_response_status,
 			'remote_data'            => (array) $remote_data,
-		);
+		];
 	}
 
 	/**
@@ -127,7 +128,7 @@ class ipn_log
 	 * @return void
 	 * @access public
 	 */
-	public function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = array())
+	public function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = [])
 	{
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
@@ -151,7 +152,7 @@ class ipn_log
 		if ($log_in_file)
 		{
 			$message_in_file = str_replace('<br>', "\n", $message);
-			$backtrace = html_entity_decode(strip_tags(str_replace(array('<br />', '<br>', "\n\n"), "\n", $backtrace)));
+			$backtrace = html_entity_decode(strip_tags(str_replace(['<br />', '<br>', "\n\n"], "\n", $backtrace)));
 			$this->set_output_handler(new \skouat\ppde\output_handler\log_wrapper_output_handler($this->filesystem, $this->log_path_filename));
 			$this->output_handler->write(sprintf('[%s] %s %s', $error_timestamp, $message_in_file, $backtrace));
 		}

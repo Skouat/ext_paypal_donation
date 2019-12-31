@@ -112,12 +112,12 @@ class donation_pages_controller extends admin_main
 					continue;
 				}
 
-				$this->template->assign_block_vars('ppde_langs.dp_list', array(
+				$this->template->assign_block_vars('ppde_langs.dp_list', [
 					'DONATION_PAGE_TITLE' => $this->language->lang(strtoupper($data['page_title'])),
 					'DONATION_PAGE_LANG'  => (string) $lang,
 					'U_DELETE'            => $this->u_action . '&amp;action=delete&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
-				));
+				]);
 			}
 			unset($data_ary, $data);
 		}
@@ -138,11 +138,11 @@ class donation_pages_controller extends admin_main
 	 */
 	private function assign_langs_template_vars($lang, $current = 0)
 	{
-		$this->template->assign_block_vars('ppde_langs', array(
+		$this->template->assign_block_vars('ppde_langs', [
 			'LANG_LOCAL_NAME' => $lang['name'],
 			'VALUE'           => $lang['id'],
 			'S_SELECTED'      => ((int) $lang['id'] == (int) $current) ? true : false,
-		));
+		]);
 	}
 
 	/**
@@ -157,14 +157,14 @@ class donation_pages_controller extends admin_main
 		add_form_key('add_edit_donation_pages');
 
 		// Collect the form data
-		$data = array(
+		$data = [
 			'page_title'   => $this->request->variable('page_title', ''),
 			'page_lang_id' => $this->request->variable('lang_id', '', true),
 			'page_content' => $this->request->variable('page_content', '', true),
 			'bbcode'       => !$this->request->variable('disable_bbcode', false),
 			'magic_url'    => !$this->request->variable('disable_magic_url', false),
 			'smilies'      => !$this->request->variable('disable_smilies', false),
-		);
+		];
 
 		// Set template vars for language select menu
 		$this->create_language_options($data['page_lang_id']);
@@ -212,7 +212,7 @@ class donation_pages_controller extends admin_main
 		$this->preview = $this->request->is_set_post('preview');
 
 		// Create an array to collect errors that will be output to the user
-		$errors = array();
+		$errors = [];
 
 		// Load posting language file for the BBCode editor
 		$this->language->add_lang('posting');
@@ -226,17 +226,17 @@ class donation_pages_controller extends admin_main
 		// Set the message parse options in the entity
 		foreach ($message_parse_options as $function => $enabled)
 		{
-			call_user_func(array($entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function));
+			call_user_func([$entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function]);
 		}
 
 		unset($message_parse_options);
 
 		// Set the donation page's data in the entity
-		$item_fields = array(
+		$item_fields = [
 			'lang_id' => $data['page_lang_id'],
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
-		);
+		];
 		$entity->set_entity_data($item_fields);
 
 		// Check some settings before loading and submitting form
@@ -258,7 +258,7 @@ class donation_pages_controller extends admin_main
 
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'DONATION_BODY'                  => $entity->get_message_for_edit(),
 			'L_DONATION_PAGES_TITLE'         => $this->language->lang(strtoupper($entity->get_name())),
 			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->language->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
@@ -272,7 +272,7 @@ class donation_pages_controller extends admin_main
 			'S_BBCODE_ALLOWED'  => true,
 			'S_SMILIES_ALLOWED' => true,
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '">',
-		));
+		]);
 
 		// Display custom bbcodes and smilies
 		$this->include_custom_bbcodes($this->user->optionget('bbcode') || $entity->message_bbcode_enabled());
@@ -291,7 +291,7 @@ class donation_pages_controller extends admin_main
 	 */
 	private function get_message_parse_options(\skouat\ppde\entity\donation_pages $entity, $data, $type)
 	{
-		return array($type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func(array($entity, 'message_' . $type . '_enabled')));
+		return [$type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func([$entity, 'message_' . $type . '_enabled'])];
 	}
 
 	/**
@@ -308,10 +308,10 @@ class donation_pages_controller extends admin_main
 		if ($this->preview && empty($errors))
 		{
 			// Set output vars for display in the template
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'PPDE_DP_PREVIEW'   => $entity->replace_template_vars($entity->get_message_for_display()),
 				'S_PPDE_DP_PREVIEW' => $this->preview,
-			));
+			]);
 		}
 	}
 
@@ -327,10 +327,10 @@ class donation_pages_controller extends admin_main
 	{
 		for ($i = 0, $size = count($vars); $i < $size; $i++)
 		{
-			$this->template->assign_block_vars('dp_vars', array(
+			$this->template->assign_block_vars('dp_vars', [
 					'NAME'     => $vars[$i]['name'],
 					'VARIABLE' => $vars[$i]['var'],
-					'EXAMPLE'  => $vars[$i]['value'])
+					'EXAMPLE'  => $vars[$i]['value']]
 			);
 		}
 	}
@@ -355,7 +355,7 @@ class donation_pages_controller extends admin_main
 
 			$log_action = $entity->add_edit_data();
 			// Log and show user confirmation of the saved item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), array($this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name));
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), [$this->language->lang(strtoupper($entity->get_name())), $this->lang_local_name]);
 			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action), $this->lang_local_name) . adm_back_link($this->u_action));
 		}
 	}
@@ -440,7 +440,7 @@ class donation_pages_controller extends admin_main
 		$this->ppde_entity->load($page_id);
 
 		// Collect the form data
-		$data = array(
+		$data = [
 			'page_id'      => (int) $page_id,
 			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name(), false),
 			'page_lang_id' => $this->request->variable('page_lang_id', $this->ppde_entity->get_lang_id()),
@@ -448,7 +448,7 @@ class donation_pages_controller extends admin_main
 			'bbcode'       => !$this->request->variable('disable_bbcode', false),
 			'magic_url'    => !$this->request->variable('disable_magic_url', false),
 			'smilies'      => !$this->request->variable('disable_smilies', false),
-		);
+		];
 
 		// Set template vars for language select menu
 		$this->create_language_options($data['page_lang_id']);
@@ -479,7 +479,7 @@ class donation_pages_controller extends admin_main
 		$this->ppde_entity->delete($page_id);
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), array($this->language->lang(strtoupper($this->ppde_entity->get_name())), $this->lang_local_name));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), [$this->language->lang(strtoupper($this->ppde_entity->get_name())), $this->lang_local_name]);
 
 		// If AJAX was used, show user a result message
 		$message = $this->language->lang($this->lang_key_prefix . '_DELETED', $this->lang_local_name);

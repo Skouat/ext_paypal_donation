@@ -14,17 +14,17 @@ class v320_m3_update_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v32x\v320_m2_update_schema');
+		return ['\skouat\ppde\migrations\v32x\v320_m2_update_schema'];
 	}
 
 	public function update_data()
 	{
-		return array(
+		return [
 			// IPN Settings
-			array('config.add', array('ppde_ipn_min_before_group', 0)),
-			array('config.add', array('ppde_tls_detected', false)),
-			array('config.remove', array('ppde_fsock_detected')),
-			array('config.update', array('ppde_first_start', true)),
-		);
+			['config.add', ['ppde_ipn_min_before_group', 0]],
+			['config.add', ['ppde_tls_detected', false]],
+			['config.remove', ['ppde_fsock_detected']],
+			['config.update', ['ppde_first_start', true]],
+		];
 	}
 }

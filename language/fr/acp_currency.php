@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: currency
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DC_CONFIG'           => 'Gestion des devises',
 	'PPDE_DC_CONFIG_EXPLAIN'   => 'Permet de gérer les devises pour faire un don.',
 	'PPDE_DC_CREATE_CURRENCY'  => 'Ajouter une devise',
@@ -54,23 +54,23 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_POSITION_RIGHT'   => 'À droite',
 	'PPDE_DC_SYMBOL'           => 'Symbole de la devise',
 	'PPDE_DC_SYMBOL_EXPLAIN'   => 'Inscrire le symbole de la devise.<br>Exemple : <strong>€</strong> pour Euro.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DC_ADDED'          => 'Une devise a été ajoutée.',
 	'PPDE_DC_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
 	'PPDE_DC_DELETED'        => 'Une devise a été supprimée.',
 	'PPDE_DC_GO_TO_PAGE'     => '%sModifier la devise existante%s',
 	'PPDE_DC_UPDATED'        => 'Une devise a été mise à jour.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_CANNOT_DISABLE_DEFAULT_CURRENCY' => 'Vous ne pouvez pas désactiver la devise par défaut.',
 	'PPDE_DC_EMPTY_NAME'                   => 'Saisissez un nom de devise.',
 	'PPDE_DC_EMPTY_ISO_CODE'               => 'Saisissez un code ISO.',
@@ -79,4 +79,4 @@ $lang = array_merge($lang, array(
 	'PPDE_DC_INVALID_HASH'                 => 'Le lien est corrompu. Le hachage n’est pas valide.',
 	'PPDE_DC_NO_CURRENCY'                  => 'Aucune devise n’a été trouvée.',
 	'PPDE_DISABLE_BEFORE_DELETION'         => 'Vous devez désactiver la devise avant de la supprimer.',
-));
+]);

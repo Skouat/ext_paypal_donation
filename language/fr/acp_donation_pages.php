@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: donation pages
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Donation Page Body settings
 	'DONATION_BODY'            => 'Page principale',
 	'DONATION_BODY_EXPLAIN'    => 'Saisir le texte que vous souhaitez afficher sur la page principale.',
@@ -69,25 +69,25 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_VAR_EXAMPLE'      => 'Exemple',
 	'PPDE_DP_VAR_NAME'         => 'Nom',
 	'PPDE_DP_VAR_VAR'          => 'Variable',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DP_ADDED'          => 'Une page de dons pour la langue « %s » a été ajoutée.',
 	'PPDE_DP_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
 	'PPDE_DP_DELETED'        => 'Une page de dons pour la langue « %s » a été supprimée.',
 	'PPDE_DP_GO_TO_PAGE'     => '%sModifier la page de dons existante%s',
 	'PPDE_DP_UPDATED'        => 'Une page de dons pour la langue « %s » a été mise à jour.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DP_EMPTY_LANG_ID'     => 'Aucune langue n’a été sélectionnée.',
 	'PPDE_DP_EMPTY_NAME'        => 'La page de dons sélectionnée n’existe pas.',
 	'PPDE_DP_EXISTS'            => 'Cette page de dons existe déjà.',
 	'PPDE_DP_NO_DONATION_PAGES' => 'Aucune page de dons n’a été trouvée.',
-));
+]);

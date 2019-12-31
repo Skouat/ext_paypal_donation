@@ -18,7 +18,7 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v30x\v300_m1_converter_data');
+		return ['\skouat\ppde\migrations\v30x\v300_m1_converter_data'];
 	}
 
 	/**
@@ -36,11 +36,11 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 	 */
 	public function update_schema()
 	{
-		return array(
-			'drop_tables' => array(
+		return [
+			'drop_tables' => [
 				$this->table_prefix . 'donation_item',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -49,6 +49,6 @@ class v300_m2_converter_schema extends \phpbb\db\migration\migration
 	public function revert_schema()
 	{
 		// Do not revert the table because it requires a complete reinstall of PPDM for phpBB 3.0
-		return array();
+		return [];
 	}
 }

@@ -140,11 +140,11 @@ class transactions_controller extends admin_main
 	public function display_transactions($id, $mode, $action)
 	{
 		// Set up general vars
-		$args = array();
+		$args = [];
 		$start = $this->request->variable('start', 0);
 		$deletemark = $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST);
 		$deleteall = $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST);
-		$marked = $this->request->variable('mark', array(0));
+		$marked = $this->request->variable('mark', [0]);
 		$txn_approve = $this->request->is_set('approve');
 		$txn_approved = $this->request->variable('txn_errors_approved', 0);
 		$txn_add = $this->request->is_set('add');
@@ -158,8 +158,8 @@ class transactions_controller extends admin_main
 		if (($deletemark || $deleteall) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$action = 'delete';
-			$args = array(
-				'hidden_fields' => array(
+			$args = [
+				'hidden_fields' => [
 					'start'     => $start,
 					'delall'    => $deleteall,
 					'delmarked' => $deletemark,
@@ -169,21 +169,21 @@ class transactions_controller extends admin_main
 					'sd'        => $sort_dir,
 					'i'         => $id,
 					'mode'      => $mode,
-				),
-			);
+				],
+			];
 		}
 
 		if ($txn_approve)
 		{
 			$transaction_id = $this->request->variable('id', 0);
 			$action = 'approve';
-			$args = array(
-				'hidden_fields' => array(
+			$args = [
+				'hidden_fields' => [
 					'approve'             => true,
 					'id'                  => $transaction_id,
 					'txn_errors_approved' => $txn_approved,
-				),
-			);
+				],
+			];
 		}
 
 		if ($txn_add)
@@ -203,9 +203,9 @@ class transactions_controller extends admin_main
 			$pagination = $this->container->get('pagination');
 
 			// Sorting
-			$limit_days = array(0 => $this->language->lang('ALL_ENTRIES'), 1 => $this->language->lang('1_DAY'), 7 => $this->language->lang('7_DAYS'), 14 => $this->language->lang('2_WEEKS'), 30 => $this->language->lang('1_MONTH'), 90 => $this->language->lang('3_MONTHS'), 180 => $this->language->lang('6_MONTHS'), 365 => $this->language->lang('1_YEAR'));
-			$sort_by_text = array('txn' => $this->language->lang('PPDE_DT_SORT_TXN_ID'), 'u' => $this->language->lang('PPDE_DT_SORT_DONORS'), 'ipn' => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'), 'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'), 'ps' => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'), 't' => $this->language->lang('SORT_DATE'));
-			$sort_by_sql = array('txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date');
+			$limit_days = [0 => $this->language->lang('ALL_ENTRIES'), 1 => $this->language->lang('1_DAY'), 7 => $this->language->lang('7_DAYS'), 14 => $this->language->lang('2_WEEKS'), 30 => $this->language->lang('1_MONTH'), 90 => $this->language->lang('3_MONTHS'), 180 => $this->language->lang('6_MONTHS'), 365 => $this->language->lang('1_YEAR')];
+			$sort_by_text = ['txn' => $this->language->lang('PPDE_DT_SORT_TXN_ID'), 'u' => $this->language->lang('PPDE_DT_SORT_DONORS'), 'ipn' => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'), 'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'), 'ps' => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'), 't' => $this->language->lang('SORT_DATE')];
+			$sort_by_sql = ['txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date'];
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 			gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
@@ -218,7 +218,7 @@ class transactions_controller extends admin_main
 			$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
 
 			// Grab log data
-			$log_data = array();
+			$log_data = [];
 			$log_count = 0;
 
 			$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $start, $sql_where, $sql_sort, $keywords);
@@ -226,7 +226,7 @@ class transactions_controller extends admin_main
 			$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
 			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $start);
 
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
 				'S_KEYWORDS'   => $keywords,
 				'S_LIMIT_DAYS' => $s_limit_days,
@@ -234,9 +234,9 @@ class transactions_controller extends admin_main
 				'S_SORT_DIR'   => $s_sort_dir,
 				'S_TXN'        => $mode,
 				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $start,
-			));
+			]);
 
-			array_map(array($this, 'display_log_assign_template_vars'), $log_data);
+			array_map([$this, 'display_log_assign_template_vars'], $log_data);
 		}
 	}
 
@@ -258,22 +258,22 @@ class transactions_controller extends admin_main
 				$transaction_id = $this->request->variable('id', 0);
 
 				// add field username to the table schema needed by entity->import()
-				$additional_table_schema = array(
-					'item_username'    => array('name' => 'username', 'type' => 'string'),
-					'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
-				);
+				$additional_table_schema = [
+					'item_username'    => ['name' => 'username', 'type' => 'string'],
+					'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
+				];
 
 				// Grab transaction data
 				$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
-				array_map(array($this, 'action_assign_template_vars'), $data_ary);
+				array_map([$this, 'action_assign_template_vars'], $data_ary);
 
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
 					'U_ACTION'        => $this->u_action,
 					'U_BACK'          => $this->u_action,
 					'S_VIEW'          => true,
-				));
+				]);
 			break;
 			case 'delete':
 				if (confirm_box(true))
@@ -330,7 +330,7 @@ class transactions_controller extends admin_main
 				$action = '';
 			break;
 			case 'add':
-				$errors = array();
+				$errors = [];
 
 				$transaction_data = $this->request_transaction_vars();
 
@@ -348,7 +348,7 @@ class transactions_controller extends admin_main
 
 						$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
 
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), array($transaction_data['MT_USERNAME']));
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
 						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
 					}
 					catch (transaction_exception $e)
@@ -363,14 +363,14 @@ class transactions_controller extends admin_main
 
 				$this->template->assign_vars($transaction_data);
 
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'U_ACTION'             => $this->u_action,
 					'U_BACK'               => $this->u_action,
 					'S_ADD'                => true,
 					'ANONYMOUS_USER_ID'    => ANONYMOUS,
 					'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
 					'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
-				));
+				]);
 			break;
 			case 'change':
 
@@ -441,7 +441,7 @@ class transactions_controller extends admin_main
 	 */
 	private function request_transaction_vars()
 	{
-		return array(
+		return [
 			'MT_ANONYMOUS'          => $this->request->is_set('u'),
 			'MT_USERNAME'           => $this->request->variable('username', '', true),
 			'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
@@ -456,7 +456,7 @@ class transactions_controller extends admin_main
 			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
 			'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
 			'MT_MEMO'               => $this->request->variable('memo', '', true),
-		);
+		];
 	}
 
 	/**
@@ -467,14 +467,14 @@ class transactions_controller extends admin_main
 	 */
 	private function get_payment_time_examples()
 	{
-		$formats = array(
+		$formats = [
 			'H:i:s',
 			'G:i',
 			'h:i:s a',
 			'g:i A',
-		);
+		];
 
-		$examples = array();
+		$examples = [];
 
 		foreach ($formats as $format)
 		{
@@ -524,7 +524,7 @@ class transactions_controller extends admin_main
 	{
 		$this->entry_count = 0;
 		$this->last_page_offset = $offset;
-		$url_ary = array();
+		$url_ary = [];
 
 		if ($this->ppde_entity->is_in_admin() && $this->phpbb_admin_path)
 		{
@@ -549,7 +549,7 @@ class transactions_controller extends admin_main
 				// Save the queries, because there are no logs to display
 				$this->last_page_offset = 0;
 
-				return array();
+				return [];
 			}
 
 			// Return the user to the last page that is valid
@@ -588,7 +588,7 @@ class transactions_controller extends admin_main
 	 */
 	private function build_data_ary($transaction_data)
 	{
-		$errors = array();
+		$errors = [];
 
 		if ($this->request->is_set('u') && $transaction_data['MT_USERNAME'] === '')
 		{
@@ -659,7 +659,7 @@ class transactions_controller extends admin_main
 			throw (new transaction_exception())->set_errors($errors);
 		}
 
-		return array(
+		return [
 			'business'          => $this->config['ppde_account_id'],
 			'confirmed'         => true,
 			'exchange_rate'     => '',
@@ -689,7 +689,7 @@ class transactions_controller extends admin_main
 			'txn_id'            => 'PPDE' . gen_rand_string(13),
 			'txn_type'          => 'ppde_manual_donation',
 			'user_id'           => $user_id,
-		);
+		];
 	}
 
 	/**
@@ -702,18 +702,18 @@ class transactions_controller extends admin_main
 	 */
 	protected function display_log_assign_template_vars($row)
 	{
-		$this->template->assign_block_vars('log', array(
+		$this->template->assign_block_vars('log', [
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'DATE'             => $this->user->format_date($row['payment_date']),
 			'ID'               => $row['transaction_id'],
-			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
+			'PAYMENT_STATUS'   => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status'])]),
 			'TNX_ID'           => $row['txn_id'],
 			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
 			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
 			'S_TXN_ERRORS'     => !empty($row['txn_errors']),
 			'S_TEST_IPN'       => (bool) $row['test_ipn'],
-		));
+		]);
 	}
 
 	/**
@@ -726,12 +726,12 @@ class transactions_controller extends admin_main
 	 */
 	protected function action_assign_template_vars($data)
 	{
-		$s_hidden_fields = build_hidden_fields(array(
+		$s_hidden_fields = build_hidden_fields([
 			'id'                  => $data['transaction_id'],
 			'txn_errors_approved' => $data['txn_errors_approved'],
-		));
+		]);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
 			'ITEM_NAME'      => $data['item_name'],
@@ -746,7 +746,7 @@ class transactions_controller extends admin_main
 			'PAYER_ID'       => $data['payer_id'],
 			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
-			'PAYMENT_STATUS' => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status']))),
+			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
 			'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
@@ -759,6 +759,6 @@ class transactions_controller extends admin_main
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,
 			'ERROR_MSG'                       => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
-		));
+		]);
 	}
 }

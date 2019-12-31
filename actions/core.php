@@ -20,13 +20,13 @@ class core
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	/** @var array */
-	private static $operators_table = array(
+	private static $operators_table = [
 		'<'  => 'compare_lt',
 		'<=' => 'compare_lte',
 		'==' => 'compare_eq',
 		'>=' => 'compare_gte',
 		'>'  => 'compare_gt',
-	);
+	];
 
 	/**
 	 * Services properties declaration
@@ -272,7 +272,7 @@ class core
 	 */
 	public function get_payer_data()
 	{
-		return (count($this->payer_data) != 0) ? $this->payer_data : array();
+		return (count($this->payer_data) != 0) ? $this->payer_data : [];
 	}
 
 	/**
@@ -332,14 +332,14 @@ class core
 		 * @since 1.0.3
 		 * @changed 2.1.2 Added var $payer_donated_amount
 		 */
-		$vars = array(
+		$vars = [
 			'can_use_autogroup',
 			'group_id',
 			'payer_id',
 			'payer_username',
 			'default_group',
 			'payer_donated_amount',
-		);
+		];
 		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
 
 		if ($can_use_autogroup)
@@ -350,7 +350,7 @@ class core
 			}
 
 			// Adds the user to the donors group and set as default.
-			group_user_add($group_id, array($payer_id), array($payer_username), get_group_name($group_id), $default_group);
+			group_user_add($group_id, [$payer_id], [$payer_username], get_group_name($group_id), $default_group);
 		}
 	}
 
@@ -499,7 +499,7 @@ class core
 		foreach ($data_ary['force_settings'] as $control_point => $params)
 		{
 			// Calling the set_post_data_function
-			$value = call_user_func_array(array($this, 'set_post_data_' . $control_point), array($data_ary['value'], $params));
+			$value = call_user_func_array([$this, 'set_post_data_' . $control_point], [$data_ary['value'], $params]);
 		}
 		unset($data_ary, $control_point, $params);
 
@@ -627,7 +627,7 @@ class core
 	{
 		if (array_key_exists($operator, self::$operators_table))
 		{
-			return call_user_func_array(array($this, self::$operators_table[$operator]), array($value1, $value2));
+			return call_user_func_array([$this, self::$operators_table[$operator]], [$value1, $value2]);
 		}
 
 		return false;

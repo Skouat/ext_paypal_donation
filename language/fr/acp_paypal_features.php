@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: PayPal features
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN',
 	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les fonctionnalités utilisant les notifications instantanées de paiement (IPN) de PayPal.',
 
@@ -73,19 +73,19 @@ $lang = array_merge($lang, array(
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Inscrire l’adresse e-mail ou l’ID de vendeur PayPal Sandbox.',
 	'PPDE_SANDBOX_REMOTE'                  => 'URL PayPal Sandbox',
 	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Ne changez pas ce paramètre, sauf si cette extension a des difficultés pour contacter les serveurs Sandbox de PayPal.',
-));
+]);
 
 /**
  * Confirm box
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres IPN PayPal ont été sauvegardés.',
-));
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Veuillez vérifier le paramètre « Adresse PayPal Sandbox ».',
 	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble »',
-));
+]);

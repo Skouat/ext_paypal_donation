@@ -62,7 +62,7 @@ class main_donate extends main_controller
 
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'DONATION_BODY'      => $this->donation_body,
 			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
@@ -71,7 +71,7 @@ class main_donate extends main_controller
 			'S_PPDE_FORM_ACTION' => $this->get_paypal_uri(),
 			'S_RETURN_ARGS'      => $this->return_args_url,
 			'S_SANDBOX'          => $this->use_sandbox(),
-		));
+		]);
 
 		$this->ppde_controller_display_stats->display_stats();
 
@@ -93,14 +93,14 @@ class main_donate extends main_controller
 		{
 			case 'cancel':
 			case 'success':
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
-				));
+				]);
 			break;
 			case 'donorlist':
-				$this->template->assign_vars(array(
+				$this->template->assign_vars([
 					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
-				));
+				]);
 			break;
 			default:
 				$this->return_args_url = 'body';
@@ -206,7 +206,7 @@ class main_donate extends main_controller
 	 */
 	private function paypal_hidden_fields()
 	{
-		return build_hidden_fields(array(
+		return build_hidden_fields([
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
 			'item_name'     => $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']),
@@ -218,7 +218,7 @@ class main_donate extends main_controller
 			'tax'           => 0,
 			'bn'            => 'Board_Donate_WPS',
 			'charset'       => 'utf-8',
-		));
+		]);
 	}
 
 	/**
@@ -242,7 +242,7 @@ class main_donate extends main_controller
 	 */
 	private function generate_paypal_return_url($arg)
 	{
-		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', array('return' => $arg));
+		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => $arg]);
 	}
 
 	/**

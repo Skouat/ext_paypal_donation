@@ -54,11 +54,11 @@ class currency
 	public function build_sql_data($currency_id = 0, $only_enabled = false)
 	{
 		// Build main sql request
-		$sql_ary = array(
+		$sql_ary = [
 			'SELECT'   => '*',
-			'FROM'     => array($this->ppde_currency_table => 'c'),
+			'FROM'     => [$this->ppde_currency_table => 'c'],
 			'ORDER_BY' => 'c.currency_order',
-		);
+		];
 
 		// Use WHERE clause when $currency_id is different from 0
 		if ((int) $currency_id)

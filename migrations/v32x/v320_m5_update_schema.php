@@ -17,7 +17,7 @@ class v320_m5_update_schema extends \phpbb\db\migration\migration
 	 */
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v32x\v320_m4_update_schema');
+		return ['\skouat\ppde\migrations\v32x\v320_m4_update_schema'];
 	}
 
 	/**
@@ -25,13 +25,13 @@ class v320_m5_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function update_schema()
 	{
-		return array(
-			'add_columns' => array(
-				$this->table_prefix . 'ppde_txn_log' => array(
-					'txn_errors_approved' => array('BOOL', 0),
-				),
-			),
-		);
+		return [
+			'add_columns' => [
+				$this->table_prefix . 'ppde_txn_log' => [
+					'txn_errors_approved' => ['BOOL', 0],
+				],
+			],
+		];
 	}
 
 	/**
@@ -39,10 +39,10 @@ class v320_m5_update_schema extends \phpbb\db\migration\migration
 	 */
 	public function revert_schema()
 	{
-		return array(
-			'drop_columns' => array(
-				$this->table_prefix . 'ppde_txn_log' => array('txn_errors_approved'),
-			),
-		);
+		return [
+			'drop_columns' => [
+				$this->table_prefix . 'ppde_txn_log' => ['txn_errors_approved'],
+			],
+		];
 	}
 }

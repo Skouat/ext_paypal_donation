@@ -84,7 +84,7 @@ class settings_controller extends admin_main
 		add_form_key('ppde_settings');
 
 		// Create an array to collect errors that will be output to the user
-		$errors = array();
+		$errors = [];
 
 		$this->submit_settings();
 
@@ -93,7 +93,7 @@ class settings_controller extends admin_main
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
@@ -110,7 +110,7 @@ class settings_controller extends admin_main
 			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
 			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
 			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
-		));
+		]);
 	}
 
 	/**
@@ -157,7 +157,7 @@ class settings_controller extends admin_main
 	private function rebuild_items_list($config_value, $added_value = '')
 	{
 		$items_list = explode(',', $config_value);
-		$merge_items = array();
+		$merge_items = [];
 
 		$this->add_int_data_in_array($merge_items, $added_value);
 

@@ -97,7 +97,7 @@ class paypal_features_controller extends admin_main
 		add_form_key('ppde_paypal_features');
 
 		// Create an array to collect errors that will be output to the user
-		$errors = array();
+		$errors = [];
 
 		$this->submit_settings();
 
@@ -105,7 +105,7 @@ class paypal_features_controller extends admin_main
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->build_remote_uri_select_menu($this->config['ppde_sandbox_remote'], 'sandbox');
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
 			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
@@ -120,7 +120,7 @@ class paypal_features_controller extends admin_main
 			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
 			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
-		));
+		]);
 	}
 
 	/**

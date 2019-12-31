@@ -97,13 +97,13 @@ class currency
 		foreach ($currency_items as $currency_item)
 		{
 			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', array(
+			$this->template->assign_block_vars('options', [
 				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
 				'CURRENCY_NAME'      => $currency_item['currency_name'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
 				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
-			));
+			]);
 		}
 		unset ($currency_items, $currency_item);
 	}

@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,8 +37,8 @@ if (empty($lang) || !is_array($lang))
 /**
  * UCP notification system
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_ERRORS'   => 'Quelqu’un a effectué un don comportant des erreurs.',
 	'NOTIFICATION_TYPE_PPDE_ADMIN_DONATION_RECEIVED' => 'Quelqu’un a effectué un don.',
 	'NOTIFICATION_TYPE_PPDE_DONATION_RECEIVED'       => 'Un don que vous avez effectué a été réceptionné sur le forum.',
-));
+]);

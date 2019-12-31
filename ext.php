@@ -122,7 +122,7 @@ class ext extends \phpbb\extension\base
 
 		foreach ($notification_types as $notification_type)
 		{
-			call_user_func(array($phpbb_notifications, $step . '_notifications'), $notification_type);
+			call_user_func([$phpbb_notifications, $step . '_notifications'], $notification_type);
 		}
 
 		return 'notifications';
@@ -136,10 +136,10 @@ class ext extends \phpbb\extension\base
 	 */
 	protected function notification_types()
 	{
-		return array(
+		return [
 			'skouat.ppde.notification.type.admin_donation_errors',
 			'skouat.ppde.notification.type.admin_donation_received',
 			'skouat.ppde.notification.type.donor_donation_received',
-		);
+		];
 	}
 }

@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -35,10 +35,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 // Adding the permissions
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'ACL_CAT_PPDE' => 'PayPal Donation',
 
 	'ACL_A_PPDE_MANAGE'         => 'Peut gérer l’extension PayPal Donation.',
 	'ACL_U_PPDE_USE'            => 'Peut faire un don.',
 	'ACL_U_PPDE_VIEW_DONORLIST' => 'Peut consulter la liste des donateurs.',
-));
+]);

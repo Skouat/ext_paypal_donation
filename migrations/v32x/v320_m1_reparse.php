@@ -17,7 +17,7 @@ class v320_m1_reparse extends \phpbb\db\migration\container_aware_migration
 	 */
 	public static function depends_on()
 	{
-		return array('\skouat\ppde\migrations\v31x\v310_m3_currency_data');
+		return ['\skouat\ppde\migrations\v31x\v310_m3_currency_data'];
 	}
 
 	/**
@@ -25,9 +25,9 @@ class v320_m1_reparse extends \phpbb\db\migration\container_aware_migration
 	 */
 	public function update_data()
 	{
-		return array(
-			array('custom', array(array($this, 'reparse'))),
-		);
+		return [
+			['custom', [[$this, 'reparse']]],
+		];
 	}
 
 	/**

@@ -72,13 +72,13 @@ class listener implements EventSubscriberInterface
 	 */
 	public static function getSubscribedEvents()
 	{
-		return array(
+		return [
 			'core.index_modify_page_title'       => 'load_index_data',
 			'core.page_header'                   => 'add_page_header_link',
 			'core.permissions'                   => 'add_permissions',
 			'core.user_setup'                    => 'load_language_on_setup',
 			'core.viewonline_overwrite_location' => 'viewonline_page',
-		);
+		];
 	}
 
 	/**
@@ -91,9 +91,9 @@ class listener implements EventSubscriberInterface
 	{
 		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
 		{
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
-			));
+			]);
 
 			//Assign statistics vars to the template
 			$this->ppde_controller_display_stats->display_stats();
@@ -108,12 +108,12 @@ class listener implements EventSubscriberInterface
 	 */
 	public function add_page_header_link()
 	{
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'S_PPDE_LINK_ENABLED'           => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
 			'S_PPDE_LINK_DONORLIST_ENABLED' => $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'] ? true : false,
 			'U_PPDE_DONATE'                 => $this->controller_helper->route('skouat_ppde_donate'),
 			'U_PPDE_DONORLIST'              => $this->controller_helper->route('skouat_ppde_donorlist'),
-		));
+		]);
 	}
 
 	/**
@@ -127,10 +127,10 @@ class listener implements EventSubscriberInterface
 	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];
-		$lang_set_ext[] = array(
+		$lang_set_ext[] = [
 			'ext_name' => 'skouat/ppde',
-			'lang_set' => array('donate', 'exceptions'),
-		);
+			'lang_set' => ['donate', 'exceptions'],
+		];
 		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
@@ -171,8 +171,8 @@ class listener implements EventSubscriberInterface
 	public function add_permissions($event)
 	{
 		$event->update_subarray('categories', 'ppde', 'ACL_CAT_PPDE');
-		$event->update_subarray('permissions', 'a_ppde_manage', array('lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde'));
-		$event->update_subarray('permissions', 'u_ppde_use', array('lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde'));
-		$event->update_subarray('permissions', 'u_ppde_view_donorlist', array('lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde'));
+		$event->update_subarray('permissions', 'a_ppde_manage', ['lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde']);
+		$event->update_subarray('permissions', 'u_ppde_use', ['lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde']);
+		$event->update_subarray('permissions', 'u_ppde_view_donorlist', ['lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde']);
 	}
 }

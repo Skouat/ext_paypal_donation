@@ -58,15 +58,15 @@ class currency extends main
 			'PPDE_DC',
 			'CURRENCY',
 			$table_name,
-			array(
-				'item_id'       => array('name' => 'currency_id', 'type' => 'integer'),
-				'item_name'     => array('name' => 'currency_name', 'type' => 'string'),
-				'item_iso_code' => array('name' => 'currency_iso_code', 'type' => 'string'),
-				'item_symbol'   => array('name' => 'currency_symbol', 'type' => 'string'),
-				'item_on_left'  => array('name' => 'currency_on_left', 'type' => 'boolean'),
-				'item_enable'   => array('name' => 'currency_enable', 'type' => 'boolean'),
-				'item_order'    => array('name' => 'currency_order', 'type' => 'integer'),
-			)
+			[
+				'item_id'       => ['name' => 'currency_id', 'type' => 'integer'],
+				'item_name'     => ['name' => 'currency_name', 'type' => 'string'],
+				'item_iso_code' => ['name' => 'currency_iso_code', 'type' => 'string'],
+				'item_symbol'   => ['name' => 'currency_symbol', 'type' => 'string'],
+				'item_on_left'  => ['name' => 'currency_on_left', 'type' => 'boolean'],
+				'item_enable'   => ['name' => 'currency_enable', 'type' => 'boolean'],
+				'item_order'    => ['name' => 'currency_order', 'type' => 'integer'],
+			]
 		);
 	}
 

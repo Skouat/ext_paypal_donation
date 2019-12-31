@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 
 // DEVELOPERS PLEASE NOTE
@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 /**
  * mode: transactions
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	// Transactions log
 	'PPDE_DT_CONFIG'                => 'Journal des transactions',
 	'PPDE_DT_CONFIG_EXPLAIN'        => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
@@ -105,13 +105,13 @@ $lang = array_merge($lang, array(
 
 	// List of available translations: https://github.com/fengyuanchen/datepicker/tree/master/i18n
 	'PPDE_MT_DATEPICKER_LANG'           => 'fr-FR',
-));
+]);
 
 /**
  * mode: transactions
  * Info: This array is out of the previous because there is an issue with Transifex platform
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	/**
 	 * TRANSLATORS PLEASE NOTE
 	 * The line below has a special note.
@@ -120,7 +120,7 @@ $lang = array_merge($lang, array(
 	 */
 
 	## For translate:					Don't					Yes
-	'PPDE_DT_PAYMENT_STATUS_VALUES' => array(
+	'PPDE_DT_PAYMENT_STATUS_VALUES' => [
 										'canceled_reversal' => 'Annulation invalidée',
 										'completed'         => 'Effectué',
 										'created'           => 'Créé',
@@ -132,13 +132,13 @@ $lang = array_merge($lang, array(
 										'reversed'          => 'Annulé',
 										'processed'         => 'Accepté',
 										'voided'            => 'Annulé',
-	),
-));
+	],
+]);
 
 /**
  * Errors
  */
-$lang = array_merge($lang, array(
+$lang = array_merge($lang, [
 	'PPDE_DT_IPN_APPROVED'         => 'Transaction approuvée manuellement',
 	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'Cette donation a été approuvée manuellement avec les erreurs suivantes',
 	'PPDE_DT_IPN_ERRORS'           => 'Vous devriez reconsidérer ce don car les erreurs suivantes ont été détectées',
@@ -151,4 +151,4 @@ $lang = array_merge($lang, array(
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'La date du don « %1$s » n’est pas valide.',
 	'PPDE_MT_PAYMENT_TIME_ERROR'   => 'L’heure du don « %1$s » n’est pas valide.',
 	'PPDE_MT_PAYMENT_DATE_FUTURE'  => 'La date du don doit être une date échue, mais vous avez renseigné « %1$s ».',
-));
+]);

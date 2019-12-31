@@ -50,7 +50,7 @@ abstract class main
 		$lang_key_prefix = '',
 		$lang_key_suffix = '',
 		$table_name = '',
-		$table_schema = array()
+		$table_schema = []
 	)
 	{
 		$this->db = $db;
@@ -75,7 +75,7 @@ abstract class main
 		foreach ($data_ary as $entity_function => $data)
 		{
 			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array(array($this, 'set_' . $entity_function), array($data));
+			call_user_func_array([$this, 'set_' . $entity_function], [$data]);
 		}
 		unset($data_ary, $entity_function, $data);
 	}
@@ -153,7 +153,7 @@ abstract class main
 	 */
 	protected function display_warning_message($lang_key, $args = '')
 	{
-		$message = call_user_func_array(array($this->language, 'lang'), array_merge(array(strtoupper($lang_key), $args))) . $this->adm_back_link_exists();
+		$message = call_user_func_array([$this->language, 'lang'], array_merge([strtoupper($lang_key), $args])) . $this->adm_back_link_exists();
 		trigger_error($message, E_USER_WARNING);
 	}
 
@@ -181,7 +181,7 @@ abstract class main
 		$func_result = true;
 		if ($function_name)
 		{
-			$func_result = (bool) call_user_func(array($this, $function_name));
+			$func_result = (bool) call_user_func([$this, $function_name]);
 		}
 
 		return $func_result;
@@ -416,9 +416,9 @@ abstract class main
 	 * @return array
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = array(), $limit = 0, $limit_offset = 0, $override = false)
+	public function get_data($sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false)
 	{
-		$entities = array();
+		$entities = [];
 		$result = $this->limit_query($sql, $limit, $limit_offset);
 
 		while ($row = $this->db->sql_fetchrow($result))
@@ -461,10 +461,10 @@ abstract class main
 	 * @return array $this->data
 	 * @access public
 	 */
-	public function import($data, $additional_table_schema = array(), $override = false)
+	public function import($data, $additional_table_schema = [], $override = false)
 	{
 		// Clear out any saved data
-		$this->data = array();
+		$this->data = [];
 
 		// Adds additional field to the table schema
 		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
