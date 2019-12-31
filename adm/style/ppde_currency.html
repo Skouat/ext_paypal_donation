@@ -18,26 +18,26 @@
 	<fieldset>
 		<legend>{{ lang('GENERAL_OPTIONS') }}</legend>
 		<dl>
-			<dt><label for="currency_name">{{ lang('PPDE_DC_NAME') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_NAME_EXPLAIN') }}</span></dt>
+			<dt><label for="currency_name">{{ lang('PPDE_DC_NAME') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_NAME_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_name" name="currency_name" type="text" class="text medium" value="{{ CURRENCY_NAME }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_iso_code">{{ lang('PPDE_DC_ISO_CODE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_ISO_CODE_EXPLAIN') }}</span></dt>
+			<dt><label for="currency_iso_code">{{ lang('PPDE_DC_ISO_CODE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_ISO_CODE_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_iso_code" name="currency_iso_code" type="text" class="text medium" value="{{ CURRENCY_ISO_CODE }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_symbol">{{ lang('PPDE_DC_SYMBOL') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_SYMBOL_EXPLAIN') }}</span></dt>
+			<dt><label for="currency_symbol">{{ lang('PPDE_DC_SYMBOL') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_SYMBOL_EXPLAIN') }}</span></dt>
 			<dd><input id="currency_symbol" name="currency_symbol" type="text" class="text medium" value="{{ CURRENCY_SYMBOL }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="currency_on_left">{{ lang('PPDE_DC_POSITION') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_POSITION_EXPLAIN') }}</span></dt>
+			<dt><label for="currency_on_left">{{ lang('PPDE_DC_POSITION') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_POSITION_EXPLAIN') }}</span></dt>
 			<dd><label><input id="currency_on_left" name="currency_on_left" type="radio" class="radio" value="1"{% if CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_LEFT') }}</label>
 				<label><input name="currency_on_left" type="radio" class="radio" value="0"{% if not CURRENCY_POSITION %} checked{% endif %}> {{ lang('PPDE_DC_POSITION_RIGHT') }}</label></dd>
 		</dl>
 		<hr>
 		<div id="itemoptions">
 			<dl>
-				<dt><label for="currency_enable">{{ lang('PPDE_DC_ENABLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_ENABLE_EXPLAIN') }}</span></dt>
+				<dt><label for="currency_enable">{{ lang('PPDE_DC_ENABLE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_ENABLE_EXPLAIN') }}</span></dt>
 				<dd><label><input id="currency_enable" name="currency_enable" type="radio" class="radio" value="1"{% if CURRENCY_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
 					<label><input name="currency_enable" type="radio" class="radio" value="0"{% if not CURRENCY_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 			</dl>

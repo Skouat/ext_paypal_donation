@@ -116,14 +116,14 @@
 	<div class="successbox">
 		<h3><i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: #fca600;"></i>&nbsp;{{ lang('PPDE_DT_IPN_APPROVED') }}</h3>
 
-		<p>{{ lang('PPDE_DT_IPN_APPROVED_EXPLAIN') }}{{ lang('COLON') }}</p>
+		<p>{{ lang('PPDE_DT_IPN_APPROVED_EXPLAIN') ~ lang('COLON') }}</p>
 		<p>{{ ERROR_MSG }}</p>
 	</div>
 	{% else %}
 	<div class="errorbox">
 		<h3>{{ lang('WARNING') }}</h3>
 
-		<p>{{ lang('PPDE_DT_IPN_ERRORS') }}{{ lang('COLON') }}</p>
+		<p>{{ lang('PPDE_DT_IPN_ERRORS') ~ lang('COLON') }}</p>
 		<p>{{ ERROR_MSG }}</p>
 	</div>
 	{% endif %}
@@ -132,89 +132,89 @@
 	<fieldset>
 		<legend>{{ lang('PPDE_DT_DETAILS') }}</legend>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TXN_ID') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TXN_ID') ~ lang('COLON') }}</span></dt>
 			<dd>{{ TXN_ID }}</dd>
 		</dl>
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_BOARD_USERNAME') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_BOARD_USERNAME') ~ lang('COLON') }}</span></dt>
 			<dd>{{ BOARD_USERNAME }}</dd>
 		</dl>
 		<dl>
-			<dt><label for="username" style="font-weight: bold">{{ lang('PPDE_DT_CHANGE_BOARD_USERNAME') }}{{ lang('COLON') }}</label><br>{{ lang('PPDE_DT_CHANGE_BOARD_USERNAME_EXPLAIN') }}</dt>
+			<dt><label for="username" style="font-weight: bold">{{ lang('PPDE_DT_CHANGE_BOARD_USERNAME') ~ lang('COLON') }}</label><br>{{ lang('PPDE_DT_CHANGE_BOARD_USERNAME_EXPLAIN') }}</dt>
 			<dd><input type="text" class="medium" id="username" name="username" value="{{ MT_USERNAME }}"></dd>
 			<dd>[ <a href="{{ U_FIND_USERNAME }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a> ]</dd>
 			<dd><label for="anonymous"><input type="checkbox" class="checkbox" id="anonymous" name="u" value="{{ ANONYMOUS_USER_ID }}"{{ MT_ANONYMOUS ? ' checked' }}> {{ lang('SELECT_ANONYMOUS') }}</label></dd>
 		</dl>
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NAME') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NAME') ~ lang('COLON') }}</span></dt>
 			<dd>{{ NAME }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_EMAIL') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_EMAIL') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYER_EMAIL }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_ID') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_ID') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYER_ID }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_STATUS') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_STATUS') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYER_STATUS }}</dd>
 		</dl>
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_EMAIL') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_EMAIL') ~ lang('COLON') }}</span></dt>
 			<dd>{{ RECEIVER_EMAIL }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_ID') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_ID') ~ lang('COLON') }}</span></dt>
 			<dd>{{ RECEIVER_ID }}</dd>
 		</dl>
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TOTAL_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_TOTAL_AMOUNT') ~ lang('COLON') }}</span></dt>
 			<dd>{{ MC_GROSS }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_FEE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_FEE_AMOUNT') ~ lang('COLON') }}</span></dt>
 			<dd>{{ MC_FEE }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NET_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_NET_AMOUNT') ~ lang('COLON') }}</span></dt>
 			<dd>{{ MC_NET }}</dd>
 		</dl>
 		{% if S_CONVERT %}
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_SETTLE_AMOUNT') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_SETTLE_AMOUNT') ~ lang('COLON') }}</span></dt>
 			<dd>{{ SETTLE_AMOUNT }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') }}{{ lang('COLON') }}</span><br>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') ~ lang('COLON') }}</span><br>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
 			<dd>{{ EXCHANGE_RATE }}</dd>
 		</dl>
 		{% endif %}
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NAME') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NAME') ~ lang('COLON') }}</span></dt>
 			<dd>{{ ITEM_NAME }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NUMBER') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_ITEM_NUMBER') ~ lang('COLON') }}</span></dt>
 			<dd>{{ ITEM_NUMBER }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_DATE') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_DATE') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYMENT_DATE }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_STATUS') }}{{ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYMENT_STATUS') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYMENT_STATUS }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_MEMO') }}{{ lang('COLON') }}</span><br>{{ lang('PPDE_DT_MEMO_EXPLAIN') }}</dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_MEMO') ~ lang('COLON') }}</span><br>{{ lang('PPDE_DT_MEMO_EXPLAIN') }}</dt>
 			<dd>{{ MEMO }}</dd>
 		</dl>
 	</fieldset>
@@ -235,7 +235,7 @@
 {% else %}
 <form id="ppde_transactions" method="post" action="{{ U_ACTION }}">
 	<fieldset class="display-options search-box">
-		{{ lang('SEARCH_KEYWORDS') }}{{ lang('COLON') }} <input type="text" name="keywords" value="{{ S_KEYWORDS }}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
+		{{ lang('SEARCH_KEYWORDS') ~ lang('COLON') }} <input type="text" name="keywords" value="{{ S_KEYWORDS }}">&nbsp;<input type="submit" class="button2" name="filter" value="{{ lang('SEARCH') }}">
 	</fieldset>
 
 	{% if loops.log|length %}
@@ -288,7 +288,7 @@
 	{% endif %}
 
 	<fieldset class="display-options">
-		{{ lang('DISPLAY_LOG') }}{{ lang('COLON') }} &nbsp;{{ S_LIMIT_DAYS }}&nbsp;{{ lang('SORT_BY') }}{{ lang('COLON') }} {{ S_SORT_KEY }} {{ S_SORT_DIR }}
+		{{ lang('DISPLAY_LOG') ~ lang('COLON') }} &nbsp;{{ S_LIMIT_DAYS }}&nbsp;{{ lang('SORT_BY') ~ lang('COLON') }} {{ S_SORT_KEY }} {{ S_SORT_DIR }}
 		<input class="button2" type="submit" value="{{ lang('GO') }}" name="sort">
 		{{ S_FORM_TOKEN }}
 	</fieldset>

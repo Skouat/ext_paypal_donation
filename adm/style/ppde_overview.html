@@ -15,21 +15,21 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>{{ lang('STATS_TRANSACTIONS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_TRANSACTIONS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_TRANSACTIONS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_TRANSACTIONS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_KNOWN_DONORS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_KNOWN_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_ANONYMOUS_DONORS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ STATS_ANONYMOUS_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	</tbody>
@@ -51,21 +51,21 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>{{ lang('STATS_TRANSACTIONS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_TRANSACTIONS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_TRANSACTIONS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_TRANSACTIONS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_TRANSACTIONS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_KNOWN_DONORS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_KNOWN_DONORS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_KNOWN_DONORS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_KNOWN_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_ANONYMOUS_DONORS_COUNT') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_ANONYMOUS_DONORS_COUNT }}</strong></td>
-		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('STATS_ANONYMOUS_DONORS_PER_DAY') ~ lang('COLON') }}</td>
 		<td><strong>{{ SANDBOX_ANONYMOUS_DONORS_PER_DAY }}</strong></td>
 	</tr>
 	</tbody>
@@ -108,19 +108,19 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>{{ lang('PPDE_ESI_VERSION') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('PPDE_ESI_VERSION') ~ lang('COLON') }}</td>
 		<td><strong>{{ PPDE_ESI_VERSION }}</strong> [ <a href="{{ U_PPDE_MORE_INFORMATION }}" title="{{ lang('PPDE_ESI_MORE_INFORMATION') }}">{{ lang('PPDE_ESI_MORE_INFORMATION') }}</a> ]</td>
-		<td>{{ lang('PPDE_ESI_INSTALL_DATE') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('PPDE_ESI_INSTALL_DATE') ~ lang('COLON') }}</td>
 		<td><strong>{{ PPDE_ESI_INSTALL_DATE }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('PPDE_ESI_VERSION_CURL') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('PPDE_ESI_VERSION_CURL') ~ lang('COLON') }}</td>
 		<td><strong {% if S_CURL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_CURL }}</strong></td>
-		<td>{{ lang('PPDE_ESI_VERSION_SSL') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('PPDE_ESI_VERSION_SSL') ~ lang('COLON') }}</td>
 		<td><strong {% if S_SSL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_SSL }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('PPDE_ESI_TLS') }}{{ lang('COLON') }}</td>
+		<td>{{ lang('PPDE_ESI_TLS') ~ lang('COLON') }}</td>
 		<td><strong {% if S_TLS %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_TLS }}</strong></td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
