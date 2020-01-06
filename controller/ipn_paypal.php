@@ -266,32 +266,27 @@ class ipn_paypal
 	}
 
 	/**
-	 * Check if PayPal connection use TLS 1.2 and HTTP 1.1
+	 * Check if website use TLS 1.2
 	 *
 	 * @return void
 	 * @access public
 	 */
 	public function check_tls()
 	{
+		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
+
 		// Reset settings to false
 		$this->config->set('ppde_tls_detected', false);
+		$this->response ='';
 
-		if (function_exists('curl_init') && function_exists('curl_exec'))
+		$this->check_curl($ext_meta['extra']['security-check']['tls']['tls-host']);
+
+		// Analyse response
+		$json = json_decode($this->response);
+
+		if (in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
 		{
-			$ch = curl_init('https://www.howsmyssl.com/a/check');
-
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			$response = curl_exec($ch);
-
-			curl_close($ch);
-
-			$json = json_decode($response);
-
-			if (in_array($json->tls_version, $this::$tls_version))
-			{
-				$this->config->set('ppde_tls_detected', true);
-			}
+			$this->config->set('ppde_tls_detected', true);
 		}
 	}
 
@@ -303,22 +298,24 @@ class ipn_paypal
 	 */
 	public function set_remote_detected()
 	{
-		$this->config->set('ppde_curl_detected', $this->check_curl());
+		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
+
+		$this->config->set('ppde_curl_detected', $this->check_curl($ext_meta['extra']['version-check']['host']));
 	}
 
 	/**
 	 * Check if cURL is available
 	 *
+	 * @param string $host
+	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function check_curl()
+	public function check_curl($host)
 	{
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
-			$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-
-			$ch = curl_init($ext_meta['extra']['version-check']['host']);
+			$ch = curl_init($host);
 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 

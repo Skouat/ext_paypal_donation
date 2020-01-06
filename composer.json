@@ -50,6 +50,15 @@
             "host": "skouat.github.io",
             "directory": "/ext_paypal_donation/",
             "filename": "ppde_version_check.json"
+        },
+        "security-check": {
+            "tls": {
+                "tls-host": "https://www.howsmyssl.com/a/check",
+                "tls-version": [
+                    "TLS 1.2",
+                    "TLS 1.3"
+                ]
+            }
         }
     }
 }
