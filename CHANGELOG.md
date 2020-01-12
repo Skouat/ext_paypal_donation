@@ -1,8 +1,9 @@
 # Changelog
 ## 3.0.0 - 2020-01-12
   - Add: Implement support money format, based on PHP Intl extension.
-  - Change: Donors list group donations by username and currencies
+  - Change: In donors list, group donations by username and currencies
   - Change: Code review of notification system
+  - Change: Update datepicker to 1.0.9
 
 ## 2.1.2 - 2019-11-19
   - Change: Temporarily disable TLS check because PayPal TLS website is down  
