@@ -17,6 +17,7 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\currency;
+use skouat\ppde\actions\locale_icu;
 
 /**
  * @property config   config             Config object
@@ -34,17 +35,19 @@ use skouat\ppde\actions\currency;
 class settings_controller extends admin_main
 {
 	protected $ppde_actions_currency;
+	protected $ppde_actions_locale;
 
 	/**
 	 * Constructor
 	 *
-	 * @param config   $config                Config object
-	 * @param language $language              Language user object
-	 * @param log      $log                   The phpBB log system
-	 * @param currency $ppde_actions_currency Main controller object
-	 * @param request  $request               Request object
-	 * @param template $template              Template object
-	 * @param user     $user                  User object
+	 * @param config     $config                Config object
+	 * @param language   $language              Language user object
+	 * @param log        $log                   The phpBB log system
+	 * @param currency   $ppde_actions_currency PPDE currency actions object
+	 * @param locale_icu $ppde_actions_locale   PPDE locale actions object
+	 * @param request    $request               Request object
+	 * @param template   $template              Template object
+	 * @param user       $user                  User object
 	 *
 	 * @access public
 	 */
@@ -53,6 +56,7 @@ class settings_controller extends admin_main
 		language $language,
 		log $log,
 		currency $ppde_actions_currency,
+		locale_icu $ppde_actions_locale,
 		request $request,
 		template $template,
 		user $user
@@ -62,6 +66,7 @@ class settings_controller extends admin_main
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_actions_currency = $ppde_actions_currency;
+		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -92,12 +97,15 @@ class settings_controller extends admin_main
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
+		$this->ppde_actions_locale->build_locale_select_menu($this->config['ppde_default_locale']);
 		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
+
 		$this->template->assign_vars([
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
+			'S_PPDE_DEFAULT_LOCALE'     => $this->ppde_actions_locale->icu_requirements(),
 			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'             => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
@@ -123,6 +131,7 @@ class settings_controller extends admin_main
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
+		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
@@ -173,7 +182,7 @@ class settings_controller extends admin_main
 	}
 
 	/**
-	 * Add integer data in an array()
+	 * Add integer data in an array
 	 *
 	 * @param array  &$array
 	 * @param string  $var

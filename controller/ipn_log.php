@@ -47,7 +47,7 @@ class ipn_log
 							'remote_type'            => '',
 							'remote_report_response' => '',
 							'remote_response_status' => '',
-							'remote_data'            => []
+							'remote_data'            => [],
 	];
 
 	/**

@@ -1,4 +1,9 @@
 # Changelog
+## 2.2.0 - 2019-12-01
+  - Add: Implement support money format, based on PHP Intl extension.
+  - Change: Donors list group donations by username and currencies
+  - Change: Code review of notification system
+
 ## 2.1.2 - 2019-11-19
   - Change: Temporarily disable TLS check because PayPal TLS website is down  
   - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks Dark❶)

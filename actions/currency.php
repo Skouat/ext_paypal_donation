@@ -15,6 +15,7 @@ use phpbb\template\template;
 class currency
 {
 	protected $entity;
+	protected $locale;
 	protected $operator;
 	protected $template;
 
@@ -22,15 +23,17 @@ class currency
 	 * currency constructor.
 	 *
 	 * @param \skouat\ppde\entity\currency    $entity   Currency entity object
+	 * @param \skouat\ppde\actions\locale_icu $locale   PPDE Locale object
 	 * @param \skouat\ppde\operators\currency $operator Currency operator object
 	 * @param template                        $template Template object
 	 *
 	 * @access public
 	 */
 
-	public function __construct(\skouat\ppde\entity\currency $entity, \skouat\ppde\operators\currency $operator, template $template)
+	public function __construct(\skouat\ppde\entity\currency $entity, locale_icu $locale, \skouat\ppde\operators\currency $operator, template $template)
 	{
 		$this->entity = $entity;
+		$this->locale = $locale;
 		$this->operator = $operator;
 		$this->template = $template;
 	}
@@ -64,20 +67,49 @@ class currency
 	}
 
 	/**
+	 * Format currency value, based on the PHP intl extension.
+	 * If this PHP Extension is not available, we switch on a basic currency formatter.
+	 *
+	 * @param int|float $value
+	 * @param string    $currency_iso_code
+	 * @param string    $currency_symbol
+	 * @param bool      $on_left
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true)
+	{
+		if ($this->locale->is_locale_configured())
+		{
+			return $this->locale->numfmt_format_currency($this->locale->numfmt_create(), $value, $currency_iso_code);
+		}
+
+		return $this->currency_on_left($value, $currency_symbol, $on_left);
+	}
+
+	/**
 	 * Put the currency on the left or on the right of the amount
 	 *
 	 * @param int|float $value
-	 * @param string    $currency
+	 * @param string    $currency_symbol
 	 * @param bool      $on_left
 	 * @param string    $dec_point
 	 * @param string    $thousands_sep
 	 *
 	 * @return string
 	 * @access public
+	 * @deprecated 2.2.0 (To be removed: 3.0.0)
+	 *
 	 */
-	public function currency_on_left($value, $currency, $on_left = true, $dec_point = '.', $thousands_sep = '')
+	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = '')
 	{
-		return $on_left ? $currency . number_format(round($value, 2), 2, $dec_point, $thousands_sep) : number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency;
+		if ($on_left)
+		{
+			return $currency_symbol . number_format(round($value, 2), 2, $dec_point, $thousands_sep);
+		}
+
+		return number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency_symbol;
 	}
 
 	/**

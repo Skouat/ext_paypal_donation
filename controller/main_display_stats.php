@@ -63,9 +63,9 @@ class main_display_stats
 				'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
 				'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
 
-				'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-				'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-				'L_PPDE_USED'   => $this->get_ppde_used_langkey($default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+				'L_PPDE_USED'   => $this->get_ppde_used_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 			]);
 
 			// Generate statistics percent for display
@@ -76,78 +76,75 @@ class main_display_stats
 	/**
 	 * Retrieve the language key for donation goal
 	 *
+	 * @param string $currency_iso_code
 	 * @param string $currency_symbol Currency symbol
 	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_goal_langkey($currency_symbol, $on_left = true)
+	public function get_ppde_goal_langkey($currency_iso_code, $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
-			$l_ppde_goal = $this->language->lang('PPDE_DONATE_NO_GOAL');
-		}
-		else if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
-		{
-			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_REACHED');
-		}
-		else
-		{
-			$l_ppde_goal = $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_goal'], $currency_symbol, $on_left));
+			return $this->language->lang('PPDE_DONATE_NO_GOAL');
 		}
 
-		return $l_ppde_goal;
+		if ((int) $this->config['ppde_goal'] < (int) $this->config['ppde_raised'])
+		{
+			return $this->language->lang('PPDE_DONATE_GOAL_REACHED');
+		}
+
+		return $this->language->lang('PPDE_DONATE_GOAL_RAISE', $this->ppde_actions_currency->format_currency((float) $this->config['ppde_goal'], $currency_iso_code, $currency_symbol, $on_left));
 	}
 
 	/**
 	 * Retrieve the language key for donation raised
 	 *
+	 * @param string $currency_iso_code
 	 * @param string $currency_symbol Currency symbol
 	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_raised_langkey($currency_symbol, $on_left = true)
+	public function get_ppde_raised_langkey($currency_iso_code, $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
-			$l_ppde_raised = $this->language->lang('PPDE_DONATE_NOT_RECEIVED');
-		}
-		else
-		{
-			$l_ppde_raised = $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
+			return $this->language->lang('PPDE_DONATE_NOT_RECEIVED');
 		}
 
-		return $l_ppde_raised;
+		return $this->language->lang('PPDE_DONATE_RECEIVED', $this->ppde_actions_currency->format_currency((float) $this->config['ppde_raised'], $currency_iso_code, $currency_symbol, $on_left));
 	}
 
 	/**
 	 * Retrieve the language key for donation used
 	 *
+	 * @param string $currency_iso_code
 	 * @param string $currency_symbol Currency symbol
 	 * @param bool   $on_left         Symbol position
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_used_langkey($currency_symbol, $on_left = true)
+	public function get_ppde_used_langkey($currency_iso_code, $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_NOT_USED');
-		}
-		else if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
-		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left), $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_raised'], $currency_symbol, $on_left));
-		}
-		else
-		{
-			$l_ppde_used = $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_actions_currency->currency_on_left((float) $this->config['ppde_used'], $currency_symbol, $on_left));
+			return $this->language->lang('PPDE_DONATE_NOT_USED');
 		}
 
-		return $l_ppde_used;
+		if ((int) $this->config['ppde_used'] < (int) $this->config['ppde_raised'])
+		{
+			return $this->language->lang(
+				'PPDE_DONATE_USED',
+				$this->ppde_actions_currency->format_currency((float) $this->config['ppde_used'], $currency_iso_code, $currency_symbol, $on_left),
+				$this->ppde_actions_currency->format_currency((float) $this->config['ppde_raised'], $currency_iso_code, $currency_symbol, $on_left)
+			);
+		}
+
+		return $this->language->lang('PPDE_DONATE_USED_EXCEEDED', $this->ppde_actions_currency->format_currency((float) $this->config['ppde_used'], $currency_iso_code, $currency_symbol, $on_left));
 	}
 
 	/**

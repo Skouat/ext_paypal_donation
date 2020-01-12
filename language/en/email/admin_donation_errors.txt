@@ -1,4 +1,4 @@
-Subject: Suspicious donation notification  - "{SITENAME}"
+Subject: Suspicious donation notification  - {SITENAME}
 
 Hello {USERNAME},
 

@@ -34,13 +34,28 @@
 			<dt><label for="ppde_default_currency">{{ lang('PPDE_DEFAULT_CURRENCY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_CURRENCY_EXPLAIN') }}</span></dt>
 			<dd><select name="ppde_default_currency" id="ppde_default_currency">
 				{% for options in loops.options %}
-				<option value="{{ options.CURRENCY_ID }}"{% if options.S_CURRENCY_DEFAULT %} selected{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }} &bull; {{ options.CURRENCY_NAME }}</option>
+				<option value="{{ options.CURRENCY_ID }}"{% if options.S_CURRENCY_DEFAULT %} selected{% endif %}>{{ options.CURRENCY_ISO_CODE }} &bull; {{ options.CURRENCY_NAME }}</option>
 				{% endfor %}
 			</select>
 			</dd>
 		</dl>
 		<dl>
-			<dt><label for="ppde_default_value">{{ lang('PPDE_DEFAULT_VALUE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_VALUE_EXPLAIN') }}</span></dt>
+			<dt><label for="ppde_default_locale">{{ lang('PPDE_DEFAULT_LOCALE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_LOCALE_EXPLAIN') }}</span></dt>
+			<dd>
+				{% if S_PPDE_DEFAULT_LOCALE %}
+				<select name="ppde_default_locale" id="ppde_default_locale">
+					<option value="">{{ lang('PPDE_DEFAULT_LOCALE_SELECT') }}</option>
+					{% for locale_options in loops.locale_options %}
+					<option value="{locale_options.LOCALE_ID}"{% if locale_options.S_LOCALE_DEFAULT %} selected{% endif %}>{{ locale_options.LOCALE_NAME }}</option>
+					{% endfor %}
+				</select>
+				{% else %}
+				<span style="font-weight: bold">{{ lang('PPDE_DEFAULT_LOCALE_REQUIRED') }}</span>
+				{% endif %}
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_default_value">{{ lang('PPDE_DEFAULT_VALUE') }}{{ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_VALUE_EXPLAIN') }}</span></dt>
 			<dd><input type="text" class="text" id="ppde_default_value" name="ppde_default_value" size="10" maxlength="50" value="{{ PPDE_DEFAULT_VALUE }}"></dd>
 		</dl>
 		<dl>

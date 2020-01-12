@@ -109,11 +109,33 @@ class listener implements EventSubscriberInterface
 	public function add_page_header_link()
 	{
 		$this->template->assign_vars([
-			'S_PPDE_LINK_ENABLED'           => $this->ppde_controller_main->can_use_ppde() && ($this->config['ppde_enable'] && $this->config['ppde_header_link']) ? true : false,
-			'S_PPDE_LINK_DONORLIST_ENABLED' => $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'] ? true : false,
+			'S_PPDE_LINK_ENABLED'           => $this->is_donate_link_allowed(),
+			'S_PPDE_LINK_DONORLIST_ENABLED' => $this->is_donors_list_link_allowed(),
 			'U_PPDE_DONATE'                 => $this->controller_helper->route('skouat_ppde_donate'),
 			'U_PPDE_DONORLIST'              => $this->controller_helper->route('skouat_ppde_donorlist'),
 		]);
+	}
+
+	/**
+	 * Checks if the donate link can be displayed on the header
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_donate_link_allowed()
+	{
+		return $this->ppde_controller_main->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
+	}
+
+	/**
+	 * Checks if the donors list link can be displayed on the header
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function is_donors_list_link_allowed()
+	{
+		return $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**

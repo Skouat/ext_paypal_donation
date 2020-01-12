@@ -96,14 +96,14 @@ $lang = array_merge($lang, [
 	'INVALID_TXN_INVALID_CHECK' => 'Unknown Postdata.',
 	'INVALID_TXN_LENGTH'        => 'The expected number of chars for “%s” does not match.',
 	'INVALID_RESPONSE_STATUS'   => 'Invalid response status: ',
-	'NO_CONNECTION_DETECTED'    => 'cURL has not been detected. Please contact the administrator of your web server.',
-	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 have not been detected. Please contact the administrator of your web server.',
+	'NO_CONNECTION_DETECTED'    => 'cURL not detected. Please contact the administrator of your web server.',
+	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 not detected. Please contact the administrator of your web server.',
 	'UNEXPECTED_RESPONSE'       => 'Unexpected response from PayPal.',
 ]);
 
 $lang = array_merge($lang, [
 	// Notification
-	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => '%1$s’s donation requires your attention.',
+	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => '%1$s’s last donation requires your attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donated “%2$s”.',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Your donation of “%1$s” has been received.',
 ]);

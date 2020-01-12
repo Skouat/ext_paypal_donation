@@ -30,8 +30,6 @@ class ipn_paypal
 		['hostname' => 'ipnpb.sandbox.paypal.com', 'uri' => 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'],
 	];
 
-	private static $tls_version = ['TLS 1.2', 'TLS 1.3'];
-
 	protected $config;
 	protected $language;
 	protected $ppde_ext_manager;

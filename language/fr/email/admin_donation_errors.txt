@@ -1,4 +1,4 @@
-Subject: Notification de don suspect - "{SITENAME}"
+Subject: Notification de don suspect - {SITENAME}
 
 Bonjour {USERNAME},
 

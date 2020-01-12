@@ -14,19 +14,11 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
+use skouat\ppde\operators\compare;
 
 class core
 {
 	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-	/** @var array */
-	private static $operators_table = [
-		'<'  => 'compare_lt',
-		'<=' => 'compare_lte',
-		'==' => 'compare_eq',
-		'>=' => 'compare_gte',
-		'>'  => 'compare_gt',
-	];
 
 	/**
 	 * Services properties declaration
@@ -38,6 +30,7 @@ class core
 	protected $path_helper;
 	protected $php_ext;
 	protected $ppde_entity_transaction;
+	protected $ppde_operator_compare;
 	protected $ppde_operator_transaction;
 	protected $transaction_data;
 
@@ -72,13 +65,23 @@ class core
 	 * @param \skouat\ppde\notification\core      $notification              PPDE Notification object
 	 * @param path_helper                         $path_helper               Path helper object
 	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transaction   Transaction entity object
+	 * @param compare                             $ppde_operator_compare     Compare operator object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object
 	 * @param string                              $php_ext                   phpEx
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, language $language, \skouat\ppde\notification\core $notification, path_helper $path_helper, \skouat\ppde\entity\transactions $ppde_entity_transaction, \skouat\ppde\operators\transactions $ppde_operator_transaction, dispatcher_interface $dispatcher, $php_ext)
+	public function __construct(
+		config $config,
+		language $language,
+		\skouat\ppde\notification\core $notification,
+		path_helper $path_helper,
+		\skouat\ppde\entity\transactions $ppde_entity_transaction,
+		compare $ppde_operator_compare,
+		\skouat\ppde\operators\transactions $ppde_operator_transaction,
+		dispatcher_interface $dispatcher,
+		$php_ext)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;
@@ -86,6 +89,7 @@ class core
 		$this->notification = $notification;
 		$this->path_helper = $path_helper;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
+		$this->ppde_operator_compare = $ppde_operator_compare;
 		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
 
@@ -518,7 +522,7 @@ class core
 	 */
 	public function check_post_data_length($value, $statement)
 	{
-		return $this->compare(strlen($value), $statement['value'], $statement['operator']);
+		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
 	}
 
 	/**
@@ -611,95 +615,5 @@ class core
 	public function set_post_data_strtotime($value, $force = false)
 	{
 		return $force ? strtotime($value) : $value;
-	}
-
-	/**
-	 * Compare two value
-	 *
-	 * @param int    $value1
-	 * @param int    $value2
-	 * @param string $operator
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function compare($value1, $value2, $operator)
-	{
-		if (array_key_exists($operator, self::$operators_table))
-		{
-			return call_user_func_array([$this, self::$operators_table[$operator]], [$value1, $value2]);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_lt($a, $b)
-	{
-		return $a < $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_lte($a, $b)
-	{
-		return $a <= $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_eq($a, $b)
-	{
-		return $a == $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gte($a, $b)
-	{
-		return $a >= $b;
-	}
-
-	/**
-	 * Method called by $this->compare
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gt($a, $b)
-	{
-		return $a > $b;
 	}
 }

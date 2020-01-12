@@ -1,4 +1,4 @@
-Subject: Notification de nouveau don - « {SITENAME} »
+Subject: Notification de nouveau don - {SITENAME}
 
 Bonjour {USERNAME},
 
@@ -14,7 +14,7 @@ Montant reçu : <!-- IF SETTLE_AMOUNT !== '' -->{SETTLE_AMOUNT}<!-- ELSE -->{NE
 
 ----------------------------
 
-Consultez le journal des transactions pour connaître les détails de cette transaction.
+Consultez le journal des transactions de PPDE pour connaître les détails de cette transaction.
 
 -----
 

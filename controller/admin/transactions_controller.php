@@ -139,80 +139,52 @@ class transactions_controller extends admin_main
 	 */
 	public function display_transactions($id, $mode, $action)
 	{
-		// Set up general vars
-		$args = [];
-		$start = $this->request->variable('start', 0);
-		$deletemark = $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST);
-		$deleteall = $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST);
-		$marked = $this->request->variable('mark', [0]);
-		$txn_approve = $this->request->is_set('approve');
-		$txn_approved = $this->request->variable('txn_errors_approved', 0);
-		$txn_add = $this->request->is_set('add');
-		$txn_change = $this->request->is_set_post('change');
-		// Sort keys
-		$sort_days = $this->request->variable('st', 0);
-		$sort_key = $this->request->variable('sk', 't');
-		$sort_dir = $this->request->variable('sd', 'd');
+		// Gets vars from REQUEST/POST then build a array of them
+		$args = $this->build_args_array($id, $mode, $action);
 
-		// Prepares args for entries deletion
-		if (($deletemark || $deleteall) && $this->auth->acl_get('a_ppde_manage'))
-		{
-			$action = 'delete';
-			$args = [
-				'hidden_fields' => [
-					'start'     => $start,
-					'delall'    => $deleteall,
-					'delmarked' => $deletemark,
-					'mark'      => $marked,
-					'st'        => $sort_days,
-					'sk'        => $sort_key,
-					'sd'        => $sort_dir,
-					'i'         => $id,
-					'mode'      => $mode,
-				],
-			];
-		}
+		// Does the action regarding the action provided
+		$action = $this->do_action($args);
 
-		if ($txn_approve)
-		{
-			$transaction_id = $this->request->variable('id', 0);
-			$action = 'approve';
-			$args = [
-				'hidden_fields' => [
-					'approve'             => true,
-					'id'                  => $transaction_id,
-					'txn_errors_approved' => $txn_approved,
-				],
-			];
-		}
-
-		if ($txn_add)
-		{
-			$action = 'add';
-		}
-		else if ($txn_change)
-		{
-			$action = 'change';
-		}
-
-		$action = $this->do_action($action, $args);
-
-		if (!$action)
+		// Proceed if no action to do
+		if (empty($action))
 		{
 			/** @type \phpbb\pagination $pagination */
 			$pagination = $this->container->get('pagination');
 
 			// Sorting
-			$limit_days = [0 => $this->language->lang('ALL_ENTRIES'), 1 => $this->language->lang('1_DAY'), 7 => $this->language->lang('7_DAYS'), 14 => $this->language->lang('2_WEEKS'), 30 => $this->language->lang('1_MONTH'), 90 => $this->language->lang('3_MONTHS'), 180 => $this->language->lang('6_MONTHS'), 365 => $this->language->lang('1_YEAR')];
-			$sort_by_text = ['txn' => $this->language->lang('PPDE_DT_SORT_TXN_ID'), 'u' => $this->language->lang('PPDE_DT_SORT_DONORS'), 'ipn' => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'), 'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'), 'ps' => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'), 't' => $this->language->lang('SORT_DATE')];
-			$sort_by_sql = ['txn' => 'txn.txn_id', 'u' => 'u.username_clean', 'ipn' => 'txn.confirmed', 'ipn_test' => 'txn.test_ipn', 'ps' => 'txn.payment_status', 't' => 'txn.payment_date'];
+			$limit_days = [
+				0   => $this->language->lang('ALL_ENTRIES'),
+				1   => $this->language->lang('1_DAY'),
+				7   => $this->language->lang('7_DAYS'),
+				14  => $this->language->lang('2_WEEKS'),
+				30  => $this->language->lang('1_MONTH'),
+				90  => $this->language->lang('3_MONTHS'),
+				180 => $this->language->lang('6_MONTHS'),
+				365 => $this->language->lang('1_YEAR'),
+			];
+			$sort_by_text = [
+				'txn'      => $this->language->lang('PPDE_DT_SORT_TXN_ID'),
+				'u'        => $this->language->lang('PPDE_DT_SORT_DONORS'),
+				'ipn'      => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'),
+				'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
+				'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
+				't'        => $this->language->lang('SORT_DATE'),
+			];
+			$sort_by_sql = [
+				'txn'      => 'txn.txn_id',
+				'u'        => 'u.username_clean',
+				'ipn'      => 'txn.confirmed',
+				'ipn_test' => 'txn.test_ipn',
+				'ps'       => 'txn.payment_status',
+				't'        => 'txn.payment_date',
+			];
 
 			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
-			gen_sort_selects($limit_days, $sort_by_text, $sort_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
+			gen_sort_selects($limit_days, $sort_by_text, $args['hidden_fields']['st'], $args['hidden_fields']['sk'], $args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
 			// Define where and sort sql for use in displaying transactions
-			$sql_where = ($sort_days) ? (time() - ($sort_days * 86400)) : 0;
-			$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir == 'd') ? 'DESC' : 'ASC');
+			$sql_where = ($args['hidden_fields']['st']) ? (time() - ($args['hidden_fields']['st'] * 86400)) : 0;
+			$sql_sort = $sort_by_sql[$args['hidden_fields']['sk']] . ' ' . (($args['hidden_fields']['sd'] == 'd') ? 'DESC' : 'ASC');
 
 			$keywords = $this->request->variable('keywords', '', true);
 			$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
@@ -221,10 +193,10 @@ class transactions_controller extends admin_main
 			$log_data = [];
 			$log_count = 0;
 
-			$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $start, $sql_where, $sql_sort, $keywords);
+			$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $args['hidden_fields']['start'], $sql_where, $sql_sort, $keywords);
 
 			$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
-			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $start);
+			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $args['hidden_fields']['start']);
 
 			$this->template->assign_vars([
 				'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
@@ -233,7 +205,7 @@ class transactions_controller extends admin_main
 				'S_SORT_KEY'   => $s_sort_key,
 				'S_SORT_DIR'   => $s_sort_dir,
 				'S_TXN'        => $mode,
-				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $start,
+				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $args['hidden_fields']['start'],
 			]);
 
 			array_map([$this, 'display_log_assign_template_vars'], $log_data);
@@ -241,17 +213,73 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Do action regarding the value of $action
+	 * Gets vars from POST then build a array of them
 	 *
-	 * @param string $action Requested action
-	 * @param array  $args   Arguments required for the action
+	 * @param string $id     Module id
+	 * @param string $mode   Module categorie
+	 * @param string $action Action name
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function build_args_array($id, $mode, $action)
+	{
+		$args = [
+			'action'        => $action,
+			'hidden_fields' => [
+				'start'     => $this->request->variable('start', 0),
+				'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
+				'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
+				'mark'      => $this->request->variable('mark', [0]),
+				'st'        => $this->request->variable('st', 0),
+				'sk'        => $this->request->variable('sk', 't'),
+				'sd'        => $this->request->variable('sd', 'd'),
+			],
+		];
+
+		// Prepares args depending actions
+		if (($args['hidden_fields']['delmarked'] || $args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
+		{
+			$args['action'] = 'delete';
+			$args['hidden_fields'] = array_merge($args['hidden_fields'], [
+				'i'    => $id,
+				'mode' => $mode,
+			]);
+		}
+		else if ($this->request->is_set('approve'))
+		{
+			$args = [
+				'action'        => 'approve',
+				'hidden_fields' => [
+					'approve'             => true,
+					'id'                  => $this->request->variable('id', 0),
+					'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
+				],
+			];
+		}
+		else if ($this->request->is_set('add'))
+		{
+			$args['action'] = 'add';
+		}
+		else if ($this->request->is_set_post('change'))
+		{
+			$args['action'] = 'change';
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Does the action regarding the action provided
+	 *
+	 * @param array $args Array of arguments required for the action
 	 *
 	 * @return string
 	 * @access private
 	 */
-	private function do_action($action, $args)
+	private function do_action($args)
 	{
-		switch ($action)
+		switch ($args['action'])
 		{
 			case 'view':
 				// Request Identifier of the transaction
@@ -300,7 +328,7 @@ class transactions_controller extends admin_main
 					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
 				}
 				// Clear $action status
-				$action = '';
+				$args['action'] = '';
 			break;
 			case 'approve':
 				if (confirm_box(true))
@@ -327,7 +355,7 @@ class transactions_controller extends admin_main
 					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
 				}
 				// Clear $action status
-				$action = '';
+				$args['action'] = '';
 			break;
 			case 'add':
 				$errors = [];
@@ -402,14 +430,15 @@ class transactions_controller extends admin_main
 
 				$log_action = $this->ppde_entity
 					->set_user_id($user_id)
-					->add_edit_data();
+					->add_edit_data()
+				;
 
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action));
 				trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 			break;
 		}
 
-		return $action;
+		return $args['action'];
 	}
 
 	/**
@@ -579,7 +608,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Prepare data array() before send it to $this->entity
+	 * Prepare data array before send it to $this->entity
 	 *
 	 * @param array $transaction_data
 	 *
@@ -731,15 +760,17 @@ class transactions_controller extends admin_main
 			'txn_errors_approved' => $data['txn_errors_approved'],
 		]);
 
+		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
+		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+
 		$this->template->assign_vars([
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
 			'ITEM_NAME'      => $data['item_name'],
 			'ITEM_NUMBER'    => $data['item_number'],
-			'MC_CURRENCY'    => $data['net_amount'] . ' ' . $data['mc_currency'],
-			'MC_GROSS'       => $data['mc_gross'] . ' ' . $data['mc_currency'],
-			'MC_FEE'         => $data['mc_fee'] . ' ' . $data['mc_currency'],
-			'MC_NET'         => $data['net_amount'] . ' ' . $data['mc_currency'],
+			'MC_GROSS'       => $this->ppde_actions_currency->format_currency($data['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_FEE'         => $this->ppde_actions_currency->format_currency($data['mc_fee'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_NET'         => $this->ppde_actions_currency->format_currency($data['net_amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 			'MEMO'           => $data['memo'],
 			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 			'PAYER_EMAIL'    => $data['payer_email'],
@@ -749,7 +780,7 @@ class transactions_controller extends admin_main
 			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $data['settle_amount'] . ' ' . $data['settle_currency'],
+			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency($data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
 			'TXN_ID'         => $data['txn_id'],
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
