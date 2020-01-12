@@ -1,5 +1,5 @@
 # Changelog
-## 2.2.0 - 2019-12-01
+## 3.0.0 - 2020-01-12
   - Add: Implement support money format, based on PHP Intl extension.
   - Change: Donors list group donations by username and currencies
   - Change: Code review of notification system

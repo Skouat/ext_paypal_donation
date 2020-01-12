@@ -8,9 +8,9 @@
  *
  */
 
-namespace skouat\ppde\migrations\v32x;
+namespace skouat\ppde\migrations\v33x;
 
-class v320_m7_update_data extends \phpbb\db\migration\migration
+class v330_m1_update_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
@@ -20,7 +20,7 @@ class v320_m7_update_data extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return [
-			// INTL Settings
+			// PHP intl Settings
 			['config.add', ['ppde_default_locale', '']],
 			['config.add', ['ppde_intl_detected', false]],
 			['config.add', ['ppde_intl_version', '']],
