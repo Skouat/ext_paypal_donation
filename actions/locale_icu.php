@@ -101,7 +101,7 @@ class locale_icu
 	 */
 	public function icu_requirements()
 	{
-		return (bool) $this->config['ppde_intl_version_valid'] && $this->config["ppde_intl_detected"];
+		return (bool) $this->config['ppde_intl_version_valid'] && $this->config['ppde_intl_detected'];
 	}
 
 	/**
@@ -114,14 +114,14 @@ class locale_icu
 	 */
 	public function get_currency_symbol($currency_iso_code)
 	{
-		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . "@currency=" . $currency_iso_code, \NumberFormatter::CURRENCY);
+		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
 		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
 	}
 
 	/**
 	 * Checks if the PPDE locale feature is configured
 	 *
-	 * @return bool.
+	 * @return bool
 	 * @access public
 	 */
 	public function is_locale_configured()

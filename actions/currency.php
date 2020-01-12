@@ -99,8 +99,6 @@ class currency
 	 *
 	 * @return string
 	 * @access public
-	 * @deprecated 2.2.0 (To be removed: 3.0.0)
-	 *
 	 */
 	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = '')
 	{

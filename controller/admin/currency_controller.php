@@ -149,7 +149,7 @@ class currency_controller extends admin_main
 		// Create an array to collect errors that will be output to the user
 		$errors = [];
 
-		// As currency symbol is deprecated, this is a temporary workaround until the code deletion.
+		// Get the currency symbol if PHP intl is available.
 		if ($this->ppde_locale->is_locale_configured())
 		{
 			$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);

@@ -21,7 +21,7 @@ services:
             - '@template'
 
     skouat.ppde.actions.locale_icu:
-        class: skouat\ppde\actions\locale_icu
+        class: 'skouat\ppde\actions\locale_icu'
         arguments:
             - '@config'
             - '@template'
