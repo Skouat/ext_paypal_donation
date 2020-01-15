@@ -489,6 +489,200 @@ class transactions_controller extends admin_main
 	}
 
 	/**
+	 * Prepare data array before send it to $this->entity
+	 *
+	 * @param array $transaction_data
+	 *
+	 * @return array
+	 * @throws transaction_exception
+	 */
+	private function build_data_ary($transaction_data)
+	{
+		$errors = [];
+
+		if ($this->request->is_set('u') && $transaction_data['MT_USERNAME'] === '')
+		{
+			$user_id = ANONYMOUS;
+		}
+		else
+		{
+			$user_ary = $this->ppde_operator->query_donor_user_data('username', $transaction_data['MT_USERNAME']);
+
+			if ($user_ary)
+			{
+				$user_id = $user_ary['user_id'];
+			}
+			else
+			{
+				$errors[] = $this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $transaction_data['MT_USERNAME']);
+			}
+		}
+
+		$payment_date = implode('-', [
+			$transaction_data['MT_PAYMENT_DATE_YEAR'],
+			$transaction_data['MT_PAYMENT_DATE_MONTH'],
+			$transaction_data['MT_PAYMENT_DATE_DAY'],
+		]);
+
+		$payment_date_timestamp_at_midnight = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $payment_date . ' 00:00:00');
+		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
+		$payment_time_timestamp = strtotime($payment_time);
+
+		// Normalize payment time to start from today at midnight
+		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
+
+		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
+
+		$errors = array_merge($errors,
+			$this->mc_gross_too_low($transaction_data),
+			$this->mc_fee_negative($transaction_data),
+			$this->mc_fee_too_high($transaction_data),
+			$this->payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date),
+			$this->payment_time_timestamp($payment_time_timestamp, $payment_date),
+			$this->payment_date_time((string) $payment_date_time));
+
+		if ($errors)
+		{
+			throw (new transaction_exception())->set_errors($errors);
+		}
+
+		return [
+			'business'          => $this->config['ppde_account_id'],
+			'confirmed'         => true,
+			'exchange_rate'     => '',
+			'first_name'        => $transaction_data['MT_FIRST_NAME'],
+			'item_name'         => '',
+			'item_number'       => implode('_', ['uid', $user_id, time()]),
+			'last_name'         => $transaction_data['MT_LAST_NAME'],
+			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
+			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
+			'mc_fee'            => $transaction_data['MT_MC_FEE'],
+			'net_amount'        => (float) 0, // This value is calculated in core_actions:log_to_db()
+			'parent_txn_id'     => '',
+			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
+			'payer_id'          => '',
+			'payer_status'      => '',
+			'payment_date'      => $payment_date_time,
+			'payment_status'    => 'Completed',
+			'payment_type'      => '',
+			'memo'              => $transaction_data['MT_MEMO'],
+			'receiver_id'       => '',
+			'receiver_email'    => '',
+			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
+			'settle_amount'     => (float) 0,
+			'settle_currency'   => '',
+			'test_ipn'          => false,
+			'txn_errors'        => '',
+			'txn_id'            => 'PPDE' . gen_rand_string(13),
+			'txn_type'          => 'ppde_manual_donation',
+			'user_id'           => $user_id,
+		];
+	}
+
+	/**
+	 * Tests if mc_gross is to low
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function mc_gross_too_low($data)
+	{
+		if ($data['MT_MC_GROSS'] <= 0)
+		{
+			return [$this->language->lang('PPDE_MT_MC_GROSS_TOO_LOW')];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Tests if mc_fee has a negative value
+	 * @param array $data
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function mc_fee_negative($data)
+	{
+		if ($data['MT_MC_FEE'] < 0)
+		{
+			return [$this->language->lang('PPDE_MT_MC_FEE_NEGATIVE')];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Tests if mc_fee is to high
+	 * @param array $data
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function mc_fee_too_high($data)
+	{
+		if ($data['MT_MC_FEE'] >= $data['MT_MC_GROSS'])
+		{
+			return [$this->language->lang('PPDE_MT_MC_FEE_TOO_HIGH')];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Tests if the date is valid
+	 * @param string|false $payment_date_timestamp_at_midnight
+	 * @param string       $payment_date
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date)
+	{
+		if ($payment_date_timestamp_at_midnight === false)
+		{
+			return [$this->language->lang('PPDE_MT_PAYMENT_DATE_ERROR', $payment_date)];
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param int|false $payment_time_timestamp
+	 * @param string    $payment_date
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function payment_time_timestamp($payment_time_timestamp, $payment_date)
+	{
+		if ($payment_time_timestamp === false)
+		{
+			return [$this->language->lang('PPDE_MT_PAYMENT_TIME_ERROR', $payment_date)];
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param string $payment_date_time
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function payment_date_time($payment_date_time)
+	{
+		if ($payment_date_time > time())
+		{
+			return [$this->language->lang('PPDE_MT_PAYMENT_DATE_FUTURE', $this->user->format_date($payment_date_time))];
+		}
+
+		return [];
+	}
+
+	/**
 	 * Returns a list of valid times that the user can provide in the manual transaction form
 	 *
 	 * @return array Array of strings representing the current time, each in a different format
@@ -605,120 +799,6 @@ class transactions_controller extends admin_main
 	public function get_valid_offset()
 	{
 		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
-	}
-
-	/**
-	 * Prepare data array before send it to $this->entity
-	 *
-	 * @param array $transaction_data
-	 *
-	 * @return array
-	 * @throws transaction_exception
-	 */
-	private function build_data_ary($transaction_data)
-	{
-		$errors = [];
-
-		if ($this->request->is_set('u') && $transaction_data['MT_USERNAME'] === '')
-		{
-			$user_id = ANONYMOUS;
-		}
-		else
-		{
-			$user_ary = $this->ppde_operator->query_donor_user_data('username', $transaction_data['MT_USERNAME']);
-
-			if ($user_ary)
-			{
-				$user_id = $user_ary['user_id'];
-			}
-			else
-			{
-				$errors[] = $this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $transaction_data['MT_USERNAME']);
-			}
-		}
-
-		if ($transaction_data['MT_MC_GROSS'] <= 0)
-		{
-			$errors[] = $this->language->lang('PPDE_MT_MC_GROSS_TOO_LOW');
-		}
-
-		if ($transaction_data['MT_MC_FEE'] < 0)
-		{
-			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_NEGATIVE');
-		}
-
-		if ($transaction_data['MT_MC_FEE'] >= $transaction_data['MT_MC_GROSS'])
-		{
-			$errors[] = $this->language->lang('PPDE_MT_MC_FEE_TOO_HIGH');
-		}
-
-		$payment_date = implode('-', [
-			$transaction_data['MT_PAYMENT_DATE_YEAR'],
-			$transaction_data['MT_PAYMENT_DATE_MONTH'],
-			$transaction_data['MT_PAYMENT_DATE_DAY'],
-		]);
-
-		$payment_date_timestamp_at_midnight = $this->user->get_timestamp_from_format('Y-m-d H:i:s', $payment_date . ' 00:00:00');
-
-		if ($payment_date_timestamp_at_midnight === false)
-		{
-			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_DATE_ERROR', $payment_date);
-		}
-
-		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
-		$payment_time_timestamp = strtotime($payment_time);
-
-		if ($payment_time_timestamp === false)
-		{
-			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_TIME_ERROR', $payment_time);
-		}
-
-		// Normalize payment time to start from today at midnight
-		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
-
-		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
-
-		if ($payment_date_time > time())
-		{
-			$errors[] = $this->language->lang('PPDE_MT_PAYMENT_DATE_FUTURE', $this->user->format_date($payment_date_time));
-		}
-
-		if ($errors)
-		{
-			throw (new transaction_exception())->set_errors($errors);
-		}
-
-		return [
-			'business'          => $this->config['ppde_account_id'],
-			'confirmed'         => true,
-			'exchange_rate'     => '',
-			'first_name'        => $transaction_data['MT_FIRST_NAME'],
-			'item_name'         => '',
-			'item_number'       => implode('_', ['uid', $user_id, time()]),
-			'last_name'         => $transaction_data['MT_LAST_NAME'],
-			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
-			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
-			'mc_fee'            => $transaction_data['MT_MC_FEE'],
-			'net_amount'        => (float) 0, // This value is calculated in core_actions:log_to_db()
-			'parent_txn_id'     => '',
-			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
-			'payer_id'          => '',
-			'payer_status'      => '',
-			'payment_date'      => $payment_date_time,
-			'payment_status'    => 'Completed',
-			'payment_type'      => '',
-			'memo'              => $transaction_data['MT_MEMO'],
-			'receiver_id'       => '',
-			'receiver_email'    => '',
-			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
-			'settle_amount'     => (float) 0,
-			'settle_currency'   => '',
-			'test_ipn'          => false,
-			'txn_errors'        => '',
-			'txn_id'            => 'PPDE' . gen_rand_string(13),
-			'txn_type'          => 'ppde_manual_donation',
-			'user_id'           => $user_id,
-		];
 	}
 
 	/**
