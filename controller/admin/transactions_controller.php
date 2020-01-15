@@ -285,7 +285,7 @@ class transactions_controller extends admin_main
 				// Request Identifier of the transaction
 				$transaction_id = $this->request->variable('id', 0);
 
-				// add field username to the table schema needed by entity->import()
+				// add additional fields to the table schema needed by entity->import()
 				$additional_table_schema = [
 					'item_username'    => ['name' => 'username', 'type' => 'string'],
 					'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
@@ -323,10 +323,9 @@ class transactions_controller extends admin_main
 						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 					}
 				}
-				else
-				{
-					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
-				}
+
+				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
+
 				// Clear $action status
 				$args['action'] = '';
 			break;
@@ -350,10 +349,9 @@ class transactions_controller extends admin_main
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
-				else
-				{
-					confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
-				}
+
+				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
+
 				// Clear $action status
 				$args['action'] = '';
 			break;
@@ -401,21 +399,14 @@ class transactions_controller extends admin_main
 				]);
 			break;
 			case 'change':
-
 				$username = $this->request->variable('username', '', true);
-
-				if ($this->request->is_set('u') && $username === '')
+				try
 				{
-					$user_id = ANONYMOUS;
+					$user_id = $this->validate_user_id($username);
 				}
-				else
+				catch (transaction_exception $e)
 				{
-					$user_id = $this->user_loader->load_user_by_username($username);
-
-					if ($user_id == ANONYMOUS)
-					{
-						trigger_error($this->language->lang('NO_USER') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
+					trigger_error(implode('<br>', $e->get_errors()) . adm_back_link($this->u_action), E_USER_WARNING);
 				}
 
 				// Request Identifier of the transaction
@@ -494,28 +485,20 @@ class transactions_controller extends admin_main
 	 * @param array $transaction_data
 	 *
 	 * @return array
-	 * @throws transaction_exception
+	 * @access private
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	private function build_data_ary($transaction_data)
 	{
 		$errors = [];
 
-		if ($this->request->is_set('u') && $transaction_data['MT_USERNAME'] === '')
+		try
 		{
-			$user_id = ANONYMOUS;
+			$user_id = $this->validate_user_id($transaction_data['MT_USERNAME']);
 		}
-		else
+		catch (transaction_exception $e)
 		{
-			$user_ary = $this->ppde_operator->query_donor_user_data('username', $transaction_data['MT_USERNAME']);
-
-			if ($user_ary)
-			{
-				$user_id = $user_ary['user_id'];
-			}
-			else
-			{
-				$errors[] = $this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $transaction_data['MT_USERNAME']);
-			}
+			$errors = $e->get_errors();
 		}
 
 		$payment_date = implode('-', [
@@ -541,7 +524,7 @@ class transactions_controller extends admin_main
 			$this->payment_time_timestamp($payment_time_timestamp, $payment_date),
 			$this->payment_date_time((string) $payment_date_time));
 
-		if (!empty($errors))
+		if (count($errors))
 		{
 			throw (new transaction_exception())->set_errors($errors);
 		}
@@ -599,6 +582,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * Tests if mc_fee has a negative value
+	 *
 	 * @param array $data
 	 *
 	 * @return array
@@ -616,6 +600,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * Tests if mc_fee is to high
+	 *
 	 * @param array $data
 	 *
 	 * @return array
@@ -633,6 +618,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * Tests if the date is valid
+	 *
 	 * @param string|false $payment_date_timestamp_at_midnight
 	 * @param string       $payment_date
 	 *
@@ -705,6 +691,32 @@ class transactions_controller extends admin_main
 		}
 
 		return $examples;
+	}
+
+	/**
+	 * Returns the intended user ID
+	 *
+	 * @param $username
+	 *
+	 * @return int
+	 * @access private
+	 * @throws \skouat\ppde\exception\transaction_exception
+	 */
+	private function validate_user_id($username)
+	{
+		if ($this->request->is_set('u') && $username === '')
+		{
+			return ANONYMOUS;
+		}
+
+		$user_id = $this->user_loader->load_user_by_username($username);
+
+		if ($user_id == ANONYMOUS)
+		{
+			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $username)]);
+		}
+
+		return $user_id;
 	}
 
 	/**
