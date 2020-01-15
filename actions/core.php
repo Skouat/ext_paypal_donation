@@ -238,7 +238,7 @@ class core
 			$anonymous_user = true;
 		}
 
-		if ($anonymous_user)
+		if ($anonymous_user && !empty($this->transaction_data['payer_email']))
 		{
 			// If the user is anonymous, check their PayPal email address with all known email hashes
 			// to determine if the user exists in the database with that email
