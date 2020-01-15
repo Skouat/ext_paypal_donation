@@ -696,7 +696,7 @@ class transactions_controller extends admin_main
 	/**
 	 * Returns the intended user ID
 	 *
-	 * @param $username
+	 * @param string $username
 	 *
 	 * @return int
 	 * @access private
@@ -713,7 +713,7 @@ class transactions_controller extends admin_main
 
 		if ($user_id == ANONYMOUS)
 		{
-			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND', $username)]);
+			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
 		}
 
 		return $user_id;

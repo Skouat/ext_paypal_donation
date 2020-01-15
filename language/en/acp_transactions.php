@@ -144,7 +144,7 @@ $lang = array_merge($lang, [
 	'PPDE_DT_IPN_ERRORS'           => 'You should reconsider this donation because the following errors are detected',
 	'PPDE_DT_NO_TRANSACTION'       => 'No transaction found.',
 
-	'PPDE_MT_DONOR_NOT_FOUND'      => 'The donor user “%1$s” was not found.',
+	'PPDE_MT_DONOR_NOT_FOUND'      => 'The requested donor does not exist.',
 	'PPDE_MT_MC_GROSS_TOO_LOW'     => 'The total amount must be greater than zero.',
 	'PPDE_MT_MC_FEE_NEGATIVE'      => 'The fee cannot be negative.',
 	'PPDE_MT_MC_FEE_TOO_HIGH'      => 'The fee must be lower than the total amount.',
