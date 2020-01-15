@@ -147,7 +147,7 @@ class locale_icu
 	 * @param float            $value
 	 * @param string           $currency_iso_code
 	 *
-	 * @return \phpbb\config\config
+	 * @return string
 	 * @access public
 	 */
 	public function numfmt_format_currency($fmt, $value, $currency_iso_code)
