@@ -541,7 +541,7 @@ class transactions_controller extends admin_main
 			$this->payment_time_timestamp($payment_time_timestamp, $payment_date),
 			$this->payment_date_time((string) $payment_date_time));
 
-		if ($errors)
+		if (!empty($errors))
 		{
 			throw (new transaction_exception())->set_errors($errors);
 		}
