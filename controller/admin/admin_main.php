@@ -137,7 +137,12 @@ abstract class admin_main
 	 */
 	protected function is_invalid_form($form_name, $submit_or_preview = false)
 	{
-		return (!check_form_key($form_name) && $submit_or_preview) ? [$this->language->lang('FORM_INVALID')] : [];
+		if (!check_form_key($form_name) && $submit_or_preview)
+		{
+			return [$this->language->lang('FORM_INVALID')];
+		}
+
+		return [];
 	}
 
 	/**
