@@ -30,7 +30,12 @@ class currency
 	 * @access public
 	 */
 
-	public function __construct(\skouat\ppde\entity\currency $entity, locale_icu $locale, \skouat\ppde\operators\currency $operator, template $template)
+	public function __construct(
+		\skouat\ppde\entity\currency $entity,
+		locale_icu $locale,
+		\skouat\ppde\operators\currency $operator,
+		template $template
+	)
 	{
 		$this->entity = $entity;
 		$this->locale = $locale;
@@ -132,7 +137,7 @@ class currency
 				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
 				'CURRENCY_NAME'      => $currency_item['currency_name'],
 				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-				'S_CURRENCY_DEFAULT' => $config_value == $currency_item['currency_id'],
+				'S_CURRENCY_DEFAULT' => (int) $config_value == (int) $currency_item['currency_id'],
 			]);
 		}
 		unset ($currency_items, $currency_item);
