@@ -400,9 +400,11 @@ class transactions_controller extends admin_main
 			break;
 			case 'change':
 				$username = $this->request->variable('username', '', true);
+				$donor_id = $this->request->variable('donor_id', 0);
+
 				try
 				{
-					$user_id = $this->validate_user_id($username);
+					$user_id = $this->validate_user_id($username, $donor_id);
 				}
 				catch (transaction_exception $e)
 				{
@@ -697,21 +699,22 @@ class transactions_controller extends admin_main
 	 * Returns the intended user ID
 	 *
 	 * @param string $username
+	 * @param int    $donor_id
 	 *
 	 * @return int
 	 * @access private
 	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
-	private function validate_user_id($username)
+	private function validate_user_id($username, $donor_id = 0)
 	{
-		if ($this->request->is_set('u') && $username === '')
+		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
 		{
 			return ANONYMOUS;
 		}
 
-		$user_id = $this->user_loader->load_user_by_username($username);
+		$user_id = ($username !== '') ? $this->user_loader->load_user_by_username($username) : $donor_id;
 
-		if ($user_id == ANONYMOUS)
+		if ($user_id <= ANONYMOUS)
 		{
 			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
 		}
@@ -849,6 +852,7 @@ class transactions_controller extends admin_main
 	{
 		$s_hidden_fields = build_hidden_fields([
 			'id'                  => $data['transaction_id'],
+			'donor_id'            => $data['user_id'],
 			'txn_errors_approved' => $data['txn_errors_approved'],
 		]);
 
