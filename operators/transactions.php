@@ -11,7 +11,6 @@
 namespace skouat\ppde\operators;
 
 use phpbb\db\driver\driver_interface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class transactions
 {
@@ -22,15 +21,13 @@ class transactions
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container                   Service container interface
 	 * @param driver_interface   $db                          Database connection
 	 * @param string             $ppde_transactions_log_table Table name
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, driver_interface $db, $ppde_transactions_log_table)
+	public function __construct(driver_interface $db, $ppde_transactions_log_table)
 	{
-		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_transactions_log_table = $ppde_transactions_log_table;
 	}

@@ -3,20 +3,17 @@ services:
         class: skouat\ppde\operators\currency
         arguments:
             - '@cache.driver'
-            - '@service_container'
             - '@dbal.conn'
             - '%skouat.ppde.tables.ppde_currency%'
 
     skouat.ppde.operator.donation_pages:
         class: skouat\ppde\operators\donation_pages
         arguments:
-            - '@service_container'
             - '@dbal.conn'
             - '%skouat.ppde.tables.ppde_donation_pages%'
 
     skouat.ppde.operator.transactions:
         class: skouat\ppde\operators\transactions
         arguments:
-            - '@service_container'
             - '@dbal.conn'
             - '%skouat.ppde.tables.ppde_transactions%'
