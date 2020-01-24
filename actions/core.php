@@ -52,7 +52,7 @@ class core
 	/**
 	 * @var array
 	 */
-	private $payer_data;
+	private $payer_data = array();
 	/**
 	 * phpBB root path
 	 *
