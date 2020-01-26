@@ -1,4 +1,7 @@
 # Changelog
+## 2.1.3 - 2020-01-25
+  - Code changes following phpBB Customisation Team reports
+
 ## 2.1.2 - 2019-11-19
   - Change: Temporarily disable TLS check because PayPal TLS website is down  
   - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks Dark❶)
