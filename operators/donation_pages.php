@@ -11,26 +11,22 @@
 namespace skouat\ppde\operators;
 
 use phpbb\db\driver\driver_interface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class donation_pages
 {
-	protected $container;
 	protected $db;
 	protected $ppde_donation_pages_table;
 
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container                 Service container interface
 	 * @param driver_interface   $db                        Database connection
 	 * @param string             $ppde_donation_pages_table Table name
 	 *
 	 * @access public
 	 */
-	public function __construct(ContainerInterface $container, driver_interface $db, $ppde_donation_pages_table)
+	public function __construct(driver_interface $db, $ppde_donation_pages_table)
 	{
-		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
 	}

@@ -10,12 +10,9 @@
 
 namespace skouat\ppde\operators;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 class currency
 {
 	protected $cache;
-	protected $container;
 	protected $db;
 	protected $ppde_currency_table;
 
@@ -23,7 +20,6 @@ class currency
 	 * Constructor
 	 *
 	 * @param \phpbb\cache\driver\driver_interface $cache               Cache object
-	 * @param ContainerInterface                   $container           Service container interface
 	 * @param \phpbb\db\driver\driver_interface    $db                  Database connection
 	 * @param string                               $ppde_currency_table Table name
 	 *
@@ -31,13 +27,11 @@ class currency
 	 */
 	public function __construct(
 		\phpbb\cache\driver\driver_interface $cache,
-		ContainerInterface $container,
 		\phpbb\db\driver\driver_interface $db,
 		$ppde_currency_table
 	)
 	{
 		$this->cache = $cache;
-		$this->container = $container;
 		$this->db = $db;
 		$this->ppde_currency_table = $ppde_currency_table;
 	}
