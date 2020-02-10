@@ -141,7 +141,7 @@ class donation_pages_controller extends admin_main
 		$this->template->assign_block_vars('ppde_langs', [
 			'LANG_LOCAL_NAME' => $lang['name'],
 			'VALUE'           => $lang['id'],
-			'S_SELECTED'      => ((int) $lang['id'] == (int) $current) ? true : false,
+			'S_SELECTED'      => ((int) $lang['id'] === (int) $current),
 		]);
 	}
 
