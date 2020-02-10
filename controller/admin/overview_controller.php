@@ -216,30 +216,22 @@ class overview_controller extends admin_main
 		switch ($action)
 		{
 			case 'date':
-				$confirm = true;
 				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
 			break;
 			case 'esi':
-				$confirm = true;
 				$confirm_lang = 'STAT_RETEST_ESI_CONFIRM';
 			break;
 			case 'sandbox':
-				$confirm = true;
 				$confirm_lang = 'STAT_RESYNC_SANDBOX_STATS_CONFIRM';
 			break;
 			case 'stats':
-				$confirm = true;
 				$confirm_lang = 'STAT_RESYNC_STATS_CONFIRM';
 			break;
 			default:
-				$confirm = true;
 				$confirm_lang = 'CONFIRM_OPERATION';
 		}
 
-		if ($confirm)
-		{
-			confirm_box(false, $this->language->lang($confirm_lang), build_hidden_fields(['action' => $action]));
-		}
+		confirm_box(false, $this->language->lang($confirm_lang), build_hidden_fields(['action' => $action]));
 	}
 
 	/**
