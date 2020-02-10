@@ -128,7 +128,7 @@ class currency
 		// Grab the list of all enabled currencies; 0 is for all data
 		$currency_items = $this->entity->get_data($this->operator->build_sql_data(0, true));
 
-		// Process each rule menu item for pull-down
+		// Process each menu item for pull-down
 		foreach ($currency_items as $currency_item)
 		{
 			// Set output block vars for display in the template

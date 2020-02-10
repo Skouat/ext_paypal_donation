@@ -128,7 +128,7 @@ class donation_pages_controller extends admin_main
 
 	/**
 	 * Assign language template vars to a block vars
-	 * $s_select is for build options select menu
+	 * $current is for build options select menu
 	 *
 	 * @param array $lang
 	 * @param int   $current
