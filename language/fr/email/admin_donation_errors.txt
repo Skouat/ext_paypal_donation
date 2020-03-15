@@ -1,17 +1,17 @@
-Subject: Notification de don suspect - {SITENAME}
+Subject: Notification de don suspect - {{ SITENAME }}
 
-Bonjour {USERNAME},
+Bonjour {{ USERNAME }},
 
 Votre forum a reçu un don PayPal. Vous devriez reconsidérer ce don car des erreurs ont été détectées.
 Tant que vous n'approuverez pas ce don, il ne sera pas traité par PPDE.
 
 ----------------------------
-ID de transaction : {TXN_ID}
+ID de transaction : {{ TXN_ID }}
 
-Donateur : {PAYER_USERNAME} ({PAYER_EMAIL})
+Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Erreurs détectées:
-{TNX_ERRORS}
+{{ TNX_ERRORS }}
 
 ----------------------------
 
@@ -22,6 +22,6 @@ Consultez le journal des transactions pour connaître les détails de cette tran
 Vous recevez cet e-mail car vous avez demandé à être notifié dès réception d’un don.
 Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 
-{U_NOTIFICATION_SETTINGS}
+{{ U_NOTIFICATION_SETTINGS }}
 
-{EMAIL_SIG}
+{{ EMAIL_SIG }}
