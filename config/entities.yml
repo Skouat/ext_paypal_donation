@@ -4,14 +4,12 @@ services:
         arguments:
             - '@dbal.conn'
             - '@language'
-            - '@user'
 
     skouat.ppde.entity.currency:
         class: skouat\ppde\entity\currency
         arguments:
             - '@dbal.conn'
             - '@language'
-            - '@user'
             - '%skouat.ppde.tables.ppde_currency%'
 
     skouat.ppde.entity.donation_pages:
@@ -28,5 +26,4 @@ services:
         arguments:
             - '@dbal.conn'
             - '@language'
-            - '@user'
             - '%skouat.ppde.tables.ppde_transactions%'

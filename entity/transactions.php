@@ -12,11 +12,9 @@ namespace skouat\ppde\entity;
 
 use phpbb\db\driver\driver_interface;
 use phpbb\language\language;
-use phpbb\user;
 
 /**
  * @property driver_interface db                 phpBB Database object
- * @property user             user               phpBB User object
  * @property language         language           phpBB Language object
  * @property string           lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string           lang_key_suffix    Suffix for the messages thrown by exceptions
@@ -69,18 +67,16 @@ class transactions extends main
 	 *
 	 * @param driver_interface $db         Database object
 	 * @param language         $language   Language object
-	 * @param user             $user       User object
 	 * @param string           $table_name Name of the table used to store data
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, language $language, user $user, $table_name)
+	public function __construct(driver_interface $db, language $language, $table_name)
 	{
 		$this->transactions_log_table = $table_name;
 		parent::__construct(
 			$db,
 			$language,
-			$user,
 			'PPDE_DT',
 			'TRANSACTION',
 			$table_name,

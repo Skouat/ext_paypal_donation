@@ -22,7 +22,6 @@ abstract class main
 	 * Declare overridden properties
 	 */
 	protected $db;
-	protected $user;
 	protected $data;
 	protected $lang_key_prefix;
 	protected $lang_key_suffix;
@@ -34,7 +33,6 @@ abstract class main
 	 * Construct
 	 *
 	 * @param driver_interface $db              Database object
-	 * @param user             $user            User object
 	 * @param language         $language        Language object
 	 * @param string           $lang_key_prefix Prefix for the messages thrown by exceptions
 	 * @param string           $lang_key_suffix Suffix for the messages thrown by exceptions
@@ -46,7 +44,6 @@ abstract class main
 	public function __construct(
 		driver_interface $db,
 		language $language,
-		user $user,
 		$lang_key_prefix = '',
 		$lang_key_suffix = '',
 		$table_name = '',
@@ -55,7 +52,6 @@ abstract class main
 	{
 		$this->db = $db;
 		$this->language = $language;
-		$this->user = $user;
 		$this->lang_key_prefix = $lang_key_prefix;
 		$this->lang_key_suffix = $lang_key_suffix;
 		$this->table_name = $table_name;
@@ -344,17 +340,6 @@ abstract class main
 	public function check_required_field()
 	{
 		return false;
-	}
-
-	/**
-	 * Check we are in the ACP
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_in_admin()
-	{
-		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
 	}
 
 	/**

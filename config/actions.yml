@@ -10,6 +10,7 @@ services:
             - '@skouat.ppde.operator.compare'
             - '@skouat.ppde.operator.transactions'
             - '@dispatcher'
+            - '@user'
             - '%core.php_ext%'
 
     skouat.ppde.actions.currency:
@@ -25,4 +26,13 @@ services:
         arguments:
             - '@config'
             - '@template'
+            - '@user'
+
+    skouat.ppde.actions.vars:
+        class: skouat\ppde\actions\vars
+        arguments:
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.currency'
+            - '@config'
+            - '@language'
             - '@user'

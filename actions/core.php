@@ -14,6 +14,7 @@ use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
+use phpbb\user;
 use skouat\ppde\operators\compare;
 
 class core
@@ -33,6 +34,7 @@ class core
 	protected $ppde_operator_compare;
 	protected $ppde_operator_transaction;
 	protected $transaction_data;
+	protected $user;
 
 	/**
 	 * @var boolean
@@ -68,6 +70,7 @@ class core
 	 * @param compare                             $ppde_operator_compare     Compare operator object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object
+	 * @param \phpbb\user                         $user                      User object
 	 * @param string                              $php_ext                   phpEx
 	 *
 	 * @access public
@@ -81,6 +84,7 @@ class core
 		compare $ppde_operator_compare,
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
+		user $user,
 		$php_ext)
 	{
 		$this->config = $config;
@@ -92,8 +96,8 @@ class core
 		$this->ppde_operator_compare = $ppde_operator_compare;
 		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
-
 		$this->root_path = $this->path_helper->get_phpbb_root_path();
+		$this->user = $user;
 	}
 
 	/**
@@ -615,5 +619,16 @@ class core
 	public function set_post_data_strtotime($value, $force = false)
 	{
 		return $force ? strtotime($value) : $value;
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_in_admin()
+	{
+		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
 	}
 }

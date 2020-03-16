@@ -69,6 +69,7 @@ services:
         class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
+            - [set_actions_vars, ['@skouat.ppde.actions.vars']]
             - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
             - [set_entity_donation_pages, ['@skouat.ppde.entity.donation_pages']]
             - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]
@@ -102,6 +103,7 @@ services:
             - '@service_container'
             - '@language'
             - '@log'
+            - '@skouat.ppde.actions.vars'
             - '@skouat.ppde.entity.donation_pages'
             - '@skouat.ppde.operator.donation_pages'
             - '@request'

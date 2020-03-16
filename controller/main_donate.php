@@ -12,6 +12,8 @@ namespace skouat\ppde\controller;
 
 class main_donate extends main_controller
 {
+	/** @var \skouat\ppde\actions\vars */
+	protected $ppde_actions_vars;
 	/** @var \skouat\ppde\controller\main_display_stats */
 	protected $ppde_controller_display_stats;
 	/** @var \skouat\ppde\entity\donation_pages */
@@ -23,7 +25,11 @@ class main_donate extends main_controller
 	/** @var string */
 	private $return_args_url;
 
-	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
+	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars)
+	{
+		$this->ppde_actions_vars = $ppde_actions_vars;
+
+	}	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
 	{
 		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
 	}
@@ -56,8 +62,8 @@ class main_donate extends main_controller
 		// Prepare message for display
 		if ($this->get_donation_content_data($this->return_args_url))
 		{
-			$this->ppde_entity_donation_pages->get_vars();
-			$this->donation_body = $this->ppde_entity_donation_pages->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
+			$this->ppde_actions_vars->get_vars();
+			$this->donation_body = $this->ppde_actions_vars->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
