@@ -1,6 +1,6 @@
 services:
     skouat.ppde.extension_manager:
-        class: 'skouat\ppde\controller\extension_manager'
+        class: skouat\ppde\controller\extension_manager
         arguments:
             - '@service_container'
             - '@dbal.conn'
@@ -12,7 +12,7 @@ services:
             - '@cache'
 
     skouat.ppde.ipn_listener:
-        class: 'skouat\ppde\controller\ipn_listener'
+        class: skouat\ppde\controller\ipn_listener
         arguments:
             - '@config'
             - '@language'
@@ -25,7 +25,7 @@ services:
             - '@dispatcher'
 
     skouat.ppde.ipn_log:
-        class: 'skouat\ppde\controller\ipn_log'
+        class: skouat\ppde\controller\ipn_log
         arguments:
             - '@config'
             - '@filesystem'
@@ -33,7 +33,7 @@ services:
             - '@skouat.ppde.controller'
 
     skouat.ppde.ipn_paypal:
-        class: 'skouat\ppde\controller\ipn_paypal'
+        class: skouat\ppde\controller\ipn_paypal
         arguments:
             - '@config'
             - '@language'
@@ -42,7 +42,7 @@ services:
             - '@request'
 
     skouat.ppde.controller:
-        class: 'skouat\ppde\controller\main_controller'
+        class: skouat\ppde\controller\main_controller
         arguments:
             - '@auth'
             - '@config'
@@ -58,7 +58,7 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.controller.main.displaystats:
-        class: 'skouat\ppde\controller\main_display_stats'
+        class: skouat\ppde\controller\main_display_stats
         arguments:
             - '@config'
             - '@language'
@@ -66,7 +66,7 @@ services:
             - '@template'
 
     skouat.ppde.controller.main.donate:
-        class: 'skouat\ppde\controller\main_donate'
+        class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
             - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
@@ -74,7 +74,7 @@ services:
             - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]
 
     skouat.ppde.controller.main.donorlist:
-        class: 'skouat\ppde\controller\main_donor_list'
+        class: skouat\ppde\controller\main_donor_list
         parent: skouat.ppde.controller
         calls:
             - [set_entity_transactions, ['@skouat.ppde.entity.transactions']]
@@ -83,7 +83,7 @@ services:
             - [set_path_helper, ['@path_helper']]
 
     skouat.ppde.controller.admin.currency:
-        class: 'skouat\ppde\controller\admin\currency_controller'
+        class: skouat\ppde\controller\admin\currency_controller
         arguments:
             - '@config'
             - '@service_container'
@@ -97,7 +97,7 @@ services:
             - '@user'
 
     skouat.ppde.controller.admin.donation_pages:
-        class: 'skouat\ppde\controller\admin\donation_pages_controller'
+        class: skouat\ppde\controller\admin\donation_pages_controller
         arguments:
             - '@service_container'
             - '@language'
@@ -111,7 +111,7 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.controller.admin.overview:
-        class: 'skouat\ppde\controller\admin\overview_controller'
+        class: skouat\ppde\controller\admin\overview_controller
         arguments:
             - '@auth'
             - '@config'
@@ -131,7 +131,7 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.controller.admin.settings:
-        class: 'skouat\ppde\controller\admin\settings_controller'
+        class: skouat\ppde\controller\admin\settings_controller
         arguments:
             - '@config'
             - '@language'
@@ -143,7 +143,7 @@ services:
             - '@user'
 
     skouat.ppde.controller.admin.paypal_features:
-        class: 'skouat\ppde\controller\admin\paypal_features_controller'
+        class: skouat\ppde\controller\admin\paypal_features_controller
         arguments:
             - '@config'
             - '@language'
@@ -155,7 +155,7 @@ services:
             - '@user'
 
     skouat.ppde.controller.admin.transactions:
-        class: 'skouat\ppde\controller\admin\transactions_controller'
+        class: skouat\ppde\controller\admin\transactions_controller
         arguments:
             - '@auth'
             - '@config'

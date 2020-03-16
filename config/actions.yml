@@ -1,6 +1,6 @@
 services:
     skouat.ppde.core_actions:
-        class: 'skouat\ppde\actions\core'
+        class: skouat\ppde\actions\core
         arguments:
             - '@config'
             - '@language'
@@ -13,7 +13,7 @@ services:
             - '%core.php_ext%'
 
     skouat.ppde.actions.currency:
-        class: 'skouat\ppde\actions\currency'
+        class: skouat\ppde\actions\currency
         arguments:
             - '@skouat.ppde.entity.currency'
             - '@skouat.ppde.actions.locale_icu'
@@ -21,7 +21,7 @@ services:
             - '@template'
 
     skouat.ppde.actions.locale_icu:
-        class: 'skouat\ppde\actions\locale_icu'
+        class: skouat\ppde\actions\locale_icu
         arguments:
             - '@config'
             - '@template'

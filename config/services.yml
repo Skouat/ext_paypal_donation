@@ -8,7 +8,7 @@ imports:
 
 services:
     skouat.ppde.listener:
-        class: 'skouat\ppde\event\listener'
+        class: skouat\ppde\event\listener
         arguments:
             - '@config'
             - '@controller.helper'

@@ -1,13 +1,13 @@
 services:
     skouat.ppde.entity.main:
-        class: 'skouat\ppde\entity\main'
+        class: skouat\ppde\entity\main
         arguments:
             - '@dbal.conn'
             - '@language'
             - '@user'
 
     skouat.ppde.entity.currency:
-        class: 'skouat\ppde\entity\currency'
+        class: skouat\ppde\entity\currency
         arguments:
             - '@dbal.conn'
             - '@language'
@@ -15,7 +15,7 @@ services:
             - '%skouat.ppde.tables.ppde_currency%'
 
     skouat.ppde.entity.donation_pages:
-        class: 'skouat\ppde\entity\donation_pages'
+        class: skouat\ppde\entity\donation_pages
         arguments:
             - '@config'
             - '@dbal.conn'
@@ -24,7 +24,7 @@ services:
             - '%skouat.ppde.tables.ppde_donation_pages%'
 
     skouat.ppde.entity.transactions:
-        class: 'skouat\ppde\entity\transactions'
+        class: skouat\ppde\entity\transactions
         arguments:
             - '@dbal.conn'
             - '@language'
