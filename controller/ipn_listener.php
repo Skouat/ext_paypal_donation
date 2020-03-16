@@ -161,12 +161,6 @@ class ipn_listener
 	protected $tasks_list;
 
 	/**
-	 * Args from PayPal notify return URL
-	 *
-	 * @var string
-	 */
-	private $args_return_uri = [];
-	/**
 	 * Data from PayPal transaction
 	 *
 	 * @var array
@@ -295,14 +289,14 @@ class ipn_listener
 		}
 
 		// Get all variables from PayPal to build return URI
-		$this->set_args_return_uri();
+		$this->ppde_ipn_paypal->set_args_return_uri();
 
 		// Get PayPal or Sandbox URI
 		$this->u_paypal = $this->ppde_controller_main->get_paypal_uri((bool) $this->transaction_data['test_ipn']);
 
 		// Initiate PayPal connection
 		$this->ppde_ipn_paypal->set_u_paypal($this->u_paypal);
-		$this->ppde_ipn_paypal->initiate_paypal_connection($this->args_return_uri, $this->transaction_data);
+		$this->ppde_ipn_paypal->initiate_paypal_connection($this->transaction_data);
 
 		if ($this->ppde_ipn_paypal->check_response_status())
 		{
@@ -340,43 +334,13 @@ class ipn_listener
 	}
 
 	/**
-	 * Get all args and build the return URI
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_args_return_uri()
-	{
-		$values = [];
-		// Add the cmd=_notify-validate for PayPal
-		$this->args_return_uri = 'cmd=_notify-validate';
-
-		// Grab the post data form and set in an array to be used in the URI to PayPal
-		foreach ($this->get_postback_args() as $key => $value)
-		{
-			$encoded = urlencode(htmlspecialchars_decode($value));
-			$values[] = $key . '=' . $encoded;
-		}
-
-		// Implode the array into a string URI
-		$this->args_return_uri .= '&' . implode('&', $values);
-	}
-
-	/**
 	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
 	 *
 	 * @return array
 	 */
 	private function get_postback_args()
 	{
-		$data_ary = [];
-
-		foreach ($this->request->variable_names(\phpbb\request\request_interface::POST) as $key)
-		{
-			$data_ary[$key] = $this->request->variable($key, '', true);
-		}
-
-		return $data_ary;
+		return $this->ppde_ipn_paypal->get_postback_args();
 	}
 
 	/**

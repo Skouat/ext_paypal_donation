@@ -19,6 +19,12 @@ use phpbb\request\request;
 
 class ipn_paypal
 {
+	/**
+	 * Args from PayPal notify return URL
+	 *
+	 * @var string
+	 */
+	private $args_return_uri = [];
 	/** Production and Sandbox Postback URL
 	 *
 	 * @var array
@@ -103,17 +109,16 @@ class ipn_paypal
 	 * Initiate communication with PayPal.
 	 * We use cURL. If it is not available we log an error.
 	 *
-	 * @param string $args_return_uri
-	 * @param array  $data
+	 * @param array $data
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function initiate_paypal_connection($args_return_uri, $data)
+	public function initiate_paypal_connection($data)
 	{
 		if ($this->curl_fsock['curl'])
 		{
-			$this->curl_post($args_return_uri);
+			$this->curl_post($this->args_return_uri);
 		}
 		else
 		{
@@ -161,14 +166,13 @@ class ipn_paypal
 		{
 			// cURL error
 			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR', curl_errno($ch) . ' (' . curl_error($ch) . ')'), $this->ppde_ipn_log->is_use_log_error());
-			curl_close($ch);
 		}
 		else
 		{
 			$info = curl_getinfo($ch);
 			$this->response_status = $info['http_code'];
-			curl_close($ch);
 		}
+		curl_close($ch);
 
 		// Split response headers and payload, a better way for strcmp
 		$tokens = explode("\r\n\r\n", trim($this->response));
@@ -275,7 +279,7 @@ class ipn_paypal
 
 		// Reset settings to false
 		$this->config->set('ppde_tls_detected', false);
-		$this->response ='';
+		$this->response = '';
 
 		$this->check_curl($ext_meta['extra']['security-check']['tls']['tls-host']);
 
@@ -358,5 +362,60 @@ class ipn_paypal
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get all args and build the return URI
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_args_return_uri()
+	{
+		$values = [];
+		// Add the cmd=_notify-validate for PayPal
+		$this->args_return_uri = 'cmd=_notify-validate';
+
+		// Grab the post data form and set in an array to be used in the URI to PayPal
+		foreach ($this->get_postback_args() as $key => $value)
+		{
+			$values[] = $key . '=' . urlencode($value);
+		}
+
+		// Implode the array into a string URI
+		$this->args_return_uri .= '&' . implode('&', $values);
+	}
+
+	/**
+	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
+	 * based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function get_postback_args()
+	{
+		$data_ary = [];
+		$raw_post_data = file_get_contents('php://input');
+		$raw_post_array = explode('&', $raw_post_data);
+
+		foreach ($raw_post_array as $keyval)
+		{
+			$keyval = explode('=', $keyval);
+			if (count($keyval) == 2)
+			{
+				// Since we do not want the plus in the datetime string to be encoded to a space, we manually encode it.
+				if ($keyval[0] === 'payment_date')
+				{
+					if (substr_count($keyval[1], '+') === 1)
+					{
+						$keyval[1] = str_replace('+', '%2B', $keyval[1]);
+					}
+				}
+				$data_ary[$keyval[0]] = urldecode($keyval[1]);
+			}
+		}
+
+		return $data_ary;
 	}
 }
