@@ -4,7 +4,7 @@
 <h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
 {% endif %}
 
-{% if S_GOAL_NUMBER %}
+{% if S_GOAL_NUMBER && not S_PPDE_STATS_TEXT_ONLY %}
 <div class="progress">
 	<div class="progress-value bg3">{{ PPDE_GOAL_NUMBER }} %</div>
 	<div class="progress-grey">
@@ -24,12 +24,14 @@
 	{% if S_USED_NUMBER %}
 </p>
 
+{% if not S_PPDE_STATS_TEXT_ONLY %}
 <div class="progress">
 	<div class="progress-value bg3">{{ PPDE_USED_NUMBER }} %</div>
 	<div class="progress-grey">
 		<div class="prog-color {{ PPDE_CSS_USED_NUMBER }}" style="width: {{ PPDE_USED_NUMBER }}%;"></div>
 	</div>
 </div>
+{% endif %}
 
 <p class="donation_stats">
 	{% endif %}

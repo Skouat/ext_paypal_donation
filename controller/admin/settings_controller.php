@@ -116,6 +116,7 @@ class settings_controller extends admin_main
 			'PPDE_USED'                 => $this->check_config($this->config['ppde_used'], 'float', 0),
 			'S_PPDE_GOAL_ENABLE'        => $this->check_config($this->config['ppde_goal_enable']),
 			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
+			'S_PPDE_STATS_TEXT_ONLY'    => $this->check_config($this->config['ppde_stats_text_only']),
 			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
 			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
 		]);
@@ -143,6 +144,7 @@ class settings_controller extends admin_main
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
+		$this->config->set('ppde_stats_text_only', $this->request->variable('ppde_stats_text_only', false));
 		$this->config->set('ppde_raised_enable', $this->request->variable('ppde_raised_enable', false));
 		$this->config->set('ppde_raised', $this->request->variable('ppde_raised', 0.0));
 		$this->config->set('ppde_goal_enable', $this->request->variable('ppde_goal_enable', false));

@@ -25,6 +25,7 @@ class v330_m1_update_data extends \phpbb\db\migration\migration
 			['config.add', ['ppde_intl_detected', false]],
 			['config.add', ['ppde_intl_version', '']],
 			['config.add', ['ppde_intl_version_valid', false]],
+			['config.add', ['ppde_stats_text_only', false]],
 			['config.update', ['ppde_first_start', true]],
 		];
 	}

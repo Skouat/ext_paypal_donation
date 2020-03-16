@@ -66,6 +66,8 @@ class main_display_stats
 				'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'L_PPDE_USED'   => $this->get_ppde_used_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
+
+				'S_PPDE_STATS_TEXT_ONLY' => $this->config['ppde_stats_text_only'],
 			]);
 
 			// Generate statistics percent for display

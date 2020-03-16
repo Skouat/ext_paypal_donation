@@ -87,6 +87,11 @@
 			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"{% if S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"{% if not S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
+		<dl>
+			<dt><label for="ppde_stats_text_only">{{ lang('PPDE_STATS_TEXT_ONLY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_TEXT_ONLY_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_stats_text_only" name="ppde_stats_text_only" value="1"{% if S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_stats_text_only" value="0"{% if not S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+		</dl>
 		<fieldset>
 			<legend>{{ lang('PPDE_RAISED') }}</legend>
 			<dl>

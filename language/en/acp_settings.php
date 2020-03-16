@@ -76,6 +76,8 @@ $lang = array_merge($lang, [
 	'PPDE_RAISED_EXPLAIN'             => 'The current amount raised through donations.',
 	'PPDE_STATS_INDEX_ENABLE'         => 'Display donation stats on index',
 	'PPDE_STATS_INDEX_ENABLE_EXPLAIN' => 'Enable this if you want to display the donation stats on index.',
+	'PPDE_STATS_TEXT_ONLY'            => 'Disable donation stats bars',
+	'PPDE_STATS_TEXT_ONLY_EXPLAIN'    => 'Enable this if you want to disable the donation stats bars. Only the text will be displayed.',
 	'PPDE_USED'                       => 'Donations used',
 	'PPDE_USED_EXPLAIN'               => 'The amount of donations that you have already used.',
 ]);

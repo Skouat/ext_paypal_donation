@@ -1,8 +1,9 @@
 # Changelog
 ## 3.0.0 - 2020-03-16
   - Add: Implement support money format, based on PHP Intl extension
-  - Fix: Transactions detected as invalid if memo contains specials chars
-  - Change: Re-enable TLS check 
+  - Add: Donation stats bars can be disabled to show only text information
+  - Fix: Transactions detected as invalid if PayPal memo contains specials chars
+  - Change: Re-enable TLS check
   - Change: In donors list, group donations by username and currencies
   - Change: Code review of notification system
   - Change: Convert email template vars to Twig
