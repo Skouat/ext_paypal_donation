@@ -334,7 +334,7 @@ class ipn_listener
 	}
 
 	/**
-	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
+	 * Return Postback args to PayPal or for tracking errors.
 	 *
 	 * @return array
 	 */
@@ -506,7 +506,7 @@ class ipn_listener
 			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
 		}
 
-		// Assign variables to $this->transaction_data
+		// Check post data. Then assign them to $this->transaction_data
 		$this->check_post_data($data_ary);
 		$this->transaction_data[$data_ary['name']] = $this->set_post_data($data_ary);
 	}
@@ -553,6 +553,7 @@ class ipn_listener
 
 	/**
 	 * Check requirements for data value.
+	 * If a check fails, error message are stored in $this->error_message
 	 *
 	 * @param array $data_ary
 	 *
