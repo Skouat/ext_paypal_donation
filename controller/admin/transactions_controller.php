@@ -364,9 +364,7 @@ class transactions_controller extends admin_main
 				{
 					try
 					{
-						$data_ary = $this->build_data_ary($transaction_data);
-
-						$this->ppde_actions->log_to_db($data_ary);
+						$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
 
 						// Prepare transaction settings before doing actions
 						$this->ppde_actions->set_transaction_data($transaction_data);
