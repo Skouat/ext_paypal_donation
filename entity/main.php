@@ -12,7 +12,6 @@ namespace skouat\ppde\entity;
 
 use phpbb\db\driver\driver_interface;
 use phpbb\language\language;
-use phpbb\user;
 
 abstract class main
 {
