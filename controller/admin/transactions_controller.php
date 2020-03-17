@@ -764,7 +764,7 @@ class transactions_controller extends admin_main
 		$this->last_page_offset = $offset;
 		$url_ary = [];
 
-		if ($this->ppde_entity->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
