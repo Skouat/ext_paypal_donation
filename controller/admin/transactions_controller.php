@@ -764,7 +764,7 @@ class transactions_controller extends admin_main
 		$this->last_page_offset = $offset;
 		$url_ary = [];
 
-		if ($this->ppde_entity->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
@@ -864,9 +864,9 @@ class transactions_controller extends admin_main
 			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
 			'ITEM_NAME'      => $data['item_name'],
 			'ITEM_NUMBER'    => $data['item_number'],
-			'MC_GROSS'       => $this->ppde_actions_currency->format_currency($data['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'MC_FEE'         => $this->ppde_actions_currency->format_currency($data['mc_fee'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'MC_NET'         => $this->ppde_actions_currency->format_currency($data['net_amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_GROSS'       => $this->ppde_actions_currency->format_currency((float) $data['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_FEE'         => $this->ppde_actions_currency->format_currency((float) $data['mc_fee'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'MC_NET'         => $this->ppde_actions_currency->format_currency((float) $data['net_amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
 			'MEMO'           => $data['memo'],
 			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 			'PAYER_EMAIL'    => $data['payer_email'],
@@ -876,7 +876,7 @@ class transactions_controller extends admin_main
 			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency($data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
+			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
 			'TXN_ID'         => $data['txn_id'],
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),

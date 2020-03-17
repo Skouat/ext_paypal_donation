@@ -17,7 +17,6 @@ use phpbb\user;
 
 /**
  * @property driver_interface db                 phpBB Database object
- * @property user             user               phpBB User object
  * @property language         language           phpBB Language object
  * @property string           lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property string           lang_key_suffix    Suffix for the messages thrown by exceptions
@@ -38,10 +37,9 @@ class donation_pages extends main
 	 * @access protected
 	 */
 	protected $data;
-	protected $dp_vars;
-
 	protected $config;
 	protected $donation_pages_table;
+	protected $user;
 
 	/**
 	 * Constructor
@@ -54,14 +52,20 @@ class donation_pages extends main
 	 *
 	 * @access public
 	 */
-	public function __construct(config $config, driver_interface $db, language $language, user $user, $table_name)
+	public function __construct(
+		config $config,
+		driver_interface $db,
+		language $language,
+		user $user,
+		$table_name
+	)
 	{
 		$this->config = $config;
 		$this->donation_pages_table = $table_name;
+		$this->user = $user;
 		parent::__construct(
 			$db,
 			$language,
-			$user,
 			'PPDE_DP',
 			'DONATION_PAGES',
 			$table_name,
@@ -75,61 +79,6 @@ class donation_pages extends main
 				'item_content_bbcode_options'  => ['name' => 'page_content_bbcode_options', 'type' => 'integer'],
 			]
 		);
-	}
-
-	/**
-	 * Get template vars
-	 *
-	 * @return array $this->dp_vars
-	 * @access public
-	 */
-	public function get_vars()
-	{
-		$this->dp_vars = [
-			0 => ['var'   => '{USER_ID}',
-				  'value' => $this->user->data['user_id'],
-			],
-			1 => ['var'   => '{USERNAME}',
-				  'value' => $this->user->data['username'],
-			],
-			2 => ['var'   => '{SITE_NAME}',
-				  'value' => $this->config['sitename'],
-			],
-			3 => ['var'   => '{SITE_DESC}',
-				  'value' => $this->config['site_desc'],
-			],
-			4 => ['var'   => '{BOARD_CONTACT}',
-				  'value' => $this->config['board_contact'],
-			],
-			5 => ['var'   => '{BOARD_EMAIL}',
-				  'value' => $this->config['board_email'],
-			],
-			6 => ['var'   => '{BOARD_SIG}',
-				  'value' => $this->config['board_email_sig'],
-			],
-		];
-
-		if ($this->is_in_admin())
-		{
-			$this->add_predefined_lang_vars();
-		}
-
-		return $this->dp_vars;
-	}
-
-	/**
-	 * Add language key for donation pages Predefined vars
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function add_predefined_lang_vars()
-	{
-		//Add language entries for displaying the vars
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
-		{
-			$this->dp_vars[$i]['name'] = $this->language->lang($this->lang_key_prefix . '_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1));
-		}
 	}
 
 	/**
@@ -196,25 +145,6 @@ class donation_pages extends main
 
 		// Generate for display
 		return generate_text_for_display($message, $uid, $bitfield, $options, $censor_text);
-	}
-
-	/**
-	 * Replace template vars in the message
-	 *
-	 * @param string $message
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function replace_template_vars($message)
-	{
-		$tpl_ary = [];
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
-		{
-			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];
-		}
-
-		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);
 	}
 
 	/**
