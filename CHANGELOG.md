@@ -1,13 +1,15 @@
 # Changelog
-## 3.0.0 - 2020-03-16
+## 3.0.0 - 2020-03-17
   - Add: Implement support money format, based on PHP Intl extension
   - Add: Donation stats bars can be disabled to show only text information
+  - Add: New predefined variables are available for Donation pages
   - Fix: Transactions detected as invalid if PayPal memo contains specials chars
   - Change: Re-enable TLS check
   - Change: In donors list, group donations by username and currencies
   - Change: Code review of notification system
   - Change: Convert email template vars to Twig
   - Change: Update datepicker to 1.0.9
+  - Code improvement
 
 ## 2.1.2 - 2019-11-19
   - Change: Temporarily disable TLS check because PayPal TLS website is down  
