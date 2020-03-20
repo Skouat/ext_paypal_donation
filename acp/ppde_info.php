@@ -42,6 +42,10 @@ class ppde_info
 					'title' => 'PPDE_ACP_TRANSACTIONS',
 					'auth'  => 'ext_skouat/ppde && acl_a_ppde_manage',
 					'cat'   => ['PPDE_ACP_DONATION']],
+				'donors'    => [
+					'title' => 'PPDE_ACP_DONORS',
+					'auth'  => 'ext_skouat/ppde && acl_a_ppde_manage',
+					'cat'   => ['PPDE_ACP_DONATION']],
 			],
 		];
 	}

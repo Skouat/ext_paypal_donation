@@ -16,6 +16,7 @@ class ppde_module
 	private static $available_mode = [
 		['module_name' => 'currency', 'lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'],
 		['module_name' => 'donation_pages', 'lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'],
+		['module_name' => 'donors'],
 		['module_name' => 'overview'],
 		['module_name' => 'paypal_features'],
 		['module_name' => 'settings'],
@@ -171,6 +172,11 @@ class ppde_module
 				// Load the display overview handle in the admin controller
 				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
+			break;
+			case 'donors':
+				// Load the display transactions log handle in the admin controller
+				/** @type \skouat\ppde\controller\admin\donors_controller $admin_controller */
+				$admin_controller->display_donors($id, $mode, $action);
 			break;
 		}
 	}
