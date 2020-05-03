@@ -1,4 +1,7 @@
 # Changelog
+## 2.1.4 - 2020-05-03
+  - Fix: SQL error on transactions log
+
 ## 2.1.3 - 2020-01-25
   - Code changes following phpBB Customisation Team reports
 
@@ -16,7 +19,7 @@
 
 ## 2.1.0 - 2019-05-09
   - Add: Donation on error can be manually approved
-  - Add: Allow to change transactions donor (thanks kasimi)
+  - Add: Allow changing transactions donor (thanks kasimi)
   - Change: Make donor name a link to the profile when viewing a transaction (#61) (thanks kasimi)
   - Change: Use built-in phpbb_email_hash() function (#59) (thanks kasimi)
   - Fix: All transactions log are cleared when "Delete marked" is used
