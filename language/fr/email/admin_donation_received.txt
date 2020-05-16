@@ -1,25 +1,25 @@
-Subject: Notification de nouveau don - {{ SITENAME }}
+Subject: New donation notification  - {{ SITENAME }}
 
-Bonjour {{ USERNAME }},
+Hello {{ USERNAME }},
 
-Un don PayPal a été effectué pour votre forum.
-
-----------------------------
-ID de transaction : {{ TXN_ID }}
-
-Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
-
-Montant donné : {{ MC_GROSS }}
-Montant reçu : {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+A donation has been made for your board.
 
 ----------------------------
+Transaction ID: {{ TXN_ID }}
 
-Consultez le journal des transactions de PPDE pour connaître les détails de cette transaction.
+Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+
+Amount donated: {{ MC_GROSS }}
+Amount received: {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+
+----------------------------
+
+View the PPDE transactions log for more details.
 
 -----
 
-Vous recevez cet e-mail car vous avez demandé à être notifié dès réception d’un don.
-Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
+You are receiving this notification because you asked to be notified when receiving a donation.
+If you no longer wish to receive updates about new donations, please update your notification settings here:
 
 {{ U_NOTIFICATION_SETTINGS }}
 
