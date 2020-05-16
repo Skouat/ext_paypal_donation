@@ -18,7 +18,7 @@ Consultez le journal des transactions de PPDE pour connaître les détails de ce
 
 -----
 
-Vous recevez cet e-mail car vous avez demandé à être notifié dès réception d’un don.
+Vous recevez ce courriel car vous avez demandé à être notifié dès réception d’un don.
 Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 
 {{ U_NOTIFICATION_SETTINGS }}

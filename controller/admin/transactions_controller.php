@@ -341,11 +341,15 @@ class transactions_controller extends admin_main
 					$this->ppde_entity->save(false);
 
 					// Prepare transaction settings before doing actions
-					$this->ppde_actions->set_transaction_data($this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
+					$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
+					$this->ppde_actions->set_transaction_data($transaction_data[0]);
 					$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
 					$this->ppde_actions->is_donor_is_member();
 
-					$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+					if ($txn_approved)
+					{
+						$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+					}
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
