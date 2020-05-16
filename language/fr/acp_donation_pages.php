@@ -58,7 +58,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DP_PAGE'             => 'Type de page',
 
 	// Donation Page Template vars
-	'PPDE_DP_BOARD_CONTACT'    => 'E-mail de contact',
+	'PPDE_DP_BOARD_CONTACT'    => 'Adresse courriel de contact',
 	'PPDE_DP_BOARD_EMAIL'      => 'Adresse courriel du forum',
 	'PPDE_DP_BOARD_SIG'        => 'Signature du forum',
 	'PPDE_DP_PREDEFINED_VARS'  => 'Variables prédéfinies',
