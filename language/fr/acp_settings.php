@@ -48,7 +48,7 @@ $lang = array_merge($lang, [
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Défini quelle devise sera sélectionnée par défaut.',
 	'PPDE_DEFAULT_LOCALE'             => 'Paramètres régionnaux',
 	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Définit les paramètres régionaux utilisés pour le formatage des devises.',
-	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'L’extension <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> doit est nécessaire et doit être en version 1.1.0 ou supérieure.',
+	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'L’extension <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> est nécessaire et doit être en version 1.1.0 ou supérieure.',
 	'PPDE_DEFAULT_LOCALE_SELECT'      => 'Sélectionnez une localisation',
 	'PPDE_DEFAULT_VALUE'              => 'Valeur de don par défaut',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
