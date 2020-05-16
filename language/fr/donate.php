@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
 	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
 	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
-	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal - Veuillez patienter…',
+	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal. Veuillez patienter…',
 	'PPDE_SANDBOX_TITLE'               => 'Tester PayPal Donation avec PayPal Sandbox',
 
 	// Donors list
@@ -94,7 +94,7 @@ $lang = array_merge($lang, array(
 	'INVALID_TXN_CONTENT'       => 'Contenu inattendu dans « %s ».',
 	'INVALID_TXN_EMPTY'         => 'La variable « %s » est vide.',
 	'INVALID_TXN_INVALID_CHECK' => 'Variable POST inconnue.',
-	'INVALID_TXN_LENGTH'        => 'Le nombre de caractères attendues pour « %s » ne correspondent pas.',
+	'INVALID_TXN_LENGTH'        => 'Le nombre de caractères attendu pour « %s » ne correspond pas.',
 	'INVALID_RESPONSE_STATUS'   => 'Statut de réponse non valide : ',
 	'NO_CONNECTION_DETECTED'    => 'cURL n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
 	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 ou HTTP1/1 n’a pas été détecté. Veuillez contacter l’administrateur du serveur.',
