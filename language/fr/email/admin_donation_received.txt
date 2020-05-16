@@ -2,7 +2,7 @@ Subject: New donation notification  - {{ SITENAME }}
 
 Hello {{ USERNAME }},
 
-A donation has been made for your board.
+Un don PayPal a été effectué pour votre forum.
 
 ----------------------------
 Transaction ID: {{ TXN_ID }}
@@ -18,8 +18,8 @@ View the PPDE transactions log for more details.
 
 -----
 
-You are receiving this notification because you asked to be notified when receiving a donation.
-If you no longer wish to receive updates about new donations, please update your notification settings here:
+Vous recevez ce courriel car vous avez demandé à être notifié dès réception d’un don.
+Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 
 {{ U_NOTIFICATION_SETTINGS }}
 
