@@ -43,7 +43,7 @@ $lang = array_merge($lang, [
 
 	// General settings
 	'PPDE_ACCOUNT_ID'                 => 'ID du compte PayPal',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse e-mail.',
+	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse courriel.',
 	'PPDE_DEFAULT_CURRENCY'           => 'Devise par défaut',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Défini quelle devise sera sélectionnée par défaut.',
 	'PPDE_DEFAULT_LOCALE'             => 'Paramètres régionnaux',
