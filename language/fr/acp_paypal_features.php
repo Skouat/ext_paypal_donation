@@ -87,5 +87,5 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Veuillez vérifier le paramètre « Adresse PayPal Sandbox ».',
-	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble »',
+	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble ».',
 ]);
