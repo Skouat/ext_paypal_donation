@@ -31,7 +31,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ « » “ ” …
+// ’ « » “ ” …
 //
 
 /**
@@ -55,7 +55,7 @@ $lang = array_merge($lang, [
 	'PPDE_DROPBOX_ENABLE'             => 'Activer le menu déroulant',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'     => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
 	'PPDE_DROPBOX_VALUE'              => 'Valeurs des dons du menu déroulant',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br>Séparez chaque valeur par une virgule (",") et sans espace.',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br>Séparez chaque valeur par une <strong>virgule</strong> (",") et <strong>sans espace</strong>.',
 	'PPDE_ENABLE'                     => 'Activer PayPal Donation',
 	'PPDE_ENABLE_EXPLAIN'             => 'Active ou désactive l’extension PayPal Donation.',
 	'PPDE_HEADER_LINK'                => 'Afficher le lien « Faire un don » dans l’entête du forum',
