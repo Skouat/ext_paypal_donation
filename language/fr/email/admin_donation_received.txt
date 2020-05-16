@@ -1,20 +1,20 @@
-Subject: New donation notification  - {{ SITENAME }}
+Subject: Notification de nouveau don - {{ SITENAME }}
 
-Hello {{ USERNAME }},
+Bonjour {{ USERNAME }},
 
 Un don PayPal a été effectué pour votre forum.
 
 ----------------------------
-Transaction ID: {{ TXN_ID }}
+ID de transaction : {{ TXN_ID }}
 
-Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
-Amount donated: {{ MC_GROSS }}
-Amount received: {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+Montant donné : {{ MC_GROSS }}
+Montant reçu : {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
 
 ----------------------------
 
-View the PPDE transactions log for more details.
+Consultez le journal des transactions pour connaître le détail de cette transaction.
 
 -----
 
