@@ -14,7 +14,7 @@ Montant reçu : {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NE
 
 ----------------------------
 
-Consultez le journal des transactions de PPDE pour connaître les détails de cette transaction.
+Consultez le journal des transactions pour connaître le détail de cette transaction.
 
 -----
 
