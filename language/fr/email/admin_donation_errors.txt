@@ -1,14 +1,14 @@
-Subject: Suspicious donation notification  - {{ SITENAME }}
+Subject: Notification de don suspect - {{ SITENAME }}
 
-Hello {{ USERNAME }},
+Bonjour {{ USERNAME }},
 
 Votre forum a reçu un don PayPal. Vous devriez reconsidérer ce don car des erreurs ont été détectées.
 Tant que vous n'approuverez pas ce don, il ne sera pas traité par PPDE.
 
 ----------------------------
-Transaction ID: {{ TXN_ID }}
+ID de transaction : {{ TXN_ID }}
 
-Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Erreurs détectées :
 {{ TNX_ERRORS }}
