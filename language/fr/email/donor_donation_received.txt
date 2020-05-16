@@ -4,7 +4,7 @@ Hello {{ USERNAME }},
 
 Your donation to "{{ SITENAME }}" was received.
 
-Information about your donation:
+Informations concernant votre don :
 
 ----------------------------
 Transaction ID: {{ TXN_ID }}
@@ -16,7 +16,7 @@ Amount received by "{{ SITENAME }}": {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOU
 
 ----------------------------
 
-If you no longer wish to be notified when you make a donation, please update your notification settings here:
+Si vous ne souhaitez plus être notifié lorsque vous émettez un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 
 {{ U_NOTIFICATION_SETTINGS }}
 
