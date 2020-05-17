@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	// Header
 	'PPDE_HEADER_LINK_TITLE'           => 'Faire un don',
-	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donateurs',
+	'PPDE_HEADER_DONORLIST_LINK_TITLE' => 'Donateur',
 
 	// Index page
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Statistiques des dons',
