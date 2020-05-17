@@ -48,8 +48,8 @@ This extension add a PayPal Donation page on your site.
 
 ## Translations
 
-  * Translations should be added on the [Transifex](https://www.transifex.com/skouat/ppde-develop-33x) repository.
-  * Feel free to [join](https://www.transifex.com/signup/?join_project=ppde-develop-33x) the translation team, and read this [Quick User Guide](/.tx/README.md)
+  * This project use [Crowdin](https://crwd.in/skouat-ppde) for translations. Feel free to [join](https://crwd.in/skouat-ppde) the project.
+  * You can also send your translations in the [PayPal Donation translation topic at phpBB.com](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/support/topic/216046)
 
 ## License
-[GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
+[GNU General Public License v2](https://opensource.org/licenses/GPL-2.0)
