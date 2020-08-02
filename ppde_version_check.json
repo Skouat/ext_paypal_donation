@@ -8,8 +8,8 @@
             "security": false
         },
         "2.0": {
-            "current": "2.1.3",
-            "download": "https://www.phpbb.com/customise/db/download/175791",
+            "current": "2.1.4",
+            "download": "https://www.phpbb.com/customise/db/download/179051",
             "announcement": "https://www.phpbb.com/customise/db/extension/paypal_donation_extension/#revisions-panel",
             "eol": null,
             "security": false
