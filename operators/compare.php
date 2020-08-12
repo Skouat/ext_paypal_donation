@@ -14,11 +14,15 @@ class compare
 {
 	/** @var array */
 	private static $operators_table = [
-		'<'  => 'compare_lt',
-		'<=' => 'compare_lte',
-		'==' => 'compare_eq',
-		'>=' => 'compare_gte',
-		'>'  => 'compare_gt',
+		'<'   => 'compare_lt',
+		'<='  => 'compare_lte',
+		'=='  => 'compare_eq',
+		'===' => 'compare_id',
+		'>='  => 'compare_gte',
+		'>'   => 'compare_gt',
+		'<>'  => 'compare_diff',
+		'!='  => 'compare_not_eq',
+		'!==' => 'compare_not_id',
 	];
 
 	/**
@@ -42,7 +46,7 @@ class compare
 	}
 
 	/**
-	 * Method called by $this->compare
+	 * Method called by $this->compare_value
 	 *
 	 * @param $a
 	 * @param $b
@@ -56,7 +60,7 @@ class compare
 	}
 
 	/**
-	 * Method called by $this->compare
+	 * Method called by $this->compare_value
 	 *
 	 * @param $a
 	 * @param $b
@@ -70,7 +74,7 @@ class compare
 	}
 
 	/**
-	 * Method called by $this->compare
+	 * Method called by $this->compare_value
 	 *
 	 * @param $a
 	 * @param $b
@@ -84,7 +88,21 @@ class compare
 	}
 
 	/**
-	 * Method called by $this->compare
+	 * Method called by $this->compare_value
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function compare_id($a, $b)
+	{
+		return $a === $b;
+	}
+
+	/**
+	 * Method called by $this->compare_value
 	 *
 	 * @param $a
 	 * @param $b
@@ -98,7 +116,7 @@ class compare
 	}
 
 	/**
-	 * Method called by $this->compare
+	 * Method called by $this->compare_value
 	 *
 	 * @param $a
 	 * @param $b
@@ -109,5 +127,47 @@ class compare
 	private function compare_gt($a, $b)
 	{
 		return $a > $b;
+	}
+
+	/**
+	 * Method called by $this->compare_value
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function compare_diff($a, $b)
+	{
+		return $a <> $b;
+	}
+
+	/**
+	 * Method called by $this->compare_value
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function compare_not_eq($a, $b)
+	{
+		return $a != $b;
+	}
+
+	/**
+	 * Method called by $this->compare_value
+	 *
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function compare_not_id($a, $b)
+	{
+		return $a !== $b;
 	}
 }
