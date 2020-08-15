@@ -43,6 +43,7 @@ $lang = array_merge($lang, [
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
+	'PPDE_LEGEND_IPN_DEBUG'                => 'Paramètres de débogage',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Liste des donateurs',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Système de notification',
 	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres Généraux',
