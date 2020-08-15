@@ -4,6 +4,7 @@
 build.xml       export-ignore
 composer.lock   export-ignore
 CHANGELOG.md    export-ignore
+crowdin.yml     export-ignore
 phpunit.xml.*   export-ignore
 README.md       export-ignore
 .tx/            export-ignore
