@@ -116,7 +116,7 @@ class transactions
 	{
 		// Build sql request
 		return [
-			'SELECT' => 'txn.payment_date, txn.mc_gross',
+			'SELECT' => 'txn.payment_date, txn.mc_gross, txn.mc_currency',
 			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'  => 'txn.transaction_id = ' . (int) $transaction_id,
 		];

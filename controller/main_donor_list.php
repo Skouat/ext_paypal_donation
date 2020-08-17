@@ -120,6 +120,7 @@ class main_donor_list extends main_controller
 		$last_donation_table_schema = [
 			'item_payment_date' => ['name' => 'payment_date', 'type' => 'integer'],
 			'item_mc_gross'     => ['name' => 'mc_gross', 'type' => 'float'],
+			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
 		foreach ($data_ary as $data)
