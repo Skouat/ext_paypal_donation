@@ -114,6 +114,13 @@ services:
 
     skouat.ppde.controller.admin.donors:
         class: skouat\ppde\controller\admin\donors_controller
+        arguments:
+            - '@skouat.ppde.actions.currency'
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.transactions'
+            - '@template'
+            - '@user'
+            - '@user_loader'
 
     skouat.ppde.controller.admin.overview:
         class: skouat\ppde\controller\admin\overview_controller

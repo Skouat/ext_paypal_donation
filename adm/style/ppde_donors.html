@@ -5,4 +5,28 @@
 <h1>{{ lang('PPDE_DD_CONFIG') }}</h1>
 <p>{{ lang('PPDE_DD_CONFIG_EXPLAIN') }}</p>
 
+<form id="donors" method="post" action="{{ U_ACTION }}">
+	<table class="table1 zebra-table">
+		<thead>
+		<tr>
+			<th>{{ lang('USERNAME') }}</th>
+			<th>{{ lang('PPDE_DONORLIST_LAST_DONATION') }}</th>
+			<th>{{ lang('PPDE_DONORLIST_LAST_DATE') }}</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for donor in loops.donors %}
+		<tr class="{% if donor.S_ROW_COUNT is even %}bg1{% else %}bg2{% endif %}">
+			<td>{{ donor.PPDE_DONOR_USERNAME }}</td>
+			<td>{{ donor.PPDE_LAST_DONATED_AMOUNT }}</td>
+			<td>{{ donor.PPDE_LAST_PAYMENT_DATE }}</td>
+		</tr>
+		{% else %}
+		<tr class="row2">
+			<td style="text-align: center;" colspan="3">{{ lang('ACP_NO_ITEMS') }}</td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</form>
 {% INCLUDE 'overall_footer.html' %}

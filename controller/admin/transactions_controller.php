@@ -21,7 +21,6 @@ use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
 use skouat\ppde\exception\transaction_exception;
-use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -38,7 +37,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property template           template           Template object
  * @property string             u_action           Action URL
  * @property user               user               User object.
- * @property user_loader        user_loader        User loader object
  */
 class transactions_controller extends admin_main
 {
@@ -60,24 +58,24 @@ class transactions_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param auth                             $auth                       Authentication object
-	 * @param config                           $config                     Config object
-	 * @param ContainerInterface               $container                  Service container interface
-	 * @param language                         $language                   Language user object
-	 * @param log                              $log                        The phpBB log system
-	 * @param core                             $ppde_actions               PPDE actions object
-	 * @param currency                         $ppde_actions_currency      PPDE currency actions object
-	 * @param \skouat\ppde\entity\transactions $ppde_entity_transactions   Entity object
-	 * @param transactions                     $ppde_operator_transactions Operator object
-	 * @param request                          $request                    Request object
-	 * @param template                         $template                   Template object
-	 * @param user                             $user                       User object.
-	 * @param user_loader                      $user_loader                User loader object
-	 * @param string                           $adm_relative_path          phpBB admin relative path
-	 * @param string                           $phpbb_root_path            phpBB root path
-	 * @param string                           $php_ext                    phpEx
-	 * @param string                           $table_prefix               The table prefix
-	 * @param string                           $table_ppde_transactions    Name of the table used to store data
+	 * @param auth                                $auth                       Authentication object
+	 * @param config                              $config                     Config object
+	 * @param ContainerInterface                  $container                  Service container interface
+	 * @param language                            $language                   Language user object
+	 * @param log                                 $log                        The phpBB log system
+	 * @param core                                $ppde_actions               PPDE actions object
+	 * @param currency                            $ppde_actions_currency      PPDE currency actions object
+	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transactions   Entity object
+	 * @param \skouat\ppde\operators\transactions $ppde_operator_transactions Operator object
+	 * @param request                             $request                    Request object
+	 * @param template                            $template                   Template object
+	 * @param user                                $user                       User object.
+	 * @param user_loader                         $user_loader                User loader object
+	 * @param string                              $adm_relative_path          phpBB admin relative path
+	 * @param string                              $phpbb_root_path            phpBB root path
+	 * @param string                              $php_ext                    phpEx
+	 * @param string                              $table_prefix               The table prefix
+	 * @param string                              $table_ppde_transactions    Name of the table used to store data
 	 *
 	 * @access public
 	 */
@@ -90,7 +88,7 @@ class transactions_controller extends admin_main
 		core $ppde_actions,
 		currency $ppde_actions_currency,
 		\skouat\ppde\entity\transactions $ppde_entity_transactions,
-		transactions $ppde_operator_transactions,
+		\skouat\ppde\operators\transactions $ppde_operator_transactions,
 		request $request,
 		template $template,
 		user $user,
