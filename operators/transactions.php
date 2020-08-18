@@ -66,7 +66,7 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to count how many donated
+	 * SQL Query to count how many donated or list donors grouped by username and currency
 	 *
 	 * @param bool   $detailed
 	 * @param string $order_by
@@ -99,6 +99,39 @@ class transactions
 					'FROM' => [USERS_TABLE => 'u'],
 					'ON'   => 'u.user_id = txn.user_id',
 				]];
+		}
+
+		return $sql_donorslist_ary;
+	}
+
+	/**
+	 * SQL Query to list donors
+	 *
+	 * @param string $order_by
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_donors_list($order_by = '')
+	{
+		// Build sql request
+		$sql_donorslist_ary = [
+			'SELECT'   => 'txn.user_id, MAX(txn.mc_currency) AS mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)',
+			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
+			'LEFT_JOIN' => [
+				[
+					'FROM' => [USERS_TABLE => 'u'],
+					'ON'   => 'u.user_id = txn.user_id',
+				]],
+			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
+							AND txn.payment_status = 'Completed'
+							AND txn.test_ipn = 0",
+			'GROUP_BY' => 'txn.user_id',
+		];
+
+		if ($order_by)
+		{
+			$sql_donorslist_ary['ORDER_BY'] = $order_by;
 		}
 
 		return $sql_donorslist_ary;
