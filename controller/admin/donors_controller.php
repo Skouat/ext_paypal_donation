@@ -78,7 +78,7 @@ class donors_controller extends admin_main
 			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
-		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donors_list();
+		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donors_list('', false);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, 0, 0, true);
 
 		// Adds fields to the table schema needed by entity->import()

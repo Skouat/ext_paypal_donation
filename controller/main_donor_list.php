@@ -90,8 +90,7 @@ class main_donor_list extends main_controller
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
-		$sql_count_donors = $this->ppde_operator_transactions->sql_donorlist_ary();
-		$total_donors = $this->ppde_operator_transactions->query_sql_count($sql_count_donors, 'txn.user_id');
+		$total_donors = $this->ppde_operator_transactions->query_sql_count($this->ppde_operator_transactions->sql_count_donors(), 'txn.user_id');
 		$start = $this->pagination->validate_start($start, (int) $this->config['topics_per_page'], $total_donors);
 
 		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, (int) $this->config['topics_per_page'], $start);
@@ -113,14 +112,14 @@ class main_donor_list extends main_controller
 			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
-		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
+		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donors_list(true, $order_by);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, (int) $this->config['topics_per_page'], $start, true);
 
 		// Adds fields to the table schema needed by entity->import()
 		$last_donation_table_schema = [
 			'item_payment_date' => ['name' => 'payment_date', 'type' => 'integer'],
 			'item_mc_gross'     => ['name' => 'mc_gross', 'type' => 'float'],
-			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
+			'item_mc_currency'  => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
 		foreach ($data_ary as $data)

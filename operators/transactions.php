@@ -66,18 +66,16 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to count how many donated or list donors grouped by username and currency
+	 * SQL Query to count donors, grouped by username and currency
 	 *
-	 * @param bool   $detailed
-	 * @param string $order_by
+	 * @param bool $group_by_currency
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function sql_donorlist_ary($detailed = false, $order_by = '')
+	public function sql_count_donors($group_by_currency = true)
 	{
-		// Build sql request
-		$sql_donorslist_ary = [
+		$sql_count_donors = [
 			'SELECT'   => 'txn.user_id, txn.mc_currency',
 			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
@@ -86,55 +84,67 @@ class transactions
 			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
 		];
 
-		if ($order_by)
-		{
-			$sql_donorslist_ary['ORDER_BY'] = $order_by;
-		}
+		$sql_count_donors = $this->sql_group_by_currency($sql_count_donors, $group_by_currency);
 
-		if ($detailed)
-		{
-			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
-			$sql_donorslist_ary['LEFT_JOIN'] = [
-				[
-					'FROM' => [USERS_TABLE => 'u'],
-					'ON'   => 'u.user_id = txn.user_id',
-				]];
-		}
-
-		return $sql_donorslist_ary;
+		return $sql_count_donors;
 	}
 
 	/**
 	 * SQL Query to list donors
 	 *
 	 * @param string $order_by
+	 * @param bool   $group_by_currency Add a "group by" statement on column "mc_currency"
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function sql_donors_list($order_by = '')
+	public function sql_donors_list($order_by = '', $group_by_currency = true)
 	{
 		// Build sql request
-		$sql_donorslist_ary = [
-			'SELECT'   => 'txn.user_id, MAX(txn.mc_currency) AS mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)',
-			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
+		$sql_donorslist = [
+			'SELECT'    => 'txn.user_id, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)',
+			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
 			'LEFT_JOIN' => [
 				[
 					'FROM' => [USERS_TABLE => 'u'],
 					'ON'   => 'u.user_id = txn.user_id',
 				]],
-			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
+			'WHERE'     => 'txn.user_id <> ' . ANONYMOUS . "
 							AND txn.payment_status = 'Completed'
 							AND txn.test_ipn = 0",
-			'GROUP_BY' => 'txn.user_id',
+			'GROUP_BY'  => 'txn.user_id',
 		];
+
+		$sql_donorslist = $this->sql_group_by_currency($sql_donorslist, $group_by_currency);
 
 		if ($order_by)
 		{
-			$sql_donorslist_ary['ORDER_BY'] = $order_by;
+			$sql_donorslist['ORDER_BY'] = $order_by;
 		}
 
-		return $sql_donorslist_ary;
+		return $sql_donorslist;
+	}
+
+	/**
+	 * @param array $sql
+	 * @param bool  $grouped
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function sql_group_by_currency(array $sql, bool $grouped)
+	{
+		if ($grouped)
+		{
+			$sql['SELECT'] .= ', txn.mc_currency';
+			$sql['GROUP_BY'] .= ', txn.mc_currency';
+		}
+		else
+		{
+			$sql['SELECT'] .= ', MAX(txn.mc_currency) AS mc_currency';
+		}
+
+		return $sql;
 	}
 
 	/**
