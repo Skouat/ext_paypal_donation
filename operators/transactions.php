@@ -228,8 +228,16 @@ class transactions
 			}
 
 			$sql_keywords = ' ' . $statement_operator . ' (';
-			$sql_lower = $this->db->sql_lower_text('txn.txn_id');
-			$sql_keywords .= ' ' . $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords) . ')';
+			$columns = ['txn.txn_id', 'u.username'];
+
+			foreach ($columns as $column_name)
+			{
+				$sql_lower = $this->db->sql_lower_text($column_name);
+				$sql_lowers[] = $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords);
+			}
+			unset($columns, $column_name);
+
+			$sql_keywords .= implode(' OR ', $sql_lowers) . ')';
 		}
 
 		return $sql_keywords;
