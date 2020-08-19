@@ -229,6 +229,7 @@ class transactions
 
 			$sql_keywords = ' ' . $statement_operator . ' (';
 			$columns = ['txn.txn_id', 'u.username'];
+			$sql_lowers = array();
 
 			foreach ($columns as $column_name)
 			{
