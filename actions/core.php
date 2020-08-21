@@ -164,8 +164,16 @@ class core
 	 */
 	public function update_raised_amount()
 	{
-		$this->config->set('ppde_raised' . $this->suffix_ipn, (float) $this->config['ppde_raised' . $this->suffix_ipn] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']), true);
+		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+
+		if (!empty($this->transaction_data['settle_amount']))
+		{
+			$net_amount = $this->transaction_data['settle_amount'];
+		}
+
+		$this->config->set('ppde_raised' . $this->suffix_ipn, (float) $this->config['ppde_raised' . $this->suffix_ipn] + $net_amount, true);
 	}
+
 
 	/**
 	 * Returns the net amount of a donation
@@ -337,7 +345,7 @@ class core
 		 * @var string  payer_username         The user name
 		 * @var bool    default_group          Whether or not the group should be made default for the user
 		 * @var float   payer_donated_amount   The user donated amount
-		 * @since 1.0.3
+		 * @since   1.0.3
 		 * @changed 2.1.2 Added var $payer_donated_amount
 		 */
 		$vars = [
