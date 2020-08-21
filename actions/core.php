@@ -174,7 +174,6 @@ class core
 		$this->config->set('ppde_raised' . $this->suffix_ipn, (float) $this->config['ppde_raised' . $this->suffix_ipn] + $net_amount, true);
 	}
 
-
 	/**
 	 * Returns the net amount of a donation
 	 *
