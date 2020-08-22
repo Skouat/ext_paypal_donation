@@ -431,13 +431,13 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Edit a donation page
 	 *
-	 * @param int $page_id Donation page identifier
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function edit($page_id)
+	public function edit()
 	{
+		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
+
 		// Add form key
 		add_form_key('add_edit_donation_pages');
 
@@ -468,13 +468,13 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Delete a donation page
 	 *
-	 * @param int $page_id The donation page identifier to delete
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function delete($page_id)
+	public function delete()
 	{
+		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
+
 		// Load data
 		$this->ppde_entity->load($page_id);
 

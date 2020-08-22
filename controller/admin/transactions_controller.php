@@ -199,6 +199,100 @@ class transactions_controller extends admin_main
 	}
 
 	/**
+	 * View log
+	 *
+	 * @param array  &$log         The result array with the logs
+	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
+	 *                             database. Otherwise an integer with the number of total matching entries is returned.
+	 * @param int     $limit       Limit the number of entries that are returned
+	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
+	 * @param int     $limit_days
+	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
+	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
+	 *
+	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
+	 * @access private
+	 */
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	{
+		$count_logs = ($log_count !== false);
+
+		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
+		$log_count = $this->get_log_count();
+
+		return $this->get_valid_offset();
+	}
+
+	/**
+	 * @param bool   $count_logs
+	 * @param int    $limit
+	 * @param int    $offset
+	 * @param int    $log_time
+	 * @param string $sort_by
+	 * @param string $keywords
+	 *
+	 * @return array $log
+	 * @access private
+	 */
+	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	{
+		$this->entry_count = 0;
+		$this->last_page_offset = $offset;
+		$url_ary = [];
+
+		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
+		{
+			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
+			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
+
+		}
+		else
+		{
+			$url_ary['profile_url'] = append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=viewprofile');
+			$url_ary['txn_url'] = '';
+		}
+
+		$get_logs_sql_ary = $this->ppde_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
+
+		if ($count_logs)
+		{
+			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
+
+			if ($this->entry_count == 0)
+			{
+				// Save the queries, because there are no logs to display
+				$this->last_page_offset = 0;
+
+				return [];
+			}
+
+			// Return the user to the last page that is valid
+			while ($this->last_page_offset >= $this->entry_count)
+			{
+				$this->last_page_offset = max(0, $this->last_page_offset - $limit);
+			}
+		}
+
+		return $this->ppde_operator->build_log_ary($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get_log_count()
+	{
+		return ($this->entry_count) ? (int) $this->entry_count : 0;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get_valid_offset()
+	{
+		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
+	}
+
+	/**
 	 * Gets vars from POST then build a array of them
 	 *
 	 * @param string $id     Module id
@@ -286,6 +380,33 @@ class transactions_controller extends admin_main
 		trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 	}
 
+	/**
+	 * Returns the intended user ID
+	 *
+	 * @param string $username
+	 * @param int    $donor_id
+	 *
+	 * @return int
+	 * @access private
+	 * @throws \skouat\ppde\exception\transaction_exception
+	 */
+	private function validate_user_id($username, $donor_id = 0)
+	{
+		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
+		{
+			return ANONYMOUS;
+		}
+
+		$user_id = ($username !== '') ? $this->user_loader->load_user_by_username($username) : $donor_id;
+
+		if ($user_id <= ANONYMOUS)
+		{
+			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
+		}
+
+		return $user_id;
+	}
+
 	public function approve()
 	{
 		$transaction_id = (int) $this->args['hidden_fields']['id'];
@@ -308,6 +429,27 @@ class transactions_controller extends admin_main
 		}
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
+	}
+
+	/**
+	 * Does actions for validated transaction
+	 *
+	 * @param bool $is_member
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function do_transactions_actions($is_member)
+	{
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+
+		if ($is_member)
+		{
+			$this->ppde_actions->update_donor_stats();
+			$this->ppde_actions->donors_group_user_add();
+			$this->ppde_actions->notification->notify_donor_donation_received();
+		}
 	}
 
 	public function add()
@@ -351,71 +493,6 @@ class transactions_controller extends admin_main
 			'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
 			'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
 		]);
-	}
-
-	public function view()
-	{
-		// Request Identifier of the transaction
-		$transaction_id = $this->request->variable('id', 0);
-
-		// add additional fields to the table schema needed by entity->import()
-		$additional_table_schema = [
-			'item_username'    => ['name' => 'username', 'type' => 'string'],
-			'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
-		];
-
-		// Grab transaction data
-		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
-
-		array_map([$this, 'action_assign_template_vars'], $data_ary);
-
-		$this->template->assign_vars([
-			'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
-			'U_ACTION'        => $this->u_action,
-			'U_BACK'          => $this->u_action,
-			'S_VIEW'          => true,
-		]);
-	}
-
-	public function delete($txn_id)
-	{
-		$where_sql = '';
-
-		if ($this->args['hidden_fields']['delmarked'] && count($this->args['hidden_fields']['mark']))
-		{
-			$where_sql = $this->ppde_operator->build_marked_where_sql($this->args['hidden_fields']['mark']);
-		}
-
-		if ($where_sql || $this->args['hidden_fields']['delall'])
-		{
-			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
-			$this->ppde_actions->set_ipn_test_properties(true);
-			$this->ppde_actions->update_overview_stats();
-			$this->ppde_actions->set_ipn_test_properties(false);
-			$this->ppde_actions->update_overview_stats();
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
-		}
-	}
-
-	/**
-	 * Does actions for validated transaction
-	 *
-	 * @param bool $is_member
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function do_transactions_actions($is_member)
-	{
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if ($is_member)
-		{
-			$this->ppde_actions->update_donor_stats();
-			$this->ppde_actions->donors_group_user_add();
-			$this->ppde_actions->notification->notify_donor_donation_received();
-		}
 	}
 
 	/**
@@ -658,125 +735,48 @@ class transactions_controller extends admin_main
 		return $examples;
 	}
 
-	/**
-	 * Returns the intended user ID
-	 *
-	 * @param string $username
-	 * @param int    $donor_id
-	 *
-	 * @return int
-	 * @access private
-	 * @throws \skouat\ppde\exception\transaction_exception
-	 */
-	private function validate_user_id($username, $donor_id = 0)
+	public function view()
 	{
-		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
-		{
-			return ANONYMOUS;
-		}
+		// Request Identifier of the transaction
+		$transaction_id = $this->request->variable('id', 0);
 
-		$user_id = ($username !== '') ? $this->user_loader->load_user_by_username($username) : $donor_id;
+		// add additional fields to the table schema needed by entity->import()
+		$additional_table_schema = [
+			'item_username'    => ['name' => 'username', 'type' => 'string'],
+			'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
+		];
 
-		if ($user_id <= ANONYMOUS)
-		{
-			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
-		}
+		// Grab transaction data
+		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
-		return $user_id;
+		array_map([$this, 'action_assign_template_vars'], $data_ary);
+
+		$this->template->assign_vars([
+			'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
+			'U_ACTION'        => $this->u_action,
+			'U_BACK'          => $this->u_action,
+			'S_VIEW'          => true,
+		]);
 	}
 
-	/**
-	 * View log
-	 *
-	 * @param array  &$log         The result array with the logs
-	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
-	 *                             database. Otherwise an integer with the number of total matching entries is returned.
-	 * @param int     $limit       Limit the number of entries that are returned
-	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
-	 * @param int     $limit_days
-	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
-	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
-	 *
-	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
-	 * @access private
-	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	public function delete()
 	{
-		$count_logs = ($log_count !== false);
+		$where_sql = '';
 
-		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
-		$log_count = $this->get_log_count();
-
-		return $this->get_valid_offset();
-	}
-
-	/**
-	 * @param bool   $count_logs
-	 * @param int    $limit
-	 * @param int    $offset
-	 * @param int    $log_time
-	 * @param string $sort_by
-	 * @param string $keywords
-	 *
-	 * @return array $log
-	 * @access private
-	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
-	{
-		$this->entry_count = 0;
-		$this->last_page_offset = $offset;
-		$url_ary = [];
-
-		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->args['hidden_fields']['delmarked'] && count($this->args['hidden_fields']['mark']))
 		{
-			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
-			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
-
-		}
-		else
-		{
-			$url_ary['profile_url'] = append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=viewprofile');
-			$url_ary['txn_url'] = '';
+			$where_sql = $this->ppde_operator->build_marked_where_sql($this->args['hidden_fields']['mark']);
 		}
 
-		$get_logs_sql_ary = $this->ppde_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
-
-		if ($count_logs)
+		if ($where_sql || $this->args['hidden_fields']['delall'])
 		{
-			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
-
-			if ($this->entry_count == 0)
-			{
-				// Save the queries, because there are no logs to display
-				$this->last_page_offset = 0;
-
-				return [];
-			}
-
-			// Return the user to the last page that is valid
-			while ($this->last_page_offset >= $this->entry_count)
-			{
-				$this->last_page_offset = max(0, $this->last_page_offset - $limit);
-			}
+			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
+			$this->ppde_actions->set_ipn_test_properties(true);
+			$this->ppde_actions->update_overview_stats();
+			$this->ppde_actions->set_ipn_test_properties(false);
+			$this->ppde_actions->update_overview_stats();
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 		}
-
-		return $this->ppde_operator->build_log_ary($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function get_log_count()
-	{
-		return ($this->entry_count) ? (int) $this->entry_count : 0;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function get_valid_offset()
-	{
-		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
 	}
 
 	/**

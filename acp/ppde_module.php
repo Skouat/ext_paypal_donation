@@ -154,12 +154,12 @@ class ppde_module
 			// no break;
 			case 'transactions':
 				// Request the ID
-				$item_id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
+				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
 
 				// Send ids to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
 
-				$this->do_action($id, $mode, $admin_controller->get_action(), $admin_controller, $item_id);
+				$this->do_action($admin_controller->get_action(), $admin_controller);
 			break;
 			case 'paypal_features':
 			case 'settings':
@@ -178,17 +178,14 @@ class ppde_module
 	/**
 	 * Performs action requested by the module
 	 *
-	 * @param int                                      $id
-	 * @param string                                   $mode
 	 * @param string                                   $action
 	 * @param \skouat\ppde\controller\admin\admin_main $controller
-	 * @param int                                      $item_id
 	 *
 	 * @return void
 	 * @throws \Exception
 	 * @access private
 	 */
-	private function do_action($id, $mode, $action, $controller, $item_id)
+	private function do_action($action, $controller)
 	{
 		global $phpbb_container;
 
@@ -204,28 +201,25 @@ class ppde_module
 				// Set the page title for our ACP page
 				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
 
-				// Load the edit handle in the admin controller
-				$controller->$action($item_id);
+				// Call the method in the admin controller based on the $action value
+				$controller->$action();
 
 				// Return to stop execution of this script
 				return;
 			case 'move_down':
 			case 'move_up':
-				// Move a item
-				$controller->move($item_id, $action);
+				$controller->move();
 			break;
 			case 'activate':
 			case 'deactivate':
-				// Enable/disable a item
-				$controller->enable($item_id, $action);
+				$controller->enable();
 			break;
 			case 'approve':
 			case 'delete':
 				// Use a confirm box routine when approving/deleting an item
 				if (confirm_box(true))
 				{
-					// Delete a currency
-					$controller->$mode($item_id);
+					$controller->$action();
 					break;
 				}
 
