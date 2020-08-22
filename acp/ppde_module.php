@@ -228,7 +228,7 @@ class ppde_module
 				}
 
 				// Request confirmation from the user to delete the selected item
-				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields($controller->get_hidden_fields()));
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
 			break;
 		}
 

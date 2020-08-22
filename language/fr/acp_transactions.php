@@ -39,13 +39,13 @@ if (empty($lang) || !is_array($lang))
  */
 $lang = array_merge($lang, [
 	// Transactions log
-	'PPDE_DT_CONFIG'                => 'Journal des transactions',
-	'PPDE_DT_CONFIG_EXPLAIN'        => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
-	'PPDE_DT_IPN_STATUS'            => 'État de la transaction',
-	'PPDE_DT_IPN_TEST'              => 'Test IPN',
-	'PPDE_DT_PAYMENT_STATUS'        => 'État du paiement',
-	'PPDE_DT_TXN_ID'                => 'Numéro de transaction',
-	'PPDE_DT_USERNAME'              => 'Nom du donateur',
+	'PPDE_DT_CONFIG'         => 'Journal des transactions',
+	'PPDE_DT_CONFIG_EXPLAIN' => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
+	'PPDE_DT_IPN_STATUS'     => 'État de la transaction',
+	'PPDE_DT_IPN_TEST'       => 'Test IPN',
+	'PPDE_DT_PAYMENT_STATUS' => 'État du paiement',
+	'PPDE_DT_TXN_ID'         => 'Numéro de transaction',
+	'PPDE_DT_USERNAME'       => 'Nom du donateur',
 
 	// Display transactions
 	'PPDE_DT_APPROVE'                       => 'Approuver',
@@ -139,7 +139,7 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_DC_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir effectuer cette opération ?',
+	'PPDE_DC_CONFIRM_OPERATION' => 'Êtes-vous sûr de vouloir effectuer cette opération ?',
 ]);
 
 /**

@@ -63,11 +63,11 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_DC_ADDED'          => 'Une devise a été ajoutée.',
-	'PPDE_DC_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
-	'PPDE_DC_DELETED'        => 'Une devise a été supprimée.',
-	'PPDE_DC_GO_TO_PAGE'     => '%sModifier la devise existante%s',
-	'PPDE_DC_UPDATED'        => 'Une devise a été mise à jour.',
+	'PPDE_DC_ADDED'             => 'Une devise a été ajoutée.',
+	'PPDE_DC_CONFIRM_OPERATION' => 'Êtes-vous sûr de vouloir supprimer cette devise ?',
+	'PPDE_DC_DELETED'           => 'Une devise a été supprimée.',
+	'PPDE_DC_GO_TO_PAGE'        => '%sModifier la devise existante%s',
+	'PPDE_DC_UPDATED'           => 'Une devise a été mise à jour.',
 ]);
 
 /**
