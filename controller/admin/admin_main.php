@@ -15,6 +15,8 @@ use skouat\ppde\entity\main;
 
 abstract class admin_main
 {
+	/** @var array */
+	protected $args;
 	/** @var object \phpbb\config\config */
 	protected $config;
 	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
@@ -69,6 +71,29 @@ abstract class admin_main
 	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
+	}
+
+	public function set_hidden_fields($id, $mode, $action)
+	{
+		$this->args = [
+			'id'     => $id,
+			'mode'   => $mode,
+			'action' => $action,
+		];
+	}
+
+	public function get_hidden_fields()
+	{
+		return count($this->args) ? (array) $this->args : [
+			'id'     => '',
+			'mode'   => '',
+			'action' => '',
+		];
+	}
+
+	public function get_action()
+	{
+		return (isset($this->args['action'])) ? (string) $this->args['action'] : '';
 	}
 
 	public function display()

@@ -136,6 +136,13 @@ $lang = array_merge($lang, [
 ]);
 
 /**
+ * Confirm box
+ */
+$lang = array_merge($lang, [
+	'PPDE_DT_CONFIRM_DELETE' => 'Are you sure you wish to carry out this operation?',
+]);
+
+/**
  * Errors
  */
 $lang = array_merge($lang, [

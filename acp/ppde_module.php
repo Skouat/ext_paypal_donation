@@ -19,7 +19,7 @@ class ppde_module
 		['module_name' => 'overview'],
 		['module_name' => 'paypal_features'],
 		['module_name' => 'settings'],
-		['module_name' => 'transactions'],
+		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_', 'id_prefix_name' => 'txn'],
 	];
 	/** @var string */
 	public $u_action;
@@ -139,7 +139,7 @@ class ppde_module
 		/** @type \phpbb\request\request $request Request object */
 		$request = $phpbb_container->get('request');
 
-		// Requests
+		// Requests vars
 		$action = $request->variable('action', '');
 
 		switch ($mode)
@@ -151,11 +151,15 @@ class ppde_module
 
 				// Make the $u_action url available in entity
 				$entity->set_page_url($this->u_action);
-
+			// no break;
+			case 'transactions':
 				// Request the ID
 				$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
 
-				$this->do_action($id, $mode, $action, $admin_controller);
+				// Send ids to the controller
+				$admin_controller->set_hidden_fields($id, $mode, $action);
+
+				$this->do_action($id, $mode, $admin_controller->get_action(), $admin_controller);
 			break;
 			case 'paypal_features':
 			case 'settings':
@@ -167,11 +171,6 @@ class ppde_module
 				// Load the display overview handle in the admin controller
 				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
-			break;
-			case 'transactions':
-				// Load the display transactions log handle in the admin controller
-				/** @type \skouat\ppde\controller\admin\transactions_controller $admin_controller */
-				$admin_controller->display_transactions($id, $mode, $action);
 			break;
 		}
 	}
@@ -198,20 +197,14 @@ class ppde_module
 		switch ($action)
 		{
 			case 'add':
-				// Set the page title for our ACP page
-				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
-
-				// Load the add handle in the admin controller
-				$controller->add();
-
-				// Return to stop execution of this script
-				return;
+			case 'change':
 			case 'edit':
+			case 'view':
 				// Set the page title for our ACP page
 				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
 
 				// Load the edit handle in the admin controller
-				$controller->edit($id);
+				$controller->$action($id);
 
 				// Return to stop execution of this script
 				return;
@@ -235,11 +228,7 @@ class ppde_module
 				}
 
 				// Request confirmation from the user to delete the selected item
-				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields([
-					'id'     => $id,
-					'mode'   => $mode,
-					'action' => $action,
-				]));
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields($controller->get_hidden_fields()));
 			break;
 		}
 
