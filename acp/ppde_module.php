@@ -19,7 +19,7 @@ class ppde_module
 		['module_name' => 'overview'],
 		['module_name' => 'paypal_features'],
 		['module_name' => 'settings'],
-		['module_name' => 'transactions'],
+		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_'],
 	];
 	/** @var string */
 	public $u_action;
@@ -139,7 +139,7 @@ class ppde_module
 		/** @type \phpbb\request\request $request Request object */
 		$request = $phpbb_container->get('request');
 
-		// Requests
+		// Requests vars
 		$action = $request->variable('action', '');
 
 		switch ($mode)
@@ -151,11 +151,15 @@ class ppde_module
 
 				// Make the $u_action url available in entity
 				$entity->set_page_url($this->u_action);
-
+			// no break;
+			case 'transactions':
 				// Request the ID
-				$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
+				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
 
-				$this->do_action($id, $mode, $action, $admin_controller);
+				// Send ids to the controller
+				$admin_controller->set_hidden_fields($id, $mode, $action);
+
+				$this->do_action($admin_controller->get_action(), $admin_controller);
 			break;
 			case 'paypal_features':
 			case 'settings':
@@ -168,27 +172,20 @@ class ppde_module
 				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
 			break;
-			case 'transactions':
-				// Load the display transactions log handle in the admin controller
-				/** @type \skouat\ppde\controller\admin\transactions_controller $admin_controller */
-				$admin_controller->display_transactions($id, $mode, $action);
-			break;
 		}
 	}
 
 	/**
 	 * Performs action requested by the module
 	 *
-	 * @param int                                      $id
-	 * @param string                                   $mode
 	 * @param string                                   $action
 	 * @param \skouat\ppde\controller\admin\admin_main $controller
 	 *
 	 * @return void
-	 * @access private
 	 * @throws \Exception
+	 * @access private
 	 */
-	private function do_action($id, $mode, $action, $controller)
+	private function do_action($action, $controller)
 	{
 		global $phpbb_container;
 
@@ -198,48 +195,39 @@ class ppde_module
 		switch ($action)
 		{
 			case 'add':
-				// Set the page title for our ACP page
-				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
-
-				// Load the add handle in the admin controller
-				$controller->add();
-
-				// Return to stop execution of this script
-				return;
+			case 'change':
 			case 'edit':
+			case 'view':
 				// Set the page title for our ACP page
 				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
 
-				// Load the edit handle in the admin controller
-				$controller->edit($id);
+				// Call the method in the admin controller based on the $action value
+				$controller->$action();
 
 				// Return to stop execution of this script
 				return;
 			case 'move_down':
 			case 'move_up':
-				// Move a item
-				$controller->move($id, $action);
+				$controller->move();
 			break;
 			case 'activate':
 			case 'deactivate':
-				// Enable/disable a item
-				$controller->enable($id, $action);
+				$controller->enable();
 			break;
+			case 'approve':
 			case 'delete':
-				// Use a confirm box routine when deleting a item
+				// Use a confirm box routine when approving/deleting an item
 				if (confirm_box(true))
 				{
-					// Delete a currency
-					$controller->delete($id);
+					$controller->$action();
 					break;
 				}
 
-				// Request confirmation from the user to delete the selected item
-				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_DELETE'), build_hidden_fields([
-					'id'     => $id,
-					'mode'   => $mode,
-					'action' => $action,
-				]));
+				// Request confirmation from the user to do the action for selected item
+				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
+
+				// Clear $action status
+				$controller->set_action($action);
 			break;
 		}
 

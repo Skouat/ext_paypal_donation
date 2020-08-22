@@ -77,11 +77,11 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_DP_ADDED'          => 'Une page de dons pour la langue « %s » a été ajoutée.',
-	'PPDE_DP_CONFIRM_DELETE' => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
-	'PPDE_DP_DELETED'        => 'Une page de dons pour la langue « %s » a été supprimée.',
-	'PPDE_DP_GO_TO_PAGE'     => '%sModifier la page de dons existante%s',
-	'PPDE_DP_UPDATED'        => 'Une page de dons pour la langue « %s » a été mise à jour.',
+	'PPDE_DP_ADDED'             => 'Une page de dons pour la langue « %s » a été ajoutée.',
+	'PPDE_DP_CONFIRM_OPERATION' => 'Êtes-vous sûr de vouloir supprimer cette page de dons ?',
+	'PPDE_DP_DELETED'           => 'Une page de dons pour la langue « %s » a été supprimée.',
+	'PPDE_DP_GO_TO_PAGE'        => '%sModifier la page de dons existante%s',
+	'PPDE_DP_UPDATED'           => 'Une page de dons pour la langue « %s » a été mise à jour.',
 ]);
 
 /**

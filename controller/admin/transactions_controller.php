@@ -25,6 +25,7 @@ use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * @property array              args               Array of args for hidden fiels
  * @property config             config             Config object
  * @property ContainerInterface container          Service container interface
  * @property string             id_prefix_name     Prefix name for identifier in the URL
@@ -130,86 +131,165 @@ class transactions_controller extends admin_main
 	/**
 	 * Display the transactions list
 	 *
-	 * @param string $id     Module id
-	 * @param string $mode   Module categorie
-	 * @param string $action Action name
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function display_transactions($id, $mode, $action)
+	public function display()
 	{
-		// Gets vars from REQUEST/POST then build a array of them
-		$args = $this->build_args_array($id, $mode, $action);
+		/** @type \phpbb\pagination $pagination */
+		$pagination = $this->container->get('pagination');
 
-		// Does the action regarding the action provided
-		$action = $this->do_action($args);
+		// Sorting
+		$limit_days = [
+			0   => $this->language->lang('ALL_ENTRIES'),
+			1   => $this->language->lang('1_DAY'),
+			7   => $this->language->lang('7_DAYS'),
+			14  => $this->language->lang('2_WEEKS'),
+			30  => $this->language->lang('1_MONTH'),
+			90  => $this->language->lang('3_MONTHS'),
+			180 => $this->language->lang('6_MONTHS'),
+			365 => $this->language->lang('1_YEAR'),
+		];
+		$sort_by_text = [
+			'txn'      => $this->language->lang('PPDE_DT_SORT_TXN_ID'),
+			'u'        => $this->language->lang('PPDE_DT_SORT_DONORS'),
+			'ipn'      => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'),
+			'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
+			'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
+			't'        => $this->language->lang('SORT_DATE'),
+		];
+		$sort_by_sql = [
+			'txn'      => 'txn.txn_id',
+			'u'        => 'u.username_clean',
+			'ipn'      => 'txn.confirmed',
+			'ipn_test' => 'txn.test_ipn',
+			'ps'       => 'txn.payment_status',
+			't'        => 'txn.payment_date',
+		];
 
-		// Proceed if no action to do
-		if (empty($action))
+		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
+		gen_sort_selects($limit_days, $sort_by_text, $this->args['hidden_fields']['st'], $this->args['hidden_fields']['sk'], $this->args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
+
+		// Define where and sort sql for use in displaying transactions
+		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
+		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] == 'd') ? 'DESC' : 'ASC');
+
+		$keywords = $this->request->variable('keywords', '', true);
+		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
+
+		// Grab log data
+		$log_data = [];
+		$log_count = 0;
+
+		$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $this->args['hidden_fields']['start'], $sql_where, $sql_sort, $keywords);
+
+		$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $this->args['hidden_fields']['start']);
+
+		$this->template->assign_vars([
+			'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
+			'S_KEYWORDS'   => $keywords,
+			'S_LIMIT_DAYS' => $s_limit_days,
+			'S_SORT_KEY'   => $s_sort_key,
+			'S_SORT_DIR'   => $s_sort_dir,
+			'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $this->args['hidden_fields']['start'],
+		]);
+
+		array_map([$this, 'display_log_assign_template_vars'], $log_data);
+	}
+
+	/**
+	 * View log
+	 *
+	 * @param array  &$log         The result array with the logs
+	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
+	 *                             database. Otherwise an integer with the number of total matching entries is returned.
+	 * @param int     $limit       Limit the number of entries that are returned
+	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
+	 * @param int     $limit_days
+	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
+	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
+	 *
+	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
+	 * @access private
+	 */
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	{
+		$count_logs = ($log_count !== false);
+
+		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
+		$log_count = $this->get_log_count();
+
+		return $this->get_valid_offset();
+	}
+
+	/**
+	 * @param bool   $count_logs
+	 * @param int    $limit
+	 * @param int    $offset
+	 * @param int    $log_time
+	 * @param string $sort_by
+	 * @param string $keywords
+	 *
+	 * @return array $log
+	 * @access private
+	 */
+	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	{
+		$this->entry_count = 0;
+		$this->last_page_offset = $offset;
+		$url_ary = [];
+
+		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
 		{
-			/** @type \phpbb\pagination $pagination */
-			$pagination = $this->container->get('pagination');
+			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
+			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
 
-			// Sorting
-			$limit_days = [
-				0   => $this->language->lang('ALL_ENTRIES'),
-				1   => $this->language->lang('1_DAY'),
-				7   => $this->language->lang('7_DAYS'),
-				14  => $this->language->lang('2_WEEKS'),
-				30  => $this->language->lang('1_MONTH'),
-				90  => $this->language->lang('3_MONTHS'),
-				180 => $this->language->lang('6_MONTHS'),
-				365 => $this->language->lang('1_YEAR'),
-			];
-			$sort_by_text = [
-				'txn'      => $this->language->lang('PPDE_DT_SORT_TXN_ID'),
-				'u'        => $this->language->lang('PPDE_DT_SORT_DONORS'),
-				'ipn'      => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'),
-				'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
-				'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
-				't'        => $this->language->lang('SORT_DATE'),
-			];
-			$sort_by_sql = [
-				'txn'      => 'txn.txn_id',
-				'u'        => 'u.username_clean',
-				'ipn'      => 'txn.confirmed',
-				'ipn_test' => 'txn.test_ipn',
-				'ps'       => 'txn.payment_status',
-				't'        => 'txn.payment_date',
-			];
-
-			$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
-			gen_sort_selects($limit_days, $sort_by_text, $args['hidden_fields']['st'], $args['hidden_fields']['sk'], $args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
-
-			// Define where and sort sql for use in displaying transactions
-			$sql_where = ($args['hidden_fields']['st']) ? (time() - ($args['hidden_fields']['st'] * 86400)) : 0;
-			$sql_sort = $sort_by_sql[$args['hidden_fields']['sk']] . ' ' . (($args['hidden_fields']['sd'] == 'd') ? 'DESC' : 'ASC');
-
-			$keywords = $this->request->variable('keywords', '', true);
-			$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
-
-			// Grab log data
-			$log_data = [];
-			$log_count = 0;
-
-			$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $args['hidden_fields']['start'], $sql_where, $sql_sort, $keywords);
-
-			$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
-			$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $args['hidden_fields']['start']);
-
-			$this->template->assign_vars([
-				'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
-				'S_KEYWORDS'   => $keywords,
-				'S_LIMIT_DAYS' => $s_limit_days,
-				'S_SORT_KEY'   => $s_sort_key,
-				'S_SORT_DIR'   => $s_sort_dir,
-				'S_TXN'        => $mode,
-				'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $args['hidden_fields']['start'],
-			]);
-
-			array_map([$this, 'display_log_assign_template_vars'], $log_data);
 		}
+		else
+		{
+			$url_ary['profile_url'] = append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=viewprofile');
+			$url_ary['txn_url'] = '';
+		}
+
+		$get_logs_sql_ary = $this->ppde_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
+
+		if ($count_logs)
+		{
+			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
+
+			if ($this->entry_count == 0)
+			{
+				// Save the queries, because there are no logs to display
+				$this->last_page_offset = 0;
+
+				return [];
+			}
+
+			// Return the user to the last page that is valid
+			while ($this->last_page_offset >= $this->entry_count)
+			{
+				$this->last_page_offset = max(0, $this->last_page_offset - $limit);
+			}
+		}
+
+		return $this->ppde_operator->build_log_ary($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get_log_count()
+	{
+		return ($this->entry_count) ? (int) $this->entry_count : 0;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function get_valid_offset()
+	{
+		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
 	}
 
 	/**
@@ -219,12 +299,12 @@ class transactions_controller extends admin_main
 	 * @param string $mode   Module categorie
 	 * @param string $action Action name
 	 *
-	 * @return array
+	 * @return void
 	 * @access private
 	 */
-	private function build_args_array($id, $mode, $action)
+	public function set_hidden_fields($id, $mode, $action)
 	{
-		$args = [
+		$this->args = [
 			'action'        => $action,
 			'hidden_fields' => [
 				'start'     => $this->request->variable('start', 0),
@@ -238,17 +318,17 @@ class transactions_controller extends admin_main
 		];
 
 		// Prepares args depending actions
-		if (($args['hidden_fields']['delmarked'] || $args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
+		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
-			$args['action'] = 'delete';
-			$args['hidden_fields'] = array_merge($args['hidden_fields'], [
+			$this->args['action'] = 'delete';
+			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
 				'i'    => $id,
 				'mode' => $mode,
 			]);
 		}
 		else if ($this->request->is_set('approve'))
 		{
-			$args = [
+			$this->args = [
 				'action'        => 'approve',
 				'hidden_fields' => [
 					'approve'             => true,
@@ -259,181 +339,96 @@ class transactions_controller extends admin_main
 		}
 		else if ($this->request->is_set('add'))
 		{
-			$args['action'] = 'add';
+			$this->args['action'] = 'add';
 		}
 		else if ($this->request->is_set_post('change'))
 		{
-			$args['action'] = 'change';
+			$this->args['action'] = 'change';
+		}
+	}
+
+	public function change()
+	{
+		$username = $this->request->variable('username', '', true);
+		$donor_id = $this->request->variable('donor_id', 0);
+
+		try
+		{
+			$user_id = $this->validate_user_id($username, $donor_id);
+		}
+		catch (transaction_exception $e)
+		{
+			trigger_error(implode('<br>', $e->get_errors()) . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		return $args;
+		// Request Identifier of the transaction
+		$transaction_id = $this->request->variable('id', 0);
+
+		$this->ppde_entity->load($transaction_id);
+
+		if (!$this->ppde_entity->data_exists($this->ppde_entity->build_sql_data_exists()))
+		{
+			trigger_error($this->language->lang('PPDE_DT_NO_TRANSACTION') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		$log_action = $this->ppde_entity
+			->set_user_id($user_id)
+			->add_edit_data()
+		;
+
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action));
+		trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 	}
 
 	/**
-	 * Does the action regarding the action provided
+	 * Returns the intended user ID
 	 *
-	 * @param array $args Array of arguments required for the action
+	 * @param string $username
+	 * @param int    $donor_id
 	 *
-	 * @return string
+	 * @return int
 	 * @access private
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
-	private function do_action($args)
+	private function validate_user_id($username, $donor_id = 0)
 	{
-		switch ($args['action'])
+		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
 		{
-			case 'view':
-				// Request Identifier of the transaction
-				$transaction_id = $this->request->variable('id', 0);
-
-				// add additional fields to the table schema needed by entity->import()
-				$additional_table_schema = [
-					'item_username'    => ['name' => 'username', 'type' => 'string'],
-					'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
-				];
-
-				// Grab transaction data
-				$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
-
-				array_map([$this, 'action_assign_template_vars'], $data_ary);
-
-				$this->template->assign_vars([
-					'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
-					'U_ACTION'        => $this->u_action,
-					'U_BACK'          => $this->u_action,
-					'S_VIEW'          => true,
-				]);
-			break;
-			case 'delete':
-				if (confirm_box(true))
-				{
-					$where_sql = '';
-
-					if ($args['hidden_fields']['delmarked'] && count($args['hidden_fields']['mark']))
-					{
-						$where_sql = $this->ppde_operator->build_marked_where_sql($args['hidden_fields']['mark']);
-					}
-
-					if ($where_sql || $args['hidden_fields']['delall'])
-					{
-						$this->ppde_entity->delete(0, '', $where_sql, $args['hidden_fields']['delall']);
-						$this->ppde_actions->set_ipn_test_properties(true);
-						$this->ppde_actions->update_overview_stats();
-						$this->ppde_actions->set_ipn_test_properties(false);
-						$this->ppde_actions->update_overview_stats();
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
-					}
-				}
-
-				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
-
-				// Clear $action status
-				$args['action'] = '';
-			break;
-			case 'approve':
-				if (confirm_box(true))
-				{
-					$transaction_id = (int) $args['hidden_fields']['id'];
-					$txn_approved = !empty($args['hidden_fields']['txn_errors_approved']) ? false : true;
-
-					// Update DB record
-					$this->ppde_entity->load($transaction_id);
-					$this->ppde_entity->set_txn_errors_approved($txn_approved);
-					$this->ppde_entity->save(false);
-
-					// Prepare transaction settings before doing actions
-					$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
-					$this->ppde_actions->set_transaction_data($transaction_data[0]);
-					$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
-					$this->ppde_actions->is_donor_is_member();
-
-					if ($txn_approved)
-					{
-						$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
-					}
-
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
-				}
-
-				confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields($args['hidden_fields']));
-
-				// Clear $action status
-				$args['action'] = '';
-			break;
-			case 'add':
-				$errors = [];
-
-				$transaction_data = $this->request_transaction_vars();
-
-				if ($this->request->is_set_post('submit'))
-				{
-					try
-					{
-						$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
-
-						// Prepare transaction settings before doing actions
-						$this->ppde_actions->set_transaction_data($transaction_data);
-						$this->ppde_actions->is_donor_is_member();
-
-						$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
-
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
-						trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
-					}
-					catch (transaction_exception $e)
-					{
-						$errors = $e->get_errors();
-					}
-				}
-
-				$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
-
-				$this->s_error_assign_template_vars($errors);
-
-				$this->template->assign_vars($transaction_data);
-
-				$this->template->assign_vars([
-					'U_ACTION'             => $this->u_action,
-					'U_BACK'               => $this->u_action,
-					'S_ADD'                => true,
-					'ANONYMOUS_USER_ID'    => ANONYMOUS,
-					'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
-					'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
-				]);
-			break;
-			case 'change':
-				$username = $this->request->variable('username', '', true);
-				$donor_id = $this->request->variable('donor_id', 0);
-
-				try
-				{
-					$user_id = $this->validate_user_id($username, $donor_id);
-				}
-				catch (transaction_exception $e)
-				{
-					trigger_error(implode('<br>', $e->get_errors()) . adm_back_link($this->u_action), E_USER_WARNING);
-				}
-
-				// Request Identifier of the transaction
-				$transaction_id = $this->request->variable('id', 0);
-
-				$this->ppde_entity->load($transaction_id);
-
-				if (!$this->ppde_entity->data_exists($this->ppde_entity->build_sql_data_exists()))
-				{
-					trigger_error($this->language->lang('PPDE_DT_NO_TRANSACTION') . adm_back_link($this->u_action), E_USER_WARNING);
-				}
-
-				$log_action = $this->ppde_entity
-					->set_user_id($user_id)
-					->add_edit_data()
-				;
-
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action));
-				trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
-			break;
+			return ANONYMOUS;
 		}
 
-		return $args['action'];
+		$user_id = ($username !== '') ? $this->user_loader->load_user_by_username($username) : $donor_id;
+
+		if ($user_id <= ANONYMOUS)
+		{
+			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
+		}
+
+		return $user_id;
+	}
+
+	public function approve()
+	{
+		$transaction_id = (int) $this->args['hidden_fields']['id'];
+		$txn_approved = !empty($this->args['hidden_fields']['txn_errors_approved']) ? false : true;
+
+		// Update DB record
+		$this->ppde_entity->load($transaction_id);
+		$this->ppde_entity->set_txn_errors_approved($txn_approved);
+		$this->ppde_entity->save(false);
+
+		// Prepare transaction settings before doing actions
+		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
+		$this->ppde_actions->set_transaction_data($transaction_data[0]);
+		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
+		$this->ppde_actions->is_donor_is_member();
+
+		if ($txn_approved)
+		{
+			$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+		}
+
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 	}
 
 	/**
@@ -455,6 +450,49 @@ class transactions_controller extends admin_main
 			$this->ppde_actions->donors_group_user_add();
 			$this->ppde_actions->notification->notify_donor_donation_received();
 		}
+	}
+
+	public function add()
+	{
+		$errors = [];
+
+		$transaction_data = $this->request_transaction_vars();
+
+		if ($this->request->is_set_post('submit'))
+		{
+			try
+			{
+				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
+
+				// Prepare transaction settings before doing actions
+				$this->ppde_actions->set_transaction_data($transaction_data);
+				$this->ppde_actions->is_donor_is_member();
+
+				$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
+
+				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
+				trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+			}
+			catch (transaction_exception $e)
+			{
+				$errors = $e->get_errors();
+			}
+		}
+
+		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
+
+		$this->s_error_assign_template_vars($errors);
+
+		$this->template->assign_vars($transaction_data);
+
+		$this->template->assign_vars([
+			'U_ACTION'             => $this->u_action,
+			'U_BACK'               => $this->u_action,
+			'S_ADD'                => true,
+			'ANONYMOUS_USER_ID'    => ANONYMOUS,
+			'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
+			'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
+		]);
 	}
 
 	/**
@@ -697,125 +735,48 @@ class transactions_controller extends admin_main
 		return $examples;
 	}
 
-	/**
-	 * Returns the intended user ID
-	 *
-	 * @param string $username
-	 * @param int    $donor_id
-	 *
-	 * @return int
-	 * @access private
-	 * @throws \skouat\ppde\exception\transaction_exception
-	 */
-	private function validate_user_id($username, $donor_id = 0)
+	public function view()
 	{
-		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
-		{
-			return ANONYMOUS;
-		}
+		// Request Identifier of the transaction
+		$transaction_id = $this->request->variable('id', 0);
 
-		$user_id = ($username !== '') ? $this->user_loader->load_user_by_username($username) : $donor_id;
+		// add additional fields to the table schema needed by entity->import()
+		$additional_table_schema = [
+			'item_username'    => ['name' => 'username', 'type' => 'string'],
+			'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
+		];
 
-		if ($user_id <= ANONYMOUS)
-		{
-			throw (new transaction_exception())->set_errors([$this->language->lang('PPDE_MT_DONOR_NOT_FOUND')]);
-		}
+		// Grab transaction data
+		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
-		return $user_id;
+		array_map([$this, 'action_assign_template_vars'], $data_ary);
+
+		$this->template->assign_vars([
+			'U_FIND_USERNAME' => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=view_transactions&amp;field=username&amp;select_single=true'),
+			'U_ACTION'        => $this->u_action,
+			'U_BACK'          => $this->u_action,
+			'S_VIEW'          => true,
+		]);
 	}
 
-	/**
-	 * View log
-	 *
-	 * @param array  &$log         The result array with the logs
-	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
-	 *                             database. Otherwise an integer with the number of total matching entries is returned.
-	 * @param int     $limit       Limit the number of entries that are returned
-	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
-	 * @param int     $limit_days
-	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
-	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
-	 *
-	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
-	 * @access private
-	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	public function delete()
 	{
-		$count_logs = ($log_count !== false);
+		$where_sql = '';
 
-		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
-		$log_count = $this->get_log_count();
-
-		return $this->get_valid_offset();
-	}
-
-	/**
-	 * @param bool   $count_logs
-	 * @param int    $limit
-	 * @param int    $offset
-	 * @param int    $log_time
-	 * @param string $sort_by
-	 * @param string $keywords
-	 *
-	 * @return array $log
-	 * @access private
-	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
-	{
-		$this->entry_count = 0;
-		$this->last_page_offset = $offset;
-		$url_ary = [];
-
-		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->args['hidden_fields']['delmarked'] && count($this->args['hidden_fields']['mark']))
 		{
-			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
-			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
-
-		}
-		else
-		{
-			$url_ary['profile_url'] = append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=viewprofile');
-			$url_ary['txn_url'] = '';
+			$where_sql = $this->ppde_operator->build_marked_where_sql($this->args['hidden_fields']['mark']);
 		}
 
-		$get_logs_sql_ary = $this->ppde_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
-
-		if ($count_logs)
+		if ($where_sql || $this->args['hidden_fields']['delall'])
 		{
-			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
-
-			if ($this->entry_count == 0)
-			{
-				// Save the queries, because there are no logs to display
-				$this->last_page_offset = 0;
-
-				return [];
-			}
-
-			// Return the user to the last page that is valid
-			while ($this->last_page_offset >= $this->entry_count)
-			{
-				$this->last_page_offset = max(0, $this->last_page_offset - $limit);
-			}
+			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
+			$this->ppde_actions->set_ipn_test_properties(true);
+			$this->ppde_actions->update_overview_stats();
+			$this->ppde_actions->set_ipn_test_properties(false);
+			$this->ppde_actions->update_overview_stats();
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 		}
-
-		return $this->ppde_operator->build_log_ary($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function get_log_count()
-	{
-		return ($this->entry_count) ? (int) $this->entry_count : 0;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function get_valid_offset()
-	{
-		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
 	}
 
 	/**

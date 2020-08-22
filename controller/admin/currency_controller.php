@@ -220,13 +220,12 @@ class currency_controller extends admin_main
 	/**
 	 * Edit a Currency
 	 *
-	 * @param int $currency_id Currency Identifier
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function edit($currency_id)
+	public function edit()
 	{
+		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 		// Add form key
 		add_form_key('add_edit_currency');
 
@@ -253,14 +252,13 @@ class currency_controller extends admin_main
 	/**
 	 * Move a currency up/down
 	 *
-	 * @param int    $currency_id The currency identifier to move
-	 * @param string $direction   The direction (up|down)
-	 *
 	 * @return void
 	 * @access   public
 	 */
-	public function move($currency_id, $direction)
+	public function move()
 	{
+		$direction = $this->args['action'];
+
 		// Before moving the currency, with check the link hash.
 		// If the hash, is invalid we return an error.
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_move'))
@@ -269,7 +267,7 @@ class currency_controller extends admin_main
 		}
 
 		// Load data
-		$this->ppde_entity->load($currency_id);
+		$this->ppde_entity->load($this->args[$this->id_prefix_name . '_id']);
 		$current_order = $this->ppde_entity->get_currency_order();
 
 		if ($current_order == 0 && $direction == 'move_up')
@@ -292,21 +290,21 @@ class currency_controller extends admin_main
 		if ($this->request->is_ajax())
 		{
 			$json_response = new \phpbb\json_response;
-			$json_response->send([				'success' => $move_executed			]);
+			$json_response->send(['success' => $move_executed]);
 		}
 	}
 
 	/**
 	 * Enable/disable a currency
 	 *
-	 * @param int    $currency_id
-	 * @param string $action
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function enable($currency_id, $action)
+	public function enable()
 	{
+		$action = $this->args['action'];
+		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
+
 		// Return an error if no currency
 		if (!$currency_id)
 		{
@@ -323,7 +321,7 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($currency_id);
 
 		// Set the new status for this currency
-		$this->ppde_entity->set_currency_enable(($action == 'activate') ? true : false);
+		$this->ppde_entity->set_currency_enable($action == 'activate');
 
 		// Save data to the database
 		$this->ppde_entity->save($this->ppde_entity->check_required_field());
@@ -341,13 +339,13 @@ class currency_controller extends admin_main
 	/**
 	 * Delete a currency
 	 *
-	 * @param int $currency_id
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function delete($currency_id)
+	public function delete()
 	{
+		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
+
 		// Load data
 		$this->ppde_entity->load($currency_id);
 		$this->ppde_entity->delete($currency_id, 'check_currency_enable');
