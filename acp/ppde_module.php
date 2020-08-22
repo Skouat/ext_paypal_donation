@@ -19,7 +19,7 @@ class ppde_module
 		['module_name' => 'overview'],
 		['module_name' => 'paypal_features'],
 		['module_name' => 'settings'],
-		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_', 'id_prefix_name' => 'txn'],
+		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_'],
 	];
 	/** @var string */
 	public $u_action;
@@ -154,12 +154,12 @@ class ppde_module
 			// no break;
 			case 'transactions':
 				// Request the ID
-				$id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
+				$item_id = $request->variable($this->module_info['id_prefix_name'] . '_id', 0);
 
 				// Send ids to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
 
-				$this->do_action($id, $mode, $admin_controller->get_action(), $admin_controller);
+				$this->do_action($id, $mode, $admin_controller->get_action(), $admin_controller, $item_id);
 			break;
 			case 'paypal_features':
 			case 'settings':
@@ -182,12 +182,13 @@ class ppde_module
 	 * @param string                                   $mode
 	 * @param string                                   $action
 	 * @param \skouat\ppde\controller\admin\admin_main $controller
+	 * @param int                                      $item_id
 	 *
 	 * @return void
-	 * @access private
 	 * @throws \Exception
+	 * @access private
 	 */
-	private function do_action($id, $mode, $action, $controller)
+	private function do_action($id, $mode, $action, $controller, $item_id)
 	{
 		global $phpbb_container;
 
@@ -204,31 +205,35 @@ class ppde_module
 				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
 
 				// Load the edit handle in the admin controller
-				$controller->$action($id);
+				$controller->$action($item_id);
 
 				// Return to stop execution of this script
 				return;
 			case 'move_down':
 			case 'move_up':
 				// Move a item
-				$controller->move($id, $action);
+				$controller->move($item_id, $action);
 			break;
 			case 'activate':
 			case 'deactivate':
 				// Enable/disable a item
-				$controller->enable($id, $action);
+				$controller->enable($item_id, $action);
 			break;
+			case 'approve':
 			case 'delete':
-				// Use a confirm box routine when deleting a item
+				// Use a confirm box routine when approving/deleting an item
 				if (confirm_box(true))
 				{
 					// Delete a currency
-					$controller->delete($id);
+					$controller->$mode($item_id);
 					break;
 				}
 
-				// Request confirmation from the user to delete the selected item
+				// Request confirmation from the user to do the action for selected item
 				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
+
+				// Clear $action status
+				$controller->set_action($action);
 			break;
 		}
 

@@ -76,19 +76,27 @@ abstract class admin_main
 	public function set_hidden_fields($id, $mode, $action)
 	{
 		$this->args = [
-			'id'     => $id,
-			'mode'   => $mode,
-			'action' => $action,
+			'id'                         => $id,
+			'mode'                       => $mode,
+			'action'                     => $action,
+			'hidden_fields'              => [],
+			$this->id_prefix_name . 'id' => 0,
 		];
 	}
 
 	public function get_hidden_fields()
 	{
-		return count($this->args) ? (array) $this->args : [
-			'id'     => '',
-			'mode'   => '',
-			'action' => '',
-		];
+		return count($this->args) ? array_merge(
+			['id'                         => $this->args['id'],
+			 'mode'                       => $this->args['mode'],
+			 'action'                     => $this->args['action'],
+			 $this->id_prefix_name . 'id' => $this->args[$this->id_prefix_name . 'id']],
+			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];
+	}
+
+	public function set_action($action)
+	{
+		$this->args['action'] = $action;
 	}
 
 	public function get_action()
