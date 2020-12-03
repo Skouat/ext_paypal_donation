@@ -19,7 +19,7 @@ class ppde_module
 		['module_name' => 'overview'],
 		['module_name' => 'paypal_features'],
 		['module_name' => 'settings'],
-		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_'],
+		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_', 'id_prefix_name' => 'transaction'],
 	];
 	/** @var string */
 	public $u_action;
