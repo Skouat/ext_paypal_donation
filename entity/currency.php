@@ -45,7 +45,7 @@ class currency extends main
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, language $language, $table_name)
+	public function __construct(driver_interface $db, language $language, string $table_name)
 	{
 		$this->currency_table = $table_name;
 		parent::__construct(
@@ -133,10 +133,10 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_currency_position($on_left)
+	public function set_currency_position(bool $on_left)
 	{
 		// Set the item type on our data array
-		$this->data['currency_on_left'] = (bool) $on_left;
+		$this->data['currency_on_left'] = $on_left;
 
 		return $this;
 	}
@@ -149,10 +149,10 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_currency_enable($enable)
+	public function set_currency_enable(bool $enable)
 	{
 		// Set the item type on our data array
-		$this->data['currency_enable'] = (bool) $enable;
+		$this->data['currency_enable'] = $enable;
 
 		return $this;
 	}
@@ -165,10 +165,10 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_iso_code($iso_code)
+	public function set_iso_code(string $iso_code)
 	{
 		// Set the lang_id on our data array
-		$this->data['currency_iso_code'] = (string) $iso_code;
+		$this->data['currency_iso_code'] = $iso_code;
 
 		return $this;
 	}
@@ -181,7 +181,7 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_symbol($symbol)
+	public function set_symbol(string $symbol)
 	{
 		// Set the lang_id on our data array
 		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');

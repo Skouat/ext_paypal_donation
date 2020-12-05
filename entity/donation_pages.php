@@ -57,7 +57,7 @@ class donation_pages extends main
 		driver_interface $db,
 		language $language,
 		user $user,
-		$table_name
+		string $table_name
 	)
 	{
 		$this->config = $config;
@@ -100,10 +100,10 @@ class donation_pages extends main
 	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_lang_id($lang)
+	public function set_lang_id(int $lang)
 	{
 		// Set the lang_id on our data array
-		$this->data['page_lang_id'] = (int) $lang;
+		$this->data['page_lang_id'] = $lang;
 
 		return $this;
 	}
@@ -170,7 +170,7 @@ class donation_pages extends main
 	 * @return void
 	 * @access protected
 	 */
-	protected function set_message_option($option_value, $negate = false, $reparse_message = true)
+	protected function set_message_option(int $option_value, $negate = false, $reparse_message = true)
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
 		$this->data['page_content_bbcode_options'] = (isset($this->data['page_content_bbcode_options'])) ? $this->data['page_content_bbcode_options'] : 0;
@@ -208,7 +208,7 @@ class donation_pages extends main
 	 * @return donation_pages $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_message($message)
+	public function set_message(string $message)
 	{
 		// Prepare the text for storage
 		$uid = $bitfield = $flags = '';

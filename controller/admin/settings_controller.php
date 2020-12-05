@@ -165,7 +165,7 @@ class settings_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function rebuild_items_list($config_value, $added_value = '')
+	private function rebuild_items_list(string $config_value, $added_value = '')
 	{
 		$items_list = explode(',', $config_value);
 		$merge_items = [];
@@ -192,7 +192,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_int_data_in_array(&$array, $var)
+	private function add_int_data_in_array(array &$array, string $var)
 	{
 		if (settype($var, 'integer') && $var != 0)
 		{

@@ -114,7 +114,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function initiate_paypal_connection($data)
+	public function initiate_paypal_connection(array $data)
 	{
 		if ($this->curl_fsock['curl'])
 		{
@@ -138,7 +138,7 @@ class ipn_paypal
 	 * @return void
 	 * @access private
 	 */
-	private function curl_post($encoded_data)
+	private function curl_post(string $encoded_data)
 	{
 		$ch = curl_init($this->u_paypal);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
@@ -204,9 +204,20 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_u_paypal($u_paypal)
+	public function set_u_paypal(string $u_paypal)
 	{
-		$this->u_paypal = (string) $u_paypal;
+		$this->u_paypal = $u_paypal;
+	}
+
+	/**
+	 * Get the property '$u_paypal'
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_u_paypal()
+	{
+		return $this->u_paypal;
 	}
 
 	/**
@@ -262,7 +273,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function is_curl_strcmp($arg)
+	public function is_curl_strcmp(string $arg)
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
 	}
@@ -313,7 +324,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function check_curl($host)
+	public function check_curl(string $host)
 	{
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
@@ -326,7 +337,7 @@ class ipn_paypal
 
 			curl_close($ch);
 
-			return ($this->response !== false || $this->response_status !== '0') ? true : false;
+			return $this->response !== false || $this->response_status !== '0';
 		}
 
 		return false;

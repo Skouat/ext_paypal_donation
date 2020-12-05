@@ -76,7 +76,7 @@ class ipn_log
 	}
 
 	/**
-	 * @return boolean
+	 * @return bool
 	 */
 	public function is_use_log_error()
 	{
@@ -86,9 +86,9 @@ class ipn_log
 	/**
 	 * Set the property
 	 *
-	 * @param boolean $use_log_error
+	 * @param bool $use_log_error
 	 */
-	public function set_use_log_error($use_log_error)
+	public function set_use_log_error(bool $use_log_error)
 	{
 		$this->use_log_error = (bool) $use_log_error;
 	}
@@ -105,14 +105,14 @@ class ipn_log
 	 * @return void
 	 * @access public
 	 */
-	public function set_report_data($remote_uri, $remote_type, $remote_report_response, $remote_response_status, $remote_data)
+	public function set_report_data(string $remote_uri, string $remote_type, string $remote_report_response, string $remote_response_status, array $remote_data)
 	{
 		$this->report_data = [
-			'remote_uri'             => (string) $remote_uri,
-			'remote_type'            => (string) $remote_type,
-			'remote_report_response' => (string) $remote_report_response,
-			'remote_response_status' => (string) $remote_response_status,
-			'remote_data'            => (array) $remote_data,
+			'remote_uri'             => $remote_uri,
+			'remote_type'            => $remote_type,
+			'remote_report_response' => $remote_report_response,
+			'remote_response_status' => $remote_response_status,
+			'remote_data'            => $remote_data,
 		];
 	}
 
@@ -128,7 +128,7 @@ class ipn_log
 	 * @return void
 	 * @access public
 	 */
-	public function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = [])
+	public function log_error(string $message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = [])
 	{
 		$error_timestamp = date('d-M-Y H:i:s Z');
 

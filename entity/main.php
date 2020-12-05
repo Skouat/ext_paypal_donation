@@ -65,7 +65,7 @@ abstract class main
 	 *
 	 * @access public
 	 */
-	public function set_entity_data($data_ary)
+	public function set_entity_data(array $data_ary)
 	{
 		foreach ($data_ary as $entity_function => $data)
 		{
@@ -146,7 +146,7 @@ abstract class main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_warning_message($lang_key, $args = '')
+	protected function display_warning_message(string $lang_key, $args = '')
 	{
 		$message = call_user_func_array([$this->language, 'lang'], array_merge([strtoupper($lang_key), $args])) . $this->adm_back_link_exists();
 		trigger_error($message, E_USER_WARNING);
@@ -171,7 +171,7 @@ abstract class main
 	 * @return bool
 	 * @access private
 	 */
-	private function run_function_before_action($function_name)
+	private function run_function_before_action(string $function_name)
 	{
 		$func_result = true;
 		if ($function_name)
@@ -193,7 +193,7 @@ abstract class main
 	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function save($required_fields)
+	public function save(bool $required_fields)
 	{
 		if ($required_fields)
 		{
@@ -228,7 +228,7 @@ abstract class main
 	 * @return bool
 	 * @access public
 	 */
-	public function data_exists($sql)
+	public function data_exists(string $sql)
 	{
 		$this->db->sql_query($sql);
 		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
@@ -244,9 +244,9 @@ abstract class main
 	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_id($id)
+	public function set_id(int $id)
 	{
-		$this->data[$this->table_schema['item_id']['name']] = (int) $id;
+		$this->data[$this->table_schema['item_id']['name']] = $id;
 
 		return $this;
 	}
@@ -272,7 +272,7 @@ abstract class main
 	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function load($id)
+	public function load(int $id)
 	{
 		$sql = 'SELECT *
 			FROM ' . $this->table_name . '
@@ -309,10 +309,10 @@ abstract class main
 	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_name($name)
+	public function set_name(string $name)
 	{
 		// Set the item type on our data array
-		$this->data[$this->table_schema['item_name']['name']] = (string) $name;
+		$this->data[$this->table_schema['item_name']['name']] = $name;
 
 		return $this;
 	}
@@ -325,7 +325,7 @@ abstract class main
 	 * @return void
 	 * @access public
 	 */
-	public function set_page_url($u_action)
+	public function set_page_url(string $u_action)
 	{
 		$this->u_action = $u_action;
 	}
@@ -352,7 +352,7 @@ abstract class main
 	 * @return bool
 	 * @access public
 	 */
-	public function delete($id, $action_before_delete = '', $sql_where = '', $all = false)
+	public function delete(int $id, $action_before_delete = '', $sql_where = '', $all = false)
 	{
 		$where_clause = '';
 
@@ -383,7 +383,7 @@ abstract class main
 	 *
 	 * @return bool
 	 */
-	private function disallow_deletion($id)
+	private function disallow_deletion(int $id)
 	{
 		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
 	}
@@ -400,7 +400,7 @@ abstract class main
 	 * @return array
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false)
+	public function get_data(string $sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false)
 	{
 		$entities = [];
 		$result = $this->limit_query($sql, $limit, $limit_offset);
@@ -426,7 +426,7 @@ abstract class main
 	 * @return mixed
 	 * @access private
 	 */
-	private function limit_query($sql, $limit, $offset)
+	private function limit_query(string $sql, int $limit, int $offset)
 	{
 		return empty($limit) ? $this->db->sql_query($sql) : $this->db->sql_query_limit($sql, $limit, $offset);
 	}
@@ -445,7 +445,7 @@ abstract class main
 	 * @return array $this->data
 	 * @access public
 	 */
-	public function import($data, $additional_table_schema = [], $override = false)
+	public function import(array $data, $additional_table_schema = [], $override = false)
 	{
 		// Clear out any saved data
 		$this->data = [];

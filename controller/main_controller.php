@@ -47,6 +47,7 @@ class main_controller
 	 * @param request                       $request               Request object
 	 * @param template                      $template              Template object
 	 * @param user                          $user                  User object
+	 * @param \phpbb\user_loader            $user_loader           User loader object
 	 * @param string                        $root_path             phpBB root path
 	 * @param string                        $php_ext               phpEx
 	 *
@@ -63,8 +64,8 @@ class main_controller
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		$root_path,
-		$php_ext
+		string $root_path,
+		string $php_ext
 	)
 	{
 		$this->auth = $auth;

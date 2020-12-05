@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -72,11 +72,11 @@ class vars
 				$default_currency_data[0]['currency_iso_code'],
 				$default_currency_data[0]['currency_symbol'],
 				(bool) $default_currency_data[0]['currency_on_left'])],
-			8 => ['var'=> '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
+			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
 				(float) $this->config['ppde_raised'],
 				$default_currency_data[0]['currency_iso_code'],
 				$default_currency_data[0]['currency_symbol'],
-				(bool) $default_currency_data[0]['currency_on_left'])]
+				(bool) $default_currency_data[0]['currency_on_left'])],
 		];
 
 		if ($this->actions_core->is_in_admin())
@@ -110,7 +110,7 @@ class vars
 	 * @return string
 	 * @access public
 	 */
-	public function replace_template_vars($message)
+	public function replace_template_vars(string $message)
 	{
 		$tpl_ary = [];
 		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)

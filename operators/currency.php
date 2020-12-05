@@ -28,7 +28,7 @@ class currency
 	public function __construct(
 		\phpbb\cache\driver\driver_interface $cache,
 		\phpbb\db\driver\driver_interface $db,
-		$ppde_currency_table
+		string $ppde_currency_table
 	)
 	{
 		$this->cache = $cache;
@@ -120,7 +120,7 @@ class currency
 	 * @return bool
 	 * @access public
 	 */
-	public function move($switch_order_id, $current_order, $id)
+	public function move(int $switch_order_id, int $current_order, int $id)
 	{
 		// Update the entry
 		$sql = 'UPDATE ' . $this->ppde_currency_table . '

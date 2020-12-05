@@ -167,13 +167,6 @@ class ipn_listener
 	 */
 	private $transaction_data = [];
 	/**
-	 * PayPal URL
-	 * Could be Sandbox URL ou normal PayPal URL.
-	 *
-	 * @var string
-	 */
-	private $u_paypal = '';
-	/**
 	 * Transaction status
 	 *
 	 * @var boolean
@@ -291,11 +284,8 @@ class ipn_listener
 		// Get all variables from PayPal to build return URI
 		$this->ppde_ipn_paypal->set_args_return_uri();
 
-		// Get PayPal or Sandbox URI
-		$this->u_paypal = $this->ppde_controller_main->get_paypal_uri((bool) $this->transaction_data['test_ipn']);
-
 		// Initiate PayPal connection
-		$this->ppde_ipn_paypal->set_u_paypal($this->u_paypal);
+		$this->ppde_ipn_paypal->set_u_paypal($this->ppde_controller_main->get_paypal_uri((bool) $this->transaction_data['test_ipn']));
 		$this->ppde_ipn_paypal->initiate_paypal_connection($this->transaction_data);
 
 		if ($this->ppde_ipn_paypal->check_response_status())
@@ -337,6 +327,7 @@ class ipn_listener
 	 * Return Postback args to PayPal or for tracking errors.
 	 *
 	 * @return array
+	 * @access private
 	 */
 	private function get_postback_args()
 	{
@@ -353,7 +344,7 @@ class ipn_listener
 	private function check_response()
 	{
 		// Prepare data to include in report
-		$this->ppde_ipn_log->set_report_data($this->u_paypal, $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
+		$this->ppde_ipn_log->set_report_data($this->ppde_ipn_paypal->get_u_paypal(), $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
 
 		if ($this->txn_is_verified())
 		{
@@ -417,7 +408,6 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-
 	private function validate_actions()
 	{
 		if (!$this->verified)
@@ -493,6 +483,7 @@ class ipn_listener
 	 * @param array $data_ary List of data to request
 	 *
 	 * @return void
+	 * @access private
 	 */
 	private function get_post_data($data_ary = [])
 	{
@@ -514,10 +505,12 @@ class ipn_listener
 	/**
 	 * Set PayPal Postdata.
 	 *
-	 * @param $data_ary
+	 * @param array $data_ary
+	 *
 	 * @return array|string
+	 * @access private
 	 */
-	private function set_post_data($data_ary)
+	private function set_post_data(array $data_ary)
 	{
 		$value = $data_ary['value'];
 
@@ -557,10 +550,10 @@ class ipn_listener
 	 *
 	 * @param array $data_ary
 	 *
-	 * @access public
 	 * @return array
+	 * @access public
 	 */
-	public function call_post_data_func($data_ary)
+	public function call_post_data_func(array $data_ary)
 	{
 		$check = [];
 

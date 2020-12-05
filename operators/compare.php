@@ -26,7 +26,7 @@ class compare
 	];
 
 	/**
-	 * Compare two value
+	 * Compare two values
 	 *
 	 * @param int    $value1
 	 * @param int    $value2
@@ -35,7 +35,7 @@ class compare
 	 * @return bool
 	 * @access public
 	 */
-	public function compare_value($value1, $value2, $operator)
+	public function compare_value(int $value1, int $value2, string $operator)
 	{
 		if (array_key_exists($operator, self::$operators_table))
 		{

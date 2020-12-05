@@ -85,7 +85,7 @@ class core
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
 		user $user,
-		$php_ext)
+		string $php_ext)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;
@@ -108,10 +108,10 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_test)
+	public function set_ipn_test_properties(bool $ipn_test)
 	{
 		$this->set_ipn_test($ipn_test);
-		$this->set_suffix_ipn($this->is_ipn_test);
+		$this->set_suffix_ipn();
 	}
 
 	/**
@@ -122,22 +122,20 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function set_ipn_test($ipn_test)
+	private function set_ipn_test(bool $ipn_test)
 	{
-		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
+		$this->is_ipn_test = $ipn_test ? $ipn_test : false;
 	}
 
 	/**
 	 * Sets the property $this->suffix_ipn
 	 *
-	 * @param bool $is_ipn_test
-	 *
 	 * @return void
 	 * @access private
 	 */
-	private function set_suffix_ipn($is_ipn_test)
+	private function set_suffix_ipn()
 	{
-		$this->suffix_ipn = $is_ipn_test ? '_ipn' : '';
+		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
 	}
 
 	/**
@@ -153,7 +151,7 @@ class core
 	 */
 	public function get_ipn_test()
 	{
-		return ($this->is_ipn_test) ? (bool) $this->is_ipn_test : false;
+		return $this->is_ipn_test ? (bool) $this->is_ipn_test : false;
 	}
 
 	/**
@@ -185,9 +183,9 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = '')
+	public function net_amount(float $amount, float $fee, $dec_point = '.', $thousands_sep = '')
 	{
-		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
+		return number_format($amount - $fee, 2, $dec_point, $thousands_sep);
 	}
 
 	/**
@@ -211,7 +209,7 @@ class core
 	 * @return int
 	 * @access private
 	 */
-	private function get_count_result($config_name)
+	private function get_count_result(string $config_name)
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
@@ -275,7 +273,7 @@ class core
 	 * @return bool
 	 * @access private
 	 */
-	private function check_donors_status($type, $args)
+	private function check_donors_status(string $type, $args)
 	{
 		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
 
@@ -308,7 +306,7 @@ class core
 	 * @param int   $user_id
 	 * @param float $amount
 	 */
-	public function update_user_stats($user_id, $amount)
+	public function update_user_stats(int $user_id, float $amount)
 	{
 		if (!$user_id)
 		{
@@ -417,7 +415,7 @@ class core
 		// Updates payer_data info before checking values
 		$this->check_donors_status('user', $this->payer_data['user_id']);
 
-		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : false;
+		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'];
 	}
 
 	/**
@@ -427,7 +425,7 @@ class core
 	 *
 	 * @access public
 	 */
-	public function log_to_db($data)
+	public function log_to_db(array $data)
 	{
 		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
@@ -462,7 +460,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_transaction_data($transaction_data)
+	public function set_transaction_data(array $transaction_data)
 	{
 		if (!empty($this->transaction_data))
 		{
@@ -504,10 +502,10 @@ class core
 	 *
 	 * @param array $data_ary
 	 *
-	 * @access public
 	 * @return mixed
+	 * @access public
 	 */
-	public function set_post_data_func($data_ary)
+	public function set_post_data_func(array $data_ary)
 	{
 		$value = $data_ary['value'];
 
@@ -531,7 +529,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_length($value, $statement)
+	public function check_post_data_length(string $value, array $statement)
 	{
 		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
 	}
@@ -540,12 +538,12 @@ class core
 	 * Check if parsed value contains only ASCII chars.
 	 * Return false if it contains non ASCII chars.
 	 *
-	 * @param $value
+	 * @param string $value
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_ascii($value)
+	public function check_post_data_ascii(string $value)
 	{
 		// We ensure that the value contains only ASCII chars...
 		$pos = strspn($value, self::ASCII_RANGE);
@@ -564,7 +562,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_content($value, $content_ary)
+	public function check_post_data_content(string $value, array $content_ary)
 	{
 		return in_array($value, $content_ary) ? true : false;
 	}
@@ -578,7 +576,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_empty($value)
+	public function check_post_data_empty(string $value)
 	{
 		return empty($value) ? false : true;
 	}
@@ -593,9 +591,9 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_length($value, $length)
+	public function set_post_data_length(string $value, int $length)
 	{
-		return substr($value, 0, (int) $length);
+		return substr($value, 0, $length);
 	}
 
 	/**
@@ -608,7 +606,7 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_lowercase($value, $force = false)
+	public function set_post_data_lowercase(string $value, $force = false)
 	{
 		return $force ? strtolower($value) : $value;
 	}
@@ -623,7 +621,7 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_strtotime($value, $force = false)
+	public function set_post_data_strtotime(string $value, $force = false)
 	{
 		return $force ? strtotime($value) : $value;
 	}

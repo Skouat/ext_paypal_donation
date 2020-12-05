@@ -85,7 +85,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_goal_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_goal_langkey(string $currency_iso_code, string $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
@@ -110,7 +110,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_raised_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_raised_langkey(string $currency_iso_code, string $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
@@ -130,7 +130,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_used_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_used_langkey(string $currency_iso_code, string $currency_symbol, $on_left = true)
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{
@@ -201,7 +201,7 @@ class main_display_stats
 	 * @return float
 	 * @access private
 	 */
-	private function percent_value($multiplicand, $dividend)
+	private function percent_value(float $multiplicand, float $dividend)
 	{
 		return ($multiplicand * 100) / $dividend;
 	}
@@ -216,7 +216,7 @@ class main_display_stats
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($varname, $percent, $reverse_css = false)
+	private function assign_vars_stats_percent(string $varname, float $percent, $reverse_css = false)
 	{
 		// Force $varname to be in upper case
 		$varname = strtoupper($varname);
@@ -237,7 +237,7 @@ class main_display_stats
 	 * @return string
 	 * @access private
 	 */
-	private function ppde_css_classname($value, $reverse = false)
+	private function ppde_css_classname(float $value, $reverse = false)
 	{
 		$css_reverse = '';
 		// Array of CSS class name

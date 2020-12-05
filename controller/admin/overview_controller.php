@@ -85,9 +85,9 @@ class overview_controller extends admin_main
 		request $request,
 		template $template,
 		user $user,
-		$adm_relative_path,
-		$phpbb_root_path,
-		$php_ext
+		string $adm_relative_path,
+		string $phpbb_root_path,
+		string $php_ext
 	)
 	{
 		$this->auth = $auth;
@@ -123,7 +123,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function display_overview($action)
+	public function display_overview(string $action)
 	{
 		if ($this->config['ppde_first_start'])
 		{
@@ -189,7 +189,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function do_action($action)
+	private function do_action(string $action)
 	{
 		if ($action)
 		{
@@ -211,7 +211,7 @@ class overview_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function display_confirm($action)
+	private function display_confirm(string $action)
 	{
 		switch ($action)
 		{
@@ -241,7 +241,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function exec_action($action)
+	private function exec_action(string $action)
 	{
 		if (!$this->auth->acl_get('a_ppde_manage'))
 		{
@@ -283,7 +283,7 @@ class overview_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function per_day_stats($config_name)
+	private function per_day_stats(string $config_name)
 	{
 		return sprintf('%.2f', (float) $this->config[$config_name] / $this->get_install_days());
 	}

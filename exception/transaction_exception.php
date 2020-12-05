@@ -29,7 +29,7 @@ class transaction_exception extends \Exception
 	 * @param array $errors
 	 * @return transaction_exception
 	 */
-	public function set_errors($errors)
+	public function set_errors(array $errors)
 	{
 		$this->errors = $errors;
 		return $this;

@@ -105,17 +105,16 @@ class ext extends \phpbb\extension\base
 	/**
 	 * Notification handler to call notification enable/disable/purge steps
 	 *
-	 * @author        VSEphpbb (Matt Friedman)
-	 * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
-	 * @license       GNU General Public License, version 2 (GPL-2.0)
-	 *
 	 * @param string $step               The step (enable, disable, purge)
 	 * @param array  $notification_types The notification type names
 	 *
 	 * @return string Return notifications as temporary state
 	 * @access        protected
+	 * @author        VSEphpbb (Matt Friedman)
+	 * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
+	 * @license       GNU General Public License, version 2 (GPL-2.0)
 	 */
-	protected function notification_handler($step, $notification_types)
+	protected function notification_handler(string $step, array $notification_types)
 	{
 		/** @type \phpbb\notification\manager $phpbb_notifications */
 		$phpbb_notifications = $this->container->get('notification_manager');

@@ -35,8 +35,8 @@ class ppde_module
 	 * @param string $mode
 	 *
 	 * @return void
-	 * @access public
 	 * @throws \Exception
+	 * @access public
 	 */
 	public function main($id, $mode)
 	{
@@ -129,8 +129,8 @@ class ppde_module
 	 * @param \skouat\ppde\controller\admin\admin_main $admin_controller
 	 *
 	 * @return void
-	 * @access private
 	 * @throws \Exception
+	 * @access private
 	 */
 	private function switch_mode($id, $mode, $admin_controller)
 	{
@@ -156,7 +156,7 @@ class ppde_module
 				// Request the ID
 				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
 
-				// Send ids to the controller
+				// Send ID to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
 
 				$this->do_action($admin_controller->get_action(), $admin_controller);
