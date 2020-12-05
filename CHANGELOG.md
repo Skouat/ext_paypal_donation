@@ -1,5 +1,5 @@
 # Changelog
-## 3.0.0 - 2020-03-17
+## 3.0.0 - 2020-12-05
   - Add: Implement support money format, based on PHP Intl extension
   - Add: Donation stats bars can be disabled to show only text information
   - Add: New predefined variables are available for Donation pages
