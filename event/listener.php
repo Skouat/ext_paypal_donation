@@ -51,7 +51,7 @@ class listener implements EventSubscriberInterface
 		main_controller $ppde_controller_main,
 		main_display_stats $ppde_controller_display_stats,
 		template $template,
-		string $php_ext
+		$php_ext
 	)
 	{
 		$this->config = $config;
@@ -146,7 +146,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function load_language_on_setup(\phpbb\event\data $event)
+	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = [
@@ -164,7 +164,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function viewonline_page(\phpbb\event\data $event)
+	public function viewonline_page($event)
 	{
 		if ($event['on_page'][1] == 'app')
 		{
@@ -190,7 +190,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function add_permissions(\phpbb\event\data $event)
+	public function add_permissions($event)
 	{
 		$event->update_subarray('categories', 'ppde', 'ACL_CAT_PPDE');
 		$event->update_subarray('permissions', 'a_ppde_manage', ['lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde']);

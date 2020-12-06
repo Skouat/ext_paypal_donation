@@ -510,7 +510,7 @@ class ipn_listener
 	 * @return array|string
 	 * @access private
 	 */
-	private function set_post_data(array $data_ary)
+	private function set_post_data($data_ary)
 	{
 		$value = $data_ary['value'];
 
@@ -553,7 +553,7 @@ class ipn_listener
 	 * @return array
 	 * @access public
 	 */
-	public function call_post_data_func(array $data_ary)
+	public function call_post_data_func($data_ary)
 	{
 		$check = [];
 

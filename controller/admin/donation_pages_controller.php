@@ -68,8 +68,8 @@ class donation_pages_controller extends admin_main
 		request $request,
 		template $template,
 		user $user,
-		string $phpbb_root_path,
-		string $php_ext
+		$phpbb_root_path,
+		$php_ext
 	)
 	{
 		$this->container = $container;
@@ -141,7 +141,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_langs_template_vars(array $lang, $current = 0)
+	private function assign_langs_template_vars($lang, $current = 0)
 	{
 		$this->template->assign_block_vars('ppde_langs', [
 			'LANG_LOCAL_NAME' => $lang['name'],
@@ -189,7 +189,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function create_language_options(int $current)
+	protected function create_language_options($current)
 	{
 		// Grab all available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -210,7 +210,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, array $data)
+	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -294,7 +294,7 @@ class donation_pages_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function get_message_parse_options(\skouat\ppde\entity\donation_pages $entity, array $data, string $type)
+	private function get_message_parse_options(\skouat\ppde\entity\donation_pages $entity, $data, $type)
 	{
 		return [$type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func([$entity, 'message_' . $type . '_enabled'])];
 	}
@@ -308,7 +308,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, array $errors)
+	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors)
 	{
 		if ($this->preview && empty($errors))
 		{
@@ -328,7 +328,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_predefined_block_vars(array $vars)
+	private function assign_predefined_block_vars($vars)
 	{
 		for ($i = 0, $size = count($vars); $i < $size; $i++)
 		{
@@ -373,7 +373,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function get_lang_local_name(array $langs)
+	private function get_lang_local_name($langs)
 	{
 		foreach ($langs as $lang)
 		{
@@ -387,7 +387,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_custom_bbcodes(bool $bbcode_enabled)
+	private function include_custom_bbcodes($bbcode_enabled)
 	{
 		if ($bbcode_enabled)
 		{
@@ -405,7 +405,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_function(string $function_name, string $function_filepath)
+	private function include_function($function_name, $function_filepath)
 	{
 		if (!function_exists($function_name))
 		{
@@ -419,7 +419,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_smilies(bool $smilies_enabled)
+	private function include_smilies($smilies_enabled)
 	{
 		if ($smilies_enabled)
 		{

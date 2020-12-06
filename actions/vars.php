@@ -110,7 +110,7 @@ class vars
 	 * @return string
 	 * @access public
 	 */
-	public function replace_template_vars(string $message)
+	public function replace_template_vars($message)
 	{
 		$tpl_ary = [];
 		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)

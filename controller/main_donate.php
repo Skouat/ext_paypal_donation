@@ -91,7 +91,7 @@ class main_donate extends main_controller
 	 * @return void
 	 * @access private
 	 */
-	private function set_return_args_url(string $set_return_args_url)
+	private function set_return_args_url($set_return_args_url)
 	{
 		$this->return_args_url = $set_return_args_url;
 
@@ -122,7 +122,7 @@ class main_donate extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data(string $return_args_url)
+	private function get_donation_content_data($return_args_url)
 	{
 		return $this->ppde_entity_donation_pages->get_data(
 				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
@@ -246,7 +246,7 @@ class main_donate extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function generate_paypal_return_url(string $arg)
+	private function generate_paypal_return_url($arg)
 	{
 		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => $arg]);
 	}

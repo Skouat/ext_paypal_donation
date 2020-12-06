@@ -57,7 +57,7 @@ class core
 	/**
 	 * @var string
 	 */
-	private $suffix_ipn;
+	private $ipn_suffix;
 
 	/**
 	 * Constructor
@@ -85,7 +85,7 @@ class core
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
 		user $user,
-		string $php_ext)
+		$php_ext)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;
@@ -108,10 +108,10 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties(bool $ipn_test)
+	public function set_ipn_test_properties($ipn_test)
 	{
 		$this->set_ipn_test($ipn_test);
-		$this->set_suffix_ipn();
+		$this->set_ipn_suffix();
 	}
 
 	/**
@@ -122,32 +122,36 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function set_ipn_test(bool $ipn_test)
+	private function set_ipn_test($ipn_test)
 	{
-		$this->is_ipn_test = $ipn_test ? $ipn_test : false;
+		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
 	}
 
 	/**
-	 * Sets the property $this->suffix_ipn
+	 * Sets the property $this->ipn_suffix
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function set_suffix_ipn()
+	private function set_ipn_suffix()
 	{
-		$this->suffix_ipn = $this->is_ipn_test ? '_ipn' : '';
+		$this->ipn_suffix = $this->is_ipn_test ? '_ipn' : '';
 	}
 
 	/**
+	 * Gets the property $this->ipn_suffix
+	 *
 	 * @return string
+	 * @access private
 	 */
-	public function get_suffix_ipn()
+	public function get_ipn_suffix()
 	{
-		return ($this->get_ipn_test()) ? $this->suffix_ipn : '';
+		return ($this->get_ipn_test()) ? $this->ipn_suffix : '';
 	}
 
 	/**
 	 * @return boolean
+	 * @access private
 	 */
 	public function get_ipn_test()
 	{
@@ -169,7 +173,7 @@ class core
 			$net_amount = $this->transaction_data['settle_amount'];
 		}
 
-		$this->config->set('ppde_raised' . $this->suffix_ipn, (float) $this->config['ppde_raised' . $this->suffix_ipn] + $net_amount, true);
+		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount, true);
 	}
 
 	/**
@@ -183,9 +187,9 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function net_amount(float $amount, float $fee, $dec_point = '.', $thousands_sep = '')
+	public function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = '')
 	{
-		return number_format($amount - $fee, 2, $dec_point, $thousands_sep);
+		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
 	}
 
 	/**
@@ -196,9 +200,9 @@ class core
 	 */
 	public function update_overview_stats()
 	{
-		$this->config->set('ppde_anonymous_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_anonymous_donors_count' . $this->suffix_ipn));
-		$this->config->set('ppde_known_donors_count' . $this->suffix_ipn, $this->get_count_result('ppde_known_donors_count' . $this->suffix_ipn), true);
-		$this->config->set('ppde_transactions_count' . $this->suffix_ipn, $this->get_count_result('ppde_transactions_count' . $this->suffix_ipn), true);
+		$this->config->set('ppde_anonymous_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->ipn_suffix));
+		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix), true);
+		$this->config->set('ppde_transactions_count' . $this->ipn_suffix, $this->get_count_result('ppde_transactions_count' . $this->ipn_suffix), true);
 	}
 
 	/**
@@ -209,7 +213,7 @@ class core
 	 * @return int
 	 * @access private
 	 */
-	private function get_count_result(string $config_name)
+	private function get_count_result($config_name)
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
@@ -273,7 +277,7 @@ class core
 	 * @return bool
 	 * @access private
 	 */
-	private function check_donors_status(string $type, $args)
+	private function check_donors_status($type, $args)
 	{
 		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
 
@@ -306,7 +310,7 @@ class core
 	 * @param int   $user_id
 	 * @param float $amount
 	 */
-	public function update_user_stats(int $user_id, float $amount)
+	public function update_user_stats($user_id, $amount)
 	{
 		if (!$user_id)
 		{
@@ -425,7 +429,7 @@ class core
 	 *
 	 * @access public
 	 */
-	public function log_to_db(array $data)
+	public function log_to_db($data)
 	{
 		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
@@ -460,7 +464,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_transaction_data(array $transaction_data)
+	public function set_transaction_data($transaction_data)
 	{
 		if (!empty($this->transaction_data))
 		{
@@ -505,7 +509,7 @@ class core
 	 * @return mixed
 	 * @access public
 	 */
-	public function set_post_data_func(array $data_ary)
+	public function set_post_data_func($data_ary)
 	{
 		$value = $data_ary['value'];
 
@@ -529,7 +533,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_length(string $value, array $statement)
+	public function check_post_data_length($value, $statement)
 	{
 		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
 	}
@@ -543,7 +547,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_ascii(string $value)
+	public function check_post_data_ascii($value)
 	{
 		// We ensure that the value contains only ASCII chars...
 		$pos = strspn($value, self::ASCII_RANGE);
@@ -562,7 +566,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_content(string $value, array $content_ary)
+	public function check_post_data_content($value, $content_ary)
 	{
 		return in_array($value, $content_ary) ? true : false;
 	}
@@ -576,7 +580,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_empty(string $value)
+	public function check_post_data_empty($value)
 	{
 		return empty($value) ? false : true;
 	}
@@ -591,9 +595,9 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_length(string $value, int $length)
+	public function set_post_data_length($value, $length)
 	{
-		return substr($value, 0, $length);
+		return substr($value, 0, (int) $length);
 	}
 
 	/**
@@ -606,7 +610,7 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_lowercase(string $value, $force = false)
+	public function set_post_data_lowercase($value, $force = false)
 	{
 		return $force ? strtolower($value) : $value;
 	}
@@ -621,7 +625,7 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_strtotime(string $value, $force = false)
+	public function set_post_data_strtotime($value, $force = false)
 	{
 		return $force ? strtotime($value) : $value;
 	}

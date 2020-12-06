@@ -64,8 +64,8 @@ class main_controller
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		string $root_path,
-		string $php_ext
+		$root_path,
+		$php_ext
 	)
 	{
 		$this->auth = $auth;

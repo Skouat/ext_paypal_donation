@@ -114,7 +114,7 @@ class ext extends \phpbb\extension\base
 	 * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
 	 * @license       GNU General Public License, version 2 (GPL-2.0)
 	 */
-	protected function notification_handler(string $step, array $notification_types)
+	protected function notification_handler($step, $notification_types)
 	{
 		/** @type \phpbb\notification\manager $phpbb_notifications */
 		$phpbb_notifications = $this->container->get('notification_manager');

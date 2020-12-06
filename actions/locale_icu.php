@@ -150,9 +150,9 @@ class locale_icu
 	 * @return string
 	 * @access public
 	 */
-	public function numfmt_format_currency($fmt, float $value, string $currency_iso_code)
+	public function numfmt_format_currency($fmt, $value, $currency_iso_code)
 	{
-		return numfmt_format_currency($fmt, $value, $currency_iso_code);
+		return numfmt_format_currency($fmt, (float) $value, (string) $currency_iso_code);
 	}
 
 	/**
@@ -178,7 +178,7 @@ class locale_icu
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function get_php_extension_version(string $name, bool $proceed)
+	private function get_php_extension_version($name, $proceed)
 	{
 		$version = '';
 		if ($proceed)
