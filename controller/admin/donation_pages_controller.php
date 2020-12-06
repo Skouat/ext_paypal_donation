@@ -222,11 +222,11 @@ class donation_pages_controller extends admin_main
 		// Load posting language file for the BBCode editor
 		$this->language->add_lang('posting');
 
-		$message_parse_options = array_merge(
-			$this->get_message_parse_options($entity, $data, 'bbcode'),
-			$this->get_message_parse_options($entity, $data, 'magic_url'),
-			$this->get_message_parse_options($entity, $data, 'smilies')
-		);
+		$message_parse_options = [
+			'bbcode'    => $data['bbcode'],
+			'magic_url' => $data['magic_url'],
+			'smilies'   => $data['smilies'],
+		];
 
 		// Set the message parse options in the entity
 		foreach ($message_parse_options as $function => $enabled)
@@ -282,21 +282,6 @@ class donation_pages_controller extends admin_main
 		// Display custom bbcodes and smilies
 		$this->include_custom_bbcodes($this->user->optionget('bbcode') || $entity->message_bbcode_enabled());
 		$this->include_smilies($this->user->optionget('smilies') || $entity->message_smilies_enabled());
-	}
-
-	/**
-	 * Get parse options of the message
-	 *
-	 * @param \skouat\ppde\entity\donation_pages $entity The donation pages entity object
-	 * @param array                              $data   The form data to be processed
-	 * @param string                             $type
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function get_message_parse_options(\skouat\ppde\entity\donation_pages $entity, $data, $type)
-	{
-		return [$type => $this->submit_or_preview($this->submit, $this->preview) ? $data[$type] : (bool) call_user_func([$entity, 'message_' . $type . '_enabled'])];
 	}
 
 	/**
