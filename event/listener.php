@@ -93,6 +93,7 @@ class listener implements EventSubscriberInterface
 		{
 			$this->template->assign_vars([
 				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
+				'PPDE_STATS_POSITION'     => $this->config['ppde_stats_position'],
 			]);
 
 			//Assign statistics vars to the template

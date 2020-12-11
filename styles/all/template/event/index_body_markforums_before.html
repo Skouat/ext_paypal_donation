@@ -1,0 +1,3 @@
+{% if PPDE_STATS_INDEX_ENABLE and (PPDE_STATS_POSITION eq 'top' or PPDE_STATS_POSITION eq 'both') and (PPDE_GOAL_ENABLE or PPDE_RAISED_ENABLE or PPDE_USED_ENABLE) %}
+{% INCLUDE 'donate_stats.html' %}
+{% endif %}

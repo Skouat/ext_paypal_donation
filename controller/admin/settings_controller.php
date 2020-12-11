@@ -99,6 +99,7 @@ class settings_controller extends admin_main
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->ppde_actions_locale->build_locale_select_menu($this->config['ppde_default_locale']);
 		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
+		$this->build_stat_position_select_menu($this->config['ppde_stats_position']);
 
 		$this->template->assign_vars([
 			// Global Settings vars
@@ -116,8 +117,8 @@ class settings_controller extends admin_main
 			'PPDE_USED'                 => $this->check_config($this->config['ppde_used'], 'float', 0),
 			'S_PPDE_GOAL_ENABLE'        => $this->check_config($this->config['ppde_goal_enable']),
 			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
-			'S_PPDE_STATS_TEXT_ONLY'    => $this->check_config($this->config['ppde_stats_text_only']),
 			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
+			'S_PPDE_STATS_TEXT_ONLY'    => $this->check_config($this->config['ppde_stats_text_only']),
 			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
 		]);
 	}
@@ -144,6 +145,7 @@ class settings_controller extends admin_main
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
+		$this->config->set('ppde_stats_position', $this->request->variable('ppde_stats_position', 'bottom'));
 		$this->config->set('ppde_stats_text_only', $this->request->variable('ppde_stats_text_only', false));
 		$this->config->set('ppde_raised_enable', $this->request->variable('ppde_raised_enable', false));
 		$this->config->set('ppde_raised', $this->request->variable('ppde_raised', 0.0));
@@ -198,5 +200,30 @@ class settings_controller extends admin_main
 		{
 			$array[] = $var;
 		}
+	}
+
+	/**
+	 * Build pull down menu options of available positions
+	 *
+	 * @param int $default Value of the selected item.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function build_stat_position_select_menu($default)
+	{
+		// List of positions allowed
+		$positions = ['top', 'bottom', 'both'];
+
+		// Process each menu item for pull-down
+		foreach ($positions as $position)
+		{
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('positions_options', [
+				'POSITION_NAME' => $position,
+				'S_DEFAULT'     => (string) $default === $position,
+			]);
+		}
+		unset ($positions, $position);
 	}
 }

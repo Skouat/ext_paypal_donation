@@ -145,7 +145,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Build pull down menu options of available currency
+	 * Build pull down menu options of available remote URI
 	 *
 	 * @param mixed  $default ID of the selected value.
 	 * @param string $type    Can be 'live' or 'sandbox'
@@ -175,7 +175,7 @@ abstract class admin_main
 				'S_DEFAULT'   => $default == $id,
 			]);
 		}
-		unset ($remote_list, $remote);
+		unset ($remote_list, $remote, $id);
 	}
 
 	/**
