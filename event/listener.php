@@ -125,7 +125,7 @@ class listener implements EventSubscriberInterface
 	 */
 	private function is_donate_link_allowed()
 	{
-		return $this->ppde_controller_main->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
+		return $this->ppde_controller_main->ppde_actions_auth->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
 	}
 
 	/**
@@ -136,7 +136,7 @@ class listener implements EventSubscriberInterface
 	 */
 	private function is_donors_list_link_allowed()
 	{
-		return $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
+		return $this->ppde_controller_main->ppde_actions_auth->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**

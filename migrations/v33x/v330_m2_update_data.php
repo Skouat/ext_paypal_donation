@@ -21,6 +21,8 @@ class v330_m2_update_data extends \phpbb\db\migration\migration
 	{
 		return [
 			['config.add', ['ppde_stats_position', 'bottom']],
+			['config.add', ['ppde_allow_guest', false]],
+			['config.add', ['ppde_ipn_dl_allow_guest', false]],
 		];
 	}
 }

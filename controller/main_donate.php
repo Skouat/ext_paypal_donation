@@ -28,8 +28,9 @@ class main_donate extends main_controller
 	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars)
 	{
 		$this->ppde_actions_vars = $ppde_actions_vars;
+	}
 
-	}	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
+	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
 	{
 		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
 	}
@@ -52,7 +53,7 @@ class main_donate extends main_controller
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->can_use_ppde())
+		else if (!$this->ppde_actions_auth->can_use_ppde())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}

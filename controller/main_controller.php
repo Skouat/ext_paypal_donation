@@ -10,7 +10,6 @@
 
 namespace skouat\ppde\controller;
 
-use phpbb\auth\auth;
 use phpbb\config\config;
 use phpbb\controller\helper;
 use phpbb\language\language;
@@ -22,7 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
 {
-	protected $auth;
 	protected $config;
 	protected $container;
 	protected $helper;
@@ -35,15 +33,17 @@ class main_controller
 	protected $root_path;
 	protected $php_ext;
 
+	public $ppde_actions_auth;
+
 	/**
 	 * Constructor
 	 *
-	 * @param auth                          $auth                  Auth object
 	 * @param config                        $config                Config object
 	 * @param ContainerInterface            $container             Service container interface
 	 * @param helper                        $helper                Controller helper object
 	 * @param language                      $language              Language user object
-	 * @param \skouat\ppde\actions\currency $ppde_actions_currency Currency actions object
+	 * @param \skouat\ppde\actions\auth     $ppde_actions_auth     PPDE auth actions object
+	 * @param \skouat\ppde\actions\currency $ppde_actions_currency PPDE currency actions object
 	 * @param request                       $request               Request object
 	 * @param template                      $template              Template object
 	 * @param user                          $user                  User object
@@ -54,11 +54,11 @@ class main_controller
 	 * @access public
 	 */
 	public function __construct(
-		auth $auth,
 		config $config,
 		ContainerInterface $container,
 		helper $helper,
 		language $language,
+		\skouat\ppde\actions\auth $ppde_actions_auth,
 		\skouat\ppde\actions\currency $ppde_actions_currency,
 		request $request,
 		template $template,
@@ -68,11 +68,11 @@ class main_controller
 		$php_ext
 	)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->helper = $helper;
 		$this->language = $language;
+		$this->ppde_actions_auth = $ppde_actions_auth;
 		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->request = $request;
 		$this->template = $template;
@@ -87,24 +87,6 @@ class main_controller
 		// We stop the execution of the code because nothing need to be returned to phpBB.
 		garbage_collection();
 		exit_handler();
-	}
-
-	/**
-	 * @return bool
-	 * @access public
-	 */
-	public function can_use_ppde()
-	{
-		return $this->auth->acl_get('u_ppde_use');
-	}
-
-	/**
-	 * @return bool
-	 * @access public
-	 */
-	public function can_view_ppde_donorlist()
-	{
-		return $this->auth->acl_get('u_ppde_view_donorlist');
 	}
 
 	/**

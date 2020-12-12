@@ -44,6 +44,8 @@ $lang = array_merge($lang, [
 	// General settings
 	'PPDE_ACCOUNT_ID'                 => 'ID du compte PayPal',
 	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse courriel.',
+	'PPDE_ALLOW_GUEST'                => 'Autoriser les invités à faire des dons',
+	'PPDE_ALLOW_GUEST_EXPLAIN'        => 'Cette option va définir les permissions du forum pour autoriser les invités à faire des dons',
 	'PPDE_DEFAULT_CURRENCY'           => 'Devise par défaut',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Défini quelle devise sera sélectionnée par défaut.',
 	'PPDE_DEFAULT_LOCALE'             => 'Paramètres régionnaux',

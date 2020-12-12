@@ -44,11 +44,11 @@ services:
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
-            - '@auth'
             - '@config'
             - '@service_container'
             - '@controller.helper'
             - '@language'
+            - '@skouat.ppde.actions.auth'
             - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
@@ -138,6 +138,7 @@ services:
             - '@config'
             - '@language'
             - '@log'
+            - '@skouat.ppde.actions.auth'
             - '@skouat.ppde.actions.currency'
             - '@skouat.ppde.actions.locale_icu'
             - '@request'

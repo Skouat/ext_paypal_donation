@@ -16,6 +16,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\auth;
 use skouat\ppde\actions\currency;
 use skouat\ppde\actions\locale_icu;
 
@@ -34,6 +35,7 @@ use skouat\ppde\actions\locale_icu;
  */
 class settings_controller extends admin_main
 {
+	protected $ppde_actions_auth;
 	protected $ppde_actions_currency;
 	protected $ppde_actions_locale;
 
@@ -45,6 +47,7 @@ class settings_controller extends admin_main
 	 * @param log        $log                   The phpBB log system
 	 * @param currency   $ppde_actions_currency PPDE currency actions object
 	 * @param locale_icu $ppde_actions_locale   PPDE locale actions object
+	 * @param auth       $ppde_actions_auth     PPDE auth actions object
 	 * @param request    $request               Request object
 	 * @param template   $template              Template object
 	 * @param user       $user                  User object
@@ -55,6 +58,7 @@ class settings_controller extends admin_main
 		config $config,
 		language $language,
 		log $log,
+		auth $ppde_actions_auth,
 		currency $ppde_actions_currency,
 		locale_icu $ppde_actions_locale,
 		request $request,
@@ -65,6 +69,7 @@ class settings_controller extends admin_main
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_actions_auth = $ppde_actions_auth;
 		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->request = $request;
@@ -110,6 +115,7 @@ class settings_controller extends admin_main
 			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'             => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
+			'S_PPDE_ALLOW_GUEST'        => $this->check_config($this->config['ppde_allow_guest'], 'boolean', false),
 
 			// Statistics Settings vars
 			'PPDE_GOAL'                 => $this->check_config($this->config['ppde_goal'], 'float', 0),
@@ -132,6 +138,7 @@ class settings_controller extends admin_main
 	protected function set_settings()
 	{
 		// Set options for Global settings
+		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
@@ -156,6 +163,7 @@ class settings_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
+		$this->ppde_actions_auth->set_guest_acl();
 	}
 
 	/**

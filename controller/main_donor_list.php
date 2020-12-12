@@ -51,7 +51,7 @@ class main_donor_list extends main_controller
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->can_view_ppde_donorlist())
+		else if (!$this->ppde_actions_auth->can_view_ppde_donorlist())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
