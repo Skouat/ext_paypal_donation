@@ -57,17 +57,6 @@ class auth
 	}
 
 	/**
-	 * Get template vars
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function guest_can_use_ppde()
-	{
-		return (bool) $this->auth->acl_get_list(ANONYMOUS, 'u_ppde_use');
-	}
-
-	/**
 	 * @return bool
 	 * @access public
 	 */

@@ -213,7 +213,7 @@ class settings_controller extends admin_main
 	/**
 	 * Build pull down menu options of available positions
 	 *
-	 * @param int $default Value of the selected item.
+	 * @param string $default Value of the selected item.
 	 *
 	 * @return void
 	 * @access public
