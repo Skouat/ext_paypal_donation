@@ -45,7 +45,7 @@ This extension adds a PayPal Donation page on your site.
 
 ## Translations
   * This project use [Crowdin](https://crwd.in/skouat-ppde) for translations.  
-    Feel free to [join](https://crwd.in/skouat-ppde) the project, and read this [Quick Translator Guide](https://github.com/Skouat/ext_paypal_donation/blob/develop-3.2.x/docs/crowdin.md).
+    Feel free to [join](https://crwd.in/skouat-ppde) the project, and read this [Quick Translator Guide](https://github.com/Skouat/ext_paypal_donation/blob/develop-3.3.x/docs/crowdin.md).
   * You can also send your translations in the [PayPal Donation translation topic at phpBB.com](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/support/topic/216046).
 
 ## License
