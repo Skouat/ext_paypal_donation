@@ -1,7 +1,17 @@
+#
+# Your Crowdin credentials
+#
+# create your own API credential config file in $HOME/.crowdin.yaml
+# call this file by using:
+# crowdin <command> --identity 'path-to-user-credentials-file'
+
+project_id: 402540
 preserve_hierarchy: true
-commit_message: "[ci skip]"
+
 files:
-  - source: /language/en/*.php
-    translation: /language/%two_letters_code%/%original_file_name%
-  - source: /language/en/email/*.txt
-    translation: /language/%two_letters_code%/email/%original_file_name%
+    -   source: /language/en/*.php
+        translation: /language/%locale_with_underscore%/%original_file_name%
+        update_option: "update_as_unapproved"
+    -   source: /language/en/email/*.txt
+        translation: /language/%locale_with_underscore%/email/%original_file_name%
+        update_option: "update_as_unapproved"
