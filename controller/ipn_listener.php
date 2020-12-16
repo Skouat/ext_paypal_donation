@@ -464,7 +464,7 @@ class ipn_listener
 		$this->tasks_list['payment_completed'] = $mandatory[] = $this->ppde_actions->payment_status_is_completed();
 		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
 		$this->tasks_list['is_not_ipn_test'] = !$this->transaction_data['test_ipn'];
-		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']) ? true : false;
+		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']);
 
 		return array_product($mandatory);
 	}

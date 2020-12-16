@@ -1,4 +1,9 @@
 # Changelog
+## 2.1.5 - 2020-12-16
+  - Fix: Typo
+  - Fix: Invalid lang keys in email templates
+  - Quick code cleanup
+
 ## 2.1.4 - 2020-05-03
   - Fix: SQL error on transactions log
 

@@ -329,7 +329,7 @@ class ipn_paypal
 
 			curl_close($ch);
 
-			return ($this->response !== false || $this->response_status !== '0') ? true : false;
+			return $this->response !== false || $this->response_status !== '0';
 		}
 
 		return false;

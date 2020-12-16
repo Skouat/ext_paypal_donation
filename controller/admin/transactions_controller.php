@@ -714,7 +714,7 @@ class transactions_controller extends admin_main
 			'TNX_ID'           => $row['txn_id'],
 			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
-			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
+			'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
 			'S_TXN_ERRORS'     => !empty($row['txn_errors']),
 			'S_TEST_IPN'       => (bool) $row['test_ipn'],
 		));
