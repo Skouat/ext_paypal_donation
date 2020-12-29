@@ -72,18 +72,6 @@
 				</label>
 				{% endif %}
 			</dd>
-			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 5px;">
-			{% if loops.smiley|length %}<hr>{% endif %}
-			{% if S_BBCODE_ALLOWED %}
-				<label><input type="checkbox" class="radio" name="disable_bbcode"{% if S_BBCODE_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_BBCODE') }}</label>
-			{% endif %}
-			{% if S_SMILIES_ALLOWED %}
-				<label><input type="checkbox" class="radio" name="disable_smilies"{% if S_SMILIES_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_SMILIES') }}</label>
-			{% endif %}
-			{% if S_LINKS_ALLOWED %}
-				<label><input type="checkbox" class="radio" name="disable_magic_url"{% if S_MAGIC_URL_DISABLE_CHECKED and (S_PPDE_DP_PREVIEW or not S_ADD_DONATION_PAGE) %} checked{% endif %}> {{ lang('DISABLE_MAGIC_URL') }}</label>
-			{% endif %}
-			</dd>
 			<dd style="margin-{{ S_CONTENT_FLOW_BEGIN }}: 90px; margin-top: 10px;"><strong>{{ lang('OPTIONS') }}{{ lang('COLON') }} </strong>{{ BBCODE_STATUS }} :: {{ IMG_STATUS }} :: {{ FLASH_STATUS }} :: {{ URL_STATUS }} :: {{ SMILIES_STATUS }}</dd>
 		</dl>
 	</fieldset>

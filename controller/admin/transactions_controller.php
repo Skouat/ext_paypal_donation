@@ -314,11 +314,15 @@ class transactions_controller extends admin_main
 					$this->ppde_entity->save(false);
 
 					// Prepare transaction settings before doing actions
-					$this->ppde_actions->set_transaction_data($this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id)));
+					$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
+					$this->ppde_actions->set_transaction_data($transaction_data[0]);
 					$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
 					$this->ppde_actions->is_donor_is_member();
 
-					$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+					if ($txn_approved)
+					{
+						$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+					}
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 				}
@@ -710,7 +714,7 @@ class transactions_controller extends admin_main
 			'TNX_ID'           => $row['txn_id'],
 			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
-			'S_PAYMENT_STATUS' => (strtolower($row['payment_status']) === 'completed') ? true : false,
+			'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
 			'S_TXN_ERRORS'     => !empty($row['txn_errors']),
 			'S_TEST_IPN'       => (bool) $row['test_ipn'],
 		));

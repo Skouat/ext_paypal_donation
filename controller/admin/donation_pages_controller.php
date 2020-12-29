@@ -141,7 +141,7 @@ class donation_pages_controller extends admin_main
 		$this->template->assign_block_vars('ppde_langs', array(
 			'LANG_LOCAL_NAME' => $lang['name'],
 			'VALUE'           => $lang['id'],
-			'S_SELECTED'      => ((int) $lang['id'] == (int) $current) ? true : false,
+			'S_SELECTED'      => (int) $lang['id'] == (int) $current,
 		));
 	}
 
@@ -263,10 +263,6 @@ class donation_pages_controller extends admin_main
 			'L_DONATION_PAGES_TITLE'         => $this->language->lang(strtoupper($entity->get_name())),
 			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->language->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
 
-			'S_BBCODE_DISABLE_CHECKED'    => !$entity->message_bbcode_enabled(),
-			'S_MAGIC_URL_DISABLE_CHECKED' => !$entity->message_magic_url_enabled(),
-			'S_SMILIES_DISABLE_CHECKED'   => !$entity->message_smilies_enabled(),
-
 			'BBCODE_STATUS'  => $this->language->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
 			'FLASH_STATUS'   => $this->language->lang('FLASH_IS_ON'),
 			'IMG_STATUS'     => $this->language->lang('IMAGES_ARE_ON'),
@@ -274,9 +270,6 @@ class donation_pages_controller extends admin_main
 			'URL_STATUS'     => $this->language->lang('URL_IS_ON'),
 
 			'S_BBCODE_ALLOWED'  => true,
-			'S_BBCODE_FLASH'    => true,
-			'S_BBCODE_IMG'      => true,
-			'S_LINKS_ALLOWED'   => true,
 			'S_SMILIES_ALLOWED' => true,
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '">',
 		));

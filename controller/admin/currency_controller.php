@@ -312,7 +312,7 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($currency_id);
 
 		// Set the new status for this currency
-		$this->ppde_entity->set_currency_enable(($action == 'activate') ? true : false);
+		$this->ppde_entity->set_currency_enable($action == 'activate');
 
 		// Save data to the database
 		$this->ppde_entity->save($this->ppde_entity->check_required_field());
@@ -358,8 +358,16 @@ class currency_controller extends admin_main
 	 */
 	protected function currency_assign_template_vars($data)
 	{
-		$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
-		$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
+		if (!$data['currency_enable'])
+		{
+			$enable_lang = 'ENABLE';
+			$enable_value = 'activate';
+		}
+		else
+		{
+			$enable_lang = 'DISABLE';
+			$enable_value = 'deactivate';
+		}
 
 		$this->template->assign_block_vars('currency', array(
 			'CURRENCY_NAME'    => $data['currency_name'],

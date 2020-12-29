@@ -85,26 +85,16 @@ class main_donor_list extends main_controller
 
 		// Set '$this->u_action'
 		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
-		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, $this->config['enable_mod_rewrite']));
+		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, (bool) $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
-		$get_donorlist_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary(0, $order_by);
-		$total_donors = $this->ppde_operator_transactions->query_sql_count($get_donorlist_sql_ary, 'txn.user_id');
-		$start = $this->pagination->validate_start($start, $this->config['topics_per_page'], $total_donors);
+		$sql_count_donors = $this->ppde_operator_transactions->sql_donorlist_ary();
+		$total_donors = $this->ppde_operator_transactions->query_sql_count($sql_count_donors, 'txn.user_id');
+		$start = $this->pagination->validate_start($start, (int) $this->config['topics_per_page'], $total_donors);
 
-		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, $this->config['topics_per_page'], $start);
-
-		// Adds fields to the table schema needed by entity->import()
-		$additional_table_schema = array(
-			'item_username'    => array('name' => 'username', 'type' => 'string'),
-			'item_user_colour' => array('name' => 'user_colour', 'type' => 'string'),
-			'item_amount'      => array('name' => 'amount', 'type' => 'float'),
-			'item_max_txn_id'  => array('name' => 'max_txn_id', 'type' => 'integer'),
-		);
-
-		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_donorlist_sql_ary), $additional_table_schema, $this->config['topics_per_page'], $start);
+		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, (int) $this->config['topics_per_page'], $start);
 
 		// Get default currency data from the database
 		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
@@ -118,12 +108,28 @@ class main_donor_list extends main_controller
 			'U_SORT_USERNAME'        => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
 		));
 
+		// Adds fields to the table schema needed by entity->import()
+		$donorlist_table_schema = array(
+			'item_amount'     => array('name' => 'amount', 'type' => 'float'),
+			'item_max_txn_id' => array('name' => 'max_txn_id', 'type' => 'integer'),
+			'item_user_id'    => array('name' => 'user_id', 'type' => 'integer'),
+		);
+
+		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
+		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, $this->config['topics_per_page'], $start, true);
+
+		// Adds fields to the table schema needed by entity->import()
+		$last_donation_table_schema = array(
+			'item_payment_date' => array('name' => 'payment_date', 'type' => 'integer'),
+			'item_mc_gross'     => array('name' => 'mc_gross', 'type' => 'float'),
+		);
+
 		foreach ($data_ary as $data)
 		{
-			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->get_sql_donorlist_ary($data['max_txn_id']);
-			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary));
+			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
+			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
 			$this->template->assign_block_vars('donorrow', array(
-				'PPDE_DONOR_USERNAME'       => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour']),
+				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
 				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->currency_on_left($last_donation_data[0]['mc_gross'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
 				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->currency_on_left($data['amount'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
