@@ -52,7 +52,7 @@ class core
 	/**
 	 * @var array
 	 */
-	private $payer_data;
+	private $payer_data = array();
 	/**
 	 * phpBB root path
 	 *
@@ -285,7 +285,7 @@ class core
 	{
 		if ($this->donor_is_member)
 		{
-			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']));
+			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross']);
 		}
 	}
 
@@ -317,17 +317,20 @@ class core
 		$payer_id = (int) $this->payer_data['user_id'];
 		$payer_username = $this->payer_data['username'];
 		$default_group = $this->config['ppde_ipn_group_as_default'];
+		$payer_donated_amount = $this->payer_data['user_ppde_donated_amount'];
 
 		/**
 		 * Event to modify data before a user is added to the donors group
 		 *
 		 * @event skouat.ppde.donors_group_user_add_before
-		 * @var bool    can_use_autogroup   Whether or not to add the user to the group
-		 * @var int     group_id            The ID of the group to which the user will be added
-		 * @var int     payer_id            The ID of the user who will we added to the group
-		 * @var string  payer_username      The user name
-		 * @var bool    default_group       Whether or not the group should be made default for the user
+		 * @var bool    can_use_autogroup      Whether or not to add the user to the group
+		 * @var int     group_id               The ID of the group to which the user will be added
+		 * @var int     payer_id               The ID of the user who will we added to the group
+		 * @var string  payer_username         The user name
+		 * @var bool    default_group          Whether or not the group should be made default for the user
+		 * @var float   payer_donated_amount   The user donated amount
 		 * @since 1.0.3
+		 * @changed 2.1.2 Added var $payer_donated_amount
 		 */
 		$vars = array(
 			'can_use_autogroup',
@@ -335,6 +338,7 @@ class core
 			'payer_id',
 			'payer_username',
 			'default_group',
+			'payer_donated_amount',
 		);
 		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_add_before', compact($vars)));
 
@@ -395,7 +399,10 @@ class core
 	 */
 	public function minimum_donation_raised()
 	{
-		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'] ? true : false;
+		// Updates payer_data info before checking values
+		$this->check_donors_status('user', $this->payer_data['user_id']);
+
+		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'];
 	}
 
 	/**
@@ -442,14 +449,7 @@ class core
 	 */
 	public function set_transaction_data($transaction_data)
 	{
-		if (!empty($this->transaction_data))
-		{
-			array_merge($this->transaction_data, $transaction_data);
-		}
-		else
-		{
-			$this->transaction_data = $transaction_data;
-		}
+		$this->transaction_data = !empty($this->transaction_data) ? array_merge($this->transaction_data, $transaction_data) : $transaction_data;
 	}
 
 	/**
@@ -525,11 +525,7 @@ class core
 	 */
 	public function check_post_data_ascii($value)
 	{
-		// We ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		return $pos != $len ? false : true;
+		return strlen($value) != strspn($value, self::ASCII_RANGE) ? false : true;
 	}
 
 	/**
@@ -544,7 +540,7 @@ class core
 	 */
 	public function check_post_data_content($value, $content_ary)
 	{
-		return in_array($value, $content_ary) ? true : false;
+		return in_array($value, $content_ary);
 	}
 
 	/**

@@ -44,6 +44,7 @@ $lang = array_merge($lang, array(
 	'PPDE_ESI_DETECTED'         => 'Détecté',
 	'PPDE_ESI_INSTALL_DATE'     => 'Date d’installation de <strong>%s</strong>',
 	'PPDE_ESI_MORE_INFORMATION' => 'Plus d’informations…',
+	'PPDE_ESI_NOT_CHECKED'      => 'Ce test a été désactivé',
 	'PPDE_ESI_NOT_DETECTED'     => 'Non détecté',
 	'PPDE_ESI_RESYNC_OPTIONS'   => 'Réinitialiser or revérifier les informations de l’extension et du système',
 	'PPDE_ESI_TLS'              => 'TLS 1.2 et HTTP/1.1',

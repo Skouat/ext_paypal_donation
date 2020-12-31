@@ -67,7 +67,7 @@ class log_wrapper_output_handler
 		{
 			$mkdir_result = @mkdir($dir, 0777, true);
 			$chmod_result = $this->filesystem->phpbb_chmod($dir, CHMOD_READ | CHMOD_WRITE);
-			$this->log_path_result = ($mkdir_result && $chmod_result) ? true : false;
+			$this->log_path_result = $mkdir_result && $chmod_result;
 		}
 		else
 		{

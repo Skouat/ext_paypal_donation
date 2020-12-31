@@ -43,7 +43,7 @@ $lang = array_merge($lang, array(
 
 	// General settings
 	'PPDE_ACCOUNT_ID'                 => 'ID du compte PayPal',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse e-mail.',
+	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse courriel.',
 	'PPDE_DEFAULT_CURRENCY'           => 'Devise par défaut',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Défini quelle devise sera sélectionnée par défaut.',
 	'PPDE_DEFAULT_VALUE'              => 'Valeur de don par défaut',
@@ -51,7 +51,7 @@ $lang = array_merge($lang, array(
 	'PPDE_DROPBOX_ENABLE'             => 'Activer le menu déroulant',
 	'PPDE_DROPBOX_ENABLE_EXPLAIN'     => 'Activez cette option pour remplacer la zone de texte par un menu déroulant.',
 	'PPDE_DROPBOX_VALUE'              => 'Valeurs des dons du menu déroulant',
-	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br>Séparez chaque valeur par une virgule (",") et sans espace.',
+	'PPDE_DROPBOX_VALUE_EXPLAIN'      => 'Définissez les valeurs que vous voulez faire apparaître dans le menu déroulant.<br>Séparez chaque valeur par une <strong>virgule</strong> (",") et <strong>sans espace</strong>.',
 	'PPDE_ENABLE'                     => 'Activer PayPal Donation',
 	'PPDE_ENABLE_EXPLAIN'             => 'Active ou désactive l’extension PayPal Donation.',
 	'PPDE_HEADER_LINK'                => 'Afficher le lien « Faire un don » dans l’entête du forum',

@@ -17,6 +17,7 @@ use phpbb\language\language;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use phpbb\user_loader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
@@ -30,6 +31,7 @@ class main_controller
 	protected $request;
 	protected $template;
 	protected $user;
+	protected $user_loader;
 	protected $root_path;
 	protected $php_ext;
 
@@ -45,6 +47,7 @@ class main_controller
 	 * @param request                       $request               Request object
 	 * @param template                      $template              Template object
 	 * @param user                          $user                  User object
+	 * @param \phpbb\user_loader            $user_loader
 	 * @param string                        $root_path             phpBB root path
 	 * @param string                        $php_ext               phpEx
 	 *
@@ -60,6 +63,7 @@ class main_controller
 		request $request,
 		template $template,
 		user $user,
+		user_loader $user_loader,
 		$root_path,
 		$php_ext
 	)
@@ -73,6 +77,7 @@ class main_controller
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->user_loader = $user_loader;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 	}

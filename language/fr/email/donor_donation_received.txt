@@ -1,4 +1,4 @@
-Subject: Notification de nouveau don - « {SITENAME} »
+Subject: Notification de nouveau don - {SITENAME}
 
 Bonjour {USERNAME},
 
