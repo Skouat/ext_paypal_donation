@@ -67,6 +67,11 @@
 			<dt><label for="ppde_dropbox_value">{{ lang('PPDE_DROPBOX_VALUE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DROPBOX_VALUE_EXPLAIN') }}</span></dt>
 			<dd><input type="text" class="text" id="ppde_dropbox_value" name="ppde_dropbox_value" size="40" maxlength="50" value="{{ PPDE_DROPBOX_VALUE }}"></dd>
 		</dl>
+		<dl>
+			<dt><label for="ppde_allow_guest">{{ lang('PPDE_ALLOW_GUEST') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_ALLOW_GUEST_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="ppde_allow_guest" value="1"{% if S_PPDE_ALLOW_GUEST %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" id="ppde_allow_guest" name="ppde_allow_guest" value="0"{% if not S_PPDE_ALLOW_GUEST %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+		</dl>
 	</fieldset>
 	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_ADVANCED_SETTINGS') }}</legend>
@@ -82,16 +87,6 @@
 	</fieldset>
 	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_STATS_SETTINGS') }}</legend>
-		<dl>
-			<dt><label for="ppde_stats_index_enable">{{ lang('PPDE_STATS_INDEX_ENABLE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_INDEX_ENABLE_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"{% if S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"{% if not S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-		</dl>
-		<dl>
-			<dt><label for="ppde_stats_text_only">{{ lang('PPDE_STATS_TEXT_ONLY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_TEXT_ONLY_EXPLAIN') }}</span></dt>
-			<dd><label><input type="radio" class="radio" id="ppde_stats_text_only" name="ppde_stats_text_only" value="1"{% if S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="ppde_stats_text_only" value="0"{% if not S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-		</dl>
 		<fieldset>
 			<legend>{{ lang('PPDE_RAISED') }}</legend>
 			<dl>
@@ -128,6 +123,25 @@
 				<dd><input type="text" class="text" id="ppde_used" name="ppde_used" size="10" maxlength="50" value="{{ PPDE_USED }}"></dd>
 			</dl>
 		</fieldset>
+		<dl>
+			<dt><label for="ppde_stats_index_enable">{{ lang('PPDE_STATS_INDEX_ENABLE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_INDEX_ENABLE_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" id="ppde_stats_index_enable" name="ppde_stats_index_enable" value="1"{% if S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="ppde_stats_index_enable" value="0"{% if not S_PPDE_STATS_INDEX_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_stats_position">{{ lang('PPDE_STATS_LOCATION') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_LOCATION_EXPLAIN') }}</span></dt>
+			<dd><select name="ppde_stats_position" id="ppde_stats_position">
+				{% for positions_options in loops.positions_options %}
+				<option value="{{ positions_options.POSITION_NAME }}"{% if positions_options.S_DEFAULT %} selected{% endif %}>{{ positions_options.POSITION_NAME }}</option>
+				{% endfor %}
+			</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="ppde_stats_text_only">{{ lang('PPDE_STATS_TEXT_ONLY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_STATS_TEXT_ONLY_EXPLAIN') }}</span></dt>
+			<dd><label><input type="radio" class="radio" name="ppde_stats_text_only" value="1"{% if S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" id="ppde_stats_text_only" name="ppde_stats_text_only" value="0"{% if not S_PPDE_STATS_TEXT_ONLY %} checked{% endif %}> {{ lang('NO') }}</label></dd>
+		</dl>
 	</fieldset>
 
 	<fieldset class="submit-buttons">

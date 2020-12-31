@@ -51,7 +51,7 @@ class main_donor_list extends main_controller
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->can_view_ppde_donorlist())
+		else if (!$this->ppde_actions_auth->can_view_ppde_donorlist())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -147,7 +147,7 @@ class main_donor_list extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function check_params(array $params_ary, $excluded_keys)
+	private function check_params($params_ary, $excluded_keys)
 	{
 		$params = [];
 
@@ -194,7 +194,7 @@ class main_donor_list extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function set_sort_key(string $sk, string $sk_comp, string $sd)
+	private function set_sort_key($sk, $sk_comp, $sd)
 	{
 		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
 	}

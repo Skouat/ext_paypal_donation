@@ -51,7 +51,7 @@ class currency
 	 * @return array
 	 * @access public
 	 */
-	public function get_currency_data(string $iso_code)
+	public function get_currency_data($iso_code)
 	{
 		$this->entity->data_exists($this->entity->build_sql_data_exists($iso_code));
 
@@ -83,7 +83,7 @@ class currency
 	 * @return string
 	 * @access public
 	 */
-	public function format_currency(float $value, string $currency_iso_code, string $currency_symbol, $on_left = true)
+	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true)
 	{
 		if ($this->locale->is_locale_configured())
 		{
@@ -105,7 +105,7 @@ class currency
 	 * @return string
 	 * @access public
 	 */
-	public function currency_on_left(float $value, string $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = '')
+	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = '')
 	{
 		if ($on_left)
 		{

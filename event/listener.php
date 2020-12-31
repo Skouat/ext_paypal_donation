@@ -51,7 +51,7 @@ class listener implements EventSubscriberInterface
 		main_controller $ppde_controller_main,
 		main_display_stats $ppde_controller_display_stats,
 		template $template,
-		string $php_ext
+		$php_ext
 	)
 	{
 		$this->config = $config;
@@ -93,6 +93,7 @@ class listener implements EventSubscriberInterface
 		{
 			$this->template->assign_vars([
 				'PPDE_STATS_INDEX_ENABLE' => $this->config['ppde_stats_index_enable'],
+				'PPDE_STATS_POSITION'     => $this->config['ppde_stats_position'],
 			]);
 
 			//Assign statistics vars to the template
@@ -124,7 +125,7 @@ class listener implements EventSubscriberInterface
 	 */
 	private function is_donate_link_allowed()
 	{
-		return $this->ppde_controller_main->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
+		return $this->ppde_controller_main->ppde_actions_auth->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
 	}
 
 	/**
@@ -135,7 +136,7 @@ class listener implements EventSubscriberInterface
 	 */
 	private function is_donors_list_link_allowed()
 	{
-		return $this->ppde_controller_main->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
+		return $this->ppde_controller_main->ppde_actions_auth->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
 
 	/**
@@ -146,7 +147,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function load_language_on_setup(\phpbb\event\data $event)
+	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = [
@@ -164,7 +165,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function viewonline_page(\phpbb\event\data $event)
+	public function viewonline_page($event)
 	{
 		if ($event['on_page'][1] == 'app')
 		{
@@ -190,7 +191,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function add_permissions(\phpbb\event\data $event)
+	public function add_permissions($event)
 	{
 		$event->update_subarray('categories', 'ppde', 'ACL_CAT_PPDE');
 		$event->update_subarray('permissions', 'a_ppde_manage', ['lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde']);

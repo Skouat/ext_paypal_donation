@@ -37,7 +37,7 @@ class log_wrapper_output_handler
 	 * @param filesystem_interface $filesystem phpBB's filesystem service
 	 * @param string               $log_file   File to log to
 	 */
-	public function __construct(filesystem_interface $filesystem, string $log_file)
+	public function __construct(filesystem_interface $filesystem, $log_file)
 	{
 		$this->filesystem = $filesystem;
 		$this->file_open($log_file);
@@ -48,7 +48,7 @@ class log_wrapper_output_handler
 	 *
 	 * @param string $file File to open
 	 */
-	protected function file_open(string $file)
+	protected function file_open($file)
 	{
 		//check if the extension directory exists in the store/ folder
 		$this->ext_folder_exists(dirname($file));

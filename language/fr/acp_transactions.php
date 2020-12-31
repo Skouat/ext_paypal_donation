@@ -139,7 +139,7 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_DC_CONFIRM_OPERATION' => 'Êtes-vous sûr de vouloir effectuer cette opération ?',
+	'PPDE_DT_CONFIRM_OPERATION' => 'Êtes-vous sûr de vouloir effectuer cette opération ?',
 ]);
 
 /**

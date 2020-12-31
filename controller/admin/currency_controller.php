@@ -141,7 +141,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_currency_data(\skouat\ppde\entity\currency $entity, array $data)
+	private function add_edit_currency_data($entity, $data)
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -363,7 +363,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function currency_assign_template_vars(array $data)
+	protected function currency_assign_template_vars($data)
 	{
 		$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
 		$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';

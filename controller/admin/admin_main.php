@@ -47,13 +47,13 @@ abstract class admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param string $module_name     Name of the module currently used
 	 * @param string $lang_key_prefix Prefix for the messages thrown by exceptions
 	 * @param string $id_prefix_name  Prefix name for identifier in the URL
+	 * @param string $module_name     Name of the module currently used
 	 *
 	 * @access public
 	 */
-	public function __construct(string $module_name, string $lang_key_prefix, string $id_prefix_name)
+	public function __construct($module_name, $lang_key_prefix, $id_prefix_name)
 	{
 		$this->module_name = $module_name;
 		$this->lang_key_prefix = $lang_key_prefix;
@@ -68,7 +68,7 @@ abstract class admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function set_page_url(string $u_action)
+	public function set_page_url($u_action)
 	{
 		$this->u_action = $u_action;
 	}
@@ -145,7 +145,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Build pull down menu options of available currency
+	 * Build pull down menu options of available remote URI
 	 *
 	 * @param mixed  $default ID of the selected value.
 	 * @param string $type    Can be 'live' or 'sandbox'
@@ -153,7 +153,7 @@ abstract class admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function build_remote_uri_select_menu($default, string $type)
+	public function build_remote_uri_select_menu($default, $type)
 	{
 		$type = $this->force_type($type);
 
@@ -175,7 +175,7 @@ abstract class admin_main
 				'S_DEFAULT'   => $default == $id,
 			]);
 		}
-		unset ($remote_list, $remote);
+		unset ($remote_list, $remote, $id);
 	}
 
 	/**
@@ -186,9 +186,9 @@ abstract class admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function force_type(string $type)
+	private function force_type($type)
 	{
-		return $type === 'live' || $type === 'sandbox' ? $type : 'live';
+		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
 
 	/**
@@ -227,7 +227,7 @@ abstract class admin_main
 	 * @return array
 	 * @access protected
 	 */
-	protected function is_invalid_form(string $form_name, $submit_or_preview = false)
+	protected function is_invalid_form($form_name, $submit_or_preview = false)
 	{
 		if (!check_form_key($form_name) && $submit_or_preview)
 		{
@@ -293,7 +293,7 @@ abstract class admin_main
 	 * @return array $errors
 	 * @access protected
 	 */
-	protected function is_empty_data(main $entity, string $field_name, $value_cmp, $submit_or_preview = false)
+	protected function is_empty_data(main $entity, $field_name, $value_cmp, $submit_or_preview = false)
 	{
 		$errors = [];
 
@@ -364,7 +364,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function add_edit_action_assign_template_vars(string $type, $id = 0)
+	protected function add_edit_action_assign_template_vars($type, $id = 0)
 	{
 		$id_action = !empty($id) ? '&amp;' . $this->id_prefix_name . '_id=' . (int) $id : '';
 
@@ -383,7 +383,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function s_error_assign_template_vars(array $errors)
+	protected function s_error_assign_template_vars($errors)
 	{
 		$this->template->assign_vars([
 			'S_ERROR'   => (count($errors)) ? true : false,

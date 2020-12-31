@@ -114,7 +114,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function initiate_paypal_connection(array $data)
+	public function initiate_paypal_connection($data)
 	{
 		if ($this->curl_fsock['curl'])
 		{
@@ -138,7 +138,7 @@ class ipn_paypal
 	 * @return void
 	 * @access private
 	 */
-	private function curl_post(string $encoded_data)
+	private function curl_post($encoded_data)
 	{
 		$ch = curl_init($this->u_paypal);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
@@ -204,9 +204,9 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_u_paypal(string $u_paypal)
+	public function set_u_paypal($u_paypal)
 	{
-		$this->u_paypal = $u_paypal;
+		$this->u_paypal = (string) $u_paypal;
 	}
 
 	/**
@@ -273,7 +273,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function is_curl_strcmp(string $arg)
+	public function is_curl_strcmp($arg)
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
 	}
@@ -297,7 +297,7 @@ class ipn_paypal
 		// Analyse response
 		$json = json_decode($this->response);
 
-		if (in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
+		if (!is_null($json) && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
 		{
 			$this->config->set('ppde_tls_detected', true);
 		}
@@ -324,7 +324,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function check_curl(string $host)
+	public function check_curl($host)
 	{
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{

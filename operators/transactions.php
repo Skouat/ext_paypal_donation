@@ -26,7 +26,7 @@ class transactions
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, string $ppde_transactions_log_table)
+	public function __construct(driver_interface $db, $ppde_transactions_log_table)
 	{
 		$this->db = $db;
 		$this->ppde_transactions_log_table = $ppde_transactions_log_table;
@@ -112,7 +112,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function sql_last_donation_ary(int $transaction_id)
+	public function sql_last_donation_ary($transaction_id)
 	{
 		// Build sql request
 		return [
@@ -130,7 +130,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_donorlist_data(array $sql_donorlist_ary)
+	public function build_sql_donorlist_data($sql_donorlist_ary)
 	{
 		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
@@ -145,7 +145,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function query_sql_count(array $count_sql_ary, string $selected_field)
+	public function query_sql_count($count_sql_ary, $selected_field)
 	{
 		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
 
@@ -173,7 +173,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function get_logs_sql_ary(string $keywords, string $sort_by, int $log_time)
+	public function get_logs_sql_ary($keywords, $sort_by, $log_time)
 	{
 		$sql_keywords = '';
 		if (!empty($keywords))
@@ -210,7 +210,7 @@ class transactions
 	 * @return string Returns the SQL condition searching for the keywords
 	 * @access private
 	 */
-	private function generate_sql_keyword(string $keywords, $statement_operator = 'AND')
+	private function generate_sql_keyword($keywords, $statement_operator = 'AND')
 	{
 		// Use no preg_quote for $keywords because this would lead to sole
 		// backslashes being added. We also use an OR connection here for
@@ -292,7 +292,7 @@ class transactions
 	 * @return array $log
 	 * @access public
 	 */
-	public function build_log_ary(array $get_logs_sql_ary, array $url_ary, $limit = 0, $last_page_offset = 0)
+	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0)
 	{
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
@@ -330,7 +330,7 @@ class transactions
 	 * @return string A string consisting of what is wanted.
 	 * @access private
 	 */
-	private function build_transaction_url(int $id, string $txn_id, $custom_url = '', $colour = false)
+	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false)
 	{
 		static $_profile_cache;
 
@@ -387,7 +387,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function sql_query_count_result(string $type, bool $test_ipn)
+	public function sql_query_count_result($type, $test_ipn)
 	{
 		switch ($type)
 		{
@@ -431,7 +431,7 @@ class transactions
 	 * @return array
 	 * @access private
 	 */
-	private function sql_select_stats_main(string $field_name)
+	private function sql_select_stats_main($field_name)
 	{
 		return [
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
@@ -448,7 +448,7 @@ class transactions
 	 * @return void
 	 * @access public
 	 */
-	public function sql_update_user_stats(int $user_id, string $value)
+	public function sql_update_user_stats($user_id, $value)
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET user_ppde_donated_amount = ' . (float) $value . '
@@ -464,7 +464,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function build_data_ary(array $data)
+	public function build_data_ary($data)
 	{
 		return [
 			'business'          => $data['business'],

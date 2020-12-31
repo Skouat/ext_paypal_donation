@@ -16,6 +16,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\auth;
 use skouat\ppde\actions\currency;
 use skouat\ppde\actions\locale_icu;
 
@@ -34,6 +35,7 @@ use skouat\ppde\actions\locale_icu;
  */
 class settings_controller extends admin_main
 {
+	protected $ppde_actions_auth;
 	protected $ppde_actions_currency;
 	protected $ppde_actions_locale;
 
@@ -45,6 +47,7 @@ class settings_controller extends admin_main
 	 * @param log        $log                   The phpBB log system
 	 * @param currency   $ppde_actions_currency PPDE currency actions object
 	 * @param locale_icu $ppde_actions_locale   PPDE locale actions object
+	 * @param auth       $ppde_actions_auth     PPDE auth actions object
 	 * @param request    $request               Request object
 	 * @param template   $template              Template object
 	 * @param user       $user                  User object
@@ -55,6 +58,7 @@ class settings_controller extends admin_main
 		config $config,
 		language $language,
 		log $log,
+		auth $ppde_actions_auth,
 		currency $ppde_actions_currency,
 		locale_icu $ppde_actions_locale,
 		request $request,
@@ -65,6 +69,7 @@ class settings_controller extends admin_main
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
+		$this->ppde_actions_auth = $ppde_actions_auth;
 		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->request = $request;
@@ -99,6 +104,7 @@ class settings_controller extends admin_main
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->ppde_actions_locale->build_locale_select_menu($this->config['ppde_default_locale']);
 		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
+		$this->build_stat_position_select_menu($this->config['ppde_stats_position']);
 
 		$this->template->assign_vars([
 			// Global Settings vars
@@ -109,6 +115,7 @@ class settings_controller extends admin_main
 			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'             => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
+			'S_PPDE_ALLOW_GUEST'        => $this->check_config($this->config['ppde_allow_guest'], 'boolean', false),
 
 			// Statistics Settings vars
 			'PPDE_GOAL'                 => $this->check_config($this->config['ppde_goal'], 'float', 0),
@@ -116,8 +123,8 @@ class settings_controller extends admin_main
 			'PPDE_USED'                 => $this->check_config($this->config['ppde_used'], 'float', 0),
 			'S_PPDE_GOAL_ENABLE'        => $this->check_config($this->config['ppde_goal_enable']),
 			'S_PPDE_RAISED_ENABLE'      => $this->check_config($this->config['ppde_raised_enable']),
-			'S_PPDE_STATS_TEXT_ONLY'    => $this->check_config($this->config['ppde_stats_text_only']),
 			'S_PPDE_STATS_INDEX_ENABLE' => $this->check_config($this->config['ppde_stats_index_enable']),
+			'S_PPDE_STATS_TEXT_ONLY'    => $this->check_config($this->config['ppde_stats_text_only']),
 			'S_PPDE_USED_ENABLE'        => $this->check_config($this->config['ppde_used_enable']),
 		]);
 	}
@@ -131,6 +138,7 @@ class settings_controller extends admin_main
 	protected function set_settings()
 	{
 		// Set options for Global settings
+		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
@@ -144,6 +152,7 @@ class settings_controller extends admin_main
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
+		$this->config->set('ppde_stats_position', $this->request->variable('ppde_stats_position', 'bottom'));
 		$this->config->set('ppde_stats_text_only', $this->request->variable('ppde_stats_text_only', false));
 		$this->config->set('ppde_raised_enable', $this->request->variable('ppde_raised_enable', false));
 		$this->config->set('ppde_raised', $this->request->variable('ppde_raised', 0.0));
@@ -154,6 +163,7 @@ class settings_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
+		$this->ppde_actions_auth->set_guest_acl();
 	}
 
 	/**
@@ -165,7 +175,7 @@ class settings_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function rebuild_items_list(string $config_value, $added_value = '')
+	private function rebuild_items_list($config_value, $added_value = '')
 	{
 		$items_list = explode(',', $config_value);
 		$merge_items = [];
@@ -192,11 +202,36 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_int_data_in_array(array &$array, string $var)
+	private function add_int_data_in_array(&$array, $var)
 	{
 		if (settype($var, 'integer') && $var != 0)
 		{
 			$array[] = $var;
 		}
+	}
+
+	/**
+	 * Build pull down menu options of available positions
+	 *
+	 * @param string $default Value of the selected item.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function build_stat_position_select_menu($default)
+	{
+		// List of positions allowed
+		$positions = ['top', 'bottom', 'both'];
+
+		// Process each menu item for pull-down
+		foreach ($positions as $position)
+		{
+			// Set output block vars for display in the template
+			$this->template->assign_block_vars('positions_options', [
+				'POSITION_NAME' => $position,
+				'S_DEFAULT'     => (string) $default === $position,
+			]);
+		}
+		unset ($positions, $position);
 	}
 }

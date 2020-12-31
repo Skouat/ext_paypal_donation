@@ -95,11 +95,11 @@ class transactions_controller extends admin_main
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		string $adm_relative_path,
-		string $phpbb_root_path,
-		string $php_ext,
-		string $table_prefix,
-		string $table_ppde_transactions
+		$adm_relative_path,
+		$phpbb_root_path,
+		$php_ext,
+		$table_prefix,
+		$table_ppde_transactions
 	)
 	{
 		$this->auth = $auth;
@@ -213,7 +213,7 @@ class transactions_controller extends admin_main
 	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
-	private function view_txn_log(array &$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
 	{
 		$count_logs = ($log_count !== false);
 
@@ -390,7 +390,7 @@ class transactions_controller extends admin_main
 	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access private
 	 */
-	private function validate_user_id(string $username, $donor_id = 0)
+	private function validate_user_id($username, $donor_id = 0)
 	{
 		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
 		{
@@ -439,7 +439,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function do_transactions_actions(bool $is_member)
+	private function do_transactions_actions($is_member)
 	{
 		$this->ppde_actions->update_overview_stats();
 		$this->ppde_actions->update_raised_amount();
@@ -530,7 +530,7 @@ class transactions_controller extends admin_main
 	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access private
 	 */
-	private function build_data_ary(array $transaction_data)
+	private function build_data_ary($transaction_data)
 	{
 		$errors = [];
 
@@ -612,7 +612,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_gross_too_low(array $data)
+	private function mc_gross_too_low($data)
 	{
 		if ($data['MT_MC_GROSS'] <= 0)
 		{
@@ -630,7 +630,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_negative(array $data)
+	private function mc_fee_negative($data)
 	{
 		if ($data['MT_MC_FEE'] < 0)
 		{
@@ -648,7 +648,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_too_high(array $data)
+	private function mc_fee_too_high($data)
 	{
 		if ($data['MT_MC_FEE'] >= $data['MT_MC_GROSS'])
 		{
@@ -667,7 +667,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, string $payment_date)
+	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date)
 	{
 		if ($payment_date_timestamp_at_midnight === false)
 		{
@@ -684,7 +684,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_time_timestamp($payment_time_timestamp, string $payment_date)
+	private function payment_time_timestamp($payment_time_timestamp, $payment_date)
 	{
 		if ($payment_time_timestamp === false)
 		{
@@ -700,7 +700,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_time(string $payment_date_time)
+	private function payment_date_time($payment_date_time)
 	{
 		if ($payment_date_time > time())
 		{
@@ -787,7 +787,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_log_assign_template_vars(array $row)
+	protected function display_log_assign_template_vars($row)
 	{
 		$this->template->assign_block_vars('log', [
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
@@ -811,7 +811,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function action_assign_template_vars(array $data)
+	protected function action_assign_template_vars($data)
 	{
 		$s_hidden_fields = build_hidden_fields([
 			'id'                  => $data['transaction_id'],

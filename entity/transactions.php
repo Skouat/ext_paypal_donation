@@ -499,9 +499,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_txn_id(string $txn_id)
+	public function set_txn_id($txn_id)
 	{
-		$this->data['txn_id'] = $txn_id;
+		$this->data['txn_id'] = (string) $txn_id;
 
 		return $this;
 	}
@@ -514,9 +514,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_receiver_id(string $receiver_id)
+	public function set_receiver_id($receiver_id)
 	{
-		$this->data['receiver_id'] = $receiver_id;
+		$this->data['receiver_id'] = (string) $receiver_id;
 
 		return $this;
 	}
@@ -529,9 +529,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_receiver_email(string $receiver_email)
+	public function set_receiver_email($receiver_email)
 	{
-		$this->data['receiver_email'] = $receiver_email;
+		$this->data['receiver_email'] = (string) $receiver_email;
 
 		return $this;
 	}
@@ -544,9 +544,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_residence_country(string $residence_country)
+	public function set_residence_country($residence_country)
 	{
-		$this->data['residence_country'] = $residence_country;
+		$this->data['residence_country'] = (string) $residence_country;
 
 		return $this;
 	}
@@ -559,9 +559,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_business(string $business)
+	public function set_business($business)
 	{
-		$this->data['business'] = $business;
+		$this->data['business'] = (string) $business;
 
 		return $this;
 	}
@@ -574,9 +574,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_confirmed(bool $confirmed)
+	public function set_confirmed($confirmed)
 	{
-		$this->data['confirmed'] = $confirmed;
+		$this->data['confirmed'] = (bool) $confirmed;
 
 		return $this;
 	}
@@ -589,9 +589,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_test_ipn(bool $test_ipn)
+	public function set_test_ipn($test_ipn)
 	{
-		$this->data['test_ipn'] = $test_ipn;
+		$this->data['test_ipn'] = (bool) $test_ipn;
 
 		return $this;
 	}
@@ -604,9 +604,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_txn_type(string $txn_type)
+	public function set_txn_type($txn_type)
 	{
-		$this->data['txn_type'] = $txn_type;
+		$this->data['txn_type'] = (string) $txn_type;
 
 		return $this;
 	}
@@ -619,9 +619,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_parent_txn_id(string $parent_txn_id)
+	public function set_parent_txn_id($parent_txn_id)
 	{
-		$this->data['parent_txn_id'] = $parent_txn_id;
+		$this->data['parent_txn_id'] = (string) $parent_txn_id;
 
 		return $this;
 	}
@@ -634,9 +634,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_txn_errors(string $txn_errors)
+	public function set_txn_errors($txn_errors)
 	{
-		$this->data['txn_errors'] = $txn_errors;
+		$this->data['txn_errors'] = (string) $txn_errors;
 
 		return $this;
 	}
@@ -649,9 +649,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_txn_errors_approved(bool $txn_errors_approved)
+	public function set_txn_errors_approved($txn_errors_approved)
 	{
-		$this->data['txn_errors_approved'] = $txn_errors_approved;
+		$this->data['txn_errors_approved'] = (bool) $txn_errors_approved;
 
 		return $this;
 	}
@@ -664,9 +664,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payer_email(string $payer_email)
+	public function set_payer_email($payer_email)
 	{
-		$this->data['payer_email'] = $payer_email;
+		$this->data['payer_email'] = (string) $payer_email;
 
 		return $this;
 	}
@@ -679,9 +679,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payer_id(string $payer_id)
+	public function set_payer_id($payer_id)
 	{
-		$this->data['payer_id'] = $payer_id;
+		$this->data['payer_id'] = (string) $payer_id;
 
 		return $this;
 	}
@@ -694,9 +694,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payer_status(string $payer_status)
+	public function set_payer_status($payer_status)
 	{
-		$this->data['payer_status'] = $payer_status;
+		$this->data['payer_status'] = (string) $payer_status;
 
 		return $this;
 	}
@@ -709,9 +709,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_first_name(string $first_name)
+	public function set_first_name($first_name)
 	{
-		$this->data['first_name'] = $first_name;
+		$this->data['first_name'] = (string) $first_name;
 
 		return $this;
 	}
@@ -724,9 +724,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_last_name(string $last_name)
+	public function set_last_name($last_name)
 	{
-		$this->data['last_name'] = $last_name;
+		$this->data['last_name'] = (string) $last_name;
 
 		return $this;
 	}
@@ -739,9 +739,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_user_id(int $user_id)
+	public function set_user_id($user_id)
 	{
-		$this->data['user_id'] = $user_id;
+		$this->data['user_id'] = (integer) $user_id;
 
 		return $this;
 	}
@@ -754,9 +754,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_username(string $username)
+	public function set_username($username)
 	{
-		$this->extra_data['username'] = $username;
+		$this->extra_data['username'] = (string) $username;
 
 		return $this;
 	}
@@ -769,9 +769,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_custom(string $custom)
+	public function set_custom($custom)
 	{
-		$this->data['custom'] = $custom;
+		$this->data['custom'] = (string) $custom;
 
 		return $this;
 	}
@@ -784,9 +784,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_item_name(string $item_name)
+	public function set_item_name($item_name)
 	{
-		$this->data['item_name'] = $item_name;
+		$this->data['item_name'] = (string) $item_name;
 
 		return $this;
 	}
@@ -799,9 +799,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_item_number(string $item_number)
+	public function set_item_number($item_number)
 	{
-		$this->data['item_number'] = $item_number;
+		$this->data['item_number'] = (string) $item_number;
 
 		return $this;
 	}
@@ -814,9 +814,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_mc_currency(string $mc_currency)
+	public function set_mc_currency($mc_currency)
 	{
-		$this->data['mc_currency'] = $mc_currency;
+		$this->data['mc_currency'] = (string) $mc_currency;
 
 		return $this;
 	}
@@ -829,9 +829,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_mc_fee(float $mc_fee)
+	public function set_mc_fee($mc_fee)
 	{
-		$this->data['mc_fee'] = $mc_fee;
+		$this->data['mc_fee'] = (float) $mc_fee;
 
 		return $this;
 	}
@@ -845,9 +845,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_mc_gross(float $mc_gross)
+	public function set_mc_gross($mc_gross)
 	{
-		$this->data['mc_gross'] = $mc_gross;
+		$this->data['mc_gross'] = (float) $mc_gross;
 
 		return $this;
 	}
@@ -861,9 +861,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_net_amount(float $net_amount)
+	public function set_net_amount($net_amount)
 	{
-		$this->data['net_amount'] = $net_amount;
+		$this->data['net_amount'] = (float) $net_amount;
 
 		return $this;
 	}
@@ -876,9 +876,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payment_date(int $payment_date)
+	public function set_payment_date($payment_date)
 	{
-		$this->data['payment_date'] = $payment_date;
+		$this->data['payment_date'] = (int) $payment_date;
 
 		return $this;
 	}
@@ -891,9 +891,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payment_status(string $payment_status)
+	public function set_payment_status($payment_status)
 	{
-		$this->data['payment_status'] = $payment_status;
+		$this->data['payment_status'] = (string) $payment_status;
 
 		return $this;
 	}
@@ -906,9 +906,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_payment_type(string $payment_type)
+	public function set_payment_type($payment_type)
 	{
-		$this->data['payment_type'] = $payment_type;
+		$this->data['payment_type'] = (string) $payment_type;
 
 		return $this;
 	}
@@ -921,9 +921,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_memo(string $memo)
+	public function set_memo($memo)
 	{
-		$this->data['memo'] = $memo;
+		$this->data['memo'] = (string) $memo;
 
 		return $this;
 	}
@@ -937,9 +937,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_settle_amount(float $settle_amount)
+	public function set_settle_amount($settle_amount)
 	{
-		$this->data['settle_amount'] = $settle_amount;
+		$this->data['settle_amount'] = (float) $settle_amount;
 
 		return $this;
 	}
@@ -952,9 +952,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_settle_currency(string $settle_currency)
+	public function set_settle_currency($settle_currency)
 	{
-		$this->data['settle_currency'] = $settle_currency;
+		$this->data['settle_currency'] = (string) $settle_currency;
 
 		return $this;
 	}
@@ -968,9 +968,9 @@ class transactions extends main
 	 * @return transactions $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_exchange_rate(string $exchange_rate)
+	public function set_exchange_rate($exchange_rate)
 	{
-		$this->data['exchange_rate'] = $exchange_rate;
+		$this->data['exchange_rate'] = (string) $exchange_rate;
 
 		return $this;
 	}

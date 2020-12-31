@@ -13,6 +13,14 @@ services:
             - '@user'
             - '%core.php_ext%'
 
+    skouat.ppde.actions.auth:
+        class: skouat\ppde\actions\auth
+        arguments:
+            - '@auth'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
     skouat.ppde.actions.currency:
         class: skouat\ppde\actions\currency
         arguments:

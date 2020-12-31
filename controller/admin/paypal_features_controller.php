@@ -110,6 +110,7 @@ class paypal_features_controller extends admin_main
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
 			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
 			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
+			'S_PPDE_IPN_DL_ALLOW_GUEST'      => $this->check_config($this->config['ppde_ipn_dl_allow_guest'], 'boolean', false),
 			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
 			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
@@ -133,6 +134,7 @@ class paypal_features_controller extends admin_main
 	{
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
+		$this->config->set('ppde_ipn_dl_allow_guest', $this->request->variable('ppde_ipn_dl_allow_guest', false));
 		$this->config->set('ppde_ipn_donorlist_enable', $this->request->variable('ppde_ipn_donorlist_enable', false));
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
@@ -158,5 +160,6 @@ class paypal_features_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
+		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
 	}
 }

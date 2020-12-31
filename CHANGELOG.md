@@ -1,5 +1,11 @@
 # Changelog
-## 3.0.0 - 2020-12-05
+## 3.0.1 - 2020-12-12
+  - Add: Position of donation stats can be defined
+  - Add: Add options to set guest permissions from PDDE settings
+  - Fix: Access array offset on value of type null
+  - Fix: Get property 'tls_version' of non-object
+
+## 3.0.0 - 2020-03-17
   - Add: Implement support money format, based on PHP Intl extension
   - Add: Donation stats bars can be disabled to show only text information
   - Add: New predefined variables are available for Donation pages

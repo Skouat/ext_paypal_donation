@@ -28,8 +28,9 @@ class main_donate extends main_controller
 	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars)
 	{
 		$this->ppde_actions_vars = $ppde_actions_vars;
+	}
 
-	}	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
+	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
 	{
 		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
 	}
@@ -52,7 +53,7 @@ class main_donate extends main_controller
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->can_use_ppde())
+		else if (!$this->ppde_actions_auth->can_use_ppde())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -91,7 +92,7 @@ class main_donate extends main_controller
 	 * @return void
 	 * @access private
 	 */
-	private function set_return_args_url(string $set_return_args_url)
+	private function set_return_args_url($set_return_args_url)
 	{
 		$this->return_args_url = $set_return_args_url;
 
@@ -122,7 +123,7 @@ class main_donate extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data(string $return_args_url)
+	private function get_donation_content_data($return_args_url)
 	{
 		return $this->ppde_entity_donation_pages->get_data(
 				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
@@ -246,7 +247,7 @@ class main_donate extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function generate_paypal_return_url(string $arg)
+	private function generate_paypal_return_url($arg)
 	{
 		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => $arg]);
 	}

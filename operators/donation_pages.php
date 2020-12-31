@@ -25,7 +25,7 @@ class donation_pages
 	 *
 	 * @access public
 	 */
-	public function __construct(driver_interface $db, string $ppde_donation_pages_table)
+	public function __construct(driver_interface $db, $ppde_donation_pages_table)
 	{
 		$this->db = $db;
 		$this->ppde_donation_pages_table = $ppde_donation_pages_table;
@@ -57,7 +57,7 @@ class donation_pages
 	 * @return string
 	 * @access private
 	 */
-	private function build_sql_and_page_title(string $mode)
+	private function build_sql_and_page_title($mode)
 	{
 		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
 		switch ($mode)
