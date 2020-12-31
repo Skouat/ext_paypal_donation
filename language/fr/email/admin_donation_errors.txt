@@ -11,7 +11,7 @@ ID de transaction : {{ TXN_ID }}
 Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Erreurs détectées :
-{{ TNX_ERRORS }}
+{{ TXN_ERRORS }}
 
 ----------------------------
 

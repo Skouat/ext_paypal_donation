@@ -365,8 +365,16 @@ class currency_controller extends admin_main
 	 */
 	protected function currency_assign_template_vars($data)
 	{
-		$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
-		$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
+		if (!$data['currency_enable'])
+		{
+			$enable_lang = 'ENABLE';
+			$enable_value = 'activate';
+		}
+		else
+		{
+			$enable_lang = 'DISABLE';
+			$enable_value = 'deactivate';
+		}
 
 		$this->template->assign_block_vars('currency', [
 			'CURRENCY_NAME'    => $data['currency_name'],

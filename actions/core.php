@@ -466,14 +466,7 @@ class core
 	 */
 	public function set_transaction_data($transaction_data)
 	{
-		if (!empty($this->transaction_data))
-		{
-			array_merge($this->transaction_data, $transaction_data);
-		}
-		else
-		{
-			$this->transaction_data = $transaction_data;
-		}
+		$this->transaction_data = !empty($this->transaction_data) ? array_merge($this->transaction_data, $transaction_data) : $transaction_data;
 	}
 
 	/**
@@ -549,11 +542,7 @@ class core
 	 */
 	public function check_post_data_ascii($value)
 	{
-		// We ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		return $pos != $len ? false : true;
+		return strlen($value) != strspn($value, self::ASCII_RANGE) ? false : true;
 	}
 
 	/**
@@ -568,7 +557,7 @@ class core
 	 */
 	public function check_post_data_content($value, $content_ary)
 	{
-		return in_array($value, $content_ary) ? true : false;
+		return in_array($value, $content_ary);
 	}
 
 	/**

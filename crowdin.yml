@@ -10,8 +10,8 @@ preserve_hierarchy: true
 
 files:
     -   source: /language/en/*.php
-        translation: /language/%two_letters_code%/%original_file_name%
+        translation: /language/%locale_with_underscore%/%original_file_name%
         update_option: "update_as_unapproved"
     -   source: /language/en/email/*.txt
-        translation: /language/%two_letters_code%/email/%original_file_name%
+        translation: /language/%locale_with_underscore%/email/%original_file_name%
         update_option: "update_as_unapproved"
