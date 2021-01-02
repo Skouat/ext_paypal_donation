@@ -47,6 +47,11 @@ class locale_icu
 	 */
 	public function build_locale_select_menu($config_value = '')
 	{
+		if (!$this->icu_requirements())
+		{
+			return;
+		}
+
 		// Grab the list of all available locales
 		$locale_list = $this->get_locale_list();
 
