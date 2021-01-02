@@ -297,7 +297,7 @@ class ipn_paypal
 		// Analyse response
 		$json = json_decode($this->response);
 
-		if (!is_null($json) && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
+		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
 		{
 			$this->config->set('ppde_tls_detected', true);
 		}
