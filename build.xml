@@ -16,6 +16,7 @@
 		<delete dir="${dir}/tests" />
 		<delete dir="${dir}/travis" />
 
+		<delete file="${dir}/docs/crowdin.md" />
 		<delete file="${dir}/.gitattributes" />
 		<delete file="${dir}/.gitignore" />
 		<delete file="${dir}/.travis.yml" />
