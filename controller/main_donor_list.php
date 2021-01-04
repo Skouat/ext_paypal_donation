@@ -112,7 +112,7 @@ class main_donor_list extends main_controller
 			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
-		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donors_list(true, $order_by);
+		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donors_list($order_by, true);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, (int) $this->config['topics_per_page'], $start, true);
 
 		// Adds fields to the table schema needed by entity->import()

@@ -117,7 +117,7 @@ class transactions
 
 		$sql_donorslist = $this->sql_group_by_currency($sql_donorslist, $group_by_currency);
 
-		if ($order_by)
+		if (!empty($order_by))
 		{
 			$sql_donorslist['ORDER_BY'] = $order_by;
 		}
