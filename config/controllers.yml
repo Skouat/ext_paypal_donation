@@ -69,19 +69,19 @@ services:
         class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
-            - [set_actions_vars, ['@skouat.ppde.actions.vars']]
-            - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
-            - [set_entity_donation_pages, ['@skouat.ppde.entity.donation_pages']]
-            - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]
+            - [ set_actions_vars, [ '@skouat.ppde.actions.vars' ] ]
+            - [ set_display_stats, [ '@skouat.ppde.controller.main.displaystats' ] ]
+            - [ set_entity_donation_pages, [ '@skouat.ppde.entity.donation_pages' ] ]
+            - [ set_operator_donation_pages, [ '@skouat.ppde.operator.donation_pages' ] ]
 
     skouat.ppde.controller.main.donorlist:
         class: skouat\ppde\controller\main_donor_list
         parent: skouat.ppde.controller
         calls:
-            - [set_entity_transactions, ['@skouat.ppde.entity.transactions']]
-            - [set_operator_transactions, ['@skouat.ppde.operator.transactions']]
-            - [set_pagination, ['@pagination']]
-            - [set_path_helper, ['@path_helper']]
+            - [ set_entity_transactions, [ '@skouat.ppde.entity.transactions' ] ]
+            - [ set_operator_transactions, [ '@skouat.ppde.operator.transactions' ] ]
+            - [ set_pagination, [ '@pagination' ] ]
+            - [ set_path_helper, [ '@path_helper' ] ]
 
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin\currency_controller
@@ -154,6 +154,9 @@ services:
             - '@request'
             - '@template'
             - '@user'
+            - '%core.adm_relative_path%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     skouat.ppde.controller.admin.paypal_features:
         class: skouat\ppde\controller\admin\paypal_features_controller

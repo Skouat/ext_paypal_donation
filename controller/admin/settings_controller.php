@@ -38,6 +38,8 @@ class settings_controller extends admin_main
 	protected $ppde_actions_auth;
 	protected $ppde_actions_currency;
 	protected $ppde_actions_locale;
+	protected $php_ext;
+	protected $phpbb_admin_path;
 
 	/**
 	 * Constructor
@@ -63,7 +65,10 @@ class settings_controller extends admin_main
 		locale_icu $ppde_actions_locale,
 		request $request,
 		template $template,
-		user $user
+		user $user,
+		$adm_relative_path,
+		$phpbb_root_path,
+		$php_ext
 	)
 	{
 		$this->config = $config;
@@ -75,6 +80,8 @@ class settings_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
+		$this->php_ext = $php_ext;
+		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		parent::__construct(
 			'settings',
 			'PPDE_SETTINGS',
@@ -109,13 +116,16 @@ class settings_controller extends admin_main
 		$this->template->assign_vars([
 			// Global Settings vars
 			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
-			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
-			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 			'S_PPDE_DEFAULT_LOCALE'     => $this->ppde_actions_locale->icu_requirements(),
-			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
 			'S_PPDE_ENABLE'             => $this->check_config($this->config['ppde_enable']),
 			'S_PPDE_HEADER_LINK'        => $this->check_config($this->config['ppde_header_link']),
 			'S_PPDE_ALLOW_GUEST'        => $this->check_config($this->config['ppde_allow_guest'], 'boolean', false),
+
+			// Donation Settings vars
+			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
+			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
+			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
+			'U_PPDE_MORE_FEATURES'      => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=paypal_features'),
 
 			// Statistics Settings vars
 			'PPDE_GOAL'                 => $this->check_config($this->config['ppde_goal'], 'float', 0),
@@ -139,13 +149,15 @@ class settings_controller extends admin_main
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
-		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
+		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
+		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
+
+		// Set options for Donation settings
+		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
-		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
-		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
 		// Set options for Advanced settings
 		$this->config->set('ppde_default_remote', $this->request->variable('ppde_default_remote', 0));
