@@ -20,6 +20,7 @@ class v330_m3_update_data extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return [
+			['config.add', ['ppde_time_expiration', 0]],
 			['module.add', [
 				'acp',
 				'PPDE_ACP_DONATION',

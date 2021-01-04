@@ -68,6 +68,8 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_FEATURES_EXPLAIN'       => 'Enable PayPal IPN (Instant Notifications) features for a better user experience.',
 	'PPDE_IPN_MORE_FEATURES'          => 'Go to advanced settings…',
 	'PPDE_LEGEND_DONATION_SETTINGS'   => 'Donation Settings',
+	'PPDE_TIME_EXPIRATION'            => 'Donation validity time',
+	'PPDE_TIME_EXPIRATION_EXPLAIN'    => 'Define to limit a donation in time. Set to 0 for an unlimited time.',
 
 	// Advanced settings
 	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Advanced settings',

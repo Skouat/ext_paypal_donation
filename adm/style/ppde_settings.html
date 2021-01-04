@@ -76,6 +76,10 @@
 			<dd><input type="text" class="text" id="ppde_dropbox_value" name="ppde_dropbox_value" size="40" maxlength="50" value="{{ PPDE_DROPBOX_VALUE }}"></dd>
 		</dl>
 		<dl>
+			<dt><label for="ppde_time_expiration">{{ lang('PPDE_TIME_EXPIRATION') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_TIME_EXPIRATION_EXPLAIN') }}</span></dt>
+			<dd><input type="text" class="text" id="ppde_time_expiration" name="ppde_time_expiration" size="10" maxlength="10" value="{{ PPDE_TIME_EXPIRATION }}"></dd>
+		</dl>
+		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_IPN_FEATURES') ~ lang('COLON') }}</span><br><span>{{ lang('PPDE_IPN_FEATURES_EXPLAIN')}}</span></dt>
 			<dd><a href="{{ U_PPDE_MORE_FEATURES }}" title="{{ lang('PPDE_IPN_MORE_FEATURES') }}">{{ lang('PPDE_IPN_MORE_FEATURES') }}</a></dd>
 		</dl>

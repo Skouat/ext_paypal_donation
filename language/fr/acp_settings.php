@@ -68,6 +68,8 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_FEATURES_EXPLAIN'       => 'Activez les fonctionnalités IPN de PayPal pour améliorer l’expérience utilisateur.',
 	'PPDE_IPN_MORE_FEATURES'          => 'Aller dans les paramètres avancés…',
 	'PPDE_LEGEND_DONATION_SETTINGS'   => 'Paramètres des dons',
+	'PPDE_TIME_EXPIRATION'            => 'Durée de validité d’un don',
+	'PPDE_TIME_EXPIRATION_EXPLAIN'    => 'Définissez cette valeur pour limiter un don dans le temps. Réglez sur 0 pour une durée illimitée.',
 
 	// Advanced settings
 	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Paramètres avancés',

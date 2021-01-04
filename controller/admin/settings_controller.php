@@ -124,6 +124,7 @@ class settings_controller extends admin_main
 			// Donation Settings vars
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
+			'PPDE_TIME_EXPIRATION'      => $this->check_config($this->config['ppde_time_expiration'], 'integer', 0),
 			'S_PPDE_DROPBOX_ENABLE'     => $this->check_config($this->config['ppde_dropbox_enable']),
 			'U_PPDE_MORE_FEATURES'      => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=paypal_features'),
 
@@ -158,6 +159,7 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
+		$this->config->set('ppde_time_expiration', $this->request->variable('ppde_time_expiration', 0));
 
 		// Set options for Advanced settings
 		$this->config->set('ppde_default_remote', $this->request->variable('ppde_default_remote', 0));
