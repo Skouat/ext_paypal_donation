@@ -33,7 +33,7 @@ class donors_controller extends admin_main
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transactions Transactions operators object
 	 * @param template                            $template                   Template object
 	 * @param user                                $user                       User object.
-	 * @param \phpbb\user_loader                  $user_loader                User loader object
+	 * @param user_loader                         $user_loader                User loader object
 	 * @access public
 	 */
 	public function __construct(

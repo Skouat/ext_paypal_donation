@@ -49,7 +49,7 @@ class main_controller
 	 * @param request            $request               Request object
 	 * @param template           $template              Template object
 	 * @param user               $user                  User object
-	 * @param \phpbb\user_loader $user_loader           User loader object
+	 * @param user_loader        $user_loader           User loader object
 	 * @param string             $root_path             phpBB root path
 	 * @param string             $php_ext               phpEx
 	 *

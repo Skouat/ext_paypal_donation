@@ -385,7 +385,7 @@ class transactions_controller extends admin_main
 	 * @param int    $donor_id
 	 *
 	 * @return int
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 * @access private
 	 */
 	private function validate_user_id($username, $donor_id = 0)
@@ -525,7 +525,7 @@ class transactions_controller extends admin_main
 	 * @param array $transaction_data
 	 *
 	 * @return array
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 * @access private
 	 */
 	private function build_data_ary($transaction_data)
