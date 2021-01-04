@@ -28,9 +28,9 @@ class vars
 	 *
 	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object
-	 * @param \phpbb\config\config          $config           Config object
-	 * @param \phpbb\language\language      $language         Language object
-	 * @param \phpbb\user                   $user             User object
+	 * @param config                        $config           Config object
+	 * @param language                      $language         Language object
+	 * @param user                          $user             User object
 	 *
 	 * @access public
 	 */

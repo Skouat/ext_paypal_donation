@@ -25,10 +25,10 @@ class core
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface               $container               Service container interface
-	 * @param manager                          $notification            Notification object
-	 * @param \skouat\ppde\actions\currency    $ppde_actions_currency   Currency actions object
-	 * @param \skouat\ppde\entity\transactions $ppde_entity_transaction Transaction entity object
+	 * @param ContainerInterface $container               Service container interface
+	 * @param manager            $notification            Notification object
+	 * @param currency           $ppde_actions_currency   Currency actions object
+	 * @param transactions       $ppde_entity_transaction Transaction entity object
 	 * @access public
 	 */
 	public function __construct(

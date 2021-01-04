@@ -17,6 +17,8 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb\user_loader;
+use skouat\ppde\actions\auth;
+use skouat\ppde\actions\currency;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
@@ -38,18 +40,18 @@ class main_controller
 	/**
 	 * Constructor
 	 *
-	 * @param config                        $config                Config object
-	 * @param ContainerInterface            $container             Service container interface
-	 * @param helper                        $helper                Controller helper object
-	 * @param language                      $language              Language user object
-	 * @param \skouat\ppde\actions\auth     $ppde_actions_auth     PPDE auth actions object
-	 * @param \skouat\ppde\actions\currency $ppde_actions_currency PPDE currency actions object
-	 * @param request                       $request               Request object
-	 * @param template                      $template              Template object
-	 * @param user                          $user                  User object
-	 * @param \phpbb\user_loader            $user_loader           User loader object
-	 * @param string                        $root_path             phpBB root path
-	 * @param string                        $php_ext               phpEx
+	 * @param config             $config                Config object
+	 * @param ContainerInterface $container             Service container interface
+	 * @param helper             $helper                Controller helper object
+	 * @param language           $language              Language user object
+	 * @param auth               $ppde_actions_auth     PPDE auth actions object
+	 * @param currency           $ppde_actions_currency PPDE currency actions object
+	 * @param request            $request               Request object
+	 * @param template           $template              Template object
+	 * @param user               $user                  User object
+	 * @param \phpbb\user_loader $user_loader           User loader object
+	 * @param string             $root_path             phpBB root path
+	 * @param string             $php_ext               phpEx
 	 *
 	 * @access public
 	 */
@@ -58,8 +60,8 @@ class main_controller
 		ContainerInterface $container,
 		helper $helper,
 		language $language,
-		\skouat\ppde\actions\auth $ppde_actions_auth,
-		\skouat\ppde\actions\currency $ppde_actions_currency,
+		auth $ppde_actions_auth,
+		currency $ppde_actions_currency,
 		request $request,
 		template $template,
 		user $user,
