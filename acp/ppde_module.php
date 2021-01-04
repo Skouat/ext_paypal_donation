@@ -162,21 +162,16 @@ class ppde_module
 
 				$this->do_action($admin_controller->get_action(), $admin_controller);
 			break;
+			case 'donors':
 			case 'paypal_features':
 			case 'settings':
 				// Load the display handle in the admin controller
-				/** @type \skouat\ppde\controller\admin\settings_controller|\skouat\ppde\controller\admin\paypal_features_controller $admin_controller */
-				$admin_controller->display_settings();
+				$admin_controller->display();
 			break;
 			case 'overview':
 				// Load the display overview handle in the admin controller
 				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
-			break;
-			case 'donors':
-				// Load the display transactions log handle in the admin controller
-				/** @type \skouat\ppde\controller\admin\donors_controller $admin_controller */
-				$admin_controller->display_donors($id, $mode, $action);
 			break;
 		}
 	}

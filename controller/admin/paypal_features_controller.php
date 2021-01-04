@@ -83,7 +83,7 @@ class paypal_features_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_settings()
+	public function display()
 	{
 		if ($this->config['ppde_first_start'])
 		{

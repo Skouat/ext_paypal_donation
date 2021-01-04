@@ -88,7 +88,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_settings()
+	public function display()
 	{
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');

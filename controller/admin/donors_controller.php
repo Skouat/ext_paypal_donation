@@ -61,14 +61,10 @@ class donors_controller extends admin_main
 	/**
 	 * Display the transactions list
 	 *
-	 * @param string $id     Module id
-	 * @param string $mode   Module categorie
-	 * @param string $action Action name
-	 *
 	 * @return void
 	 * @access public
 	 */
-	public function display_donors($id, $mode, $action)
+	public function display()
 	{
 		// Adds fields to the table schema needed by entity->import()
 		$donorlist_table_schema = [
