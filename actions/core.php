@@ -542,7 +542,7 @@ class core
 	 */
 	public function check_post_data_ascii($value)
 	{
-		return strlen($value) != strspn($value, self::ASCII_RANGE) ? false : true;
+		return strlen($value) == strspn($value, self::ASCII_RANGE);
 	}
 
 	/**
