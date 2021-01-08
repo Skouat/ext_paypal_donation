@@ -15,8 +15,6 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\actions\vars;
-use skouat\ppde\operators\donation_pages;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -44,17 +42,17 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface                 $container                    Service container interface
-	 * @param language                           $language                     Language user object
-	 * @param log                                $log                          The phpBB log system
-	 * @param \skouat\ppde\actions\vars          $ppde_actions_vars            PPDE Actions vars object
-	 * @param \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages   PPDE Entity object
-	 * @param donation_pages                     $ppde_operator_donation_pages Operator object
-	 * @param request                            $request                      Request object
-	 * @param template                           $template                     Template object
-	 * @param user                               $user                         User object
-	 * @param string                             $phpbb_root_path              phpBB root path
-	 * @param string                             $php_ext                      phpEx
+	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param language                              $language                     Language user object
+	 * @param log                                   $log                          The phpBB log system
+	 * @param \skouat\ppde\actions\vars             $ppde_actions_vars            PPDE Actions vars object
+	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   PPDE Entity object
+	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Operator object
+	 * @param request                               $request                      Request object
+	 * @param template                              $template                     Template object
+	 * @param user                                  $user                         User object
+	 * @param string                                $phpbb_root_path              phpBB root path
+	 * @param string                                $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
@@ -62,9 +60,9 @@ class donation_pages_controller extends admin_main
 		ContainerInterface $container,
 		language $language,
 		log $log,
-		vars $ppde_actions_vars,
+		\skouat\ppde\actions\vars $ppde_actions_vars,
 		\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages,
-		donation_pages $ppde_operator_donation_pages,
+		\skouat\ppde\operators\donation_pages $ppde_operator_donation_pages,
 		request $request,
 		template $template,
 		user $user,

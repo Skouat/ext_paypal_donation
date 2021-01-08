@@ -70,7 +70,7 @@ class core
 	 * @param compare                             $ppde_operator_compare     Compare operator object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object
-	 * @param \phpbb\user                         $user                      User object
+	 * @param user                                $user                      User object
 	 * @param string                              $php_ext                   phpEx
 	 *
 	 * @access public
