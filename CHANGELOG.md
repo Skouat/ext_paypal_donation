@@ -1,4 +1,9 @@
 # Changelog
+## 3.0.2 - 2021-01-08
+  - Fix: Class 'ResourceBundle' not found
+  - Fix: Travis-ci reported issues
+  - Code changes following phpBB Customisation Team reports
+
 ## 3.0.1 - 2020-12-12
   - Add: Position of donation stats can be defined
   - Add: Add options to set guest permissions from PDDE settings
