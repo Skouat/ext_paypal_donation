@@ -265,7 +265,7 @@ class transactions
 				$sql_where = " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
 			break;
 			case 'email':
-				$sql_where = " WHERE user_email_hash = '" . $this->db->sql_escape(phpbb_email_hash($arg)) . "'";
+				$sql_where = " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
 			break;
 			default:
 				$sql_where = '';
