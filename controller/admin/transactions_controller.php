@@ -711,7 +711,7 @@ class transactions_controller extends admin_main
 			'DATE'             => $this->user->format_date($row['payment_date']),
 			'ID'               => $row['transaction_id'],
 			'PAYMENT_STATUS'   => $this->language->lang(array('PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status']))),
-			'TNX_ID'           => $row['txn_id'],
+			'TXN_ID'           => $row['txn_id'],
 			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
 			'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
