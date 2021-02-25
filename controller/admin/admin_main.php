@@ -38,10 +38,11 @@ abstract class admin_main
 	protected $submit;
 	/** @var \phpbb\template\template */
 	protected $template;
-	/** @var string */
-	protected $u_action;
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var string */
+	public $u_action;
 
 	/**
 	 * Constructor
