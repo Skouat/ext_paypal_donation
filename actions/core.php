@@ -15,7 +15,6 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
 use phpbb\user;
-use skouat\ppde\operators\compare;
 
 class core
 {
@@ -28,10 +27,8 @@ class core
 	protected $config;
 	protected $dispatcher;
 	protected $language;
-	protected $path_helper;
 	protected $php_ext;
 	protected $ppde_entity_transaction;
-	protected $ppde_operator_compare;
 	protected $ppde_operator_transaction;
 	protected $transaction_data;
 	protected $user;
@@ -67,7 +64,6 @@ class core
 	 * @param \skouat\ppde\notification\core      $notification              PPDE Notification object
 	 * @param path_helper                         $path_helper               Path helper object
 	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transaction   Transaction entity object
-	 * @param compare                             $ppde_operator_compare     Compare operator object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object
 	 * @param user                                $user                      User object
@@ -81,7 +77,6 @@ class core
 		\skouat\ppde\notification\core $notification,
 		path_helper $path_helper,
 		\skouat\ppde\entity\transactions $ppde_entity_transaction,
-		compare $ppde_operator_compare,
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
 		user $user,
@@ -91,12 +86,10 @@ class core
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
-		$this->path_helper = $path_helper;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
-		$this->ppde_operator_compare = $ppde_operator_compare;
 		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
-		$this->root_path = $this->path_helper->get_phpbb_root_path();
+		$this->root_path = $path_helper->get_phpbb_root_path();
 		$this->user = $user;
 	}
 
@@ -492,131 +485,6 @@ class core
 		{
 			$this->transaction_data['user_id'] = ANONYMOUS;
 		}
-	}
-
-	/**
-	 * Check requirements for data value.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return mixed
-	 * @access public
-	 */
-	public function set_post_data_func($data_ary)
-	{
-		$value = $data_ary['value'];
-
-		foreach ($data_ary['force_settings'] as $control_point => $params)
-		{
-			// Calling the set_post_data_function
-			$value = call_user_func_array([$this, 'set_post_data_' . $control_point], [$data_ary['value'], $params]);
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $value;
-	}
-
-	/**
-	 * Check Post data length.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $statement
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_length($value, $statement)
-	{
-		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_ascii($value)
-	{
-		return strlen($value) == strspn($value, self::ASCII_RANGE);
-	}
-
-	/**
-	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_content($value, $content_ary)
-	{
-		return in_array($value, $content_ary);
-	}
-
-	/**
-	 * Check if Post data is empty.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_empty($value)
-	{
-		return empty($value) ? false : true;
-	}
-
-	/**
-	 * Set Post data length.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string  $value
-	 * @param integer $length
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_length($value, $length)
-	{
-		return substr($value, 0, (int) $length);
-	}
-
-	/**
-	 * Set Post data to lowercase.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_lowercase($value, $force = false)
-	{
-		return $force ? strtolower($value) : $value;
-	}
-
-	/**
-	 * Set Post data to date/time format.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_strtotime($value, $force = false)
-	{
-		return $force ? strtotime($value) : $value;
 	}
 
 	/**
