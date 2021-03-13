@@ -46,6 +46,10 @@ class ipn_paypal
 	 */
 	private $curl_fsock = ['curl' => false, 'none' => true];
 	/**
+	 * @var array
+	 */
+	private $postback_args = [];
+	/**
 	 * Full PayPal response for include in text report
 	 *
 	 * @var string
@@ -399,14 +403,13 @@ class ipn_paypal
 
 	/**
 	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
-	 * based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
+	 * Based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
 	 *
-	 * @return array
+	 * @return void
 	 * @access public
 	 */
-	public function get_postback_args()
+	public function set_postback_args()
 	{
-		$data_ary = [];
 		$raw_post_data = file_get_contents('php://input');
 		$raw_post_array = explode('&', $raw_post_data);
 
@@ -423,10 +426,16 @@ class ipn_paypal
 						$keyval[1] = str_replace('+', '%2B', $keyval[1]);
 					}
 				}
-				$data_ary[$keyval[0]] = urldecode($keyval[1]);
+				$this->postback_args[$keyval[0]] = urldecode($keyval[1]);
 			}
 		}
+	}
 
-		return $data_ary;
+	/**
+	 * @return array
+	 */
+	public function get_postback_args()
+	{
+		return $this->postback_args;
 	}
 }

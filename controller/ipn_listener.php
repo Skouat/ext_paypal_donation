@@ -261,25 +261,33 @@ class ipn_listener
 	private function validate_transaction()
 	{
 		// Request and populate $this->transaction_data
-		array_map([$this, 'get_post_data'], self::$paypal_vars_table);
+		$post_data = array_map([$this, 'get_post_data'], self::$paypal_vars_table);
+		$post_data = array_map([$this, 'check_post_data'], $post_data);
+		array_map([$this, 'set_post_data'], $post_data);
+		unset($post_data);
+
+		$this->ppde_ipn_paypal->set_postback_args();
 
 		// Additional checks
 		$this->check_account_id();
 
+		// Handle errors
 		$this->transaction_data['txn_errors'] = '';
 		if (!empty($this->error_message))
 		{
 			// If data doesn't meet the requirement, we log in file (if enabled).
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->ppde_ipn_paypal->get_postback_args());
 			// We store error message in transaction data for later use.
 			$this->transaction_data['txn_errors'] = $this->error_message;
 		}
 
+		// Decode specific strings
 		$decode_ary = ['receiver_email', 'payer_email', 'payment_date', 'business', 'memo'];
 		foreach ($decode_ary as $key)
 		{
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
 		}
+		unset($decode_ary, $key);
 
 		// Get all variables from PayPal to build return URI
 		$this->ppde_ipn_paypal->set_args_return_uri();
@@ -290,7 +298,7 @@ class ipn_listener
 
 		if ($this->ppde_ipn_paypal->check_response_status())
 		{
-			$args = array_merge(['response_status' => $this->ppde_ipn_paypal->get_response_status()], $this->get_postback_args());
+			$args = array_merge(['response_status' => $this->ppde_ipn_paypal->get_response_status()], $this->ppde_ipn_paypal->get_postback_args());
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $args);
 		}
 
@@ -321,17 +329,6 @@ class ipn_listener
 	private function ipn_use_sandbox()
 	{
 		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
-	}
-
-	/**
-	 * Return Postback args to PayPal or for tracking errors.
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function get_postback_args()
-	{
-		return $this->ppde_ipn_paypal->get_postback_args();
 	}
 
 	/**
@@ -482,7 +479,7 @@ class ipn_listener
 	 *
 	 * @param array $data_ary List of data to request
 	 *
-	 * @return void
+	 * @return array
 	 * @access private
 	 */
 	private function get_post_data($data_ary = [])
@@ -496,10 +493,7 @@ class ipn_listener
 		{
 			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
 		}
-
-		// Check post data. Then assign them to $this->transaction_data
-		$this->check_post_data($data_ary);
-		$this->transaction_data[$data_ary['name']] = $this->set_post_data($data_ary);
+		return $data_ary;
 	}
 
 	/**
@@ -507,20 +501,18 @@ class ipn_listener
 	 *
 	 * @param array $data_ary
 	 *
-	 * @return array|string
+	 * @return void
 	 * @access private
 	 */
 	private function set_post_data($data_ary)
 	{
-		$value = $data_ary['value'];
+		$this->transaction_data[$data_ary['name']]= $data_ary['value'];
 
 		// Set all conditions declared for this post_data
 		if (isset($data_ary['force_settings']))
 		{
-			$value = $this->ppde_actions->set_post_data_func($data_ary);
+			$this->transaction_data[$data_ary['name']] = $this->ppde_actions->set_post_data_func($data_ary);
 		}
-
-		return $value;
 	}
 
 	/**
@@ -528,20 +520,18 @@ class ipn_listener
 	 *
 	 * @param array $data_ary
 	 *
-	 * @return bool
+	 * @return array
 	 * @access private
 	 */
 	private function check_post_data($data_ary = [])
 	{
-		$check = [];
-
 		// Check all conditions declared for this post_data
 		if (isset($data_ary['condition_check']))
 		{
-			$check = array_merge($check, $this->call_post_data_func($data_ary));
+			$data_ary['condition_checked'] = (bool) array_product($this->call_post_data_func($data_ary));
 		}
 
-		return (bool) array_product($check);
+		return $data_ary;
 	}
 
 	/**
