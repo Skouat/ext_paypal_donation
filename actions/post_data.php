@@ -63,38 +63,6 @@ class post_data
 	}
 
 	/**
-	 * Check requirements for data value.
-	 * If a check fails, error message are stored in $this->error_message
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return array
-	 * @access public
-	 */
-
-	public function call_func($data_ary)
-	{
-		$check = [];
-		$check['txn_errors'] = '';
-
-		foreach ($data_ary['condition_check'] as $control_point => $params)
-		{
-			// Calling the check_post_data_function
-			if (call_user_func_array([$this, 'check_post_data_' . $control_point], [$data_ary['value'], $params]))
-			{
-				$check[] = true;
-				continue;
-			}
-
-			$check['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
-			$check[] = false;
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $check;
-	}
-
-	/**
 	 * Request predefined variable from super global
 	 *
 	 * @param array $data_ary List of data to request
@@ -137,6 +105,38 @@ class post_data
 		}
 
 		return $data_ary;
+	}
+
+	/**
+	 * Check requirements for data value.
+	 * If a check fails, error message are stored in $this->error_message
+	 *
+	 * @param array $data_ary
+	 *
+	 * @return array
+	 * @access public
+	 */
+
+	public function call_func($data_ary)
+	{
+		$check = [];
+		$check['txn_errors'] = '';
+
+		foreach ($data_ary['condition_check'] as $control_point => $params)
+		{
+			// Calling the check_post_data_function
+			if (call_user_func_array([$this, 'check_post_data_' . $control_point], [$data_ary['value'], $params]))
+			{
+				$check[] = true;
+				continue;
+			}
+
+			$check['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
+			$check[] = false;
+		}
+		unset($data_ary, $control_point, $params);
+
+		return $check;
 	}
 
 	/**

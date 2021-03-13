@@ -299,6 +299,24 @@ class ipn_listener
 	}
 
 	/**
+	 * Request PayPal Post Data and populate $this->transaction_data
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function handle_post_data()
+	{
+		// Get PayPal data
+		$post_data = array_map([$this->ppde_actions_post_data, 'get_post_data'], self::$paypal_vars_table);
+		// Check PayPal data
+		$post_data = array_map([$this->ppde_actions_post_data, 'check_post_data'], $post_data);
+		// Populate transaction_data
+		array_map([$this, 'set_transaction_data'], $post_data);
+
+		unset($post_data);
+	}
+
+	/**
 	 * Check if Merchant ID set on the extension match with the ID stored in the transaction.
 	 *
 	 * @return void
@@ -379,20 +397,6 @@ class ipn_listener
 	}
 
 	/**
-	 * Some work to do before doing actions.
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function prepare_data()
-	{
-		$this->ppde_actions->set_transaction_data($this->transaction_data);
-		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
-		$this->ppde_actions->is_donor_is_member();
-		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
-	}
-
-	/**
 	 * Validates actions if the transaction is verified
 	 *
 	 * @return bool
@@ -411,6 +415,20 @@ class ipn_listener
 		$this->tasks_list['txn_errors'] = !empty($this->transaction_data['txn_errors']) && empty($this->transaction_data['txn_errors_approved']);
 
 		return array_product($mandatory);
+	}
+
+	/**
+	 * Some work to do before doing actions.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function prepare_data()
+	{
+		$this->ppde_actions->set_transaction_data($this->transaction_data);
+		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+		$this->ppde_actions->is_donor_is_member();
+		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
 	}
 
 	/**
@@ -465,24 +483,6 @@ class ipn_listener
 				$this->ppde_actions->notification->notify_donor_donation_received();
 			}
 		}
-	}
-
-	/**
-	 * Request PayPal Post Data and populate $this->transaction_data
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function handle_post_data()
-	{
-		// Get PayPal data
-		$post_data = array_map([$this->ppde_actions_post_data, 'get_post_data'], self::$paypal_vars_table);
-		// Check PayPal data
-		$post_data = array_map([$this->ppde_actions_post_data, 'check_post_data'], $post_data);
-		// Populate transaction_data
-		array_map([$this, 'set_transaction_data'], $post_data);
-
-		unset($post_data);
 	}
 
 	/**
