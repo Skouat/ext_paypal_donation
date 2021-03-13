@@ -1,4 +1,14 @@
 # Changelog
+## 3.0.3 - 2021-03-13
+  - Fix: Check for the existence of the auth_admin class was not properly set
+  - Fix: Typo on template vars name
+  - Fix: The amount received always set to 0 in email notifications (#92)
+  - Fix: Remove use of phpbb_email_hash()
+  - Fix: Undefined index when deleting a transaction
+  - Change: Improve processing of transaction data in IPN listener
+  - Change: Add htmlspecialchars_decode() for username items in notifications systems
+  - Change: Move post_data functions on its own actions controller
+
 ## 3.0.2 - 2021-01-08
   - Fix: Class 'ResourceBundle' not found
   - Fix: Travis-ci reported issues
