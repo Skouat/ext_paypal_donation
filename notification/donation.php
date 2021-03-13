@@ -130,7 +130,6 @@ abstract class donation extends \phpbb\notification\type\base
 		$this->set_data('net_amount', $data['net_amount']);
 		$this->set_data('payer_email', $data['payer_email']);
 		$this->set_data('payer_username', $data['payer_username']);
-		$this->set_data('settle_amount', $data['settle_amount']);
 		$this->set_data('transaction_id', $data['transaction_id']);
 		$this->set_data('txn_id', $data['txn_id']);
 		$this->set_data('user_from', $data['user_from']);
