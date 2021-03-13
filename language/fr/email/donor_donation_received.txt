@@ -12,7 +12,7 @@ ID de transaction : {{ TXN_ID }}
 Compte émetteur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Montant donné : {{ MC_GROSS }}
-Montant reçu par « {{ SITENAME }} » : {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+Montant reçu par « {{ SITENAME }} » : {{ NET_AMOUNT }}
 
 ----------------------------
 

@@ -99,20 +99,22 @@ class core
 				// Set currency data properties
 				$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
 
-				// Set currency settle data properties if exists
-				$settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount();
-				if ($settle_amount)
+				// Format net amount data properties
+				if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
 				{
 					$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
-					$settle_amount = $this->ppde_actions_currency->format_currency($settle_amount, $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+					$net_amount = $this->ppde_actions_currency->format_currency($settle_amount, $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+				}
+				else
+				{
+					$net_amount = $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']);
 				}
 
 				$notification_data = [
 					'mc_gross'       => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-					'net_amount'     => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+					'net_amount'     => $net_amount,
 					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
 					'payer_username' => $this->ppde_entity_transaction->get_username(),
-					'settle_amount'  => $settle_amount,
 					'transaction_id' => $this->ppde_entity_transaction->get_id(),
 					'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
 					'user_from'      => $this->ppde_entity_transaction->get_user_id(),
