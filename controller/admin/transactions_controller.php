@@ -304,17 +304,15 @@ class transactions_controller extends admin_main
 	 */
 	public function set_hidden_fields($id, $mode, $action)
 	{
-		$this->args = [
-			'action'        => $action,
-			'hidden_fields' => [
-				'start'     => $this->request->variable('start', 0),
-				'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
-				'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
-				'mark'      => $this->request->variable('mark', [0]),
-				'st'        => $this->request->variable('st', 0),
-				'sk'        => $this->request->variable('sk', 't'),
-				'sd'        => $this->request->variable('sd', 'd'),
-			],
+		$this->args['action'] = $action;
+		$this->args['hidden_fields'] = [
+			'start'     => $this->request->variable('start', 0),
+			'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
+			'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
+			'mark'      => $this->request->variable('mark', [0]),
+			'st'        => $this->request->variable('st', 0),
+			'sk'        => $this->request->variable('sk', 't'),
+			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
 		// Prepares args depending actions
