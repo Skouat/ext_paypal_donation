@@ -78,7 +78,6 @@ abstract class donation extends \phpbb\notification\type\base
 			'NET_AMOUNT'     => html_entity_decode($this->get_data('net_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
 			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
 			'PAYER_USERNAME' => $this->get_data('payer_username'),
-			'SETTLE_AMOUNT'  => html_entity_decode($this->get_data('settle_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
 			'TXN_ID'         => $this->get_data('txn_id'),
 		];
 	}

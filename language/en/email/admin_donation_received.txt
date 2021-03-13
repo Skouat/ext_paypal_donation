@@ -10,7 +10,7 @@ Transaction ID: {{ TXN_ID }}
 Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Amount donated: {{ MC_GROSS }}
-Amount received: {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+Amount received: {{ NET_AMOUNT }}
 
 ----------------------------
 
