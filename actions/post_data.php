@@ -74,6 +74,7 @@ class post_data
 
 	public function call_func($data_ary)
 	{
+		$check = [];
 		$check['txn_errors'] = '';
 
 		foreach ($data_ary['condition_check'] as $control_point => $params)

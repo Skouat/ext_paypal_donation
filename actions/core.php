@@ -18,8 +18,6 @@ use phpbb\user;
 
 class core
 {
-	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
 	/**
 	 * Services properties declaration
 	 */
