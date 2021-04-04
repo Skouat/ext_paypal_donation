@@ -309,7 +309,9 @@ class transactions_controller extends admin_main
 			'start'     => $this->request->variable('start', 0),
 			'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
 			'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
+			'i'         => $id,
 			'mark'      => $this->request->variable('mark', [0]),
+			'mode'      => $mode,
 			'st'        => $this->request->variable('st', 0),
 			'sk'        => $this->request->variable('sk', 't'),
 			'sd'        => $this->request->variable('sd', 'd'),
@@ -319,21 +321,15 @@ class transactions_controller extends admin_main
 		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$this->args['action'] = 'delete';
-			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
-				'i'    => $id,
-				'mode' => $mode,
-			]);
 		}
 		else if ($this->request->is_set('approve'))
 		{
-			$this->args = [
-				'action'        => 'approve',
-				'hidden_fields' => [
-					'approve'             => true,
-					'id'                  => $this->request->variable('id', 0),
-					'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
-				],
-			];
+			$this->args['action'] = 'approve';
+			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
+				'approve'             => true,
+				'id'                  => $this->request->variable('id', 0),
+				'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
+			]);
 		}
 		else if ($this->request->is_set('add'))
 		{
