@@ -74,10 +74,6 @@ $lang = array_merge($lang, [
 	'PPDE_VIEWONLINE_DONORLIST' => 'Viewing the list of donors',
 ]);
 
-/**
- * Note: This array is out of the previous because there is an issue with Transifex platform
- * Note for translators: Before pushing your translation on Transifex, please surround array indexes with ''.
- */
 $lang = array_merge($lang, [
 	'PPDE_DONORS' => [
 		1 => '%d donor',  // 1
