@@ -115,7 +115,7 @@ class core
 	 */
 	private function set_ipn_test($ipn_test)
 	{
-		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
+		$this->is_ipn_test = (bool) $ipn_test;
 	}
 
 	/**
@@ -137,7 +137,7 @@ class core
 	 */
 	public function get_ipn_suffix()
 	{
-		return ($this->get_ipn_test()) ? $this->ipn_suffix : '';
+		return $this->get_ipn_test() ? $this->ipn_suffix : '';
 	}
 
 	/**
@@ -146,7 +146,7 @@ class core
 	 */
 	public function get_ipn_test()
 	{
-		return $this->is_ipn_test ? (bool) $this->is_ipn_test : false;
+		return (bool) $this->is_ipn_test;
 	}
 
 	/**
@@ -255,7 +255,7 @@ class core
 	 */
 	public function get_donor_is_member()
 	{
-		return ($this->donor_is_member) ? (bool) $this->donor_is_member : false;
+		return (bool) $this->donor_is_member;
 	}
 
 	/**

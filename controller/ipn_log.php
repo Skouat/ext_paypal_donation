@@ -215,10 +215,7 @@ class ipn_log
 	 */
 	private function text_report_insert_line(&$r = '')
 	{
-		for ($i = 0; $i < 80; $i++)
-		{
-			$r .= '-';
-		}
+		$r .= str_repeat('-', 80);
 	}
 
 	/**

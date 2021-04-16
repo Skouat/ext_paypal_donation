@@ -100,7 +100,7 @@ abstract class admin_main
 
 	public function get_action()
 	{
-		return (isset($this->args['action'])) ? (string) $this->args['action'] : '';
+		return (string) $this->args['action'] ?? '';
 	}
 
 	public function set_item_id($item_id)
@@ -386,7 +386,7 @@ abstract class admin_main
 	protected function s_error_assign_template_vars($errors)
 	{
 		$this->template->assign_vars([
-			'S_ERROR'   => (count($errors)) ? true : false,
+			'S_ERROR'   => (bool) count($errors),
 			'ERROR_MSG' => (count($errors)) ? implode('<br>', $errors) : '',
 		]);
 	}
@@ -432,7 +432,7 @@ abstract class admin_main
 	/**
 	 * Check if a settings depend on another.
 	 *
-	 * @param $config_name
+	 * @param string $config_name
 	 *
 	 * @return bool
 	 * @access protected

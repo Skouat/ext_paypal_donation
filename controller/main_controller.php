@@ -133,7 +133,7 @@ class main_controller
 	{
 		$remote_list = ipn_paypal::get_remote_uri();
 
-		if (($is_test_ipn || $this->use_sandbox()))
+		if ($is_test_ipn || $this->use_sandbox())
 		{
 			return $remote_list[$this->config['ppde_sandbox_remote']]['uri'];
 		}

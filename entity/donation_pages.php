@@ -89,7 +89,7 @@ class donation_pages extends main
 	 */
 	public function get_lang_id()
 	{
-		return (isset($this->data['page_lang_id'])) ? (int) $this->data['page_lang_id'] : 0;
+		return (int) $this->data['page_lang_id'] ?? 0;
 	}
 
 	/**
