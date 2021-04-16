@@ -16,8 +16,7 @@ Amount received by "{{ SITENAME }}": {{ NET_AMOUNT }}
 
 ----------------------------
 
-If you no longer wish to be notified when you make a donation, please update your notification settings here:
-
+If you no longer wish to receive the donation confirmation email, click on the following link:
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}
