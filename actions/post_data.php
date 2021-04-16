@@ -16,7 +16,7 @@ use skouat\ppde\operators\compare;
 
 class post_data
 {
-	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	private const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	/**
 	 * Services properties declaration
