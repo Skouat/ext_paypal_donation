@@ -36,7 +36,7 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.0', '>=') && version_compare(PHP_VERSION, '7.1.3', '>=');
+		return phpbb_version_compare($config['version'], '3.3.0', '>=') && PHP_VERSION_ID >= 70103;
 	}
 
 	/**
