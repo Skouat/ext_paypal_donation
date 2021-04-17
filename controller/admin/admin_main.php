@@ -10,8 +10,6 @@
 
 namespace skouat\ppde\controller\admin;
 
-use skouat\ppde\controller\ipn_paypal;
-
 abstract class admin_main
 {
 	/** @var array */
