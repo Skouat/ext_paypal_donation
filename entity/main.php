@@ -471,7 +471,6 @@ abstract class main
 
 			$this->data[$field['name']] = $value;
 		}
-		unset($field);
 
 		return $this->data;
 	}

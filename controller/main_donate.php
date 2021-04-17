@@ -151,7 +151,6 @@ class main_donate extends main_controller
 				$int_value = $this->settype_dropbox_int_value($value);
 				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '"' . $this->is_value_selected($int_value, $default_value) . '>' . $int_value . '</option>' : '';
 			}
-			unset($value);
 		}
 
 		return $list_donation_value;

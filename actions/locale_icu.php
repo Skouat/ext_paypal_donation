@@ -65,7 +65,7 @@ class locale_icu
 				'S_LOCALE_DEFAULT' => $config_value === $locale,
 			]);
 		}
-		unset ($locale, $locale_list, $locale_name);
+		unset ($locale, $locale_list);
 	}
 
 	/**
@@ -92,7 +92,7 @@ class locale_icu
 		{
 			$locale_ary[$locale] = \Locale::getDisplayName($locale, $this->user->lang_name);
 		}
-		unset ($locale_items, $locale);
+		unset ($locale_items);
 
 		natsort($locale_ary);
 

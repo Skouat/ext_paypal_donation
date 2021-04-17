@@ -146,7 +146,6 @@ class ipn_log
 				$value = urlencode($value);
 				$message .= $key . ' = ' . $value . ';<br>';
 			}
-			unset($value);
 		}
 
 		if ($log_in_file)

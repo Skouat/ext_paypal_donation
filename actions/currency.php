@@ -140,6 +140,6 @@ class currency
 				'S_CURRENCY_DEFAULT' => (int) $config_value == (int) $currency_item['currency_id'],
 			]);
 		}
-		unset ($currency_items, $currency_item);
+		unset ($currency_items);
 	}
 }

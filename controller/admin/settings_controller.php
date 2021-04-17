@@ -229,6 +229,6 @@ class settings_controller extends admin_main
 				'S_DEFAULT'     => (string) $default === $position,
 			]);
 		}
-		unset ($positions, $position);
+		unset ($positions);
 	}
 }
