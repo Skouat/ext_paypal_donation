@@ -49,15 +49,14 @@ class ext extends \phpbb\extension\base
 	 */
 	public function enable_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Enable notifications
-				return $this->notification_handler('enable', $this->notification_types());
-			default:
-				// Run parent enable step method
-				return parent::enable_step($old_state);
+			// Enable notifications
+			return $this->notification_handler('enable', $this->notification_types());
 		}
+		// Run parent enable step method
+		return parent::enable_step($old_state);
 	}
 
 	/**
@@ -70,15 +69,14 @@ class ext extends \phpbb\extension\base
 	 */
 	public function disable_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Disable notifications
-				return $this->notification_handler('disable', $this->notification_types());
-			default:
-				// Run parent disable step method
-				return parent::disable_step($old_state);
+			// Disable notifications
+			return $this->notification_handler('disable', $this->notification_types());
 		}
+		// Run parent disable step method
+		return parent::disable_step($old_state);
 	}
 
 	/**
@@ -91,15 +89,14 @@ class ext extends \phpbb\extension\base
 	 */
 	public function purge_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Purge notifications
-				return $this->notification_handler('purge', $this->notification_types());
-			default:
-				// Run parent purge step method
-				return parent::purge_step($old_state);
+			// Purge notifications
+			return $this->notification_handler('purge', $this->notification_types());
 		}
+		// Run parent purge step method
+		return parent::purge_step($old_state);
 	}
 
 	/**
