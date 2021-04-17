@@ -469,7 +469,7 @@ class core
 	 */
 	private function extract_item_number_data(): void
 	{
-		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['item_number'], 4), -1);
 	}
 
 	/**
