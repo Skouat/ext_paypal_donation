@@ -110,7 +110,7 @@ abstract class admin_main
 
 	public function get_action(): string
 	{
-		return (string) $this->args['action'] ?? '';
+		return (string) ($this->args['action'] ?? '');
 	}
 
 	public function set_item_id($item_id): void

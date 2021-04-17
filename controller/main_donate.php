@@ -71,7 +71,7 @@ class main_donate extends main_controller
 
 		$this->template->assign_vars([
 			'DONATION_BODY'      => $this->donation_body,
-			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
+			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),

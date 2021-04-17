@@ -218,7 +218,7 @@ abstract class main
 	 */
 	public function get_id(): int
 	{
-		return (int) $this->data[$this->table_schema['item_id']['name']] ?? 0;
+		return (int) ($this->data[$this->table_schema['item_id']['name']] ?? 0);
 	}
 
 	/**
@@ -299,7 +299,7 @@ abstract class main
 	 */
 	public function get_name(): string
 	{
-		return (string) $this->data[$this->table_schema['item_name']['name']] ?? '';
+		return (string) ($this->data[$this->table_schema['item_name']['name']] ?? '');
 	}
 
 	/**

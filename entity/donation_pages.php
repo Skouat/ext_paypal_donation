@@ -89,7 +89,7 @@ class donation_pages extends main
 	 */
 	public function get_lang_id(): int
 	{
-		return (int) $this->data['page_lang_id'] ?? 0;
+		return (int) ($this->data['page_lang_id'] ?? 0);
 	}
 
 	/**
@@ -117,9 +117,9 @@ class donation_pages extends main
 	public function get_message_for_edit(): string
 	{
 		// Use defaults if these haven't been set yet
-		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
-		$uid = (isset($this->data['page_content_bbcode_uid'])) ? $this->data['page_content_bbcode_uid'] : '';
-		$options = (isset($this->data['page_content_bbcode_options'])) ? (int) $this->data['page_content_bbcode_options'] : 0;
+		$message = $this->data['page_content'] ?? '';
+		$uid = $this->data['page_content_bbcode_uid'] ?? '';
+		$options = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
 		// Generate for edit
 		$message_data = generate_text_for_edit($message, $uid, $options);
@@ -138,10 +138,10 @@ class donation_pages extends main
 	public function get_message_for_display($censor_text = true): string
 	{
 		// If these haven't been set yet; use defaults
-		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
-		$uid = (isset($this->data['page_content_bbcode_uid'])) ? $this->data['page_content_bbcode_uid'] : '';
-		$bitfield = (isset($this->data['page_content_bbcode_bitfield'])) ? $this->data['page_content_bbcode_bitfield'] : '';
-		$options = (isset($this->data['page_content_bbcode_options'])) ? (int) $this->data['page_content_bbcode_options'] : 0;
+		$message = $this->data['page_content'] ?? '';
+		$uid = $this->data['page_content_bbcode_uid'] ?? '';
+		$bitfield = $this->data['page_content_bbcode_bitfield'] ?? '';
+		$options = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
 		// Generate for display
 		return generate_text_for_display($message, $uid, $bitfield, $options, $censor_text);
@@ -173,7 +173,7 @@ class donation_pages extends main
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true): void
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
-		$this->data['page_content_bbcode_options'] = (isset($this->data['page_content_bbcode_options'])) ? $this->data['page_content_bbcode_options'] : 0;
+		$this->data['page_content_bbcode_options'] = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
 		// If we're setting the option and the option is not already set
 		if (!$negate && !($this->data['page_content_bbcode_options'] & $option_value))

@@ -84,7 +84,7 @@ class currency extends main
 	 */
 	public function get_currency_order(): int
 	{
-		return (int) $this->data['currency_order'] ?? 0;
+		return (int) ($this->data['currency_order'] ?? 0);
 	}
 
 	/**
@@ -95,7 +95,7 @@ class currency extends main
 	 */
 	public function get_currency_position(): bool
 	{
-		return (bool) $this->data['currency_on_left'] ?? false;
+		return (bool) ($this->data['currency_on_left'] ?? false);
 	}
 
 	/**
@@ -106,7 +106,7 @@ class currency extends main
 	 */
 	public function get_iso_code(): string
 	{
-		return (string) $this->data['currency_iso_code'] ?? '';
+		return (string) ($this->data['currency_iso_code'] ?? '');
 	}
 
 	/**
@@ -257,6 +257,6 @@ class currency extends main
 	 */
 	public function get_currency_enable(): bool
 	{
-		return (bool) $this->data['currency_enable'] ?? false;
+		return (bool) ($this->data['currency_enable'] ?? false);
 	}
 }
