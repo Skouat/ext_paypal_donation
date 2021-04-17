@@ -236,7 +236,7 @@ class transactions
 				$sql_lower = $this->db->sql_lower_text($column_name);
 				$sql_lowers[] = $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords);
 			}
-			unset($columns, $column_name);
+			unset($columns);
 
 			$sql_keywords .= implode(' OR ', $sql_lowers) . ')';
 		}

@@ -57,7 +57,7 @@ class post_data
 			// Calling the set_post_data_function
 			$value = call_user_func_array([$this, 'set_post_data_' . $control_point], [$data_ary['value'], $params]);
 		}
-		unset($data_ary, $control_point, $params);
+		unset($control_point);
 
 		return $value;
 	}
@@ -134,7 +134,7 @@ class post_data
 			$check['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
 			$check[] = false;
 		}
-		unset($data_ary, $control_point, $params);
+		unset($control_point);
 
 		return $check;
 	}

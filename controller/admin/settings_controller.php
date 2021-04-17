@@ -186,7 +186,7 @@ class settings_controller extends admin_main
 		{
 			$this->add_int_data_in_array($merge_items, $item);
 		}
-		unset($items_list, $item);
+		unset($items_list);
 
 		natsort($merge_items);
 

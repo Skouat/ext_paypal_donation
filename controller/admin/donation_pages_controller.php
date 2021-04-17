@@ -122,9 +122,9 @@ class donation_pages_controller extends admin_main
 					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 				]);
 			}
-			unset($data_ary, $data);
+			unset($data_ary);
 		}
-		unset($entry, $langs, $lang);
+		unset($langs, $lang);
 
 		$this->u_action_assign_template_vars();
 	}

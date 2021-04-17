@@ -72,7 +72,7 @@ abstract class main
 			// Calling the set_$entity_function on the entity and passing it $currency_data
 			call_user_func_array([$this, 'set_' . $entity_function], [$data]);
 		}
-		unset($data_ary, $entity_function, $data);
+		unset($entity_function);
 	}
 
 	/**

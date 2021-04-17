@@ -280,7 +280,7 @@ class ipn_listener
 		{
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
 		}
-		unset($decode_ary, $key);
+		unset($decode_ary);
 
 		// Get all variables from PayPal to build return URI
 		$this->ppde_ipn_paypal->set_args_return_uri();
