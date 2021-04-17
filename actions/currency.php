@@ -51,7 +51,7 @@ class currency
 	 * @return array
 	 * @access public
 	 */
-	public function get_currency_data($iso_code)
+	public function get_currency_data($iso_code): array
 	{
 		$this->entity->data_exists($this->entity->build_sql_data_exists($iso_code));
 
@@ -66,7 +66,7 @@ class currency
 	 * @return array
 	 * @access public
 	 */
-	public function get_default_currency_data($id = 0)
+	public function get_default_currency_data($id = 0): array
 	{
 		return $this->entity->get_data($this->operator->build_sql_data($id, true));
 	}
@@ -83,7 +83,7 @@ class currency
 	 * @return string
 	 * @access public
 	 */
-	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true)
+	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true): string
 	{
 		if ($this->locale->is_locale_configured())
 		{
@@ -105,7 +105,7 @@ class currency
 	 * @return string
 	 * @access public
 	 */
-	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = '')
+	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = ''): string
 	{
 		if ($on_left)
 		{
@@ -123,7 +123,7 @@ class currency
 	 * @return void
 	 * @access public
 	 */
-	public function build_currency_select_menu($config_value = 0)
+	public function build_currency_select_menu($config_value = 0): void
 	{
 		// Grab the list of all enabled currencies; 0 is for all data
 		$currency_items = $this->entity->get_data($this->operator->build_sql_data(0, true));

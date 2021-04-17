@@ -88,7 +88,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_settings()
+	public function display_settings(): void
 	{
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
@@ -130,12 +130,9 @@ class settings_controller extends admin_main
 	}
 
 	/**
-	 * Set the options a user can configure
-	 *
-	 * @return void
-	 * @access protected
+	 * {@inheritdoc}
 	 */
-	protected function set_settings()
+	protected function set_settings(): void
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
@@ -170,12 +167,12 @@ class settings_controller extends admin_main
 	 * Rebuild items list to conserve only numeric values
 	 *
 	 * @param string $config_value
-	 * @param string $added_value
+	 * @param int $added_value
 	 *
 	 * @return string
 	 * @access private
 	 */
-	private function rebuild_items_list($config_value, $added_value = '')
+	private function rebuild_items_list($config_value, $added_value = 0): string
 	{
 		$items_list = explode(',', $config_value);
 		$merge_items = [];
@@ -194,7 +191,7 @@ class settings_controller extends admin_main
 	}
 
 	/**
-	 * Add integer data in an array
+	 * Only add by reference integer data in an array
 	 *
 	 * @param array  &$array
 	 * @param string  $var
@@ -202,7 +199,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_int_data_in_array(&$array, $var)
+	private function add_int_data_in_array(&$array, $var): void
 	{
 		if (settype($var, 'integer') && $var != 0)
 		{
@@ -218,7 +215,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function build_stat_position_select_menu($default)
+	public function build_stat_position_select_menu($default): void
 	{
 		// List of positions allowed
 		$positions = ['top', 'bottom', 'both'];

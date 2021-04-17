@@ -78,7 +78,7 @@ class ipn_log
 	/**
 	 * @return bool
 	 */
-	public function is_use_log_error()
+	public function is_use_log_error(): bool
 	{
 		return $this->use_log_error;
 	}
@@ -88,7 +88,7 @@ class ipn_log
 	 *
 	 * @param bool $use_log_error
 	 */
-	public function set_use_log_error($use_log_error)
+	public function set_use_log_error($use_log_error): void
 	{
 		$this->use_log_error = (bool) $use_log_error;
 	}
@@ -105,7 +105,7 @@ class ipn_log
 	 * @return void
 	 * @access public
 	 */
-	public function set_report_data($remote_uri, $remote_type, $remote_report_response, $remote_response_status, $remote_data)
+	public function set_report_data($remote_uri, $remote_type, $remote_report_response, $remote_response_status, $remote_data): void
 	{
 		$this->report_data = [
 			'remote_uri'             => (string) $remote_uri,
@@ -128,7 +128,7 @@ class ipn_log
 	 * @return void
 	 * @access public
 	 */
-	public function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = [])
+	public function log_error($message, $log_in_file = false, $exit = false, $error_type = E_USER_NOTICE, $args = []): void
 	{
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
@@ -168,7 +168,7 @@ class ipn_log
 	 *
 	 * @param \skouat\ppde\output_handler\log_wrapper_output_handler $handler The output handler
 	 */
-	public function set_output_handler(\skouat\ppde\output_handler\log_wrapper_output_handler $handler)
+	public function set_output_handler(\skouat\ppde\output_handler\log_wrapper_output_handler $handler): void
 	{
 		$this->output_handler = $handler;
 	}
@@ -183,7 +183,7 @@ class ipn_log
 	 * @return string
 	 * @access public
 	 */
-	public function get_text_report()
+	public function get_text_report(): string
 	{
 		$r = '';
 
@@ -213,7 +213,7 @@ class ipn_log
 	 * @return void
 	 * @access private
 	 */
-	private function text_report_insert_line(&$r = '')
+	private function text_report_insert_line(&$r = ''): void
 	{
 		$r .= str_repeat('-', 80);
 	}
@@ -226,7 +226,7 @@ class ipn_log
 	 * @return void
 	 * @access private
 	 */
-	private function text_report_insert_args(&$r = '')
+	private function text_report_insert_args(&$r = ''): void
 	{
 		foreach ($this->report_data['remote_data'] as $key => $value)
 		{

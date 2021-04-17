@@ -87,12 +87,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Display the currency list
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		// Check if currency_order is valid and fix it if necessary
 		$this->ppde_operator->fix_currency_order();
@@ -106,12 +103,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Add a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function add()
+	public function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_currency');
@@ -141,7 +135,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_currency_data($entity, $data)
+	private function add_edit_currency_data($entity, $data): void
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -201,7 +195,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors): void
 	{
 		if (!$entity->get_id())
 		{
@@ -218,12 +212,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Edit a Currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function edit()
+	public function edit(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 		// Add form key
@@ -250,12 +241,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Move a currency up/down
-	 *
-	 * @return void
-	 * @access   public
+	 * {@inheritdoc}
 	 */
-	public function move()
+	public function move(): void
 	{
 		$direction = $this->args['action'];
 
@@ -295,12 +283,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Enable/disable a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function enable()
+	public function enable(): void
 	{
 		$action = $this->args['action'];
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
@@ -337,12 +322,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Delete a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function delete()
+	public function delete(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
@@ -363,7 +345,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function currency_assign_template_vars($data)
+	protected function currency_assign_template_vars($data): void
 	{
 		if (!$data['currency_enable'])
 		{

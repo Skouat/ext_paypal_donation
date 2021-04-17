@@ -23,22 +23,22 @@ class main_donor_list extends main_controller
 	/** @var string */
 	private $u_action;
 
-	public function set_entity_transactions(\skouat\ppde\entity\transactions $ppde_entity_transactions)
+	public function set_entity_transactions(\skouat\ppde\entity\transactions $ppde_entity_transactions): void
 	{
 		$this->ppde_entity_transactions = $ppde_entity_transactions;
 	}
 
-	public function set_operator_transactions(\skouat\ppde\operators\transactions $ppde_operator_transactions)
+	public function set_operator_transactions(\skouat\ppde\operators\transactions $ppde_operator_transactions): void
 	{
 		$this->ppde_operator_transactions = $ppde_operator_transactions;
 	}
 
-	public function set_pagination(\phpbb\pagination $pagination)
+	public function set_pagination(\phpbb\pagination $pagination): void
 	{
 		$this->pagination = $pagination;
 	}
 
-	public function set_path_helper(\phpbb\path_helper $path_helper)
+	public function set_path_helper(\phpbb\path_helper $path_helper): void
 	{
 		$this->path_helper = $path_helper;
 	}
@@ -147,7 +147,7 @@ class main_donor_list extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function check_params($params_ary, $excluded_keys)
+	private function check_params($params_ary, $excluded_keys): array
 	{
 		$params = [];
 
@@ -179,7 +179,7 @@ class main_donor_list extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function set_url_delim($url, $params)
+	private function set_url_delim($url, $params): string
 	{
 		return (empty($params)) ? $url . '?' : $url . '&amp;';
 	}
@@ -194,7 +194,7 @@ class main_donor_list extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function set_sort_key($sk, $sk_comp, $sd)
+	private function set_sort_key($sk, $sk_comp, $sd): string
 	{
 		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
 	}

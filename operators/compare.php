@@ -35,7 +35,7 @@ class compare
 	 * @return bool
 	 * @access public
 	 */
-	public function compare_value($value1, $value2, $operator)
+	public function compare_value($value1, $value2, $operator): bool
 	{
 		if (array_key_exists($operator, self::$operators_table))
 		{
@@ -54,7 +54,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_lt($a, $b)
+	private function compare_lt($a, $b): bool
 	{
 		return $a < $b;
 	}
@@ -68,7 +68,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_lte($a, $b)
+	private function compare_lte($a, $b): bool
 	{
 		return $a <= $b;
 	}
@@ -82,7 +82,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_eq($a, $b)
+	private function compare_eq($a, $b): bool
 	{
 		return $a == $b;
 	}
@@ -96,7 +96,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_id($a, $b)
+	private function compare_id($a, $b): bool
 	{
 		return $a === $b;
 	}
@@ -110,7 +110,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_gte($a, $b)
+	private function compare_gte($a, $b): bool
 	{
 		return $a >= $b;
 	}
@@ -124,7 +124,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_gt($a, $b)
+	private function compare_gt($a, $b): bool
 	{
 		return $a > $b;
 	}
@@ -138,7 +138,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_diff($a, $b)
+	private function compare_diff($a, $b): bool
 	{
 		return $a <> $b;
 	}
@@ -152,7 +152,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_not_eq($a, $b)
+	private function compare_not_eq($a, $b): bool
 	{
 		return $a != $b;
 	}
@@ -166,7 +166,7 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_not_id($a, $b)
+	private function compare_not_id($a, $b): bool
 	{
 		return $a !== $b;
 	}

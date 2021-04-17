@@ -87,7 +87,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function load_index_data()
+	public function load_index_data(): void
 	{
 		if ($this->config['ppde_enable'] && $this->config['ppde_stats_index_enable'])
 		{
@@ -107,7 +107,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function add_page_header_link()
+	public function add_page_header_link(): void
 	{
 		$this->template->assign_vars([
 			'S_PPDE_LINK_ENABLED'           => $this->is_donate_link_allowed(),
@@ -123,7 +123,7 @@ class listener implements EventSubscriberInterface
 	 * @return bool
 	 * @access private
 	 */
-	private function is_donate_link_allowed()
+	private function is_donate_link_allowed(): bool
 	{
 		return $this->ppde_controller_main->ppde_actions_auth->can_use_ppde() && $this->config['ppde_enable'] && $this->config['ppde_header_link'];
 	}
@@ -134,7 +134,7 @@ class listener implements EventSubscriberInterface
 	 * @return bool
 	 * @access private
 	 */
-	private function is_donors_list_link_allowed()
+	private function is_donors_list_link_allowed(): bool
 	{
 		return $this->ppde_controller_main->ppde_actions_auth->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
@@ -147,7 +147,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function load_language_on_setup($event)
+	public function load_language_on_setup($event): void
 	{
 		$lang_set_ext = $event['lang_set_ext'];
 		$lang_set_ext[] = [
@@ -165,7 +165,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function viewonline_page($event)
+	public function viewonline_page($event): void
 	{
 		if ($event['on_page'][1] == 'app')
 		{
@@ -191,7 +191,7 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function add_permissions($event)
+	public function add_permissions($event): void
 	{
 		$event->update_subarray('categories', 'ppde', 'ACL_CAT_PPDE');
 		$event->update_subarray('permissions', 'a_ppde_manage', ['lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde']);

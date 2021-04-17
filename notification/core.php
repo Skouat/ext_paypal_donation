@@ -50,7 +50,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function notify_donation_errors()
+	public function notify_donation_errors(): void
 	{
 		$notification_data = $this->notify_donation_core('donation_errors');
 		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_errors', $notification_data);
@@ -62,7 +62,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function notify_admin_donation_received()
+	public function notify_admin_donation_received(): void
 	{
 		$notification_data = $this->notify_donation_core();
 		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
@@ -74,7 +74,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function notify_donor_donation_received()
+	public function notify_donor_donation_received(): void
 	{
 		$notification_data = $this->notify_donation_core();
 		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
@@ -88,7 +88,7 @@ class core
 	 * @return array
 	 * @access private
 	 */
-	private function notify_donation_core($donation_type = '')
+	private function notify_donation_core($donation_type = ''): array
 	{
 		switch ($donation_type)
 		{

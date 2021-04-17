@@ -89,12 +89,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Display the pages
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		// Get list of available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -139,7 +136,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_langs_template_vars($lang, $current = 0)
+	private function assign_langs_template_vars($lang, $current = 0): void
 	{
 		$this->template->assign_block_vars('ppde_langs', [
 			'LANG_LOCAL_NAME' => $lang['name'],
@@ -149,12 +146,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Add a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function add()
+	public function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_donation_pages');
@@ -187,7 +181,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function create_language_options($current)
+	protected function create_language_options($current): void
 	{
 		// Grab all available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -208,7 +202,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data)
+	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data): void
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -291,7 +285,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors)
+	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors): void
 	{
 		if ($this->preview && empty($errors))
 		{
@@ -311,7 +305,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_predefined_block_vars($vars)
+	private function assign_predefined_block_vars($vars): void
 	{
 		for ($i = 0, $size = count($vars); $i < $size; $i++)
 		{
@@ -332,7 +326,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors): void
 	{
 		if ($this->can_submit_data($errors))
 		{
@@ -356,7 +350,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function get_lang_local_name($langs)
+	private function get_lang_local_name($langs): void
 	{
 		foreach ($langs as $lang)
 		{
@@ -370,7 +364,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_custom_bbcodes($bbcode_enabled)
+	private function include_custom_bbcodes($bbcode_enabled): void
 	{
 		if ($bbcode_enabled)
 		{
@@ -388,7 +382,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_function($function_name, $function_filepath)
+	private function include_function($function_name, $function_filepath): void
 	{
 		if (!function_exists($function_name))
 		{
@@ -402,7 +396,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_smilies($smilies_enabled)
+	private function include_smilies($smilies_enabled): void
 	{
 		if ($smilies_enabled)
 		{
@@ -412,12 +406,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Edit a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function edit()
+	public function edit(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
@@ -449,12 +440,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Delete a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function delete()
+	public function delete(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 

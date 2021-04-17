@@ -20,7 +20,7 @@ class transaction_exception extends \Exception
 	/**
 	 * @return array
 	 */
-	public function get_errors()
+	public function get_errors(): array
 	{
 		return $this->errors;
 	}

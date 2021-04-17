@@ -93,7 +93,7 @@ class main_controller
 	 * @return bool
 	 * @access private
 	 */
-	public function donorlist_is_enabled()
+	public function donorlist_is_enabled(): bool
 	{
 		return $this->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
 	}
@@ -104,7 +104,7 @@ class main_controller
 	 * @return bool
 	 * @access public
 	 */
-	public function use_ipn()
+	public function use_ipn(): bool
 	{
 		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_ipn_requirement_satisfied();
 	}
@@ -115,7 +115,7 @@ class main_controller
 	 * @return bool
 	 * @access public
 	 */
-	public function is_ipn_requirement_satisfied()
+	public function is_ipn_requirement_satisfied(): bool
 	{
 		return !empty($this->config['ppde_curl_detected']) && !empty($this->config['ppde_tls_detected']);
 	}
@@ -129,7 +129,7 @@ class main_controller
 	 * @return string
 	 * @access public
 	 */
-	public function get_paypal_uri($is_test_ipn = false)
+	public function get_paypal_uri($is_test_ipn = false): string
 	{
 		$remote_list = ipn_paypal::get_remote_uri();
 
@@ -147,7 +147,7 @@ class main_controller
 	 * @return bool
 	 * @access public
 	 */
-	public function use_sandbox()
+	public function use_sandbox(): bool
 	{
 		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && $this->is_sandbox_founder_enable();
 	}
@@ -158,7 +158,7 @@ class main_controller
 	 * @return bool
 	 * @access public
 	 */
-	public function is_sandbox_founder_enable()
+	public function is_sandbox_founder_enable(): bool
 	{
 		return (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
 	}

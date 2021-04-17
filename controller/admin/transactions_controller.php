@@ -129,12 +129,9 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Display the transactions list
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		/** @type \phpbb\pagination $pagination */
 		$pagination = $this->container->get('pagination');
@@ -213,7 +210,7 @@ class transactions_controller extends admin_main
 	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): int
 	{
 		$count_logs = ($log_count !== false);
 
@@ -234,7 +231,7 @@ class transactions_controller extends admin_main
 	 * @return array $log
 	 * @access private
 	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): array
 	{
 		$this->entry_count = 0;
 		$this->last_page_offset = $offset;
@@ -277,17 +274,17 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * @return integer
+	 * @return int
 	 */
-	public function get_log_count()
+	public function get_log_count(): int
 	{
 		return ($this->entry_count) ? (int) $this->entry_count : 0;
 	}
 
 	/**
-	 * @return integer
+	 * @return int
 	 */
-	public function get_valid_offset()
+	public function get_valid_offset(): int
 	{
 		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
 	}
@@ -302,7 +299,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	public function set_hidden_fields($id, $mode, $action)
+	public function set_hidden_fields($id, $mode, $action): void
 	{
 		$this->args['action'] = $action;
 		$this->args['hidden_fields'] = [
@@ -341,7 +338,10 @@ class transactions_controller extends admin_main
 		}
 	}
 
-	public function change()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function change(): void
 	{
 		$username = $this->request->variable('username', '', true);
 		$donor_id = $this->request->variable('donor_id', 0);
@@ -384,7 +384,7 @@ class transactions_controller extends admin_main
 	 * @throws transaction_exception
 	 * @access private
 	 */
-	private function validate_user_id($username, $donor_id = 0)
+	private function validate_user_id($username, $donor_id = 0): int
 	{
 		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
 		{
@@ -401,7 +401,7 @@ class transactions_controller extends admin_main
 		return $user_id;
 	}
 
-	public function approve()
+	public function approve(): void
 	{
 		$transaction_id = (int) $this->args['hidden_fields']['id'];
 		$txn_approved = !empty($this->args['hidden_fields']['txn_errors_approved']) ? false : true;
@@ -433,7 +433,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function do_transactions_actions($is_member)
+	private function do_transactions_actions($is_member): void
 	{
 		$this->ppde_actions->update_overview_stats();
 		$this->ppde_actions->update_raised_amount();
@@ -446,7 +446,10 @@ class transactions_controller extends admin_main
 		}
 	}
 
-	public function add()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function add(): void
 	{
 		$errors = [];
 
@@ -495,7 +498,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function request_transaction_vars()
+	private function request_transaction_vars(): array
 	{
 		return [
 			'MT_ANONYMOUS'          => $this->request->is_set('u'),
@@ -524,7 +527,7 @@ class transactions_controller extends admin_main
 	 * @throws transaction_exception
 	 * @access private
 	 */
-	private function build_data_ary($transaction_data)
+	private function build_data_ary($transaction_data): array
 	{
 		$errors = [];
 
@@ -606,7 +609,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_gross_too_low($data)
+	private function mc_gross_too_low($data): array
 	{
 		if ($data['MT_MC_GROSS'] <= 0)
 		{
@@ -624,7 +627,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_negative($data)
+	private function mc_fee_negative($data): array
 	{
 		if ($data['MT_MC_FEE'] < 0)
 		{
@@ -642,7 +645,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_too_high($data)
+	private function mc_fee_too_high($data): array
 	{
 		if ($data['MT_MC_FEE'] >= $data['MT_MC_GROSS'])
 		{
@@ -661,7 +664,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date)
+	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date): array
 	{
 		if ($payment_date_timestamp_at_midnight === false)
 		{
@@ -678,7 +681,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_time_timestamp($payment_time_timestamp, $payment_date)
+	private function payment_time_timestamp($payment_time_timestamp, $payment_date): array
 	{
 		if ($payment_time_timestamp === false)
 		{
@@ -694,7 +697,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_time($payment_date_time)
+	private function payment_date_time($payment_date_time): array
 	{
 		if ($payment_date_time > time())
 		{
@@ -710,7 +713,7 @@ class transactions_controller extends admin_main
 	 * @return array Array of strings representing the current time, each in a different format
 	 * @access private
 	 */
-	private function get_payment_time_examples()
+	private function get_payment_time_examples(): array
 	{
 		$formats = [
 			'H:i:s',
@@ -729,7 +732,10 @@ class transactions_controller extends admin_main
 		return $examples;
 	}
 
-	public function view()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function view(): void
 	{
 		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
@@ -753,7 +759,10 @@ class transactions_controller extends admin_main
 		]);
 	}
 
-	public function delete()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function delete(): void
 	{
 		$where_sql = '';
 
@@ -781,7 +790,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_log_assign_template_vars($row)
+	protected function display_log_assign_template_vars($row): void
 	{
 		$this->template->assign_block_vars('log', [
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),

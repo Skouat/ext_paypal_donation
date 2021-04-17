@@ -67,14 +67,9 @@ class currency extends main
 	}
 
 	/**
-	 * SQL Query to return the ID of selected currency
-	 *
-	 * @param string $iso_code Currency ISO code name
-	 *
-	 * @return string
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function build_sql_data_exists($iso_code = '')
+	public function build_sql_data_exists($iso_code = ''): string
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
@@ -87,7 +82,7 @@ class currency extends main
 	 * @return int Order identifier
 	 * @access public
 	 */
-	public function get_currency_order()
+	public function get_currency_order(): int
 	{
 		return (int) $this->data['currency_order'] ?? 0;
 	}
@@ -98,7 +93,7 @@ class currency extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function get_currency_position()
+	public function get_currency_position(): bool
 	{
 		return (bool) $this->data['currency_on_left'] ?? false;
 	}
@@ -109,7 +104,7 @@ class currency extends main
 	 * @return string ISO code name
 	 * @access public
 	 */
-	public function get_iso_code()
+	public function get_iso_code(): string
 	{
 		return (string) $this->data['currency_iso_code'] ?? '';
 	}
@@ -120,7 +115,7 @@ class currency extends main
 	 * @return string Currency symbol
 	 * @access public
 	 */
-	public function get_symbol()
+	public function get_symbol(): string
 	{
 		return (isset($this->data['currency_symbol'])) ? (string) html_entity_decode($this->data['currency_symbol'], ENT_COMPAT | ENT_HTML5, 'UTF-8') : '';
 	}
@@ -133,7 +128,7 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_currency_position($on_left)
+	public function set_currency_position($on_left): currency
 	{
 		// Set the item type on our data array
 		$this->data['currency_on_left'] = (bool) $on_left;
@@ -149,7 +144,7 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_currency_enable($enable)
+	public function set_currency_enable($enable): currency
 	{
 		// Set the item type on our data array
 		$this->data['currency_enable'] = (bool) $enable;
@@ -165,7 +160,7 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_iso_code($iso_code)
+	public function set_iso_code($iso_code): currency
 	{
 		// Set the lang_id on our data array
 		$this->data['currency_iso_code'] = (string) $iso_code;
@@ -181,7 +176,7 @@ class currency extends main
 	 * @return currency $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_symbol($symbol)
+	public function set_symbol($symbol): currency
 	{
 		// Set the lang_id on our data array
 		$this->data['currency_symbol'] = (string) htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
@@ -190,12 +185,9 @@ class currency extends main
 	}
 
 	/**
-	 * Check if required field are set
-	 *
-	 * @return bool
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function check_required_field()
+	public function check_required_field(): bool
 	{
 		return empty($this->data['currency_name']) || empty($this->data['currency_iso_code']) || empty($this->data['currency_symbol']);
 	}
@@ -231,7 +223,7 @@ class currency extends main
 	 * @return int Order identifier
 	 * @access private
 	 */
-	private function get_max_order()
+	private function get_max_order(): int
 	{
 		$sql = 'SELECT MAX(currency_order) AS max_order
 			FROM ' . $this->currency_table;
@@ -248,7 +240,7 @@ class currency extends main
 	 * @return void
 	 * @access protected
 	 */
-	protected function check_currency_enable()
+	protected function check_currency_enable(): void
 	{
 		if ($this->get_currency_enable())
 		{
@@ -263,7 +255,7 @@ class currency extends main
 	 * @return boolean
 	 * @access public
 	 */
-	public function get_currency_enable()
+	public function get_currency_enable(): bool
 	{
 		return (bool) $this->data['currency_enable'] ?? false;
 	}

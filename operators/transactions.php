@@ -40,7 +40,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data($transaction_id = 0)
+	public function build_sql_data($transaction_id = 0): string
 	{
 		// Build main sql request
 		$sql_ary = [
@@ -74,7 +74,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function sql_donorlist_ary($detailed = false, $order_by = '')
+	public function sql_donorlist_ary($detailed = false, $order_by = ''): array
 	{
 		// Build sql request
 		$sql_donorslist_ary = [
@@ -112,7 +112,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function sql_last_donation_ary($transaction_id)
+	public function sql_last_donation_ary($transaction_id): array
 	{
 		// Build sql request
 		return [
@@ -130,7 +130,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_donorlist_data($sql_donorlist_ary)
+	public function build_sql_donorlist_data($sql_donorlist_ary): string
 	{
 		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
@@ -145,7 +145,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function query_sql_count($count_sql_ary, $selected_field)
+	public function query_sql_count($count_sql_ary, $selected_field): int
 	{
 		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
 
@@ -173,7 +173,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function get_logs_sql_ary($keywords, $sort_by, $log_time)
+	public function get_logs_sql_ary($keywords, $sort_by, $log_time): array
 	{
 		$sql_keywords = '';
 		if (!empty($keywords))
@@ -210,7 +210,7 @@ class transactions
 	 * @return string Returns the SQL condition searching for the keywords
 	 * @access private
 	 */
-	private function generate_sql_keyword($keywords, $statement_operator = 'AND')
+	private function generate_sql_keyword($keywords, $statement_operator = 'AND'): string
 	{
 		// Use no preg_quote for $keywords because this would lead to sole
 		// backslashes being added. We also use an OR connection here for
@@ -292,7 +292,7 @@ class transactions
 	 * @return array $log
 	 * @access public
 	 */
-	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0)
+	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0): array
 	{
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
@@ -330,7 +330,7 @@ class transactions
 	 * @return string A string consisting of what is wanted.
 	 * @access private
 	 */
-	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false)
+	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false): string
 	{
 		static $_profile_cache;
 
@@ -367,7 +367,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_marked_where_sql($marked)
+	public function build_marked_where_sql($marked): string
 	{
 		$sql_in = [];
 		foreach ($marked as $mark)
@@ -387,7 +387,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function sql_query_count_result($type, $test_ipn)
+	public function sql_query_count_result($type, $test_ipn): int
 	{
 		switch ($type)
 		{
@@ -431,7 +431,7 @@ class transactions
 	 * @return array
 	 * @access private
 	 */
-	private function sql_select_stats_main($field_name)
+	private function sql_select_stats_main($field_name): array
 	{
 		return [
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
@@ -448,7 +448,7 @@ class transactions
 	 * @return void
 	 * @access public
 	 */
-	public function sql_update_user_stats($user_id, $value)
+	public function sql_update_user_stats($user_id, $value): void
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET user_ppde_donated_amount = ' . (float) $value . '
@@ -464,7 +464,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function build_data_ary($data)
+	public function build_data_ary($data): array
 	{
 		return [
 			'business'          => $data['business'],

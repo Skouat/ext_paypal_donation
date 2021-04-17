@@ -215,7 +215,7 @@ class ipn_listener
 		$this->request = $request;
 	}
 
-	public function handle()
+	public function handle(): void
 	{
 		$this->language->add_lang('donate', 'skouat/ppde');
 
@@ -257,7 +257,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_transaction()
+	private function validate_transaction(): bool
 	{
 		// Request and populate $this->transaction_data
 		$this->handle_post_data();
@@ -304,7 +304,7 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function handle_post_data()
+	private function handle_post_data(): void
 	{
 		// Get PayPal data
 		$post_data = array_map([$this->ppde_actions_post_data, 'get_post_data'], self::$paypal_vars_table);
@@ -322,7 +322,7 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function check_account_id()
+	private function check_account_id(): void
 	{
 		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 		if ($account_value != $this->transaction_data['receiver_id'] && $account_value != $this->transaction_data['receiver_email'])
@@ -337,7 +337,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function ipn_use_sandbox()
+	private function ipn_use_sandbox(): bool
 	{
 		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
 	}
@@ -349,7 +349,7 @@ class ipn_listener
 	 * @return bool $this->verified
 	 * @access private
 	 */
-	private function check_response()
+	private function check_response(): bool
 	{
 		// Prepare data to include in report
 		$this->ppde_ipn_log->set_report_data($this->ppde_ipn_paypal->get_u_paypal(), $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
@@ -380,7 +380,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function txn_is_verified()
+	private function txn_is_verified(): bool
 	{
 		return $this->ppde_ipn_paypal->is_curl_strcmp('VERIFIED');
 	}
@@ -391,7 +391,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function txn_is_invalid()
+	private function txn_is_invalid(): bool
 	{
 		return $this->ppde_ipn_paypal->is_curl_strcmp('INVALID');
 	}
@@ -402,7 +402,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_actions()
+	private function validate_actions(): bool
 	{
 		if (!$this->verified)
 		{
@@ -423,7 +423,7 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function prepare_data()
+	private function prepare_data(): void
 	{
 		$this->ppde_actions->set_transaction_data($this->transaction_data);
 		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
@@ -437,7 +437,7 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function do_actions()
+	private function do_actions(): void
 	{
 		if ($this->tasks_list['payment_completed'])
 		{
@@ -493,7 +493,7 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function set_transaction_data($post_data)
+	private function set_transaction_data($post_data): void
 	{
 		$this->transaction_data['txn_errors'] = '';
 		$this->transaction_data[$post_data['name']] = $post_data['value'];

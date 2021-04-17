@@ -41,7 +41,7 @@ class auth
 		$this->php_ext = $php_ext;
 	}
 
-	public function set_guest_acl()
+	public function set_guest_acl(): void
 	{
 		if (!class_exists('\auth_admin'))
 		{
@@ -59,7 +59,7 @@ class auth
 	 * @return bool
 	 * @access public
 	 */
-	public function can_use_ppde()
+	public function can_use_ppde(): bool
 	{
 		return $this->auth->acl_get('u_ppde_use');
 	}
@@ -68,7 +68,7 @@ class auth
 	 * @return bool
 	 * @access public
 	 */
-	public function can_view_ppde_donorlist()
+	public function can_view_ppde_donorlist(): bool
 	{
 		return $this->auth->acl_get('u_ppde_view_donorlist');
 	}

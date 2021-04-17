@@ -83,7 +83,7 @@ class paypal_features_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_settings()
+	public function display_settings(): void
 	{
 		if ($this->config['ppde_first_start'])
 		{
@@ -125,12 +125,9 @@ class paypal_features_controller extends admin_main
 	}
 
 	/**
-	 * Set the options a user can configure
-	 *
-	 * @return void
-	 * @access protected
+	 * {@inheritdoc}
 	 */
-	protected function set_settings()
+	protected function set_settings(): void
 	{
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));

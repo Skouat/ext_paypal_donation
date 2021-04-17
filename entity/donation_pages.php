@@ -87,7 +87,7 @@ class donation_pages extends main
 	 * @return int Lang identifier
 	 * @access public
 	 */
-	public function get_lang_id()
+	public function get_lang_id(): int
 	{
 		return (int) $this->data['page_lang_id'] ?? 0;
 	}
@@ -114,7 +114,7 @@ class donation_pages extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_message_for_edit()
+	public function get_message_for_edit(): string
 	{
 		// Use defaults if these haven't been set yet
 		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
@@ -135,7 +135,7 @@ class donation_pages extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_message_for_display($censor_text = true)
+	public function get_message_for_display($censor_text = true): string
 	{
 		// If these haven't been set yet; use defaults
 		$message = (isset($this->data['page_content'])) ? $this->data['page_content'] : '';
@@ -170,7 +170,7 @@ class donation_pages extends main
 	 * @return void
 	 * @access protected
 	 */
-	protected function set_message_option($option_value, $negate = false, $reparse_message = true)
+	protected function set_message_option($option_value, $negate = false, $reparse_message = true): void
 	{
 		// Set item_text_bbcode_options to 0 if it does not yet exist
 		$this->data['page_content_bbcode_options'] = (isset($this->data['page_content_bbcode_options'])) ? $this->data['page_content_bbcode_options'] : 0;
@@ -230,7 +230,7 @@ class donation_pages extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function message_bbcode_enabled()
+	public function message_bbcode_enabled(): bool
 	{
 		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
 	}
@@ -241,7 +241,7 @@ class donation_pages extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function message_magic_url_enabled()
+	public function message_magic_url_enabled(): bool
 	{
 		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
 	}
@@ -252,7 +252,7 @@ class donation_pages extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function message_smilies_enabled()
+	public function message_smilies_enabled(): bool
 	{
 		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
 	}
@@ -323,12 +323,9 @@ class donation_pages extends main
 	}
 
 	/**
-	 * SQL Query to return the ID of selected donation page
-	 *
-	 * @return string
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function build_sql_data_exists()
+	public function build_sql_data_exists(): string
 	{
 		return 'SELECT page_id
 			FROM ' . $this->donation_pages_table . "
@@ -337,12 +334,9 @@ class donation_pages extends main
 	}
 
 	/**
-	 * Check if required field are set
-	 *
-	 * @return bool
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function check_required_field()
+	public function check_required_field(): bool
 	{
 		return empty($this->data['page_title']) || empty($this->data['page_lang_id']);
 	}

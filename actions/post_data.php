@@ -70,7 +70,7 @@ class post_data
 	 * @return array
 	 * @access public
 	 */
-	public function get_post_data($data_ary = [])
+	public function get_post_data($data_ary = []): array
 	{
 		// Request variables
 		if (is_array($data_ary['default']))
@@ -92,7 +92,7 @@ class post_data
 	 * @return array
 	 * @access public
 	 */
-	public function check_post_data($data_ary = [])
+	public function check_post_data($data_ary = []): array
 	{
 		$data_ary['txn_errors'] = '';
 		// Check all conditions declared for this post_data
@@ -117,7 +117,7 @@ class post_data
 	 * @access public
 	 */
 
-	public function call_func($data_ary)
+	public function call_func($data_ary): array
 	{
 		$check = [];
 		$check['txn_errors'] = '';
@@ -149,7 +149,7 @@ class post_data
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_length($value, $statement)
+	public function check_post_data_length($value, $statement): bool
 	{
 		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
 	}
@@ -163,7 +163,7 @@ class post_data
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_ascii($value)
+	public function check_post_data_ascii($value): bool
 	{
 		return strlen($value) == strspn($value, self::ASCII_RANGE);
 	}
@@ -178,7 +178,7 @@ class post_data
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_content($value, $content_ary)
+	public function check_post_data_content($value, $content_ary): bool
 	{
 		return in_array($value, $content_ary);
 	}
@@ -192,7 +192,7 @@ class post_data
 	 * @return bool
 	 * @access public
 	 */
-	public function check_post_data_empty($value)
+	public function check_post_data_empty($value): bool
 	{
 		return empty($value) ? false : true;
 	}
@@ -207,7 +207,7 @@ class post_data
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_length($value, $length)
+	public function set_post_data_length($value, $length): string
 	{
 		return substr($value, 0, (int) $length);
 	}
@@ -222,7 +222,7 @@ class post_data
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_lowercase($value, $force = false)
+	public function set_post_data_lowercase($value, $force = false): string
 	{
 		return $force ? strtolower($value) : $value;
 	}
@@ -237,7 +237,7 @@ class post_data
 	 * @return string
 	 * @access public
 	 */
-	public function set_post_data_strtotime($value, $force = false)
+	public function set_post_data_strtotime($value, $force = false): string
 	{
 		return $force ? strtotime($value) : $value;
 	}

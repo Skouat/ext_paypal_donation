@@ -40,7 +40,7 @@ class donation_pages
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data($lang_id = 0, $mode = 'all_pages')
+	public function build_sql_data($lang_id = 0, $mode = 'all_pages'): string
 	{
 		return 'SELECT *
 				FROM ' . $this->ppde_donation_pages_table . '
@@ -57,7 +57,7 @@ class donation_pages
 	 * @return string
 	 * @access private
 	 */
-	private function build_sql_and_page_title($mode)
+	private function build_sql_and_page_title($mode): string
 	{
 		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
 		switch ($mode)
@@ -82,7 +82,7 @@ class donation_pages
 	 * @return array $langs
 	 * @access public
 	 */
-	public function get_languages($lang_id = 0)
+	public function get_languages($lang_id = 0): array
 	{
 		// Request by id if provided, otherwise request all
 		$sql_where = ($lang_id != 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';

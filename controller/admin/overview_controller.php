@@ -123,7 +123,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function display_overview($action)
+	public function display_overview($action): void
 	{
 		if ($this->config['ppde_first_start'])
 		{
@@ -189,7 +189,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function do_action($action)
+	private function do_action($action): void
 	{
 		if ($action)
 		{
@@ -211,7 +211,7 @@ class overview_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function display_confirm($action)
+	private function display_confirm($action): void
 	{
 		switch ($action)
 		{
@@ -241,7 +241,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function exec_action($action)
+	private function exec_action($action): void
 	{
 		if (!$this->auth->acl_get('a_ppde_manage'))
 		{
@@ -283,7 +283,7 @@ class overview_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function per_day_stats($config_name)
+	private function per_day_stats($config_name): string
 	{
 		return sprintf('%.2f', (float) $this->config[$config_name] / $this->get_install_days());
 	}
