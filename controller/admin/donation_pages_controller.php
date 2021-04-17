@@ -107,7 +107,7 @@ class donation_pages_controller extends admin_main
 			foreach ($data_ary as $data)
 			{
 				// Do not treat the item whether language identifier does not match
-				if ($data['page_lang_id'] != $entry['id'])
+				if ((int) $data['page_lang_id'] !== (int) $entry['id'])
 				{
 					continue;
 				}

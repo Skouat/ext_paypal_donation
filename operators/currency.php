@@ -85,7 +85,7 @@ class currency
 		{
 			++$order;
 
-			if ($row['currency_order'] != $order)
+			if ((int) $row['currency_order'] !== $order)
 			{
 				$this->db->sql_query('UPDATE ' . $this->ppde_currency_table . '
 						SET currency_order = ' . $order . '

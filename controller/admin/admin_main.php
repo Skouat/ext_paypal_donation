@@ -230,7 +230,7 @@ abstract class admin_main
 			$this->template->assign_block_vars('remote_options', [
 				'REMOTE_ID'   => $id,
 				'REMOTE_NAME' => $remote['hostname'],
-				'S_DEFAULT'   => $default == $id,
+				'S_DEFAULT'   => (int) $default === (int) $id,
 			]);
 		}
 		unset ($remote_list, $remote, $id);
@@ -486,7 +486,7 @@ abstract class admin_main
 	 */
 	protected function required_settings($settings, $depend_on)
 	{
-		if (empty($settings) && $depend_on == true)
+		if (empty($settings) && (bool) $depend_on === true)
 		{
 			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
 		}

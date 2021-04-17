@@ -201,7 +201,7 @@ class settings_controller extends admin_main
 	 */
 	private function add_int_data_in_array(&$array, $var): void
 	{
-		if (settype($var, 'integer') && $var != 0)
+		if (settype($var, 'integer') && $var !== 0)
 		{
 			$array[] = $var;
 		}

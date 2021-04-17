@@ -416,7 +416,7 @@ class ipn_paypal
 		foreach ($raw_post_array as $keyval)
 		{
 			$keyval = explode('=', $keyval);
-			if (count($keyval) == 2)
+			if (count($keyval) === 2)
 			{
 				// Since we do not want the plus in the datetime string to be encoded to a space, we manually encode it.
 				if ($keyval[0] === 'payment_date')

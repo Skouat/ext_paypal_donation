@@ -85,7 +85,7 @@ class donation_pages
 	public function get_languages($lang_id = 0): array
 	{
 		// Request by id if provided, otherwise request all
-		$sql_where = ($lang_id != 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
+		$sql_where = ($lang_id !== 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
 
 		$langs = [];
 

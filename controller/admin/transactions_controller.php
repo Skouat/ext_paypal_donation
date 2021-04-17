@@ -169,7 +169,7 @@ class transactions_controller extends admin_main
 
 		// Define where and sort sql for use in displaying transactions
 		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
-		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] == 'd') ? 'DESC' : 'ASC');
+		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
 
 		$keywords = $this->request->variable('keywords', '', true);
 		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
@@ -255,7 +255,7 @@ class transactions_controller extends admin_main
 		{
 			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
 
-			if ($this->entry_count == 0)
+			if ($this->entry_count === 0)
 			{
 				// Save the queries, because there are no logs to display
 				$this->last_page_offset = 0;

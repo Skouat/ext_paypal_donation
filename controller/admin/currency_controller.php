@@ -258,14 +258,14 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($this->args[$this->id_prefix_name . '_id']);
 		$current_order = $this->ppde_entity->get_currency_order();
 
-		if ($current_order == 0 && $direction == 'move_up')
+		if (($current_order === 0) && ($direction === 'move_up'))
 		{
 			return;
 		}
 
 		// on move_down, switch position with next order_id...
 		// on move_up, switch position with previous order_id...
-		$switch_order_id = ($direction == 'move_down') ? $current_order + 1 : $current_order - 1;
+		$switch_order_id = ($direction === 'move_down') ? $current_order + 1 : $current_order - 1;
 
 		$move_executed = $this->ppde_operator->move($switch_order_id, $current_order, $this->ppde_entity->get_id());
 
@@ -297,7 +297,7 @@ class currency_controller extends admin_main
 		}
 
 		// Return an error if it's the default currency
-		if ($this->config['ppde_default_currency'] == $currency_id && ($action == 'deactivate'))
+		if (((int) $this->config['ppde_default_currency'] === $currency_id) && ($action === 'deactivate'))
 		{
 			trigger_error($this->language->lang('PPDE_CANNOT_DISABLE_DEFAULT_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
@@ -306,16 +306,16 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($currency_id);
 
 		// Set the new status for this currency
-		$this->ppde_entity->set_currency_enable($action == 'activate');
+		$this->ppde_entity->set_currency_enable($action === 'activate');
 
 		// Save data to the database
 		$this->ppde_entity->save($this->ppde_entity->check_required_field());
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), [$this->ppde_entity->get_name()]);
 
-		if ($this->request->is_ajax() && ($action == 'activate' || $action == 'deactivate'))
+		if ($this->request->is_ajax() && (($action === 'activate') || ($action === 'deactivate')))
 		{
-			$action_lang = ($action == 'activate') ? 'DISABLE' : 'ENABLE';
+			$action_lang = ($action === 'activate') ? 'DISABLE' : 'ENABLE';
 			$json_response = new \phpbb\json_response;
 			$json_response->send(['text' => $this->language->lang($action_lang)]);
 		}

@@ -165,7 +165,7 @@ class post_data
 	 */
 	public function check_post_data_ascii($value): bool
 	{
-		return strlen($value) == strspn($value, self::ASCII_RANGE);
+		return strlen($value) === strspn($value, self::ASCII_RANGE);
 	}
 
 	/**
