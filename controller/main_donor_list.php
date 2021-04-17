@@ -158,7 +158,7 @@ class main_donor_list extends main_controller
 				continue;
 			}
 
-			$param = call_user_func_array('request_var', $call);
+			$param = call_user_func_array([$this->request, 'variable'], $call);
 			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
 
 			if (!in_array($key, $excluded_keys))
