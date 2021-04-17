@@ -96,8 +96,8 @@ abstract class admin_main
 	public function get_hidden_fields(): array
 	{
 		return count($this->args) ? array_merge(
-			['i'                           => $this->args['hidden_fields']['i'],
-			 'mode'                        => $this->args['hidden_fields']['mode'],
+			['i'                           => $this->args['i'],
+			 'mode'                        => $this->args['mode'],
 			 'action'                      => $this->args['action'],
 			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
 			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];

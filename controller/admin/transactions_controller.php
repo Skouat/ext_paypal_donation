@@ -338,6 +338,16 @@ class transactions_controller extends admin_main
 		}
 	}
 
+	public function get_hidden_fields(): array
+	{
+		return array_merge(
+			['i'                           => $this->args['hidden_fields']['i'],
+			 'mode'                        => $this->args['hidden_fields']['mode'],
+			 'action'                      => $this->args['action'],
+			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
+			$this->args['hidden_fields']);
+	}
+
 	/**
 	 * {@inheritdoc}
 	 */
