@@ -356,7 +356,7 @@ class transactions
 			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
 		}
 
-		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #FF0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
+		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #ff0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
 	}
 
 	/**
