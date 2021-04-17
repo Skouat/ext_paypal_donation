@@ -307,12 +307,12 @@ class donation_pages_controller extends admin_main
 	 */
 	private function assign_predefined_block_vars($vars): void
 	{
-		for ($i = 0, $size = count($vars); $i < $size; $i++)
+		foreach ($vars as $var)
 		{
 			$this->template->assign_block_vars('dp_vars', [
-					'NAME'     => $vars[$i]['name'],
-					'VARIABLE' => $vars[$i]['var'],
-					'EXAMPLE'  => $vars[$i]['value']]
+					'NAME'     => $var['name'],
+					'VARIABLE' => $var['var'],
+					'EXAMPLE'  => $var['value']]
 			);
 		}
 	}

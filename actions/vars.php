@@ -96,9 +96,9 @@ class vars
 	private function add_predefined_lang_vars(): void
 	{
 		//Add language entries for displaying the vars
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
+		foreach ($this->dp_vars as $index => $value)
 		{
-			$this->dp_vars[$i]['name'] = $this->language->lang('PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1));
+			$this->dp_vars[$index]['name'] = $this->language->lang('PPDE_DP_' . substr(substr($value['var'], 0, -1), 1));
 		}
 	}
 
@@ -113,9 +113,9 @@ class vars
 	public function replace_template_vars($message): string
 	{
 		$tpl_ary = [];
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
+		foreach ($this->dp_vars as $index => $value)
 		{
-			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];
+			$tpl_ary[$value['var']] = $this->dp_vars[$index]['value'];
 		}
 
 		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);

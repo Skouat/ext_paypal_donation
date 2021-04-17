@@ -222,9 +222,9 @@ class transactions
 		if (!empty($keywords))
 		{
 			// Build pattern and keywords...
-			for ($i = 0, $num_keywords = count($keywords); $i < $num_keywords; $i++)
+			foreach ($keywords as $index => $value)
 			{
-				$keywords[$i] = $this->db->sql_like_expression($this->db->get_any_char() . $keywords[$i] . $this->db->get_any_char());
+				$keywords[$index] = $this->db->sql_like_expression($this->db->get_any_char() . $value . $this->db->get_any_char());
 			}
 
 			$sql_keywords = ' ' . $statement_operator . ' (';
