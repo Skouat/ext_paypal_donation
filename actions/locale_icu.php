@@ -202,7 +202,7 @@ class locale_icu
 	 */
 	private function icu_available_features(): bool
 	{
-		return class_exists('\ResourceBundle') && function_exists('\locale_get_default');
+		return class_exists(\ResourceBundle::class) && function_exists('\locale_get_default');
 	}
 
 	/**

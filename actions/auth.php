@@ -43,7 +43,7 @@ class auth
 
 	public function set_guest_acl(): void
 	{
-		if (!class_exists('\auth_admin'))
+		if (!class_exists(\auth_admin::class))
 		{
 			include($this->phpbb_root_path . 'includes/acp/auth.' . $this->php_ext);
 		}
