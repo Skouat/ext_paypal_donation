@@ -30,6 +30,10 @@ abstract class admin_main
 	protected $log;
 	/** @var string */
 	protected $module_name;
+	/** @var \skouat\ppde\actions\locale_icu */
+	protected $ppde_actions_locale;
+	/** @var \skouat\ppde\controller\ipn_paypal */
+	protected $ppde_ipn_paypal;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -492,5 +496,25 @@ abstract class admin_main
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Run system checks if config 'ppde_first_start' is true
+	 *
+	 * @return void
+	 * @throws \ReflectionException
+	 * @access protected
+	 */
+	protected function ppde_first_start(): void
+	{
+		if ($this->config['ppde_first_start'])
+		{
+			$this->ppde_ipn_paypal->set_curl_info();
+			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_ipn_paypal->check_tls();
+			$this->ppde_actions_locale->set_intl_info();
+			$this->ppde_actions_locale->set_intl_detected();
+			$this->config->set('ppde_first_start', '0');
+		}
 	}
 }
