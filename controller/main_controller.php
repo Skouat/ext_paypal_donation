@@ -64,8 +64,8 @@ class main_controller
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		$root_path,
-		$php_ext
+		string $root_path,
+		string $php_ext
 	)
 	{
 		$this->config = $config;
@@ -160,6 +160,6 @@ class main_controller
 	 */
 	public function is_sandbox_founder_enable(): bool
 	{
-		return (!empty($this->config['ppde_sandbox_founder_enable']) && ($this->user->data['user_type'] == USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
+		return (!empty($this->config['ppde_sandbox_founder_enable']) && ((int) $this->user->data['user_type'] === USER_FOUNDER)) || empty($this->config['ppde_sandbox_founder_enable']);
 	}
 }

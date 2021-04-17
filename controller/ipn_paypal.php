@@ -337,7 +337,7 @@ class ipn_paypal
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 			$this->response = curl_exec($ch);
-			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+			$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 			curl_close($ch);
 

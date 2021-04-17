@@ -133,7 +133,7 @@ class ipn_log
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
 		$backtrace = '';
-		if ($this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']))
+		if (!empty($this->config['ppde_sandbox_enable']) && $this->ppde_controller_main->use_ipn())
 		{
 			$backtrace = get_backtrace();
 		}

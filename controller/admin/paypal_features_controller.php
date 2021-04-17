@@ -104,7 +104,7 @@ class paypal_features_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
-		$this->build_remote_uri_select_menu($this->config['ppde_sandbox_remote'], 'sandbox');
+		$this->build_remote_uri_select_menu((int) $this->config['ppde_sandbox_remote'], 'sandbox');
 		$this->template->assign_vars([
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
@@ -118,7 +118,7 @@ class paypal_features_controller extends admin_main
 			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
+			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string'),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
 			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 		]);
@@ -153,10 +153,10 @@ class paypal_features_controller extends admin_main
 		{
 			$this->config->set('ppde_ipn_enable', (string) false);
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
-		};
+		}
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
+		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));
 		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
 	}
 }

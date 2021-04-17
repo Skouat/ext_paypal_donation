@@ -313,7 +313,7 @@ class currency_controller extends admin_main
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), [$this->ppde_entity->get_name()]);
 
-		if ($this->request->is_ajax() && (($action === 'activate') || ($action === 'deactivate')))
+		if ((($action === 'activate') || ($action === 'deactivate')) && $this->request->is_ajax())
 		{
 			$action_lang = ($action === 'activate') ? 'DISABLE' : 'ENABLE';
 			$json_response = new \phpbb\json_response;

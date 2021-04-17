@@ -146,7 +146,7 @@ class core
 	 */
 	public function get_ipn_test(): bool
 	{
-		return (bool) $this->is_ipn_test;
+		return $this->is_ipn_test;
 	}
 
 	/**
@@ -226,7 +226,7 @@ class core
 		$anonymous_user = false;
 
 		// If the user_id is not anonymous
-		if ($this->transaction_data['user_id'] != ANONYMOUS)
+		if ((int) $this->transaction_data['user_id'] !== ANONYMOUS)
 		{
 			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
 
@@ -255,7 +255,7 @@ class core
 	 */
 	public function get_donor_is_member(): bool
 	{
-		return (bool) $this->donor_is_member;
+		return $this->donor_is_member;
 	}
 
 	/**

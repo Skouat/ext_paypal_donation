@@ -95,11 +95,11 @@ class transactions_controller extends admin_main
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		$adm_relative_path,
-		$phpbb_root_path,
-		$php_ext,
-		$table_prefix,
-		$table_ppde_transactions
+		string $adm_relative_path,
+		string $phpbb_root_path,
+		string $php_ext,
+		string $table_prefix,
+		string $table_ppde_transactions
 	)
 	{
 		$this->auth = $auth;
@@ -237,7 +237,7 @@ class transactions_controller extends admin_main
 		$this->last_page_offset = $offset;
 		$url_ary = [];
 
-		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->phpbb_admin_path && $this->ppde_actions->is_in_admin())
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
@@ -278,7 +278,7 @@ class transactions_controller extends admin_main
 	 */
 	public function get_log_count(): int
 	{
-		return ($this->entry_count) ? (int) $this->entry_count : 0;
+		return (int) $this->entry_count ?: 0;
 	}
 
 	/**
@@ -286,7 +286,7 @@ class transactions_controller extends admin_main
 	 */
 	public function get_valid_offset(): int
 	{
-		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
+		return (int) $this->last_page_offset ?: 0;
 	}
 
 	/**
@@ -386,7 +386,7 @@ class transactions_controller extends admin_main
 	 */
 	private function validate_user_id($username, $donor_id = 0): int
 	{
-		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
+		if (($username === '') && ($donor_id === ANONYMOUS || $this->request->is_set('u')))
 		{
 			return ANONYMOUS;
 		}
@@ -404,7 +404,7 @@ class transactions_controller extends admin_main
 	public function approve(): void
 	{
 		$transaction_id = (int) $this->args['hidden_fields']['id'];
-		$txn_approved = !empty($this->args['hidden_fields']['txn_errors_approved']) ? false : true;
+		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
 
 		// Update DB record
 		$this->ppde_entity->load($transaction_id);
@@ -847,7 +847,7 @@ class transactions_controller extends admin_main
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
+			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

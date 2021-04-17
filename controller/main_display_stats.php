@@ -222,7 +222,7 @@ class main_display_stats
 		$varname = strtoupper($varname);
 
 		$this->template->assign_vars([
-			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent, 0),
+			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent),
 			'PPDE_CSS_' . $varname => $this->ppde_css_classname($percent, $reverse_css),
 			'S_' . $varname        => true,
 		]);

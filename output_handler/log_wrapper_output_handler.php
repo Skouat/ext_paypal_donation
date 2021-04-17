@@ -53,9 +53,9 @@ class log_wrapper_output_handler
 		//check if the extension directory exists in the store/ folder
 		$this->ext_folder_exists(dirname($file));
 
-		if ($this->filesystem->is_writable(dirname($file)) && $this->log_path_result)
+		if ($this->log_path_result && $this->filesystem->is_writable(dirname($file)))
 		{
-			$this->file_handle = fopen($file, 'a');
+			$this->file_handle = fopen($file, 'ab');
 		}
 		else
 		{

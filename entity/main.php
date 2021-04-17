@@ -359,7 +359,7 @@ abstract class main
 
 		if (!$all)
 		{
-			if ($this->disallow_deletion($id) && empty($sql_where))
+			if (empty($sql_where) && $this->disallow_deletion($id))
 			{
 				// The item selected does not exists
 				$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
@@ -386,7 +386,7 @@ abstract class main
 	 */
 	private function disallow_deletion($id): bool
 	{
-		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
+		return empty($this->data[$this->table_schema['item_id']['name']]) || ((int) $this->data[$this->table_schema['item_id']['name']] !== $id);
 	}
 
 	/**

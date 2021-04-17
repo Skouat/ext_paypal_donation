@@ -15,7 +15,7 @@ use skouat\ppde\controller\ipn_paypal;
 abstract class admin_main
 {
 	/** @var array */
-	protected $args;
+	protected $args = [];
 	/** @var object \phpbb\config\config */
 	protected $config;
 	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
@@ -85,7 +85,7 @@ abstract class admin_main
 	 */
 	public function set_hidden_fields($id, $mode, $action): void
 	{
-		$this->args = array_merge((array) $this->args, [
+		$this->args = array_merge($this->args, [
 			'i'             => $id,
 			'mode'          => $mode,
 			'action'        => $action,
@@ -228,12 +228,12 @@ abstract class admin_main
 
 			// Set output block vars for display in the template
 			$this->template->assign_block_vars('remote_options', [
-				'REMOTE_ID'   => $id,
+				'REMOTE_ID'   => (int) $id,
 				'REMOTE_NAME' => $remote['hostname'],
 				'S_DEFAULT'   => (int) $default === (int) $id,
 			]);
 		}
-		unset ($remote_list, $remote, $id);
+		unset ($remote_list, $id);
 	}
 
 	/**
@@ -287,7 +287,7 @@ abstract class admin_main
 	 */
 	protected function is_invalid_form($form_name, $submit_or_preview = false): array
 	{
-		if (!check_form_key($form_name) && $submit_or_preview)
+		if ($submit_or_preview && !check_form_key($form_name))
 		{
 			return [$this->language->lang('FORM_INVALID')];
 		}
@@ -362,7 +362,7 @@ abstract class admin_main
 	{
 		$errors = [];
 
-		if (call_user_func([$entity, 'get_' . $field_name]) == $value_cmp && $submit_or_preview)
+		if ($submit_or_preview && $entity->{'get_' . $field_name}() == $value_cmp)
 		{
 			$errors[] = $this->language->lang($this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name));
 		}
@@ -381,7 +381,7 @@ abstract class admin_main
 	 */
 	protected function submit_or_preview($submit = false, $preview = false): bool
 	{
-		return (bool) $submit || (bool) $preview;
+		return $submit || $preview;
 	}
 
 	/**
@@ -472,7 +472,7 @@ abstract class admin_main
 		settype($config, $type);
 		settype($default, $type);
 
-		return $config ? $config : $default;
+		return $config ?: $default;
 	}
 
 	/**
@@ -492,18 +492,5 @@ abstract class admin_main
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Check if a settings depend on another.
-	 *
-	 * @param string $config_name
-	 *
-	 * @return bool
-	 * @access protected
-	 */
-	protected function depend_on($config_name): bool
-	{
-		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
 	}
 }

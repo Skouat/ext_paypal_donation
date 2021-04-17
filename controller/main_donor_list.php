@@ -84,7 +84,7 @@ class main_donor_list extends main_controller
 		$sort_params = $this->check_params($check_params, ['sk', 'sd']);
 
 		// Set '$this->u_action'
-		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
+		$use_page = $this->u_action ?: $this->user->page['page_name'];
 		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, (bool) $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
@@ -181,7 +181,7 @@ class main_donor_list extends main_controller
 	 */
 	private function set_url_delim($url, $params): string
 	{
-		return (empty($params)) ? $url . '?' : $url . '&amp;';
+		return empty($params) ? $url . '?' : $url . '&amp;';
 	}
 
 	/**

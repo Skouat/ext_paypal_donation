@@ -51,7 +51,7 @@ class listener implements EventSubscriberInterface
 		main_controller $ppde_controller_main,
 		main_display_stats $ppde_controller_display_stats,
 		template $template,
-		$php_ext
+		string $php_ext
 	)
 	{
 		$this->config = $config;

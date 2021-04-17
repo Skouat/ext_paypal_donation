@@ -371,7 +371,7 @@ class ipn_listener
 			$this->ppde_ipn_log->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->ppde_ipn_log->is_use_log_error(), true);
 		}
 
-		return (bool) $this->verified;
+		return $this->verified;
 	}
 
 	/**

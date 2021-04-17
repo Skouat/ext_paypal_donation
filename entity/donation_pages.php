@@ -232,7 +232,7 @@ class donation_pages extends main
 	 */
 	public function message_bbcode_enabled(): bool
 	{
-		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
+		return (bool) ($this->data['page_content_bbcode_options'] & OPTION_FLAG_BBCODE);
 	}
 
 	/**
@@ -243,7 +243,7 @@ class donation_pages extends main
 	 */
 	public function message_magic_url_enabled(): bool
 	{
-		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
+		return (bool) ($this->data['page_content_bbcode_options'] & OPTION_FLAG_LINKS);
 	}
 
 	/**
@@ -254,7 +254,7 @@ class donation_pages extends main
 	 */
 	public function message_smilies_enabled(): bool
 	{
-		return ($this->data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
+		return (bool) ($this->data['page_content_bbcode_options'] & OPTION_FLAG_SMILIES);
 	}
 
 	/**

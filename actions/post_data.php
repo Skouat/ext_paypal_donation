@@ -194,7 +194,7 @@ class post_data
 	 */
 	public function check_post_data_empty($value): bool
 	{
-		return empty($value) ? false : true;
+		return !empty($value);
 	}
 
 	/**

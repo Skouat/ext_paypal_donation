@@ -420,7 +420,7 @@ class donation_pages_controller extends admin_main
 
 		// Collect the form data
 		$data = [
-			'page_id'      => (int) $page_id,
+			'page_id'      => $page_id,
 			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name(), false),
 			'page_lang_id' => $this->request->variable('page_lang_id', $this->ppde_entity->get_lang_id()),
 			'page_content' => $this->request->variable('page_content', $this->ppde_entity->get_message_for_edit(), true),
