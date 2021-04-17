@@ -92,7 +92,6 @@ class ppde_module
 				return true;
 			}
 		}
-		unset($item);
 
 		return false;
 	}
@@ -116,7 +115,6 @@ class ppde_module
 				return $item;
 			}
 		}
-		unset($item);
 
 		return [];
 	}
