@@ -81,6 +81,7 @@ class post_data
 		{
 			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
 		}
+
 		return $data_ary;
 	}
 
