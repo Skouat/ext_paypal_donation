@@ -10,6 +10,8 @@
 
 namespace skouat\ppde\controller\admin;
 
+use skouat\ppde\controller\ipn_paypal;
+
 abstract class admin_main
 {
 	/** @var array */
@@ -30,7 +32,7 @@ abstract class admin_main
 	protected $module_name;
 	/** @var \skouat\ppde\actions\locale_icu */
 	protected $ppde_actions_locale;
-	/** @var \skouat\ppde\controller\ipn_paypal */
+	/** @var ipn_paypal */
 	protected $ppde_ipn_paypal;
 	/** @var bool */
 	protected $preview;
