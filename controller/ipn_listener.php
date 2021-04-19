@@ -324,7 +324,7 @@ class ipn_listener
 	 */
 	private function check_account_id(): void
 	{
-		$account_value = $this->ppde_controller_main->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		$account_value = !empty($this->transaction_data['test_ipn']) ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 		if ($account_value !== $this->transaction_data['receiver_id'] && $account_value !== $this->transaction_data['receiver_email'])
 		{
 			$this->transaction_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_ACCOUNT_ID');
