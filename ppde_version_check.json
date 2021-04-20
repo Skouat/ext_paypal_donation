@@ -8,8 +8,8 @@
             "security": false
         },
         "2.0": {
-            "current": "2.1.4",
-            "download": "https://www.phpbb.com/customise/db/download/179051",
+            "current": "2.1.5",
+            "download": "https://www.phpbb.com/customise/db/download/186526",
             "announcement": "https://www.phpbb.com/customise/db/extension/paypal_donation_extension/#revisions-panel",
             "eol": null,
             "security": false
@@ -38,7 +38,7 @@
             "security": false
         },
         "3.0": {
-            "current": "3.0.2-dev",
+            "current": "3.0.4-dev",
             "announcement": "http://skouat.github.io/ext_paypal_donation/",
             "download": "https://github.com/Skouat/ext_paypal_donation/archive/develop-3.3.x.zip",
             "eol": null,
