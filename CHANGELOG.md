@@ -1,4 +1,9 @@
 # Changelog
+## 3.0.4 - 2021-04-20
+  - Fix: Merchant ID does not match
+  - Fix: Undefined index on transactions module
+  - Global code review
+
 ## 3.0.3 - 2021-03-13
   - Fix: Check for the existence of the auth_admin class was not properly set
   - Fix: Typo on template vars name
