@@ -15,8 +15,8 @@
             "security": false
         },
         "3.0": {
-            "current": "3.0.1",
-            "download": "https://www.phpbb.com/customise/db/download/187086",
+            "current": "3.0.4",
+            "download": "https://www.phpbb.com/customise/db/download/189626",
             "announcement": "https://www.phpbb.com/customise/db/extension/paypal_donation_extension/#revisions-panel",
             "eol": null,
             "security": false
