@@ -92,7 +92,6 @@ class ppde_module
 				return true;
 			}
 		}
-		unset($item);
 
 		return false;
 	}
@@ -116,7 +115,6 @@ class ppde_module
 				return $item;
 			}
 		}
-		unset($item);
 
 		return [];
 	}
@@ -153,10 +151,10 @@ class ppde_module
 				$entity->set_page_url($this->u_action);
 			// no break;
 			case 'transactions':
-				// Request the ID
+				// Request the item ID
 				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
 
-				// Send ID to the controller
+				// Send module IDs to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
 
 				$this->do_action($admin_controller->get_action(), $admin_controller);

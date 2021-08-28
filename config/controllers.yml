@@ -17,6 +17,7 @@ services:
             - '@config'
             - '@language'
             - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.post_data'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'

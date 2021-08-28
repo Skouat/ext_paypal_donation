@@ -13,7 +13,7 @@ namespace skouat\ppde\controller;
 class extension_manager extends \phpbb\extension\manager
 {
 	/** Extension name  */
-	const EXT_NAME = 'skouat/ppde';
+	protected const EXT_NAME = 'skouat/ppde';
 	protected $ext_meta;
 
 	/**
@@ -22,7 +22,7 @@ class extension_manager extends \phpbb\extension\manager
 	 * @return array
 	 * @access public
 	 */
-	public function get_ext_meta()
+	public function get_ext_meta(): array
 	{
 		return empty($this->ext_meta) ? $this->load_metadata() : $this->ext_meta;
 	}
@@ -33,7 +33,7 @@ class extension_manager extends \phpbb\extension\manager
 	 * @return array
 	 * @access private
 	 */
-	private function load_metadata()
+	private function load_metadata(): array
 	{
 		$md_manager = $this->create_extension_metadata_manager($this::EXT_NAME);
 

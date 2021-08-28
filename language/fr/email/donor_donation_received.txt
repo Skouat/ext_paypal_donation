@@ -12,12 +12,11 @@ ID de transaction : {{ TXN_ID }}
 Compte émetteur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Montant donné : {{ MC_GROSS }}
-Montant reçu par « {{ SITENAME }} » : {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+Montant reçu par « {{ SITENAME }} » : {{ NET_AMOUNT }}
 
 ----------------------------
 
-Si vous ne souhaitez plus être notifié lorsque vous émettez un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
-
+Si vous ne souhaitez plus recevoir le courriel de confirmation de votre don, cliquez sur le lien suivant :
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}

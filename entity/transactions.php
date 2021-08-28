@@ -123,7 +123,7 @@ class transactions extends main
 	 * @return int $this->data['transaction_id'] Transaction identifier; 0 if the transaction doesn't exist
 	 * @access public
 	 */
-	public function transaction_exists()
+	public function transaction_exists(): int
 	{
 		$sql = 'SELECT transaction_id
 			FROM ' . $this->transactions_log_table . "
@@ -141,9 +141,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_txn_id()
+	public function get_txn_id(): string
 	{
-		return (isset($this->data['txn_id'])) ? (string) $this->data['txn_id'] : '';
+		return (string) ($this->data['txn_id'] ?? '');
 	}
 
 	/**
@@ -152,9 +152,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_receiver_id()
+	public function get_receiver_id(): string
 	{
-		return (isset($this->data['receiver_id'])) ? (string) $this->data['receiver_id'] : '';
+		return (string) ($this->data['receiver_id'] ?? '');
 	}
 
 	/**
@@ -163,9 +163,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_receiver_email()
+	public function get_receiver_email(): string
 	{
-		return (isset($this->data['receiver_email'])) ? (string) $this->data['receiver_email'] : '';
+		return (string) ($this->data['receiver_email'] ?? '');
 	}
 
 	/**
@@ -174,9 +174,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_residence_country()
+	public function get_residence_country(): string
 	{
-		return (isset($this->data['residence_country'])) ? (string) $this->data['residence_country'] : '';
+		return (string) ($this->data['residence_country'] ?? '');
 	}
 
 	/**
@@ -185,9 +185,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_business()
+	public function get_business(): string
 	{
-		return (isset($this->data['business'])) ? (string) $this->data['business'] : '';
+		return (string) ($this->data['business'] ?? '');
 	}
 
 	/**
@@ -196,9 +196,9 @@ class transactions extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function get_confirmed()
+	public function get_confirmed(): bool
 	{
-		return (isset($this->data['confirmed'])) ? (bool) $this->data['confirmed'] : false;
+		return (bool) ($this->data['confirmed'] ?? false);
 	}
 
 	/**
@@ -207,9 +207,9 @@ class transactions extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function get_test_ipn()
+	public function get_test_ipn(): bool
 	{
-		return (isset($this->data['test_ipn'])) ? (bool) $this->data['test_ipn'] : false;
+		return (bool) ($this->data['test_ipn'] ?? false);
 	}
 
 	/**
@@ -218,9 +218,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_txn_errors()
+	public function get_txn_errors(): string
 	{
-		return (isset($this->data['txn_errors'])) ? (string) $this->data['txn_errors'] : '';
+		return (string) ($this->data['txn_errors'] ?? '');
 	}
 
 	/**
@@ -229,9 +229,9 @@ class transactions extends main
 	 * @return bool
 	 * @access public
 	 */
-	public function get_txn_errors_approved()
+	public function get_txn_errors_approved(): bool
 	{
-		return (isset($this->data['txn_errors_approved'])) ? (bool) $this->data['txn_errors_approved'] : '';
+		return (bool) ($this->data['txn_errors_approved'] ?? '');
 	}
 
 	/**
@@ -240,9 +240,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_txn_type()
+	public function get_txn_type(): string
 	{
-		return (isset($this->data['txn_type'])) ? (string) $this->data['txn_type'] : '';
+		return (string) ($this->data['txn_type'] ?? '');
 	}
 
 	/**
@@ -251,9 +251,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_parent_txn_id()
+	public function get_parent_txn_id(): string
 	{
-		return (isset($this->data['parent_txn_id'])) ? (string) $this->data['parent_txn_id'] : '';
+		return (string) ($this->data['parent_txn_id'] ?? '');
 	}
 
 	/**
@@ -262,9 +262,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_payer_email()
+	public function get_payer_email(): string
 	{
-		return (isset($this->data['payer_email'])) ? (string) $this->data['payer_email'] : '';
+		return (string) ($this->data['payer_email'] ?? '');
 	}
 
 	/**
@@ -273,9 +273,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_payer_id()
+	public function get_payer_id(): string
 	{
-		return (isset($this->data['payer_id'])) ? (string) $this->data['payer_id'] : '';
+		return (string) ($this->data['payer_id'] ?? '');
 	}
 
 	/**
@@ -284,9 +284,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_payer_status()
+	public function get_payer_status(): string
 	{
-		return (isset($this->data['payer_status'])) ? (string) $this->data['payer_status'] : '';
+		return (string) ($this->data['payer_status'] ?? '');
 	}
 
 	/**
@@ -295,9 +295,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_first_name()
+	public function get_first_name(): string
 	{
-		return (isset($this->data['first_name'])) ? (string) $this->data['first_name'] : '';
+		return (string) ($this->data['first_name'] ?? '');
 	}
 
 	/**
@@ -306,20 +306,20 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_last_name()
+	public function get_last_name(): string
 	{
-		return (isset($this->data['last_name'])) ? (string) $this->data['last_name'] : '';
+		return (string) ($this->data['last_name'] ?? '');
 	}
 
 	/**
 	 * Get member user_id
 	 *
-	 * @return integer
+	 * @return int
 	 * @access public
 	 */
-	public function get_user_id()
+	public function get_user_id(): int
 	{
-		return (isset($this->data['user_id'])) ? (integer) $this->data['user_id'] : 0;
+		return (int) ($this->data['user_id'] ?? 0);
 	}
 
 	/**
@@ -328,9 +328,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_username()
+	public function get_username(): string
 	{
-		return (isset($this->extra_data['username'])) ? (string) $this->extra_data['username'] : '';
+		return (string) ($this->extra_data['username'] ?? '');
 	}
 
 	/**
@@ -339,9 +339,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_custom()
+	public function get_custom(): string
 	{
-		return (isset($this->data['custom'])) ? (string) $this->data['custom'] : '';
+		return (string) ($this->data['custom'] ?? '');
 	}
 
 	/**
@@ -350,9 +350,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_item_name()
+	public function get_item_name(): string
 	{
-		return (isset($this->data['item_name'])) ? (string) $this->data['item_name'] : '';
+		return (string) ($this->data['item_name'] ?? '');
 	}
 
 	/**
@@ -361,9 +361,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_item_number()
+	public function get_item_number(): string
 	{
-		return (isset($this->data['item_number'])) ? (string) $this->data['item_number'] : '';
+		return (string) ($this->data['item_number'] ?? '');
 	}
 
 	/**
@@ -372,9 +372,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_mc_currency()
+	public function get_mc_currency(): string
 	{
-		return (isset($this->data['mc_currency'])) ? (string) $this->data['mc_currency'] : '';
+		return (string) ($this->data['mc_currency'] ?? '');
 	}
 
 	/**
@@ -383,9 +383,9 @@ class transactions extends main
 	 * @return float
 	 * @access public
 	 */
-	public function get_mc_fee()
+	public function get_mc_fee(): float
 	{
-		return (isset($this->data['mc_fee'])) ? (float) $this->data['mc_fee'] : 0;
+		return (float) ($this->data['mc_fee'] ?? 0);
 	}
 
 	/**
@@ -395,9 +395,9 @@ class transactions extends main
 	 * @return float
 	 * @access public
 	 */
-	public function get_mc_gross()
+	public function get_mc_gross(): float
 	{
-		return (isset($this->data['mc_gross'])) ? (float) $this->data['mc_gross'] : 0;
+		return (float) ($this->data['mc_gross'] ?? 0);
 	}
 
 	/**
@@ -407,20 +407,20 @@ class transactions extends main
 	 * @return float
 	 * @access public
 	 */
-	public function get_net_amount()
+	public function get_net_amount(): float
 	{
-		return (isset($this->data['net_amount'])) ? (float) $this->data['net_amount'] : 0;
+		return (float) ($this->data['net_amount'] ?? 0);
 	}
 
 	/**
 	 * Get PayPal payment date
 	 *
-	 * @return integer
+	 * @return int
 	 * @access public
 	 */
-	public function get_payment_date()
+	public function get_payment_date(): int
 	{
-		return (isset($this->data['payment_date'])) ? (int) $this->data['payment_date'] : '';
+		return (int) ($this->data['payment_date'] ?? 0);
 	}
 
 	/**
@@ -429,9 +429,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_payment_status()
+	public function get_payment_status(): string
 	{
-		return (isset($this->data['payment_status'])) ? (string) $this->data['payment_status'] : '';
+		return (string) ($this->data['payment_status'] ?? '');
 	}
 
 	/**
@@ -440,9 +440,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_payment_type()
+	public function get_payment_type(): string
 	{
-		return (isset($this->data['payment_type'])) ? (string) $this->data['payment_type'] : '';
+		return (string) ($this->data['payment_type'] ?? '');
 	}
 
 	/**
@@ -451,9 +451,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_memo()
+	public function get_memo(): string
 	{
-		return (isset($this->data['memo'])) ? (string) $this->data['memo'] : '';
+		return (string) ($this->data['memo'] ?? '');
 	}
 
 	/**
@@ -463,9 +463,9 @@ class transactions extends main
 	 * @return float
 	 * @access public
 	 */
-	public function get_settle_amount()
+	public function get_settle_amount(): float
 	{
-		return (isset($this->data['settle_amount'])) ? (float) $this->data['settle_amount'] : 0;
+		return (float) ($this->data['settle_amount'] ?? 0);
 	}
 
 	/**
@@ -474,9 +474,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_settle_currency()
+	public function get_settle_currency(): string
 	{
-		return (isset($this->data['settle_currency'])) ? (string) $this->data['settle_currency'] : '';
+		return (string) ($this->data['settle_currency'] ?? '');
 	}
 
 	/**
@@ -486,9 +486,9 @@ class transactions extends main
 	 * @return string
 	 * @access public
 	 */
-	public function get_exchange_rate()
+	public function get_exchange_rate(): string
 	{
-		return (isset($this->data['exchange_rate'])) ? (string) $this->data['exchange_rate'] : '';
+		return (string) ($this->data['exchange_rate'] ?? '');
 	}
 
 	/**

@@ -23,22 +23,22 @@ class main_donor_list extends main_controller
 	/** @var string */
 	private $u_action;
 
-	public function set_entity_transactions(\skouat\ppde\entity\transactions $ppde_entity_transactions)
+	public function set_entity_transactions(\skouat\ppde\entity\transactions $ppde_entity_transactions): void
 	{
 		$this->ppde_entity_transactions = $ppde_entity_transactions;
 	}
 
-	public function set_operator_transactions(\skouat\ppde\operators\transactions $ppde_operator_transactions)
+	public function set_operator_transactions(\skouat\ppde\operators\transactions $ppde_operator_transactions): void
 	{
 		$this->ppde_operator_transactions = $ppde_operator_transactions;
 	}
 
-	public function set_pagination(\phpbb\pagination $pagination)
+	public function set_pagination(\phpbb\pagination $pagination): void
 	{
 		$this->pagination = $pagination;
 	}
 
-	public function set_path_helper(\phpbb\path_helper $path_helper)
+	public function set_path_helper(\phpbb\path_helper $path_helper): void
 	{
 		$this->path_helper = $path_helper;
 	}
@@ -70,7 +70,7 @@ class main_donor_list extends main_controller
 			$sort_key = $default_key;
 		}
 
-		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
+		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir === 'a') ? 'ASC' : 'DESC');
 
 		// Build a relevant pagination_url and sort_url.
 		// We do not use request_var() here directly to save some calls (not all variables are set)
@@ -84,7 +84,7 @@ class main_donor_list extends main_controller
 		$sort_params = $this->check_params($check_params, ['sk', 'sd']);
 
 		// Set '$this->u_action'
-		$use_page = ($this->u_action) ? $this->u_action : $this->user->page['page_name'];
+		$use_page = $this->u_action ?: $this->user->page['page_name'];
 		$this->u_action = reapply_sid($this->path_helper->get_valid_page($use_page, (bool) $this->config['enable_mod_rewrite']));
 
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
@@ -114,7 +114,7 @@ class main_donor_list extends main_controller
 		];
 
 		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
-		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, $this->config['topics_per_page'], $start, true);
+		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, (int) $this->config['topics_per_page'], $start, true);
 
 		// Adds fields to the table schema needed by entity->import()
 		$last_donation_table_schema = [
@@ -147,7 +147,7 @@ class main_donor_list extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function check_params($params_ary, $excluded_keys)
+	private function check_params($params_ary, $excluded_keys): array
 	{
 		$params = [];
 
@@ -158,7 +158,7 @@ class main_donor_list extends main_controller
 				continue;
 			}
 
-			$param = call_user_func_array('request_var', $call);
+			$param = call_user_func_array([$this->request, 'variable'], $call);
 			$param = urlencode($key) . '=' . ((is_string($param)) ? urlencode($param) : $param);
 
 			if (!in_array($key, $excluded_keys))
@@ -179,9 +179,9 @@ class main_donor_list extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function set_url_delim($url, $params)
+	private function set_url_delim($url, $params): string
 	{
-		return (empty($params)) ? $url . '?' : $url . '&amp;';
+		return empty($params) ? $url . '?' : $url . '&amp;';
 	}
 
 	/**
@@ -194,9 +194,9 @@ class main_donor_list extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function set_sort_key($sk, $sk_comp, $sd)
+	private function set_sort_key($sk, $sk_comp, $sd): string
 	{
-		return ($sk == $sk_comp && $sd == 'a') ? 'd' : 'a';
+		return ($sk === $sk_comp && $sd === 'a') ? 'd' : 'a';
 	}
 
 	/**

@@ -36,7 +36,7 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.0', '>=') && version_compare(PHP_VERSION, '7.1.3', '>=');
+		return phpbb_version_compare($config['version'], '3.3.0', '>=') && PHP_VERSION_ID >= 70103;
 	}
 
 	/**
@@ -44,20 +44,19 @@ class ext extends \phpbb\extension\base
 	 *
 	 * @param mixed $old_state State returned by previous call of this method
 	 *
-	 * @return mixed Returns false after last step, otherwise temporary state
+	 * @return bool|string Returns false after last step, otherwise temporary state
 	 * @access public
 	 */
 	public function enable_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Enable notifications
-				return $this->notification_handler('enable', $this->notification_types());
-			default:
-				// Run parent enable step method
-				return parent::enable_step($old_state);
+			// Enable notifications
+			return $this->notification_handler('enable', $this->notification_types());
 		}
+		// Run parent enable step method
+		return parent::enable_step($old_state);
 	}
 
 	/**
@@ -65,20 +64,19 @@ class ext extends \phpbb\extension\base
 	 *
 	 * @param mixed $old_state State returned by previous call of this method
 	 *
-	 * @return mixed Returns false after last step, otherwise temporary state
+	 * @return false|string Returns false after last step, otherwise temporary state
 	 * @access public
 	 */
 	public function disable_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Disable notifications
-				return $this->notification_handler('disable', $this->notification_types());
-			default:
-				// Run parent disable step method
-				return parent::disable_step($old_state);
+			// Disable notifications
+			return $this->notification_handler('disable', $this->notification_types());
 		}
+		// Run parent disable step method
+		return parent::disable_step($old_state);
 	}
 
 	/**
@@ -86,20 +84,19 @@ class ext extends \phpbb\extension\base
 	 *
 	 * @param mixed $old_state State returned by previous call of this method
 	 *
-	 * @return mixed Returns false after last step, otherwise temporary state
+	 * @return bool|string Returns false after last step, otherwise temporary state
 	 * @access public
 	 */
 	public function purge_step($old_state)
 	{
-		switch ($old_state)
+		// Empty means nothing has run yet
+		if ($old_state === '')
 		{
-			case '': // Empty means nothing has run yet
-				// Purge notifications
-				return $this->notification_handler('purge', $this->notification_types());
-			default:
-				// Run parent purge step method
-				return parent::purge_step($old_state);
+			// Purge notifications
+			return $this->notification_handler('purge', $this->notification_types());
 		}
+		// Run parent purge step method
+		return parent::purge_step($old_state);
 	}
 
 	/**
@@ -114,7 +111,7 @@ class ext extends \phpbb\extension\base
 	 * @copyright (c) 2014 phpBB Limited <https://www.phpbb.com>
 	 * @license       GNU General Public License, version 2 (GPL-2.0)
 	 */
-	protected function notification_handler($step, $notification_types)
+	protected function notification_handler($step, $notification_types): string
 	{
 		/** @type \phpbb\notification\manager $phpbb_notifications */
 		$phpbb_notifications = $this->container->get('notification_manager');
@@ -133,7 +130,7 @@ class ext extends \phpbb\extension\base
 	 * @return array
 	 * @access protected
 	 */
-	protected function notification_types()
+	protected function notification_types(): array
 	{
 		return [
 			'skouat.ppde.notification.type.admin_donation_errors',

@@ -10,7 +10,7 @@ Transaction ID: {{ TXN_ID }}
 Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Amount donated: {{ MC_GROSS }}
-Amount received: {% if SETTLE_AMOUNT !== '' %}{{ SETTLE_AMOUNT }}{% else %}{{ NET_AMOUNT }}{% endif %}
+Amount received: {{ NET_AMOUNT }}
 
 ----------------------------
 
@@ -18,9 +18,7 @@ View the PPDE transactions log for more details.
 
 -----
 
-You are receiving this notification because you asked to be notified when receiving a donation.
 If you no longer wish to receive updates about new donations, please update your notification settings here:
-
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}

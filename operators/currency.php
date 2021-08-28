@@ -45,7 +45,7 @@ class currency
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data($currency_id = 0, $only_enabled = false)
+	public function build_sql_data($currency_id = 0, $only_enabled = false): string
 	{
 		// Build main sql request
 		$sql_ary = [
@@ -76,7 +76,7 @@ class currency
 	 * @return void
 	 * @access public
 	 */
-	public function fix_currency_order()
+	public function fix_currency_order(): void
 	{
 		$result = $this->db->sql_query($this->sql_currency_order());
 		$order = 0;
@@ -85,7 +85,7 @@ class currency
 		{
 			++$order;
 
-			if ($row['currency_order'] != $order)
+			if ((int) $row['currency_order'] !== $order)
 			{
 				$this->db->sql_query('UPDATE ' . $this->ppde_currency_table . '
 						SET currency_order = ' . $order . '
@@ -102,7 +102,7 @@ class currency
 	 * @return string
 	 * @access private
 	 */
-	private function sql_currency_order()
+	private function sql_currency_order(): string
 	{
 		// By default, check that image_order is valid and fix it if necessary
 		return 'SELECT currency_id, currency_order
@@ -120,7 +120,7 @@ class currency
 	 * @return bool
 	 * @access public
 	 */
-	public function move($switch_order_id, $current_order, $id)
+	public function move($switch_order_id, $current_order, $id): bool
 	{
 		// Update the entry
 		$sql = 'UPDATE ' . $this->ppde_currency_table . '

@@ -88,7 +88,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function display_settings()
+	public function display_settings(): void
 	{
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
@@ -103,12 +103,12 @@ class settings_controller extends admin_main
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->ppde_actions_locale->build_locale_select_menu($this->config['ppde_default_locale']);
-		$this->build_remote_uri_select_menu($this->config['ppde_default_remote'], 'live');
+		$this->build_remote_uri_select_menu((int) $this->config['ppde_default_remote'], 'live');
 		$this->build_stat_position_select_menu($this->config['ppde_stats_position']);
 
 		$this->template->assign_vars([
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string', ''),
+			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string'),
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 			'S_PPDE_DEFAULT_LOCALE'     => $this->ppde_actions_locale->icu_requirements(),
@@ -130,12 +130,9 @@ class settings_controller extends admin_main
 	}
 
 	/**
-	 * Set the options a user can configure
-	 *
-	 * @return void
-	 * @access protected
+	 * {@inheritdoc}
 	 */
-	protected function set_settings()
+	protected function set_settings(): void
 	{
 		// Set options for Global settings
 		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
@@ -143,7 +140,7 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
-		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), $this->config['ppde_default_value']));
+		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), (int) $this->config['ppde_default_value']));
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
 
@@ -162,7 +159,7 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), $this->depend_on('ppde_enable')));
+		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), (bool) $this->config['ppde_enable']));
 		$this->ppde_actions_auth->set_guest_acl();
 	}
 
@@ -170,31 +167,31 @@ class settings_controller extends admin_main
 	 * Rebuild items list to conserve only numeric values
 	 *
 	 * @param string $config_value
-	 * @param string $added_value
+	 * @param int $added_value
 	 *
 	 * @return string
 	 * @access private
 	 */
-	private function rebuild_items_list($config_value, $added_value = '')
+	private function rebuild_items_list($config_value, $added_value = 0): string
 	{
 		$items_list = explode(',', $config_value);
-		$merge_items = [];
+		$merged_items = [];
 
-		$this->add_int_data_in_array($merge_items, $added_value);
+		$this->add_int_data_in_array($merged_items, $added_value);
 
 		foreach ($items_list as $item)
 		{
-			$this->add_int_data_in_array($merge_items, $item);
+			$this->add_int_data_in_array($merged_items, $item);
 		}
-		unset($items_list, $item);
+		unset($items_list);
 
-		natsort($merge_items);
+		natsort($merged_items);
 
-		return $this->check_config(implode(',', array_unique($merge_items)), 'string', '');
+		return $this->check_config(implode(',', array_unique($merged_items)), 'string');
 	}
 
 	/**
-	 * Add integer data in an array
+	 * Only add by reference integer data in an array
 	 *
 	 * @param array  &$array
 	 * @param string  $var
@@ -202,9 +199,9 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_int_data_in_array(&$array, $var)
+	private function add_int_data_in_array(&$array, $var): void
 	{
-		if (settype($var, 'integer') && $var != 0)
+		if (settype($var, 'integer') && $var !== 0)
 		{
 			$array[] = $var;
 		}
@@ -218,7 +215,7 @@ class settings_controller extends admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function build_stat_position_select_menu($default)
+	public function build_stat_position_select_menu($default): void
 	{
 		// List of positions allowed
 		$positions = ['top', 'bottom', 'both'];
@@ -232,6 +229,6 @@ class settings_controller extends admin_main
 				'S_DEFAULT'     => (string) $default === $position,
 			]);
 		}
-		unset ($positions, $position);
+		unset ($positions);
 	}
 }

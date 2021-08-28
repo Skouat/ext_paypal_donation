@@ -28,9 +28,9 @@ class vars
 	 *
 	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object
-	 * @param \phpbb\config\config          $config           Config object
-	 * @param \phpbb\language\language      $language         Language object
-	 * @param \phpbb\user                   $user             User object
+	 * @param config                        $config           Config object
+	 * @param language                      $language         Language object
+	 * @param user                          $user             User object
 	 *
 	 * @access public
 	 */
@@ -56,7 +56,7 @@ class vars
 	 * @return array $this->dp_vars
 	 * @access public
 	 */
-	public function get_vars()
+	public function get_vars(): array
 	{
 		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 		$this->dp_vars = [
@@ -93,12 +93,12 @@ class vars
 	 * @return void
 	 * @access private
 	 */
-	private function add_predefined_lang_vars()
+	private function add_predefined_lang_vars(): void
 	{
 		//Add language entries for displaying the vars
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
+		foreach ($this->dp_vars as $index => $value)
 		{
-			$this->dp_vars[$i]['name'] = $this->language->lang('PPDE_DP_' . substr(substr($this->dp_vars[$i]['var'], 0, -1), 1));
+			$this->dp_vars[$index]['name'] = $this->language->lang('PPDE_DP_' . substr(substr($value['var'], 0, -1), 1));
 		}
 	}
 
@@ -110,12 +110,12 @@ class vars
 	 * @return string
 	 * @access public
 	 */
-	public function replace_template_vars($message)
+	public function replace_template_vars($message): string
 	{
 		$tpl_ary = [];
-		for ($i = 0, $size = count($this->dp_vars); $i < $size; $i++)
+		foreach ($this->dp_vars as $index => $value)
 		{
-			$tpl_ary[$this->dp_vars[$i]['var']] = $this->dp_vars[$i]['value'];
+			$tpl_ary[$value['var']] = $this->dp_vars[$index]['value'];
 		}
 
 		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);

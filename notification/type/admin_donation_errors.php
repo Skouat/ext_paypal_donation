@@ -68,7 +68,7 @@ class admin_donation_errors extends donation
 	{
 		return [
 			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
-			'PAYER_USERNAME' => $this->get_data('payer_username'),
+			'PAYER_USERNAME' => htmlspecialchars_decode($this->get_data('payer_username')),
 			'TXN_ERRORS'     => $this->get_data('txn_errors'),
 			'TXN_ID'         => $this->get_data('txn_id'),
 		];

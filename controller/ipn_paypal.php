@@ -46,6 +46,10 @@ class ipn_paypal
 	 */
 	private $curl_fsock = ['curl' => false, 'none' => true];
 	/**
+	 * @var array
+	 */
+	private $postback_args = [];
+	/**
 	 * Full PayPal response for include in text report
 	 *
 	 * @var string
@@ -100,7 +104,7 @@ class ipn_paypal
 	/**
 	 * @return array
 	 */
-	public static function get_remote_uri()
+	public static function get_remote_uri(): array
 	{
 		return self::$remote_uri;
 	}
@@ -114,7 +118,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function initiate_paypal_connection($data)
+	public function initiate_paypal_connection($data): void
 	{
 		if ($this->curl_fsock['curl'])
 		{
@@ -138,7 +142,7 @@ class ipn_paypal
 	 * @return void
 	 * @access private
 	 */
-	private function curl_post($encoded_data)
+	private function curl_post($encoded_data): void
 	{
 		$ch = curl_init($this->u_paypal);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
@@ -186,7 +190,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function is_remote_detected()
+	public function is_remote_detected(): bool
 	{
 		if ($this->config['ppde_curl_detected'])
 		{
@@ -204,7 +208,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_u_paypal($u_paypal)
+	public function set_u_paypal($u_paypal): void
 	{
 		$this->u_paypal = (string) $u_paypal;
 	}
@@ -215,7 +219,7 @@ class ipn_paypal
 	 * @return string
 	 * @access public
 	 */
-	public function get_u_paypal()
+	public function get_u_paypal(): string
 	{
 		return $this->u_paypal;
 	}
@@ -227,7 +231,7 @@ class ipn_paypal
 	 * @return string
 	 * @access public
 	 */
-	public function get_remote_used()
+	public function get_remote_used(): string
 	{
 		return array_search(true, $this->curl_fsock);
 	}
@@ -238,7 +242,7 @@ class ipn_paypal
 	 * @return string
 	 * @access public
 	 */
-	public function get_report_response()
+	public function get_report_response(): string
 	{
 		return $this->report_response;
 	}
@@ -249,7 +253,7 @@ class ipn_paypal
 	 * @return string
 	 * @access public
 	 */
-	public function get_response_status()
+	public function get_response_status(): string
 	{
 		return $this->response_status;
 	}
@@ -260,7 +264,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function check_response_status()
+	public function check_response_status(): bool
 	{
 		return $this->response_status != 200;
 	}
@@ -273,7 +277,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function is_curl_strcmp($arg)
+	public function is_curl_strcmp($arg): bool
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
 	}
@@ -284,7 +288,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function check_tls()
+	public function check_tls(): void
 	{
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
@@ -297,7 +301,7 @@ class ipn_paypal
 		// Analyse response
 		$json = json_decode($this->response);
 
-		if (!is_null($json) && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
+		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
 		{
 			$this->config->set('ppde_tls_detected', true);
 		}
@@ -309,7 +313,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_remote_detected()
+	public function set_remote_detected(): void
 	{
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
@@ -324,7 +328,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function check_curl($host)
+	public function check_curl($host): bool
 	{
 		if (function_exists('curl_init') && function_exists('curl_exec'))
 		{
@@ -333,7 +337,7 @@ class ipn_paypal
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 			$this->response = curl_exec($ch);
-			$this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+			$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 			curl_close($ch);
 
@@ -349,7 +353,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_curl_info()
+	public function set_curl_info(): void
 	{
 		// Get cURL version informations
 		if ($curl_info = $this->check_curl_info())
@@ -381,7 +385,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_args_return_uri()
+	public function set_args_return_uri(): void
 	{
 		$values = [];
 		// Add the cmd=_notify-validate for PayPal
@@ -399,21 +403,20 @@ class ipn_paypal
 
 	/**
 	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
-	 * based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
+	 * Based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
 	 *
-	 * @return array
+	 * @return void
 	 * @access public
 	 */
-	public function get_postback_args()
+	public function set_postback_args(): void
 	{
-		$data_ary = [];
 		$raw_post_data = file_get_contents('php://input');
 		$raw_post_array = explode('&', $raw_post_data);
 
 		foreach ($raw_post_array as $keyval)
 		{
 			$keyval = explode('=', $keyval);
-			if (count($keyval) == 2)
+			if (count($keyval) === 2)
 			{
 				// Since we do not want the plus in the datetime string to be encoded to a space, we manually encode it.
 				if ($keyval[0] === 'payment_date')
@@ -423,10 +426,16 @@ class ipn_paypal
 						$keyval[1] = str_replace('+', '%2B', $keyval[1]);
 					}
 				}
-				$data_ary[$keyval[0]] = urldecode($keyval[1]);
+				$this->postback_args[$keyval[0]] = urldecode($keyval[1]);
 			}
 		}
+	}
 
-		return $data_ary;
+	/**
+	 * @return array
+	 */
+	public function get_postback_args(): array
+	{
+		return $this->postback_args;
 	}
 }

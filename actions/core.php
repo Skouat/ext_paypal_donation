@@ -15,12 +15,9 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
 use phpbb\user;
-use skouat\ppde\operators\compare;
 
 class core
 {
-	const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
 	/**
 	 * Services properties declaration
 	 */
@@ -28,10 +25,8 @@ class core
 	protected $config;
 	protected $dispatcher;
 	protected $language;
-	protected $path_helper;
 	protected $php_ext;
 	protected $ppde_entity_transaction;
-	protected $ppde_operator_compare;
 	protected $ppde_operator_transaction;
 	protected $transaction_data;
 	protected $user;
@@ -67,10 +62,9 @@ class core
 	 * @param \skouat\ppde\notification\core      $notification              PPDE Notification object
 	 * @param path_helper                         $path_helper               Path helper object
 	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transaction   Transaction entity object
-	 * @param compare                             $ppde_operator_compare     Compare operator object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object
-	 * @param \phpbb\user                         $user                      User object
+	 * @param user                                $user                      User object
 	 * @param string                              $php_ext                   phpEx
 	 *
 	 * @access public
@@ -81,7 +75,6 @@ class core
 		\skouat\ppde\notification\core $notification,
 		path_helper $path_helper,
 		\skouat\ppde\entity\transactions $ppde_entity_transaction,
-		compare $ppde_operator_compare,
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
 		user $user,
@@ -91,12 +84,10 @@ class core
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
-		$this->path_helper = $path_helper;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
-		$this->ppde_operator_compare = $ppde_operator_compare;
 		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
-		$this->root_path = $this->path_helper->get_phpbb_root_path();
+		$this->root_path = $path_helper->get_phpbb_root_path();
 		$this->user = $user;
 	}
 
@@ -108,7 +99,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_test)
+	public function set_ipn_test_properties($ipn_test): void
 	{
 		$this->set_ipn_test($ipn_test);
 		$this->set_ipn_suffix();
@@ -122,9 +113,9 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function set_ipn_test($ipn_test)
+	private function set_ipn_test($ipn_test): void
 	{
-		$this->is_ipn_test = $ipn_test ? (bool) $ipn_test : false;
+		$this->is_ipn_test = (bool) $ipn_test;
 	}
 
 	/**
@@ -133,7 +124,7 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function set_ipn_suffix()
+	private function set_ipn_suffix(): void
 	{
 		$this->ipn_suffix = $this->is_ipn_test ? '_ipn' : '';
 	}
@@ -144,18 +135,18 @@ class core
 	 * @return string
 	 * @access private
 	 */
-	public function get_ipn_suffix()
+	public function get_ipn_suffix(): string
 	{
-		return ($this->get_ipn_test()) ? $this->ipn_suffix : '';
+		return $this->get_ipn_test() ? $this->ipn_suffix : '';
 	}
 
 	/**
 	 * @return boolean
 	 * @access private
 	 */
-	public function get_ipn_test()
+	public function get_ipn_test(): bool
 	{
-		return $this->is_ipn_test ? (bool) $this->is_ipn_test : false;
+		return $this->is_ipn_test;
 	}
 
 	/**
@@ -164,7 +155,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function update_raised_amount()
+	public function update_raised_amount(): void
 	{
 		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
 
@@ -187,7 +178,7 @@ class core
 	 * @return string
 	 * @access public
 	 */
-	public function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = '')
+	public function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = ''): string
 	{
 		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
 	}
@@ -198,7 +189,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function update_overview_stats()
+	public function update_overview_stats(): void
 	{
 		$this->config->set('ppde_anonymous_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->ipn_suffix));
 		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix), true);
@@ -213,7 +204,7 @@ class core
 	 * @return int
 	 * @access private
 	 */
-	private function get_count_result($config_name)
+	private function get_count_result($config_name): int
 	{
 		if (!$this->config->offsetExists($config_name))
 		{
@@ -230,12 +221,12 @@ class core
 	 * @access public
 	 */
 
-	public function is_donor_is_member()
+	public function is_donor_is_member(): void
 	{
 		$anonymous_user = false;
 
 		// If the user_id is not anonymous
-		if ($this->transaction_data['user_id'] != ANONYMOUS)
+		if ((int) $this->transaction_data['user_id'] !== ANONYMOUS)
 		{
 			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
 
@@ -262,9 +253,9 @@ class core
 	/**
 	 * @return boolean
 	 */
-	public function get_donor_is_member()
+	public function get_donor_is_member(): bool
 	{
-		return ($this->donor_is_member) ? (bool) $this->donor_is_member : false;
+		return $this->donor_is_member;
 	}
 
 	/**
@@ -277,7 +268,7 @@ class core
 	 * @return bool
 	 * @access private
 	 */
-	private function check_donors_status($type, $args)
+	private function check_donors_status($type, $args): bool
 	{
 		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
 
@@ -287,7 +278,7 @@ class core
 	/**
 	 * @return array
 	 */
-	public function get_payer_data()
+	public function get_payer_data(): array
 	{
 		return (count($this->payer_data) != 0) ? $this->payer_data : [];
 	}
@@ -298,7 +289,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function update_donor_stats()
+	public function update_donor_stats(): void
 	{
 		if ($this->donor_is_member)
 		{
@@ -310,7 +301,7 @@ class core
 	 * @param int   $user_id
 	 * @param float $amount
 	 */
-	public function update_user_stats($user_id, $amount)
+	public function update_user_stats($user_id, $amount): void
 	{
 		if (!$user_id)
 		{
@@ -326,7 +317,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function donors_group_user_add()
+	public function donors_group_user_add(): void
 	{
 		// We add the user to the donors group
 		$can_use_autogroup = $this->can_use_autogroup();
@@ -377,7 +368,7 @@ class core
 	 * @return bool
 	 * @access private
 	 */
-	private function can_use_autogroup()
+	private function can_use_autogroup(): bool
 	{
 		return
 			$this->autogroup_is_enabled() &&
@@ -392,7 +383,7 @@ class core
 	 * @return bool
 	 * @access private
 	 */
-	private function autogroup_is_enabled()
+	private function autogroup_is_enabled(): bool
 	{
 		return $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_autogroup_enable'];
 	}
@@ -403,7 +394,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function payment_status_is_completed()
+	public function payment_status_is_completed(): bool
 	{
 		return $this->transaction_data['payment_status'] === 'Completed';
 	}
@@ -414,7 +405,7 @@ class core
 	 * @return bool
 	 * @access public
 	 */
-	public function minimum_donation_raised()
+	public function minimum_donation_raised(): bool
 	{
 		// Updates payer_data info before checking values
 		$this->check_donors_status('user', $this->payer_data['user_id']);
@@ -427,9 +418,10 @@ class core
 	 *
 	 * @param array $data Transaction data array
 	 *
+	 * @return void
 	 * @access public
 	 */
-	public function log_to_db($data)
+	public function log_to_db($data): void
 	{
 		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
@@ -464,16 +456,9 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_transaction_data($transaction_data)
+	public function set_transaction_data($transaction_data): void
 	{
-		if (!empty($this->transaction_data))
-		{
-			array_merge($this->transaction_data, $transaction_data);
-		}
-		else
-		{
-			$this->transaction_data = $transaction_data;
-		}
+		$this->transaction_data = !empty($this->transaction_data) ? array_merge($this->transaction_data, $transaction_data) : $transaction_data;
 	}
 
 	/**
@@ -482,9 +467,9 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function extract_item_number_data()
+	private function extract_item_number_data(): void
 	{
-		list($this->transaction_data['user_id']) = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['item_number'], 4), -1);
 	}
 
 	/**
@@ -493,7 +478,7 @@ class core
 	 * @return void
 	 * @access private
 	 */
-	private function validate_user_id()
+	private function validate_user_id(): void
 	{
 		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
 		{
@@ -502,141 +487,12 @@ class core
 	}
 
 	/**
-	 * Check requirements for data value.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return mixed
-	 * @access public
-	 */
-	public function set_post_data_func($data_ary)
-	{
-		$value = $data_ary['value'];
-
-		foreach ($data_ary['force_settings'] as $control_point => $params)
-		{
-			// Calling the set_post_data_function
-			$value = call_user_func_array([$this, 'set_post_data_' . $control_point], [$data_ary['value'], $params]);
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $value;
-	}
-
-	/**
-	 * Check Post data length.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $statement
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_length($value, $statement)
-	{
-		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_ascii($value)
-	{
-		// We ensure that the value contains only ASCII chars...
-		$pos = strspn($value, self::ASCII_RANGE);
-		$len = strlen($value);
-
-		return $pos != $len ? false : true;
-	}
-
-	/**
-	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_content($value, $content_ary)
-	{
-		return in_array($value, $content_ary) ? true : false;
-	}
-
-	/**
-	 * Check if Post data is empty.
-	 * Called by $this->check_post_data() method
-	 *
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_post_data_empty($value)
-	{
-		return empty($value) ? false : true;
-	}
-
-	/**
-	 * Set Post data length.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string  $value
-	 * @param integer $length
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_length($value, $length)
-	{
-		return substr($value, 0, (int) $length);
-	}
-
-	/**
-	 * Set Post data to lowercase.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_lowercase($value, $force = false)
-	{
-		return $force ? strtolower($value) : $value;
-	}
-
-	/**
-	 * Set Post data to date/time format.
-	 * Called by $this->set_post_data() method
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function set_post_data_strtotime($value, $force = false)
-	{
-		return $force ? strtotime($value) : $value;
-	}
-
-	/**
 	 * Check we are in the ACP
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function is_in_admin()
+	public function is_in_admin(): bool
 	{
 		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
 	}

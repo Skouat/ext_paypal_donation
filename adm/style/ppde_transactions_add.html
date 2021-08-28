@@ -1,0 +1,99 @@
+<h1>{{ lang('PPDE_MT_TITLE') }}</h1>
+<p>{{ lang('PPDE_MT_TITLE_EXPLAIN') }}</p>
+<p><strong>{{ lang('PPDE_MT_REQUIRED_CHARACTER') }}</strong> {{ lang('PPDE_MT_REQUIRED_EXPLAIN') }}</p>
+
+{% if S_ERROR %}
+<div class="errorbox">
+	<h3>{{ lang('WARNING') }}</h3>
+	<p>{{ ERROR_MSG }}</p>
+</div>
+{% endif %}
+
+<form id="manual_transaction" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{{ lang('PPDE_MT_DETAILS') }}</legend>
+		<dl>
+			<dt><label for="username">{{ lang('PPDE_MT_USERNAME') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_MT_USERNAME_EXPLAIN') }}</span></dt>
+			<dd><input type="text" class="medium" id="username" name="username" value="{{ MT_USERNAME }}"></dd>
+			<dd>[ <a href="{{ U_FIND_USERNAME }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a> ]</dd>
+			<dd><label for="anonymous"><input type="checkbox" class="checkbox" id="anonymous" name="u" value="{{ ANONYMOUS_USER_ID }}"{{ MT_ANONYMOUS ? ' checked' }}> {{ lang('SELECT_ANONYMOUS') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label for="first_name">{{ lang('PPDE_MT_FIRST_NAME') ~ lang('COLON') }}</label></dt>
+			<dd><input type="text" class="medium" id="first_name" name="first_name" value="{{ MT_FIRST_NAME }}" maxlength="64"></dd>
+		</dl>
+		<dl>
+			<dt><label for="last_name">{{ lang('PPDE_MT_LAST_NAME') ~ lang('COLON') }}</label></dt>
+			<dd><input type="text" class="medium" id="last_name" name="last_name" value="{{ MT_LAST_NAME }}" maxlength="64"></dd>
+		</dl>
+		<dl>
+			<dt><label for="payer_email">{{ lang('PPDE_MT_PAYER_EMAIL') ~ lang('COLON') }}</label></dt>
+			<dd><input type="text" class="medium" id="payer_email" name="payer_email" value="{{ MT_PAYER_EMAIL }}" maxlength="127"></dd>
+		</dl>
+		<dl>
+			<dt><label for="residence_country">{{ lang('PPDE_MT_RESIDENCE_COUNTRY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_MT_RESIDENCE_COUNTRY_EXPLAIN') }}</span></dt>
+			<dd><input type="text" class="tiny" id="residence_country" name="residence_country" value="{{ MT_RESIDENCE_COUNTRY }}" maxlength="2"></dd>
+		</dl>
+		<hr>
+		<dl>
+			<dt><label for="mc_gross">{{ lang('PPDE_MT_TOTAL_AMOUNT') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
+			<dd>
+				<input type="text" class="narrow" id="mc_gross" name="mc_gross" value="{{ MT_MC_GROSS }}">
+				<select id="mc_currency" name="mc_currency">
+					{% for options in loops.options %}
+					<option value="{{ options.CURRENCY_ISO_CODE }}"{% if (MT_MC_CURRENCY == options.CURRENCY_ISO_CODE) or (not MT_MC_CURRENCY and options.S_CURRENCY_DEFAULT) %} selected{% endif %}>{{ options.CURRENCY_ISO_CODE }}</option>
+					{% endfor %}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mc_fee">{{ lang('PPDE_MT_FEE_AMOUNT') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DECIMAL_EXPLAIN') }}</span></dt>
+			<dd><input type="text" class="narrow" id="mc_fee" name="mc_fee" value="{{ MT_MC_FEE }}"> <span id="mc_fee_currency"></span></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PPDE_MT_NET_AMOUNT') ~ lang('COLON') }}</label></dt>
+			<dd><span id="net_amount"></span> <span id="net_amount_currency"></span></dd>
+		</dl>
+		<hr>
+		<dl>
+			<dt><label for="payment_date_year">{{ lang('PPDE_MT_PAYMENT_DATE') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label></dt>
+			<dd>
+				<span class="date-fields-container">
+					<span>{{ lang('YEAR') ~ lang('COLON') }}</span> <input type="text" class="tiny" id="payment_date_year" name="payment_date_year" value="{{ MT_PAYMENT_DATE_YEAR }}">
+					<span>{{ lang('MONTH') ~ lang('COLON') }}</span> <input type="text" class="tiny" id="payment_date_month" name="payment_date_month" value="{{ MT_PAYMENT_DATE_MONTH }}">
+					<span>{{ lang('DAY') ~ lang('COLON') }}</span> <input type="text" class="tiny" id="payment_date_day" name="payment_date_day" value="{{ MT_PAYMENT_DATE_DAY }}">
+				</span>
+				<span class="date-calendar-container" data-language="{{ lang('PPDE_MT_DATEPICKER_LANG') }}" title="{{ lang('PPDE_MT_PAYMENT_DATE_PICK') }}">
+					<i class="icon fa fa-fw fa-calendar" aria-hidden="true"></i><span class="sr-only">{{ lang('PPDE_MT_PAYMENT_DATE_PICK') }}</span> <span class="date-calendar-value"></span>
+				</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>
+				<label for="payment_time">{{ lang('PPDE_MT_PAYMENT_TIME') ~ lang('PPDE_MT_REQUIRED_CHARACTER') ~ lang('COLON') }}</label>
+				<br><span>{{ lang('PPDE_MT_PAYMENT_TIME_EXPLAIN') ~ lang('COLON') }} {{ PAYMENT_TIME_FORMATS | join(lang('COMMA_SEPARATOR')) }}</span>
+			</dt>
+			<dd><input type="text" class="narrow" id="payment_time" name="payment_time" value="{{ MT_PAYMENT_TIME }}"></dd>
+		</dl>
+		<dl>
+			<dt><label for="memo">{{ lang('PPDE_MT_MEMO') ~ lang('COLON') }}</label></dt>
+			<dd><textarea id="memo" class="medium" name="memo" rows="5" maxlength="255">{{ MT_MEMO }}</textarea></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">&nbsp;
+			<input type="hidden" name="add" value="1">
+			{{ S_FORM_TOKEN }}
+		</p>
+	</fieldset>
+</form>
+
+{% INCLUDECSS '@skouat_ppde/css/datepicker.min.css' %}
+{% INCLUDEJS '@skouat_ppde/js/datepicker.min.js' %}
+{% INCLUDEJS '@skouat_ppde/js/datepicker.i18n/datepicker.' ~ lang('PPDE_MT_DATEPICKER_LANG') ~ '.js' %}
+
+{% INCLUDECSS '@skouat_ppde/css/manual_transaction.css' %}
+{% INCLUDEJS '@skouat_ppde/js/manual_transaction.js' %}

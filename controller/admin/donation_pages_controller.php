@@ -15,8 +15,6 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\actions\vars;
-use skouat\ppde\operators\donation_pages;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -44,17 +42,17 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface                 $container                    Service container interface
-	 * @param language                           $language                     Language user object
-	 * @param log                                $log                          The phpBB log system
-	 * @param \skouat\ppde\actions\vars          $ppde_actions_vars            PPDE Actions vars object
-	 * @param \skouat\ppde\entity\donation_pages $ppde_entity_donation_pages   PPDE Entity object
-	 * @param donation_pages                     $ppde_operator_donation_pages Operator object
-	 * @param request                            $request                      Request object
-	 * @param template                           $template                     Template object
-	 * @param user                               $user                         User object
-	 * @param string                             $phpbb_root_path              phpBB root path
-	 * @param string                             $php_ext                      phpEx
+	 * @param ContainerInterface                    $container                    Service container interface
+	 * @param language                              $language                     Language user object
+	 * @param log                                   $log                          The phpBB log system
+	 * @param \skouat\ppde\actions\vars             $ppde_actions_vars            PPDE Actions vars object
+	 * @param \skouat\ppde\entity\donation_pages    $ppde_entity_donation_pages   PPDE Entity object
+	 * @param \skouat\ppde\operators\donation_pages $ppde_operator_donation_pages Operator object
+	 * @param request                               $request                      Request object
+	 * @param template                              $template                     Template object
+	 * @param user                                  $user                         User object
+	 * @param string                                $phpbb_root_path              phpBB root path
+	 * @param string                                $php_ext                      phpEx
 	 *
 	 * @access public
 	 */
@@ -62,9 +60,9 @@ class donation_pages_controller extends admin_main
 		ContainerInterface $container,
 		language $language,
 		log $log,
-		vars $ppde_actions_vars,
+		\skouat\ppde\actions\vars $ppde_actions_vars,
 		\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages,
-		donation_pages $ppde_operator_donation_pages,
+		\skouat\ppde\operators\donation_pages $ppde_operator_donation_pages,
 		request $request,
 		template $template,
 		user $user,
@@ -91,12 +89,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Display the pages
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		// Get list of available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -112,7 +107,7 @@ class donation_pages_controller extends admin_main
 			foreach ($data_ary as $data)
 			{
 				// Do not treat the item whether language identifier does not match
-				if ($data['page_lang_id'] != $entry['id'])
+				if ((int) $data['page_lang_id'] !== (int) $entry['id'])
 				{
 					continue;
 				}
@@ -124,9 +119,9 @@ class donation_pages_controller extends admin_main
 					'U_EDIT'              => $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $data['page_id'],
 				]);
 			}
-			unset($data_ary, $data);
+			unset($data_ary);
 		}
-		unset($entry, $langs, $lang);
+		unset($langs, $lang);
 
 		$this->u_action_assign_template_vars();
 	}
@@ -141,7 +136,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_langs_template_vars($lang, $current = 0)
+	private function assign_langs_template_vars($lang, $current = 0): void
 	{
 		$this->template->assign_block_vars('ppde_langs', [
 			'LANG_LOCAL_NAME' => $lang['name'],
@@ -151,12 +146,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Add a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function add()
+	public function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_donation_pages');
@@ -189,7 +181,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function create_language_options($current)
+	protected function create_language_options($current): void
 	{
 		// Grab all available language packs
 		$langs = $this->ppde_operator->get_languages();
@@ -210,7 +202,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data)
+	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data): void
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -293,7 +285,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors)
+	private function assign_preview_template_vars(\skouat\ppde\entity\donation_pages $entity, $errors): void
 	{
 		if ($this->preview && empty($errors))
 		{
@@ -313,14 +305,14 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function assign_predefined_block_vars($vars)
+	private function assign_predefined_block_vars($vars): void
 	{
-		for ($i = 0, $size = count($vars); $i < $size; $i++)
+		foreach ($vars as $var)
 		{
 			$this->template->assign_block_vars('dp_vars', [
-					'NAME'     => $vars[$i]['name'],
-					'VARIABLE' => $vars[$i]['var'],
-					'EXAMPLE'  => $vars[$i]['value']]
+					'NAME'     => $var['name'],
+					'VARIABLE' => $var['var'],
+					'EXAMPLE'  => $var['value']]
 			);
 		}
 	}
@@ -334,7 +326,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\donation_pages $entity, array $errors): void
 	{
 		if ($this->can_submit_data($errors))
 		{
@@ -358,7 +350,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function get_lang_local_name($langs)
+	private function get_lang_local_name($langs): void
 	{
 		foreach ($langs as $lang)
 		{
@@ -372,7 +364,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_custom_bbcodes($bbcode_enabled)
+	private function include_custom_bbcodes($bbcode_enabled): void
 	{
 		if ($bbcode_enabled)
 		{
@@ -390,7 +382,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_function($function_name, $function_filepath)
+	private function include_function($function_name, $function_filepath): void
 	{
 		if (!function_exists($function_name))
 		{
@@ -404,7 +396,7 @@ class donation_pages_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function include_smilies($smilies_enabled)
+	private function include_smilies($smilies_enabled): void
 	{
 		if ($smilies_enabled)
 		{
@@ -414,12 +406,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Edit a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function edit()
+	public function edit(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
@@ -431,7 +420,7 @@ class donation_pages_controller extends admin_main
 
 		// Collect the form data
 		$data = [
-			'page_id'      => (int) $page_id,
+			'page_id'      => $page_id,
 			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name(), false),
 			'page_lang_id' => $this->request->variable('page_lang_id', $this->ppde_entity->get_lang_id()),
 			'page_content' => $this->request->variable('page_content', $this->ppde_entity->get_message_for_edit(), true),
@@ -451,12 +440,9 @@ class donation_pages_controller extends admin_main
 	}
 
 	/**
-	 * Delete a donation page
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function delete()
+	public function delete(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 

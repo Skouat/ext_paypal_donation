@@ -48,14 +48,14 @@ class log_wrapper_output_handler
 	 *
 	 * @param string $file File to open
 	 */
-	protected function file_open($file)
+	protected function file_open($file): void
 	{
 		//check if the extension directory exists in the store/ folder
 		$this->ext_folder_exists(dirname($file));
 
-		if ($this->filesystem->is_writable(dirname($file)) && $this->log_path_result)
+		if ($this->log_path_result && $this->filesystem->is_writable(dirname($file)))
 		{
-			$this->file_handle = fopen($file, 'a');
+			$this->file_handle = fopen($file, 'ab');
 		}
 		else
 		{
@@ -63,7 +63,7 @@ class log_wrapper_output_handler
 		}
 	}
 
-	protected function ext_folder_exists($dir)
+	protected function ext_folder_exists($dir): void
 	{
 		// Try to create the directory if it does not exist
 		if (!file_exists($dir))
@@ -78,9 +78,6 @@ class log_wrapper_output_handler
 		}
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
 	public function write($message)
 	{
 		if ($this->file_handle !== false)

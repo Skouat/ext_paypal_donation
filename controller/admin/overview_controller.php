@@ -24,27 +24,27 @@ use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config   config             Config object
- * @property string   id_prefix_name     Prefix name for identifier in the URL
- * @property string   lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property language language           Language user object
- * @property log      log                The phpBB log system
- * @property string   module_name        Name of the module currently used
- * @property request  request            Request object
- * @property template template           Template object
- * @property string   u_action           Action URL
- * @property user     user               User object
+ * @property config     config              Config object
+ * @property string     id_prefix_name      Prefix name for identifier in the URL
+ * @property string     lang_key_prefix     Prefix for the messages thrown by exceptions
+ * @property language   language            Language user object
+ * @property log        log                 The phpBB log system
+ * @property string     module_name         Name of the module currently used
+ * @property locale_icu ppde_actions_locale PPDE Locale actions object
+ * @property ipn_paypal ppde_ipn_paypal     IPN PayPal object
+ * @property request    request             Request object
+ * @property template   template            Template object
+ * @property string     u_action            Action URL
+ * @property user       user                User object
  */
 class overview_controller extends admin_main
 {
 	protected $adm_relative_path;
 	protected $auth;
 	protected $ppde_actions;
-	protected $ppde_actions_locale;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions;
 	protected $ppde_ext_manager;
-	protected $ppde_ipn_paypal;
 	protected $php_ext;
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
@@ -123,17 +123,9 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function display_overview($action)
+	public function display_overview($action): void
 	{
-		if ($this->config['ppde_first_start'])
-		{
-			$this->ppde_ipn_paypal->set_curl_info();
-			$this->ppde_ipn_paypal->set_remote_detected();
-			$this->ppde_ipn_paypal->check_tls();
-			$this->ppde_actions_locale->set_intl_info();
-			$this->ppde_actions_locale->set_intl_detected();
-			$this->config->set('ppde_first_start', '0');
-		}
+		$this->ppde_first_start();
 
 		$this->do_action($action);
 
@@ -189,7 +181,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function do_action($action)
+	private function do_action($action): void
 	{
 		if ($action)
 		{
@@ -211,7 +203,7 @@ class overview_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function display_confirm($action)
+	private function display_confirm($action): void
 	{
 		switch ($action)
 		{
@@ -241,7 +233,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function exec_action($action)
+	private function exec_action($action): void
 	{
 		if (!$this->auth->acl_get('a_ppde_manage'))
 		{
@@ -255,11 +247,8 @@ class overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 			break;
 			case 'esi':
-				$this->ppde_ipn_paypal->set_curl_info();
-				$this->ppde_ipn_paypal->set_remote_detected();
-				$this->ppde_ipn_paypal->check_tls();
-				$this->ppde_actions_locale->set_intl_info();
-				$this->ppde_actions_locale->set_intl_detected();
+				$this->config->set('ppde_first_start', 1);
+				$this->ppde_first_start();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':
@@ -283,7 +272,7 @@ class overview_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function per_day_stats($config_name)
+	private function per_day_stats($config_name): string
 	{
 		return sprintf('%.2f', (float) $this->config[$config_name] / $this->get_install_days());
 	}

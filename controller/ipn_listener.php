@@ -18,6 +18,7 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\request\request;
 use skouat\ppde\actions\core;
+use skouat\ppde\actions\post_data;
 use skouat\ppde\controller\admin\transactions_controller;
 
 class ipn_listener
@@ -153,6 +154,7 @@ class ipn_listener
 	protected $dispatcher;
 	protected $language;
 	protected $ppde_actions;
+	protected $ppde_actions_post_data;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
@@ -172,12 +174,6 @@ class ipn_listener
 	 * @var boolean
 	 */
 	private $verified = false;
-	/**
-	 * Message to parse to log_error()
-	 *
-	 * @var boolean
-	 */
-	private $error_message;
 
 	/**
 	 * Constructor
@@ -185,6 +181,7 @@ class ipn_listener
 	 * @param config                  $config                             Config object
 	 * @param language                $language                           Language user object
 	 * @param core                    $ppde_actions                       PPDE actions object
+	 * @param post_data               $ppde_actions_post_data
 	 * @param main_controller         $ppde_controller_main               Main controller object
 	 * @param transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param ipn_log                 $ppde_ipn_log                       IPN log
@@ -198,6 +195,7 @@ class ipn_listener
 		config $config,
 		language $language,
 		core $ppde_actions,
+		post_data $ppde_actions_post_data,
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions_admin,
 		ipn_log $ppde_ipn_log,
@@ -209,6 +207,7 @@ class ipn_listener
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->ppde_actions = $ppde_actions;
+		$this->ppde_actions_post_data = $ppde_actions_post_data;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
@@ -216,7 +215,7 @@ class ipn_listener
 		$this->request = $request;
 	}
 
-	public function handle()
+	public function handle(): void
 	{
 		$this->language->add_lang('donate', 'skouat/ppde');
 
@@ -226,7 +225,7 @@ class ipn_listener
 		// Determine which remote connection to use to contact PayPal
 		$this->ppde_ipn_paypal->is_remote_detected();
 
-		// If no connection detected, disable IPN, log error and exit code execution
+		// If requirements are not satisfied, disable IPN, log error and exit code execution
 		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', false);
@@ -258,28 +257,30 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_transaction()
+	private function validate_transaction(): bool
 	{
 		// Request and populate $this->transaction_data
-		array_map([$this, 'get_post_data'], self::$paypal_vars_table);
+		$this->handle_post_data();
+
+		$this->ppde_ipn_paypal->set_postback_args();
 
 		// Additional checks
 		$this->check_account_id();
 
-		$this->transaction_data['txn_errors'] = '';
-		if (!empty($this->error_message))
+		// Handle errors
+		if (!empty($this->transaction_data['txn_errors']))
 		{
 			// If data doesn't meet the requirement, we log in file (if enabled).
-			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->error_message, true, false, E_USER_NOTICE, $this->get_postback_args());
-			// We store error message in transaction data for later use.
-			$this->transaction_data['txn_errors'] = $this->error_message;
+			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_TXN') . $this->transaction_data['txn_errors'], true, false, E_USER_NOTICE, $this->ppde_ipn_paypal->get_postback_args());
 		}
 
+		// Decode specific strings
 		$decode_ary = ['receiver_email', 'payer_email', 'payment_date', 'business', 'memo'];
 		foreach ($decode_ary as $key)
 		{
 			$this->transaction_data[$key] = urldecode($this->transaction_data[$key]);
 		}
+		unset($decode_ary);
 
 		// Get all variables from PayPal to build return URI
 		$this->ppde_ipn_paypal->set_args_return_uri();
@@ -290,11 +291,29 @@ class ipn_listener
 
 		if ($this->ppde_ipn_paypal->check_response_status())
 		{
-			$args = array_merge(['response_status' => $this->ppde_ipn_paypal->get_response_status()], $this->get_postback_args());
+			$args = array_merge(['response_status' => $this->ppde_ipn_paypal->get_response_status()], $this->ppde_ipn_paypal->get_postback_args());
 			$this->ppde_ipn_log->log_error($this->language->lang('INVALID_RESPONSE_STATUS'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_NOTICE, $args);
 		}
 
 		return $this->check_response();
+	}
+
+	/**
+	 * Request PayPal Post Data and populate $this->transaction_data
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function handle_post_data(): void
+	{
+		// Get PayPal data
+		$post_data = array_map([$this->ppde_actions_post_data, 'get_post_data'], self::$paypal_vars_table);
+		// Check PayPal data
+		$post_data = array_map([$this->ppde_actions_post_data, 'check_post_data'], $post_data);
+		// Populate transaction_data
+		array_map([$this, 'set_transaction_data'], $post_data);
+
+		unset($post_data);
 	}
 
 	/**
@@ -303,35 +322,13 @@ class ipn_listener
 	 * @return void
 	 * @access private
 	 */
-	private function check_account_id()
+	private function check_account_id(): void
 	{
-		$account_value = $this->ipn_use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
-		if ($account_value != $this->transaction_data['receiver_id'] && $account_value != $this->transaction_data['receiver_email'])
+		$account_value = !empty($this->transaction_data['test_ipn']) ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
+		if (strtoupper($account_value) !== strtoupper($this->transaction_data['receiver_id']) && strtolower($account_value) !== strtolower($this->transaction_data['receiver_email']))
 		{
-			$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_ACCOUNT_ID');
+			$this->transaction_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_ACCOUNT_ID');
 		}
-	}
-
-	/**
-	 * Check if Sandbox is enabled based on config value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function ipn_use_sandbox()
-	{
-		return $this->ppde_controller_main->use_ipn() && !empty($this->config['ppde_sandbox_enable']);
-	}
-
-	/**
-	 * Return Postback args to PayPal or for tracking errors.
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function get_postback_args()
-	{
-		return $this->ppde_ipn_paypal->get_postback_args();
 	}
 
 	/**
@@ -341,7 +338,7 @@ class ipn_listener
 	 * @return bool $this->verified
 	 * @access private
 	 */
-	private function check_response()
+	private function check_response(): bool
 	{
 		// Prepare data to include in report
 		$this->ppde_ipn_log->set_report_data($this->ppde_ipn_paypal->get_u_paypal(), $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
@@ -363,7 +360,7 @@ class ipn_listener
 			$this->ppde_ipn_log->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->ppde_ipn_log->is_use_log_error(), true);
 		}
 
-		return (bool) $this->verified;
+		return $this->verified;
 	}
 
 	/**
@@ -372,7 +369,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function txn_is_verified()
+	private function txn_is_verified(): bool
 	{
 		return $this->ppde_ipn_paypal->is_curl_strcmp('VERIFIED');
 	}
@@ -383,23 +380,9 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function txn_is_invalid()
+	private function txn_is_invalid(): bool
 	{
 		return $this->ppde_ipn_paypal->is_curl_strcmp('INVALID');
-	}
-
-	/**
-	 * Some work to do before doing actions.
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function prepare_data()
-	{
-		$this->ppde_actions->set_transaction_data($this->transaction_data);
-		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
-		$this->ppde_actions->is_donor_is_member();
-		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
 	}
 
 	/**
@@ -408,7 +391,7 @@ class ipn_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function validate_actions()
+	private function validate_actions(): bool
 	{
 		if (!$this->verified)
 		{
@@ -424,12 +407,26 @@ class ipn_listener
 	}
 
 	/**
+	 * Some work to do before doing actions.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function prepare_data(): void
+	{
+		$this->ppde_actions->set_transaction_data($this->transaction_data);
+		$this->ppde_actions->set_ipn_test_properties((bool) $this->transaction_data['test_ipn']);
+		$this->ppde_actions->is_donor_is_member();
+		$this->tasks_list['donor_is_member'] = $this->ppde_actions->get_donor_is_member();
+	}
+
+	/**
 	 * Do actions for transactions
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function do_actions()
+	private function do_actions(): void
 	{
 		if ($this->tasks_list['payment_completed'])
 		{
@@ -478,99 +475,23 @@ class ipn_listener
 	}
 
 	/**
-	 * Request predefined variable from super global, then fill in the $this->transaction_data array
+	 * Populate $this->transaction_data with PayPal Postdata.
 	 *
-	 * @param array $data_ary List of data to request
+	 * @param array $post_data
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function get_post_data($data_ary = [])
+	private function set_transaction_data($post_data): void
 	{
-		// Request variables
-		if (is_array($data_ary['default']))
-		{
-			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
-		}
-		else
-		{
-			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
-		}
-
-		// Check post data. Then assign them to $this->transaction_data
-		$this->check_post_data($data_ary);
-		$this->transaction_data[$data_ary['name']] = $this->set_post_data($data_ary);
-	}
-
-	/**
-	 * Set PayPal Postdata.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return array|string
-	 * @access private
-	 */
-	private function set_post_data($data_ary)
-	{
-		$value = $data_ary['value'];
+		$this->transaction_data['txn_errors'] = '';
+		$this->transaction_data[$post_data['name']] = $post_data['value'];
 
 		// Set all conditions declared for this post_data
-		if (isset($data_ary['force_settings']))
+		if (isset($post_data['force_settings']))
 		{
-			$value = $this->ppde_actions->set_post_data_func($data_ary);
+			$this->transaction_data['txn_errors'] .= $post_data['txn_errors'];
+			$this->transaction_data[$post_data['name']] = $this->ppde_actions_post_data->set_func($post_data);
 		}
-
-		return $value;
-	}
-
-	/**
-	 * Check if some settings are valid.
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_post_data($data_ary = [])
-	{
-		$check = [];
-
-		// Check all conditions declared for this post_data
-		if (isset($data_ary['condition_check']))
-		{
-			$check = array_merge($check, $this->call_post_data_func($data_ary));
-		}
-
-		return (bool) array_product($check);
-	}
-
-	/**
-	 * Check requirements for data value.
-	 * If a check fails, error message are stored in $this->error_message
-	 *
-	 * @param array $data_ary
-	 *
-	 * @return array
-	 * @access public
-	 */
-	public function call_post_data_func($data_ary)
-	{
-		$check = [];
-
-		foreach ($data_ary['condition_check'] as $control_point => $params)
-		{
-			// Calling the check_post_data_function
-			if (call_user_func_array([$this->ppde_actions, 'check_post_data_' . $control_point], [$data_ary['value'], $params]))
-			{
-				$check[] = true;
-				continue;
-			}
-
-			$this->error_message .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
-			$check[] = false;
-		}
-		unset($data_ary, $control_point, $params);
-
-		return $check;
 	}
 }

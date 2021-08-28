@@ -87,12 +87,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Display the currency list
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		// Check if currency_order is valid and fix it if necessary
 		$this->ppde_operator->fix_currency_order();
@@ -106,12 +103,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Add a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function add()
+	public function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_currency');
@@ -141,7 +135,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_currency_data($entity, $data)
+	private function add_edit_currency_data($entity, $data): void
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -201,7 +195,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors)
+	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors): void
 	{
 		if (!$entity->get_id())
 		{
@@ -218,12 +212,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Edit a Currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function edit()
+	public function edit(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 		// Add form key
@@ -250,12 +241,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Move a currency up/down
-	 *
-	 * @return void
-	 * @access   public
+	 * {@inheritdoc}
 	 */
-	public function move()
+	public function move(): void
 	{
 		$direction = $this->args['action'];
 
@@ -270,14 +258,14 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($this->args[$this->id_prefix_name . '_id']);
 		$current_order = $this->ppde_entity->get_currency_order();
 
-		if ($current_order == 0 && $direction == 'move_up')
+		if (($current_order === 0) && ($direction === 'move_up'))
 		{
 			return;
 		}
 
 		// on move_down, switch position with next order_id...
 		// on move_up, switch position with previous order_id...
-		$switch_order_id = ($direction == 'move_down') ? $current_order + 1 : $current_order - 1;
+		$switch_order_id = ($direction === 'move_down') ? $current_order + 1 : $current_order - 1;
 
 		$move_executed = $this->ppde_operator->move($switch_order_id, $current_order, $this->ppde_entity->get_id());
 
@@ -295,12 +283,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Enable/disable a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function enable()
+	public function enable(): void
 	{
 		$action = $this->args['action'];
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
@@ -312,7 +297,7 @@ class currency_controller extends admin_main
 		}
 
 		// Return an error if it's the default currency
-		if ($this->config['ppde_default_currency'] == $currency_id && ($action == 'deactivate'))
+		if (((int) $this->config['ppde_default_currency'] === $currency_id) && ($action === 'deactivate'))
 		{
 			trigger_error($this->language->lang('PPDE_CANNOT_DISABLE_DEFAULT_CURRENCY') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
@@ -321,28 +306,25 @@ class currency_controller extends admin_main
 		$this->ppde_entity->load($currency_id);
 
 		// Set the new status for this currency
-		$this->ppde_entity->set_currency_enable($action == 'activate');
+		$this->ppde_entity->set_currency_enable($action === 'activate');
 
 		// Save data to the database
 		$this->ppde_entity->save($this->ppde_entity->check_required_field());
 		// Log action
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), [$this->ppde_entity->get_name()]);
 
-		if ($this->request->is_ajax() && ($action == 'activate' || $action == 'deactivate'))
+		if ((($action === 'activate') || ($action === 'deactivate')) && $this->request->is_ajax())
 		{
-			$action_lang = ($action == 'activate') ? 'DISABLE' : 'ENABLE';
+			$action_lang = ($action === 'activate') ? 'DISABLE' : 'ENABLE';
 			$json_response = new \phpbb\json_response;
 			$json_response->send(['text' => $this->language->lang($action_lang)]);
 		}
 	}
 
 	/**
-	 * Delete a currency
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function delete()
+	public function delete(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
@@ -363,10 +345,18 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function currency_assign_template_vars($data)
+	protected function currency_assign_template_vars($data): void
 	{
-		$enable_lang = (!$data['currency_enable']) ? 'ENABLE' : 'DISABLE';
-		$enable_value = (!$data['currency_enable']) ? 'activate' : 'deactivate';
+		if (!$data['currency_enable'])
+		{
+			$enable_lang = 'ENABLE';
+			$enable_value = 'activate';
+		}
+		else
+		{
+			$enable_lang = 'DISABLE';
+			$enable_value = 'deactivate';
+		}
 
 		$this->template->assign_block_vars('currency', [
 			'CURRENCY_NAME'    => $data['currency_name'],

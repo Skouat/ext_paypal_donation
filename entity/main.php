@@ -63,16 +63,17 @@ abstract class main
 	 *
 	 * @param array $data_ary
 	 *
+	 * @return void
 	 * @access public
 	 */
-	public function set_entity_data($data_ary)
+	public function set_entity_data($data_ary): void
 	{
 		foreach ($data_ary as $entity_function => $data)
 		{
 			// Calling the set_$entity_function on the entity and passing it $currency_data
 			call_user_func_array([$this, 'set_' . $entity_function], [$data]);
 		}
-		unset($data_ary, $entity_function, $data);
+		unset($entity_function);
 	}
 
 	/**
@@ -83,7 +84,7 @@ abstract class main
 	 * @return string
 	 * @access public
 	 */
-	public function add_edit_data($run_before_insert = '')
+	public function add_edit_data($run_before_insert = ''): string
 	{
 		if ($this->get_id())
 		{
@@ -146,7 +147,7 @@ abstract class main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_warning_message($lang_key, $args = '')
+	protected function display_warning_message($lang_key, $args = ''): void
 	{
 		$message = call_user_func_array([$this->language, 'lang'], array_merge([strtoupper($lang_key), $args])) . $this->adm_back_link_exists();
 		trigger_error($message, E_USER_WARNING);
@@ -158,7 +159,7 @@ abstract class main
 	 * @return string
 	 * @access protected
 	 */
-	protected function adm_back_link_exists()
+	protected function adm_back_link_exists(): string
 	{
 		return (function_exists('adm_back_link')) ? adm_back_link($this->u_action) : '';
 	}
@@ -171,7 +172,7 @@ abstract class main
 	 * @return bool
 	 * @access private
 	 */
-	private function run_function_before_action($function_name)
+	private function run_function_before_action($function_name): bool
 	{
 		$func_result = true;
 		if ($function_name)
@@ -215,9 +216,9 @@ abstract class main
 	 * @return int Item identifier
 	 * @access public
 	 */
-	public function get_id()
+	public function get_id(): int
 	{
-		return (isset($this->data[$this->table_schema['item_id']['name']])) ? (int) $this->data[$this->table_schema['item_id']['name']] : 0;
+		return (int) ($this->data[$this->table_schema['item_id']['name']] ?? 0);
 	}
 
 	/**
@@ -228,7 +229,7 @@ abstract class main
 	 * @return bool
 	 * @access public
 	 */
-	public function data_exists($sql)
+	public function data_exists($sql): bool
 	{
 		$this->db->sql_query($sql);
 		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
@@ -257,7 +258,7 @@ abstract class main
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data_exists()
+	public function build_sql_data_exists(): string
 	{
 		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
  			FROM ' . $this->table_name . '
@@ -296,9 +297,9 @@ abstract class main
 	 * @return string Item name
 	 * @access public
 	 */
-	public function get_name()
+	public function get_name(): string
 	{
-		return (isset($this->data[$this->table_schema['item_name']['name']])) ? (string) $this->data[$this->table_schema['item_name']['name']] : '';
+		return (string) ($this->data[$this->table_schema['item_name']['name']] ?? '');
 	}
 
 	/**
@@ -325,18 +326,18 @@ abstract class main
 	 * @return void
 	 * @access public
 	 */
-	public function set_page_url($u_action)
+	public function set_page_url($u_action): void
 	{
 		$this->u_action = $u_action;
 	}
 
 	/**
-	 * Check if required field are set
+	 * Check if required field is set
 	 *
 	 * @return bool
 	 * @access public
 	 */
-	public function check_required_field()
+	public function check_required_field(): bool
 	{
 		return false;
 	}
@@ -352,13 +353,13 @@ abstract class main
 	 * @return bool
 	 * @access public
 	 */
-	public function delete($id, $action_before_delete = '', $sql_where = '', $all = false)
+	public function delete($id, $action_before_delete = '', $sql_where = '', $all = false): bool
 	{
 		$where_clause = '';
 
 		if (!$all)
 		{
-			if ($this->disallow_deletion($id) && empty($sql_where))
+			if (empty($sql_where) && $this->disallow_deletion($id))
 			{
 				// The item selected does not exists
 				$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
@@ -383,9 +384,9 @@ abstract class main
 	 *
 	 * @return bool
 	 */
-	private function disallow_deletion($id)
+	private function disallow_deletion($id): bool
 	{
-		return empty($this->data[$this->table_schema['item_id']['name']]) || ($this->data[$this->table_schema['item_id']['name']] != $id);
+		return empty($this->data[$this->table_schema['item_id']['name']]) || ((int) $this->data[$this->table_schema['item_id']['name']] !== $id);
 	}
 
 	/**
@@ -400,7 +401,7 @@ abstract class main
 	 * @return array
 	 * @access public
 	 */
-	public function get_data($sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false)
+	public function get_data($sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false): array
 	{
 		$entities = [];
 		$result = $this->limit_query($sql, $limit, $limit_offset);
@@ -445,7 +446,7 @@ abstract class main
 	 * @return array $this->data
 	 * @access public
 	 */
-	public function import($data, $additional_table_schema = [], $override = false)
+	public function import($data, $additional_table_schema = [], $override = false): array
 	{
 		// Clear out any saved data
 		$this->data = [];
@@ -470,7 +471,6 @@ abstract class main
 
 			$this->data[$field['name']] = $value;
 		}
-		unset($field);
 
 		return $this->data;
 	}

@@ -11,12 +11,11 @@
 namespace skouat\ppde\controller\admin;
 
 use skouat\ppde\controller\ipn_paypal;
-use skouat\ppde\entity\main;
 
 abstract class admin_main
 {
 	/** @var array */
-	protected $args;
+	protected $args = [];
 	/** @var object \phpbb\config\config */
 	protected $config;
 	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
@@ -31,6 +30,10 @@ abstract class admin_main
 	protected $log;
 	/** @var string */
 	protected $module_name;
+	/** @var \skouat\ppde\actions\locale_icu */
+	protected $ppde_actions_locale;
+	/** @var ipn_paypal */
+	protected $ppde_ipn_paypal;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -39,10 +42,11 @@ abstract class admin_main
 	protected $submit;
 	/** @var \phpbb\template\template */
 	protected $template;
-	/** @var string */
-	protected $u_action;
 	/** @var \phpbb\user */
 	protected $user;
+
+	/** @var string */
+	public $u_action;
 
 	/**
 	 * Constructor
@@ -68,92 +72,150 @@ abstract class admin_main
 	 * @return void
 	 * @access public
 	 */
-	public function set_page_url($u_action)
+	public function set_page_url($u_action): void
 	{
 		$this->u_action = $u_action;
 	}
 
-	public function set_hidden_fields($id, $mode, $action)
+	/**
+	 * Gets vars from POST then build a array of them
+	 *
+	 * @param string $id     Module id
+	 * @param string $mode   Module categorie
+	 * @param string $action Action name
+	 *
+	 * @return void
+	 * @access private
+	 */
+	public function set_hidden_fields($id, $mode, $action): void
 	{
-		$this->args = array_merge((array) $this->args, [
-			'id'            => $id,
+		$this->args = array_merge($this->args, [
+			'i'             => $id,
 			'mode'          => $mode,
 			'action'        => $action,
 			'hidden_fields' => [],
 		]);
 	}
 
-	public function get_hidden_fields()
+	public function get_hidden_fields(): array
 	{
 		return count($this->args) ? array_merge(
-			['id'                          => $this->args['id'],
+			['i'                           => $this->args['i'],
 			 'mode'                        => $this->args['mode'],
 			 'action'                      => $this->args['action'],
 			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
 			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];
 	}
 
-	public function set_action($action)
+	public function set_action($action): void
 	{
 		$this->args['action'] = $action;
 	}
 
-	public function get_action()
+	public function get_action(): string
 	{
-		return (isset($this->args['action'])) ? (string) $this->args['action'] : '';
+		return (string) ($this->args['action'] ?? '');
 	}
 
-	public function set_item_id($item_id)
+	public function set_item_id($item_id): void
 	{
 		$this->args[$this->id_prefix_name . '_id'] = (int) $item_id;
 	}
 
-	public function display()
+	/**
+	 * Display items of the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function display(): void
 	{
 	}
 
-	public function add()
+	/**
+	 * Add item for the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function add(): void
 	{
 	}
 
-	public function approve()
+	public function approve(): void
 	{
 	}
 
-	public function change()
+	/**
+	 * Change item details for the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function change(): void
 	{
 	}
 
-	public function delete()
+	/**
+	 * Delete item for the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function delete(): void
 	{
 	}
 
-	public function edit()
+	/**
+	 * Edit item on the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function edit(): void
 	{
 	}
 
-	public function enable()
+	/**
+	 * Enable/disable item on the called controller
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function enable(): void
 	{
 	}
 
-	public function move()
+	/**
+	 * Move up/down an item on the called controller
+	 *
+	 * @return void
+	 * @access   public
+	 */
+	public function move(): void
 	{
 	}
 
-	public function view()
+	/**
+	 * View a selected item on the called controller
+	 *
+	 * @return void
+	 * @access   public
+	 */
+	public function view(): void
 	{
 	}
 
 	/**
 	 * Build pull down menu options of available remote URI
 	 *
-	 * @param mixed  $default ID of the selected value.
+	 * @param int    $default ID of the selected value.
 	 * @param string $type    Can be 'live' or 'sandbox'
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function build_remote_uri_select_menu($default, $type)
+	public function build_remote_uri_select_menu($default, $type): void
 	{
 		$type = $this->force_type($type);
 
@@ -170,12 +232,12 @@ abstract class admin_main
 
 			// Set output block vars for display in the template
 			$this->template->assign_block_vars('remote_options', [
-				'REMOTE_ID'   => $id,
+				'REMOTE_ID'   => (int) $id,
 				'REMOTE_NAME' => $remote['hostname'],
-				'S_DEFAULT'   => $default == $id,
+				'S_DEFAULT'   => (int) $default === (int) $id,
 			]);
 		}
-		unset ($remote_list, $remote, $id);
+		unset ($remote_list, $id);
 	}
 
 	/**
@@ -186,7 +248,7 @@ abstract class admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function force_type($type)
+	private function force_type($type): string
 	{
 		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
@@ -197,7 +259,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function submit_settings()
+	protected function submit_settings(): void
 	{
 		$this->submit = $this->request->is_set_post('submit');
 
@@ -227,9 +289,9 @@ abstract class admin_main
 	 * @return array
 	 * @access protected
 	 */
-	protected function is_invalid_form($form_name, $submit_or_preview = false)
+	protected function is_invalid_form($form_name, $submit_or_preview = false): array
 	{
-		if (!check_form_key($form_name) && $submit_or_preview)
+		if ($submit_or_preview && !check_form_key($form_name))
 		{
 			return [$this->language->lang('FORM_INVALID')];
 		}
@@ -243,12 +305,18 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function can_submit_data(array $errors)
+	protected function can_submit_data(array $errors): bool
 	{
 		return $this->submit && empty($errors) && !$this->preview;
 	}
 
-	protected function set_settings()
+	/**
+	 * Set the options for called controller
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function set_settings(): void
 	{
 	}
 
@@ -257,9 +325,10 @@ abstract class admin_main
 	 *
 	 * @param \skouat\ppde\entity\main $entity The entity object
 	 *
+	 * @return void
 	 * @access protected
 	 */
-	protected function trigger_error_data_already_exists(main $entity)
+	protected function trigger_error_data_already_exists(\skouat\ppde\entity\main $entity): void
 	{
 		if ($this->is_added_data_exists($entity))
 		{
@@ -277,7 +346,7 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function is_added_data_exists(main $entity)
+	protected function is_added_data_exists(\skouat\ppde\entity\main $entity): bool
 	{
 		return $entity->data_exists($entity->build_sql_data_exists()) && $this->request->variable('action', '') === 'add';
 	}
@@ -287,17 +356,17 @@ abstract class admin_main
 	 *
 	 * @param \skouat\ppde\entity\main $entity            The entity object
 	 * @param string                   $field_name        Name of the entity function to call
-	 * @param string|int               $value_cmp         Default value to compare with the call_user_func() return value
+	 * @param string|int               $value_cmp         Default value to compare with the return value of the called function
 	 * @param bool                     $submit_or_preview Form submit or preview status
 	 *
 	 * @return array $errors
 	 * @access protected
 	 */
-	protected function is_empty_data(main $entity, $field_name, $value_cmp, $submit_or_preview = false)
+	protected function is_empty_data(\skouat\ppde\entity\main $entity, $field_name, $value_cmp, $submit_or_preview = false): array
 	{
 		$errors = [];
 
-		if (call_user_func([$entity, 'get_' . $field_name]) == $value_cmp && $submit_or_preview)
+		if ($submit_or_preview && $entity->{'get_' . $field_name}() == $value_cmp)
 		{
 			$errors[] = $this->language->lang($this->lang_key_prefix . '_EMPTY_' . strtoupper($field_name));
 		}
@@ -314,9 +383,9 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function submit_or_preview($submit = false, $preview = false)
+	protected function submit_or_preview($submit = false, $preview = false): bool
 	{
-		return (bool) $submit || (bool) $preview;
+		return $submit || $preview;
 	}
 
 	/**
@@ -327,7 +396,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function ajax_delete_result_message($message = '')
+	protected function ajax_delete_result_message($message = ''): void
 	{
 		if ($this->request->is_ajax())
 		{
@@ -348,7 +417,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function u_action_assign_template_vars()
+	protected function u_action_assign_template_vars(): void
 	{
 		$this->template->assign_vars([
 			'U_ACTION' => $this->u_action,
@@ -364,7 +433,7 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function add_edit_action_assign_template_vars($type, $id = 0)
+	protected function add_edit_action_assign_template_vars($type, $id = 0): void
 	{
 		$id_action = !empty($id) ? '&amp;' . $this->id_prefix_name . '_id=' . (int) $id : '';
 
@@ -383,10 +452,10 @@ abstract class admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function s_error_assign_template_vars($errors)
+	protected function s_error_assign_template_vars($errors): void
 	{
 		$this->template->assign_vars([
-			'S_ERROR'   => (count($errors)) ? true : false,
+			'S_ERROR'   => (bool) count($errors),
 			'ERROR_MSG' => (count($errors)) ? implode('<br>', $errors) : '',
 		]);
 	}
@@ -407,7 +476,7 @@ abstract class admin_main
 		settype($config, $type);
 		settype($default, $type);
 
-		return $config ? $config : $default;
+		return $config ?: $default;
 	}
 
 	/**
@@ -421,7 +490,7 @@ abstract class admin_main
 	 */
 	protected function required_settings($settings, $depend_on)
 	{
-		if (empty($settings) && $depend_on == true)
+		if (empty($settings) && (bool) $depend_on === true)
 		{
 			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
@@ -430,15 +499,22 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if a settings depend on another.
+	 * Run system checks if config 'ppde_first_start' is true
 	 *
-	 * @param $config_name
-	 *
-	 * @return bool
+	 * @return void
+	 * @throws \ReflectionException
 	 * @access protected
 	 */
-	protected function depend_on($config_name)
+	protected function ppde_first_start(): void
 	{
-		return !empty($this->config[$config_name]) ? (bool) $this->config[$config_name] : false;
+		if ($this->config['ppde_first_start'])
+		{
+			$this->ppde_ipn_paypal->set_curl_info();
+			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_ipn_paypal->check_tls();
+			$this->ppde_actions_locale->set_intl_info();
+			$this->ppde_actions_locale->set_intl_detected();
+			$this->config->set('ppde_first_start', '0');
+		}
 	}
 }

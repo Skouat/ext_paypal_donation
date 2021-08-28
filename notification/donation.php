@@ -77,8 +77,7 @@ abstract class donation extends \phpbb\notification\type\base
 			'MC_GROSS'       => html_entity_decode($this->get_data('mc_gross'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
 			'NET_AMOUNT'     => html_entity_decode($this->get_data('net_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
 			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
-			'PAYER_USERNAME' => $this->get_data('payer_username'),
-			'SETTLE_AMOUNT'  => html_entity_decode($this->get_data('settle_amount'), ENT_COMPAT | ENT_HTML5, 'UTF-8'),
+			'PAYER_USERNAME' => htmlspecialchars_decode($this->get_data('payer_username')),
 			'TXN_ID'         => $this->get_data('txn_id'),
 		];
 	}
@@ -131,7 +130,6 @@ abstract class donation extends \phpbb\notification\type\base
 		$this->set_data('net_amount', $data['net_amount']);
 		$this->set_data('payer_email', $data['payer_email']);
 		$this->set_data('payer_username', $data['payer_username']);
-		$this->set_data('settle_amount', $data['settle_amount']);
 		$this->set_data('transaction_id', $data['transaction_id']);
 		$this->set_data('txn_id', $data['txn_id']);
 		$this->set_data('user_from', $data['user_from']);

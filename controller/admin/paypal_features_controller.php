@@ -20,22 +20,22 @@ use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config   config             Config object
- * @property string   id_prefix_name     Prefix name for identifier in the URL
- * @property string   lang_key_prefix    Prefix for the messages thrown by exceptions
- * @property language language           Language object
- * @property log      log                The phpBB log system
- * @property string   module_name        Name of the module currently used
- * @property request  request            Request object
- * @property bool     submit             State of submit $_POST variable
- * @property template template           Template object
- * @property string   u_action           Action URL
- * @property user     user               User object
+ * @property config     config          Config object
+ * @property string     id_prefix_name  Prefix name for identifier in the URL
+ * @property string     lang_key_prefix Prefix for the messages thrown by exceptions
+ * @property language   language        Language object
+ * @property log        log             The phpBB log system
+ * @property string     module_name     Name of the module currently used
+ * @property ipn_paypal ppde_ipn_paypal IPN PayPal object
+ * @property request    request         Request object
+ * @property bool       submit          State of submit $_POST variable
+ * @property template   template        Template object
+ * @property string     u_action        Action URL
+ * @property user       user            User object
  */
 class paypal_features_controller extends admin_main
 {
 	protected $ppde_controller_main;
-	protected $ppde_ipn_paypal;
 
 	/**
 	 * Constructor
@@ -81,17 +81,12 @@ class paypal_features_controller extends admin_main
 	 * Display the settings a user can configure for this extension
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function display_settings()
+	public function display_settings(): void
 	{
-		if ($this->config['ppde_first_start'])
-		{
-			$this->ppde_ipn_paypal->set_curl_info();
-			$this->ppde_ipn_paypal->set_remote_detected();
-			$this->ppde_ipn_paypal->check_tls();
-			$this->config->set('ppde_first_start', '0');
-		}
+		$this->ppde_first_start();
 
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_paypal_features');
@@ -104,7 +99,7 @@ class paypal_features_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
-		$this->build_remote_uri_select_menu($this->config['ppde_sandbox_remote'], 'sandbox');
+		$this->build_remote_uri_select_menu((int) $this->config['ppde_sandbox_remote'], 'sandbox');
 		$this->template->assign_vars([
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
@@ -118,19 +113,16 @@ class paypal_features_controller extends admin_main
 			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string', ''),
+			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string'),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
 			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 		]);
 	}
 
 	/**
-	 * Set the options a user can configure
-	 *
-	 * @return void
-	 * @access protected
+	 * {@inheritdoc}
 	 */
-	protected function set_settings()
+	protected function set_settings(): void
 	{
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
@@ -156,10 +148,10 @@ class paypal_features_controller extends admin_main
 		{
 			$this->config->set('ppde_ipn_enable', (string) false);
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
-		};
+		}
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), $this->depend_on('ppde_sandbox_enable')));
+		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));
 		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
 	}
 }

@@ -51,7 +51,7 @@ class main_display_stats
 	 * @return void
 	 * @access public
 	 */
-	public function display_stats()
+	public function display_stats(): void
 	{
 		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
 		{
@@ -85,7 +85,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_goal_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_goal_langkey($currency_iso_code, $currency_symbol, $on_left = true): string
 	{
 		if ((int) $this->config['ppde_goal'] <= 0)
 		{
@@ -110,7 +110,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_raised_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_raised_langkey($currency_iso_code, $currency_symbol, $on_left = true): string
 	{
 		if ((int) $this->config['ppde_raised'] <= 0)
 		{
@@ -130,7 +130,7 @@ class main_display_stats
 	 * @return string
 	 * @access public
 	 */
-	public function get_ppde_used_langkey($currency_iso_code, $currency_symbol, $on_left = true)
+	public function get_ppde_used_langkey($currency_iso_code, $currency_symbol, $on_left = true): string
 	{
 		if ((int) $this->config['ppde_used'] <= 0)
 		{
@@ -155,7 +155,7 @@ class main_display_stats
 	 * @return void
 	 * @access private
 	 */
-	private function generate_stats_percent()
+	private function generate_stats_percent(): void
 	{
 		if ($this->is_ppde_goal_stats())
 		{
@@ -176,7 +176,7 @@ class main_display_stats
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_goal_stats()
+	private function is_ppde_goal_stats(): bool
 	{
 		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
 	}
@@ -187,7 +187,7 @@ class main_display_stats
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_used_stats()
+	private function is_ppde_used_stats(): bool
 	{
 		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
 	}
@@ -216,13 +216,13 @@ class main_display_stats
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($varname, $percent, $reverse_css = false)
+	private function assign_vars_stats_percent($varname, $percent, $reverse_css = false): void
 	{
 		// Force $varname to be in upper case
 		$varname = strtoupper($varname);
 
 		$this->template->assign_vars([
-			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent, 0),
+			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent),
 			'PPDE_CSS_' . $varname => $this->ppde_css_classname($percent, $reverse_css),
 			'S_' . $varname        => true,
 		]);
@@ -237,7 +237,7 @@ class main_display_stats
 	 * @return string
 	 * @access private
 	 */
-	private function ppde_css_classname($value, $reverse = false)
+	private function ppde_css_classname($value, $reverse = false): string
 	{
 		$css_reverse = '';
 		// Array of CSS class name

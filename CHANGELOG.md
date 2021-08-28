@@ -1,4 +1,24 @@
 # Changelog
+## 3.0.4 - 2021-04-20
+  - Fix: Merchant ID does not match
+  - Fix: Undefined index on transactions module
+  - Global code review
+
+## 3.0.3 - 2021-03-13
+  - Fix: Check for the existence of the auth_admin class was not properly set
+  - Fix: Typo on template vars name
+  - Fix: The amount received always set to 0 in email notifications (#92)
+  - Fix: Remove use of phpbb_email_hash()
+  - Fix: Undefined index when deleting a transaction
+  - Change: Improve processing of transaction data in IPN listener
+  - Change: Add htmlspecialchars_decode() for username items in notifications systems
+  - Change: Move post_data functions on its own actions controller
+
+## 3.0.2 - 2021-01-08
+  - Fix: Class 'ResourceBundle' not found
+  - Fix: Travis-ci reported issues
+  - Code changes following phpBB Customisation Team reports
+
 ## 3.0.1 - 2020-12-12
   - Add: Position of donation stats can be defined
   - Add: Add options to set guest permissions from PDDE settings
@@ -16,6 +36,11 @@
   - Change: Convert email template vars to Twig
   - Change: Update datepicker to 1.0.9
   - Code improvement
+
+## 2.1.5 - 2020-12-16
+  - Fix: Typo
+  - Fix: Invalid lang keys in email templates
+  - Quick code cleanup
 
 ## 2.1.4 - 2020-05-03
   - Fix: SQL error on transactions log

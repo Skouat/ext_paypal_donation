@@ -11,7 +11,7 @@ Transaction ID: {{ TXN_ID }}
 Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Errors detected:
-{{ TNX_ERRORS }}
+{{ TXN_ERRORS }}
 
 ----------------------------
 
@@ -19,9 +19,7 @@ View the transactions log for more details.
 
 -----
 
-You are receiving this notification because you asked to be notified when receiving a donation.
 If you no longer wish to receive updates about new donations, please update your notification settings here:
-
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}

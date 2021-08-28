@@ -11,7 +11,7 @@ ID de transaction : {{ TXN_ID }}
 Donateur : {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
 
 Erreurs détectées :
-{{ TNX_ERRORS }}
+{{ TXN_ERRORS }}
 
 ----------------------------
 
@@ -19,9 +19,7 @@ Consultez le journal des transactions pour connaître le détail de cette transa
 
 -----
 
-Vous recevez ce courriel car vous avez demandé à être notifié dès réception d’un don.
-Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
-
+Si vous ne souhaitez plus être notifié des dons reçus, cliquez sur le lien suivant :
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}

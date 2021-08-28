@@ -95,11 +95,11 @@ class transactions_controller extends admin_main
 		template $template,
 		user $user,
 		user_loader $user_loader,
-		$adm_relative_path,
-		$phpbb_root_path,
-		$php_ext,
-		$table_prefix,
-		$table_ppde_transactions
+		string $adm_relative_path,
+		string $phpbb_root_path,
+		string $php_ext,
+		string $table_prefix,
+		string $table_ppde_transactions
 	)
 	{
 		$this->auth = $auth;
@@ -129,12 +129,9 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Display the transactions list
-	 *
-	 * @return void
-	 * @access public
+	 * {@inheritdoc}
 	 */
-	public function display()
+	public function display(): void
 	{
 		/** @type \phpbb\pagination $pagination */
 		$pagination = $this->container->get('pagination');
@@ -172,7 +169,7 @@ class transactions_controller extends admin_main
 
 		// Define where and sort sql for use in displaying transactions
 		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
-		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] == 'd') ? 'DESC' : 'ASC');
+		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
 
 		$keywords = $this->request->variable('keywords', '', true);
 		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
@@ -213,7 +210,7 @@ class transactions_controller extends admin_main
 	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): int
 	{
 		$count_logs = ($log_count !== false);
 
@@ -234,13 +231,13 @@ class transactions_controller extends admin_main
 	 * @return array $log
 	 * @access private
 	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = '')
+	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): array
 	{
 		$this->entry_count = 0;
 		$this->last_page_offset = $offset;
 		$url_ary = [];
 
-		if ($this->ppde_actions->is_in_admin() && $this->phpbb_admin_path)
+		if ($this->phpbb_admin_path && $this->ppde_actions->is_in_admin())
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
@@ -258,7 +255,7 @@ class transactions_controller extends admin_main
 		{
 			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
 
-			if ($this->entry_count == 0)
+			if ($this->entry_count === 0)
 			{
 				// Save the queries, because there are no logs to display
 				$this->last_page_offset = 0;
@@ -277,19 +274,19 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * @return integer
+	 * @return int
 	 */
-	public function get_log_count()
+	public function get_log_count(): int
 	{
-		return ($this->entry_count) ? (int) $this->entry_count : 0;
+		return (int) $this->entry_count ?: 0;
 	}
 
 	/**
-	 * @return integer
+	 * @return int
 	 */
-	public function get_valid_offset()
+	public function get_valid_offset(): int
 	{
-		return ($this->last_page_offset) ? (int) $this->last_page_offset : 0;
+		return (int) $this->last_page_offset ?: 0;
 	}
 
 	/**
@@ -302,40 +299,34 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	public function set_hidden_fields($id, $mode, $action)
+	public function set_hidden_fields($id, $mode, $action): void
 	{
-		$this->args = [
-			'action'        => $action,
-			'hidden_fields' => [
-				'start'     => $this->request->variable('start', 0),
-				'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
-				'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
-				'mark'      => $this->request->variable('mark', [0]),
-				'st'        => $this->request->variable('st', 0),
-				'sk'        => $this->request->variable('sk', 't'),
-				'sd'        => $this->request->variable('sd', 'd'),
-			],
+		$this->args['action'] = $action;
+		$this->args['hidden_fields'] = [
+			'start'     => $this->request->variable('start', 0),
+			'delall'    => $this->request->variable('delall', false, false, \phpbb\request\request_interface::POST),
+			'delmarked' => $this->request->variable('delmarked', false, false, \phpbb\request\request_interface::POST),
+			'i'         => $id,
+			'mark'      => $this->request->variable('mark', [0]),
+			'mode'      => $mode,
+			'st'        => $this->request->variable('st', 0),
+			'sk'        => $this->request->variable('sk', 't'),
+			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
 		// Prepares args depending actions
 		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$this->args['action'] = 'delete';
-			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
-				'i'    => $id,
-				'mode' => $mode,
-			]);
 		}
 		else if ($this->request->is_set('approve'))
 		{
-			$this->args = [
-				'action'        => 'approve',
-				'hidden_fields' => [
-					'approve'             => true,
-					'id'                  => $this->request->variable('id', 0),
-					'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
-				],
-			];
+			$this->args['action'] = 'approve';
+			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
+				'approve'             => true,
+				'id'                  => $this->request->variable('id', 0),
+				'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
+			]);
 		}
 		else if ($this->request->is_set('add'))
 		{
@@ -347,7 +338,20 @@ class transactions_controller extends admin_main
 		}
 	}
 
-	public function change()
+	public function get_hidden_fields(): array
+	{
+		return array_merge(
+			['i'                           => $this->args['hidden_fields']['i'],
+			 'mode'                        => $this->args['hidden_fields']['mode'],
+			 'action'                      => $this->args['action'],
+			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
+			$this->args['hidden_fields']);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function change(): void
 	{
 		$username = $this->request->variable('username', '', true);
 		$donor_id = $this->request->variable('donor_id', 0);
@@ -387,12 +391,12 @@ class transactions_controller extends admin_main
 	 * @param int    $donor_id
 	 *
 	 * @return int
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 * @access private
 	 */
-	private function validate_user_id($username, $donor_id = 0)
+	private function validate_user_id($username, $donor_id = 0): int
 	{
-		if (($this->request->is_set('u') || ($donor_id == 1)) && $username === '')
+		if (($username === '') && ($donor_id === ANONYMOUS || $this->request->is_set('u')))
 		{
 			return ANONYMOUS;
 		}
@@ -407,10 +411,10 @@ class transactions_controller extends admin_main
 		return $user_id;
 	}
 
-	public function approve()
+	public function approve(): void
 	{
 		$transaction_id = (int) $this->args['hidden_fields']['id'];
-		$txn_approved = !empty($this->args['hidden_fields']['txn_errors_approved']) ? false : true;
+		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
 
 		// Update DB record
 		$this->ppde_entity->load($transaction_id);
@@ -439,7 +443,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function do_transactions_actions($is_member)
+	private function do_transactions_actions($is_member): void
 	{
 		$this->ppde_actions->update_overview_stats();
 		$this->ppde_actions->update_raised_amount();
@@ -452,7 +456,10 @@ class transactions_controller extends admin_main
 		}
 	}
 
-	public function add()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function add(): void
 	{
 		$errors = [];
 
@@ -501,7 +508,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function request_transaction_vars()
+	private function request_transaction_vars(): array
 	{
 		return [
 			'MT_ANONYMOUS'          => $this->request->is_set('u'),
@@ -527,10 +534,10 @@ class transactions_controller extends admin_main
 	 * @param array $transaction_data
 	 *
 	 * @return array
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 * @access private
 	 */
-	private function build_data_ary($transaction_data)
+	private function build_data_ary($transaction_data): array
 	{
 		$errors = [];
 
@@ -612,7 +619,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_gross_too_low($data)
+	private function mc_gross_too_low($data): array
 	{
 		if ($data['MT_MC_GROSS'] <= 0)
 		{
@@ -630,7 +637,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_negative($data)
+	private function mc_fee_negative($data): array
 	{
 		if ($data['MT_MC_FEE'] < 0)
 		{
@@ -648,7 +655,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function mc_fee_too_high($data)
+	private function mc_fee_too_high($data): array
 	{
 		if ($data['MT_MC_FEE'] >= $data['MT_MC_GROSS'])
 		{
@@ -667,7 +674,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date)
+	private function payment_date_timestamp_at_midnight($payment_date_timestamp_at_midnight, $payment_date): array
 	{
 		if ($payment_date_timestamp_at_midnight === false)
 		{
@@ -684,7 +691,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_time_timestamp($payment_time_timestamp, $payment_date)
+	private function payment_time_timestamp($payment_time_timestamp, $payment_date): array
 	{
 		if ($payment_time_timestamp === false)
 		{
@@ -700,7 +707,7 @@ class transactions_controller extends admin_main
 	 * @return array
 	 * @access private
 	 */
-	private function payment_date_time($payment_date_time)
+	private function payment_date_time($payment_date_time): array
 	{
 		if ($payment_date_time > time())
 		{
@@ -716,7 +723,7 @@ class transactions_controller extends admin_main
 	 * @return array Array of strings representing the current time, each in a different format
 	 * @access private
 	 */
-	private function get_payment_time_examples()
+	private function get_payment_time_examples(): array
 	{
 		$formats = [
 			'H:i:s',
@@ -735,7 +742,10 @@ class transactions_controller extends admin_main
 		return $examples;
 	}
 
-	public function view()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function view(): void
 	{
 		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
@@ -759,7 +769,10 @@ class transactions_controller extends admin_main
 		]);
 	}
 
-	public function delete()
+	/**
+	 * {@inheritdoc}
+	 */
+	public function delete(): void
 	{
 		$where_sql = '';
 
@@ -787,14 +800,14 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_log_assign_template_vars($row)
+	protected function display_log_assign_template_vars($row): void
 	{
 		$this->template->assign_block_vars('log', [
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
 			'DATE'             => $this->user->format_date($row['payment_date']),
 			'ID'               => $row['transaction_id'],
 			'PAYMENT_STATUS'   => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status'])]),
-			'TNX_ID'           => $row['txn_id'],
+			'TXN_ID'           => $row['txn_id'],
 			'USERNAME'         => $row['username_full'],
 			'S_CONFIRMED'      => (bool) $row['confirmed'],
 			'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
@@ -844,7 +857,7 @@ class transactions_controller extends admin_main
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => ($data['settle_amount'] == 0 && empty($data['exchange_rate'])) ? false : true,
+			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

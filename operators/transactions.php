@@ -40,7 +40,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_data($transaction_id = 0)
+	public function build_sql_data($transaction_id = 0): string
 	{
 		// Build main sql request
 		$sql_ary = [
@@ -74,7 +74,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function sql_donorlist_ary($detailed = false, $order_by = '')
+	public function sql_donorlist_ary($detailed = false, $order_by = ''): array
 	{
 		// Build sql request
 		$sql_donorslist_ary = [
@@ -112,7 +112,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function sql_last_donation_ary($transaction_id)
+	public function sql_last_donation_ary($transaction_id): array
 	{
 		// Build sql request
 		return [
@@ -130,7 +130,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_sql_donorlist_data($sql_donorlist_ary)
+	public function build_sql_donorlist_data($sql_donorlist_ary): string
 	{
 		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
@@ -145,7 +145,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function query_sql_count($count_sql_ary, $selected_field)
+	public function query_sql_count($count_sql_ary, $selected_field): int
 	{
 		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
 
@@ -173,7 +173,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function get_logs_sql_ary($keywords, $sort_by, $log_time)
+	public function get_logs_sql_ary($keywords, $sort_by, $log_time): array
 	{
 		$sql_keywords = '';
 		if (!empty($keywords))
@@ -210,7 +210,7 @@ class transactions
 	 * @return string Returns the SQL condition searching for the keywords
 	 * @access private
 	 */
-	private function generate_sql_keyword($keywords, $statement_operator = 'AND')
+	private function generate_sql_keyword($keywords, $statement_operator = 'AND'): string
 	{
 		// Use no preg_quote for $keywords because this would lead to sole
 		// backslashes being added. We also use an OR connection here for
@@ -222,9 +222,9 @@ class transactions
 		if (!empty($keywords))
 		{
 			// Build pattern and keywords...
-			for ($i = 0, $num_keywords = count($keywords); $i < $num_keywords; $i++)
+			foreach ($keywords as $index => $value)
 			{
-				$keywords[$i] = $this->db->sql_like_expression($this->db->get_any_char() . $keywords[$i] . $this->db->get_any_char());
+				$keywords[$index] = $this->db->sql_like_expression($this->db->get_any_char() . $value . $this->db->get_any_char());
 			}
 
 			$sql_keywords = ' ' . $statement_operator . ' (';
@@ -236,7 +236,7 @@ class transactions
 				$sql_lower = $this->db->sql_lower_text($column_name);
 				$sql_lowers[] = $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords);
 			}
-			unset($columns, $column_name);
+			unset($columns);
 
 			$sql_keywords .= implode(' OR ', $sql_lowers) . ')';
 		}
@@ -265,7 +265,7 @@ class transactions
 				$sql_where = " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
 			break;
 			case 'email':
-				$sql_where = " WHERE user_email_hash = '" . $this->db->sql_escape(phpbb_email_hash($arg)) . "'";
+				$sql_where = " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
 			break;
 			default:
 				$sql_where = '';
@@ -292,7 +292,7 @@ class transactions
 	 * @return array $log
 	 * @access public
 	 */
-	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0)
+	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0): array
 	{
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
@@ -330,7 +330,7 @@ class transactions
 	 * @return string A string consisting of what is wanted.
 	 * @access private
 	 */
-	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false)
+	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false): string
 	{
 		static $_profile_cache;
 
@@ -356,7 +356,7 @@ class transactions
 			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
 		}
 
-		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #FF0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
+		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #ff0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
 	}
 
 	/**
@@ -367,7 +367,7 @@ class transactions
 	 * @return string
 	 * @access public
 	 */
-	public function build_marked_where_sql($marked)
+	public function build_marked_where_sql($marked): string
 	{
 		$sql_in = [];
 		foreach ($marked as $mark)
@@ -387,7 +387,7 @@ class transactions
 	 * @return int
 	 * @access public
 	 */
-	public function sql_query_count_result($type, $test_ipn)
+	public function sql_query_count_result($type, $test_ipn): int
 	{
 		switch ($type)
 		{
@@ -431,7 +431,7 @@ class transactions
 	 * @return array
 	 * @access private
 	 */
-	private function sql_select_stats_main($field_name)
+	private function sql_select_stats_main($field_name): array
 	{
 		return [
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
@@ -448,7 +448,7 @@ class transactions
 	 * @return void
 	 * @access public
 	 */
-	public function sql_update_user_stats($user_id, $value)
+	public function sql_update_user_stats($user_id, $value): void
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . '
 			SET user_ppde_donated_amount = ' . (float) $value . '
@@ -464,7 +464,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function build_data_ary($data)
+	public function build_data_ary($data): array
 	{
 		return [
 			'business'          => $data['business'],
@@ -475,9 +475,9 @@ class transactions
 			'item_number'       => $data['item_number'],
 			'last_name'         => $data['last_name'],
 			'mc_currency'       => $data['mc_currency'],
-			'mc_gross'          => floatval($data['mc_gross']),
-			'mc_fee'            => floatval($data['mc_fee']),
-			'net_amount'        => floatval($data['net_amount']),
+			'mc_gross'          => (float) $data['mc_gross'],
+			'mc_fee'            => (float) $data['mc_fee'],
+			'net_amount'        => (float) $data['net_amount'],
 			'parent_txn_id'     => $data['parent_txn_id'],
 			'payer_email'       => $data['payer_email'],
 			'payer_id'          => $data['payer_id'],
@@ -489,7 +489,7 @@ class transactions
 			'receiver_id'       => $data['receiver_id'],
 			'receiver_email'    => $data['receiver_email'],
 			'residence_country' => $data['residence_country'],
-			'settle_amount'     => floatval($data['settle_amount']),
+			'settle_amount'     => (float) $data['settle_amount'],
 			'settle_currency'   => $data['settle_currency'],
 			'test_ipn'          => (bool) $data['test_ipn'],
 			'txn_errors'        => $data['txn_errors'],

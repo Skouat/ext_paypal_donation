@@ -7,7 +7,6 @@ services:
             - '@skouat.ppde.notification.core'
             - '@path_helper'
             - '@skouat.ppde.entity.transactions'
-            - '@skouat.ppde.operator.compare'
             - '@skouat.ppde.operator.transactions'
             - '@dispatcher'
             - '@user'
@@ -35,6 +34,13 @@ services:
             - '@config'
             - '@template'
             - '@user'
+
+    skouat.ppde.actions.post_data:
+        class: skouat\ppde\actions\post_data
+        arguments:
+            - '@language'
+            - '@skouat.ppde.operator.compare'
+            - '@request'
 
     skouat.ppde.actions.vars:
         class: skouat\ppde\actions\vars

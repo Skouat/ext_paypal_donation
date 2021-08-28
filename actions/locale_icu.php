@@ -45,8 +45,13 @@ class locale_icu
 	 * @return void
 	 * @access public
 	 */
-	public function build_locale_select_menu($config_value = '')
+	public function build_locale_select_menu($config_value = ''): void
 	{
+		if (!$this->icu_requirements())
+		{
+			return;
+		}
+
 		// Grab the list of all available locales
 		$locale_list = $this->get_locale_list();
 
@@ -60,7 +65,18 @@ class locale_icu
 				'S_LOCALE_DEFAULT' => $config_value === $locale,
 			]);
 		}
-		unset ($locale, $locale_list, $locale_name);
+		unset ($locale, $locale_list);
+	}
+
+	/**
+	 * Checks if the PHP PECL intl extension is fully available
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function icu_requirements(): bool
+	{
+		return $this->config['ppde_intl_version_valid'] && $this->config['ppde_intl_detected'];
 	}
 
 	/**
@@ -76,7 +92,7 @@ class locale_icu
 		{
 			$locale_ary[$locale] = \Locale::getDisplayName($locale, $this->user->lang_name);
 		}
-		unset ($locale_items, $locale);
+		unset ($locale_items);
 
 		natsort($locale_ary);
 
@@ -88,20 +104,9 @@ class locale_icu
 	 *
 	 * @return string A string with the current Locale.
 	 */
-	public function locale_get_default()
+	public function locale_get_default(): string
 	{
 		return $this->icu_requirements() ? \locale_get_default() : '';
-	}
-
-	/**
-	 * Checks if the PHP PECL intl extension is fully available
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function icu_requirements()
-	{
-		return (bool) $this->config['ppde_intl_version_valid'] && $this->config['ppde_intl_detected'];
 	}
 
 	/**
@@ -112,7 +117,7 @@ class locale_icu
 	 * @return string
 	 * @access public
 	 */
-	public function get_currency_symbol($currency_iso_code)
+	public function get_currency_symbol($currency_iso_code): string
 	{
 		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
 		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
@@ -124,7 +129,7 @@ class locale_icu
 	 * @return bool
 	 * @access public
 	 */
-	public function is_locale_configured()
+	public function is_locale_configured(): bool
 	{
 		return $this->icu_requirements() && !empty($this->config['ppde_default_locale']);
 	}
@@ -150,7 +155,7 @@ class locale_icu
 	 * @return string
 	 * @access public
 	 */
-	public function numfmt_format_currency($fmt, $value, $currency_iso_code)
+	public function numfmt_format_currency($fmt, $value, $currency_iso_code): string
 	{
 		return numfmt_format_currency($fmt, (float) $value, (string) $currency_iso_code);
 	}
@@ -162,7 +167,7 @@ class locale_icu
 	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function set_intl_info()
+	public function set_intl_info(): void
 	{
 		$this->config->set('ppde_intl_version', $this->get_php_extension_version('intl', $this->icu_available_features()));
 		$this->config->set('ppde_intl_version_valid', (int) $this->icu_version_compare());
@@ -178,7 +183,7 @@ class locale_icu
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function get_php_extension_version($name, $proceed)
+	private function get_php_extension_version($name, $proceed): string
 	{
 		$version = '';
 		if ($proceed)
@@ -195,9 +200,9 @@ class locale_icu
 	 * @return bool
 	 * @access private
 	 */
-	private function icu_available_features()
+	private function icu_available_features(): bool
 	{
-		return class_exists('\ResourceBundle') && function_exists('\locale_get_default');
+		return class_exists(\ResourceBundle::class) && function_exists('\locale_get_default');
 	}
 
 	/**
@@ -207,7 +212,7 @@ class locale_icu
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function icu_version_compare()
+	private function icu_version_compare(): bool
 	{
 		$icu_min_version = '1.1.0';
 		$icu_version = $this->get_php_extension_version('intl', $this->icu_available_features());
@@ -220,7 +225,7 @@ class locale_icu
 	 * @return void
 	 * @access public
 	 */
-	public function set_intl_detected()
+	public function set_intl_detected(): void
 	{
 		$this->config->set('ppde_intl_detected', $this->icu_available_features());
 	}

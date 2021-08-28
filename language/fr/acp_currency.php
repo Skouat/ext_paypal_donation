@@ -56,7 +56,7 @@ $lang = array_merge($lang, [
 	'PPDE_DC_POSITION_LEFT'      => 'À gauche',
 	'PPDE_DC_POSITION_RIGHT'     => 'À droite',
 	'PPDE_DC_SYMBOL'             => 'Symbole de la devise',
-	'PPDE_DC_SYMBOL_EXPLAIN'     => 'Inscrire le symbole de la devise.<br>Exemple : <strong>€</strong> pour Euro.',
+	'PPDE_DC_SYMBOL_EXPLAIN'     => 'Inscrivez le symbole de la devise.<br>Exemple : <strong>€</strong> pour Euro.',
 ]);
 
 /**

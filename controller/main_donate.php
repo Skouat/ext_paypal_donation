@@ -25,22 +25,22 @@ class main_donate extends main_controller
 	/** @var string */
 	private $return_args_url;
 
-	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars)
+	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars): void
 	{
 		$this->ppde_actions_vars = $ppde_actions_vars;
 	}
 
-	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats)
+	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats): void
 	{
 		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
 	}
 
-	public function set_entity_donation_pages(\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages)
+	public function set_entity_donation_pages(\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages): void
 	{
 		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
 	}
 
-	public function set_operator_donation_pages(\skouat\ppde\operators\donation_pages $ppde_operator_donation_pages)
+	public function set_operator_donation_pages(\skouat\ppde\operators\donation_pages $ppde_operator_donation_pages): void
 	{
 		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
 	}
@@ -71,7 +71,7 @@ class main_donate extends main_controller
 
 		$this->template->assign_vars([
 			'DONATION_BODY'      => $this->donation_body,
-			'PPDE_DEFAULT_VALUE' => $this->config['ppde_default_value'] ? $this->config['ppde_default_value'] : 0,
+			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
 			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
@@ -92,7 +92,7 @@ class main_donate extends main_controller
 	 * @return void
 	 * @access private
 	 */
-	private function set_return_args_url($set_return_args_url)
+	private function set_return_args_url($set_return_args_url): void
 	{
 		$this->return_args_url = $set_return_args_url;
 
@@ -123,7 +123,7 @@ class main_donate extends main_controller
 	 * @return array
 	 * @access private
 	 */
-	private function get_donation_content_data($return_args_url)
+	private function get_donation_content_data($return_args_url): array
 	{
 		return $this->ppde_entity_donation_pages->get_data(
 				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
@@ -138,7 +138,7 @@ class main_donate extends main_controller
 	 * @return string List of currency value set in ACP for dropdown menu
 	 * @access private
 	 */
-	private function build_currency_value_select_menu($default_value = 0)
+	private function build_currency_value_select_menu($default_value = 0): string
 	{
 		$list_donation_value = '';
 
@@ -151,7 +151,6 @@ class main_donate extends main_controller
 				$int_value = $this->settype_dropbox_int_value($value);
 				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '"' . $this->is_value_selected($int_value, $default_value) . '>' . $int_value . '</option>' : '';
 			}
-			unset($value);
 		}
 
 		return $list_donation_value;
@@ -163,7 +162,7 @@ class main_donate extends main_controller
 	 * @return bool
 	 * @access private
 	 */
-	private function get_dropbox_status()
+	private function get_dropbox_status(): bool
 	{
 		return $this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'];
 	}
@@ -176,7 +175,7 @@ class main_donate extends main_controller
 	 * @return int
 	 * @access private
 	 */
-	private function settype_dropbox_int_value($value = 0)
+	private function settype_dropbox_int_value($value = 0): int
 	{
 		if (settype($value, 'integer') && $value != 0)
 		{
@@ -195,7 +194,7 @@ class main_donate extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function is_value_selected($value, $default)
+	private function is_value_selected($value, $default): string
 	{
 		if ($default == $value)
 		{
@@ -211,7 +210,7 @@ class main_donate extends main_controller
 	 * @return string PayPal hidden field needed to fill PayPal forms
 	 * @access private
 	 */
-	private function paypal_hidden_fields()
+	private function paypal_hidden_fields(): string
 	{
 		return build_hidden_fields([
 			'cmd'           => '_donations',
@@ -234,7 +233,7 @@ class main_donate extends main_controller
 	 * @return string $this Paypal account Identifier
 	 * @access private
 	 */
-	private function get_account_id()
+	private function get_account_id(): string
 	{
 		return $this->use_sandbox() ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
 	}
@@ -247,7 +246,7 @@ class main_donate extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function generate_paypal_return_url($arg)
+	private function generate_paypal_return_url($arg): string
 	{
 		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => $arg]);
 	}
@@ -258,7 +257,7 @@ class main_donate extends main_controller
 	 * @return string
 	 * @access private
 	 */
-	private function generate_paypal_notify_return_url()
+	private function generate_paypal_notify_return_url(): string
 	{
 		return generate_board_url(true) . $this->helper->route('skouat_ppde_ipn_listener');
 	}
