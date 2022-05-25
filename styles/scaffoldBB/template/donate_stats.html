@@ -1,0 +1,36 @@
+{% if PPDE_STATS_INDEX_ENABLE %}
+<h3 class="border-bottom text-uppercase fs-5 fw-bold">{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}{% if U_PPDE_DONATE %} &bull; <a href="{{ U_PPDE_DONATE }}">{{ lang('PPDE_HEADER_LINK_TITLE') }}</a>{% endif %}</h3>
+{% else %}
+<h3 class="border-bottom text-uppercase fs-5 fw-bold">{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
+{% endif %}
+
+{% if S_GOAL_NUMBER && not S_PPDE_STATS_TEXT_ONLY %}
+<div class="bg-opacity-75 bg-secondary progress">
+	<div class="progress-bar {{ PPDE_CSS_GOAL_NUMBER }}" role="progressbar" aria-valuenow="{{ PPDE_GOAL_NUMBER }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ PPDE_GOAL_NUMBER }}%;">{{ PPDE_GOAL_NUMBER }} %</div>
+</div>
+{% endif %}
+
+<p class="donation_stats mt-2 text-center">
+	{% if PPDE_RAISED_ENABLE %}
+	{{ lang('PPDE_RAISED') }}{% if PPDE_USED_ENABLE %}<br>{% endif %}
+	{% endif %}
+	{% if PPDE_GOAL_ENABLE %}
+	{{ lang('PPDE_GOAL') }}<br>
+	{% endif %}
+
+	{% if S_USED_NUMBER %}
+</p>
+
+{% if not S_PPDE_STATS_TEXT_ONLY %}
+<div class="bg-opacity-75 bg-secondary progress">
+	<div class="progress-bar {{ PPDE_CSS_USED_NUMBER }}" role="progressbar" aria-valuenow="{{ PPDE_USED_NUMBER }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ PPDE_USED_NUMBER }}%" >{{ PPDE_USED_NUMBER }} %</div>
+</div>
+{% endif %}
+
+<p class="donation_stats mt-2 text-center">
+	{% endif %}
+
+	{% if PPDE_USED_ENABLE %}
+	{{ lang('PPDE_USED') }}
+	{% endif %}
+</p>
