@@ -215,6 +215,7 @@ class main_donate extends main_controller
 			'notify_url'    => $this->generate_paypal_notify_return_url(),
 			'cancel_return' => $this->generate_paypal_return_url('cancel'),
 			'item_number'   => 'uid_' . $this->user->data['user_id'] . '_' . time(),
+			'custom'        => 'uid_' . $this->user->data['user_id'] . '_' . time(),
 			'tax'           => 0,
 			'bn'            => 'Board_Donate_WPS',
 			'charset'       => 'utf-8',
