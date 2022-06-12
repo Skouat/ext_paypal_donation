@@ -581,6 +581,7 @@ class transactions_controller extends admin_main
 		return [
 			'business'          => $this->config['ppde_account_id'],
 			'confirmed'         => true,
+			'custom'            => implode('_', ['uid', $user_id, time()]),
 			'exchange_rate'     => '',
 			'first_name'        => $transaction_data['MT_FIRST_NAME'],
 			'item_name'         => '',
@@ -589,7 +590,7 @@ class transactions_controller extends admin_main
 			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
 			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
 			'mc_fee'            => $transaction_data['MT_MC_FEE'],
-			'net_amount'        => (float) 0, // This value is calculated in core_actions:log_to_db()
+			'net_amount'        => 0.0, // This value is calculated in core_actions:log_to_db()
 			'parent_txn_id'     => '',
 			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
 			'payer_id'          => '',
@@ -601,7 +602,7 @@ class transactions_controller extends admin_main
 			'receiver_id'       => '',
 			'receiver_email'    => '',
 			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
-			'settle_amount'     => (float) 0,
+			'settle_amount'     => 0.0,
 			'settle_currency'   => '',
 			'test_ipn'          => false,
 			'txn_errors'        => '',

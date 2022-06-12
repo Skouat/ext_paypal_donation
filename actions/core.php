@@ -164,7 +164,7 @@ class core
 			$net_amount = $this->transaction_data['settle_amount'];
 		}
 
-		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount, true);
+		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount);
 	}
 
 	/**
@@ -426,8 +426,8 @@ class core
 		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
 
-		// The item number contains the user_id
-		$this->extract_item_number_data();
+		// Handle user_id data
+		$this->extract_user_id();
 		$this->validate_user_id();
 
 		// Set username in extra_data property in $entity
@@ -462,14 +462,14 @@ class core
 	}
 
 	/**
-	 * Retrieve user_id from item_number args
+	 * Retrieve user_id from custom args
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function extract_item_number_data(): void
+	private function extract_user_id(): void
 	{
-		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['custom'], 4), -1);
 	}
 
 	/**

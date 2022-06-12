@@ -469,6 +469,7 @@ class transactions
 		return [
 			'business'          => $data['business'],
 			'confirmed'         => (bool) $data['confirmed'],
+			'custom'            => $data['custom'],
 			'exchange_rate'     => $data['exchange_rate'],
 			'first_name'        => $data['first_name'],
 			'item_name'         => $data['item_name'],
