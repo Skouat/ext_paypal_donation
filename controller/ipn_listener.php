@@ -56,6 +56,12 @@ class ipn_listener
 				'condition_check' => array('length' => array('value' => 127, 'operator' => '<=')),
 				'force_settings'  => array('length' => 127, 'lowercase' => true),
 		),
+		array(// Equal to: 'uid_' . $this->user->data['user_id'] . '_' . time()
+				'name'            => 'custom',
+				'default'         => '',
+				'condition_check' => array('length' => array('value' => 255, 'operator' => '<=')),
+				'force_settings'  => array('length' => 255),
+		),
 		array(  // Sender's First name
 				'name'            => 'first_name',
 				'default'         => array('', true),
