@@ -1,4 +1,8 @@
 # Changelog
+## 2.1.6 - 2022-06-12
+  - Fix: PayPal returns anonymous transactions (#98) (thanks v12mike) 
+  - Fix: Typo on template vars name
+
 ## 2.1.5 - 2020-12-16
   - Fix: Typo
   - Fix: Invalid lang keys in email templates
