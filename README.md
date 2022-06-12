@@ -1,7 +1,7 @@
-# PayPal Donation for phpBB - 3.2.x Develop Branch
+# PayPal Donation for phpBB - 3.2.x Branch
 This extension add a PayPal Donation page on your site.
 
-[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.svg?branch=develop-3.2.x)](https://travis-ci.org/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-3.2.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-3.2.x)
+[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.svg?branch=3.2.x)](https://travis-ci.org/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=3.2.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=3.2.x)
 
 ## Features
   * PayPal IPN (Instant Payment Notification)
