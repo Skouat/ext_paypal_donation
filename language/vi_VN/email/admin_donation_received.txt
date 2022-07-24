@@ -1,0 +1,24 @@
+Subject: New donation notification  - {{ SITENAME }}
+
+Hello {{ USERNAME }},
+
+A donation has been made for your board.
+
+----------------------------
+Transaction ID: {{ TXN_ID }}
+
+Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+
+Amount donated: {{ MC_GROSS }}
+Amount received: {{ NET_AMOUNT }}
+
+----------------------------
+
+View the PPDE transactions log for more details.
+
+-----
+
+If you no longer wish to receive updates about new donations, please update your notification settings here:
+{{ U_NOTIFICATION_SETTINGS }}
+
+{{ EMAIL_SIG }}
