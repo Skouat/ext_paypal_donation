@@ -6,17 +6,17 @@ env:
     IMAGE_ICC: 1        # Run icc profile sniffer on your images? 1 or 0
     EPV: 1              # Run EPV (Extension Pre Validator) on your code? 1 or 0
     EXECUTABLE_FILES: 1 # Run check for executable files? 1 or 0
-    PHPBB_BRANCH: 3.3.x # The phpBB branch to run tests on
+    PHPBB_BRANCH: master # The phpBB branch to run tests on
 
 on:
     push:
         branches: # Run tests when commits are pushed to these branches in your repo
-            - '3.3.x'
-            - 'develop-3.3.x*'
+            - '4.0.x'
+            - 'develop-4.0.x*'
     pull_request: # Run tests when pull requests are made on these branches in your repo
         branches:
-            - '3.3.x'
-            - 'develop-3.3.x*'
+            - '4.0.x'
+            - 'develop-4.0.x*'
         paths-ignore:
             - '*.md'
 
@@ -27,7 +27,7 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - php: '7.1'
+                    - php: '7.3'
                       db: "none"
                       NOTESTS: 1
 

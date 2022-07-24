@@ -1,7 +1,7 @@
-# PayPal Donation for phpBB - 3.3.x Develop Branch
+# PayPal Donation for phpBB - 4.0.x Develop Branch
 This extension adds a PayPal Donation page on your site.
 
-[![Build Status](https://github.com/Skouat/ext_paypal_donation/workflows/Tests/badge.svg)](https://github.com/Skouat/ext_paypal_donation/actions) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-3.3.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-3.3.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
+[![Build Status](https://github.com/Skouat/ext_paypal_donation/workflows/Tests/badge.svg)](https://github.com/Skouat/ext_paypal_donation/actions) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-4.0.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-4.0.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
 
 ## Features
   * PayPal IPN (Instant Payment Notification)
@@ -45,7 +45,7 @@ This extension adds a PayPal Donation page on your site.
 
 ## Translations
   * This project use [Crowdin](https://crwd.in/skouat-ppde) for translations.  
-    Feel free to [join](https://crwd.in/skouat-ppde) the project, and read this [Quick Translator Guide](https://github.com/Skouat/ext_paypal_donation/blob/develop-3.3.x/docs/crowdin.md).
+    Feel free to [join](https://crwd.in/skouat-ppde) the project, and read this [Quick Translator Guide](https://github.com/Skouat/ext_paypal_donation/blob/develop-4.0.x/docs/crowdin.md).
   * You can also send your translations in the [PayPal Donation translation topic at phpBB.com](https://www.phpbb.com/customise/db/extension/paypal_donation_extension/support/topic/216046).
 
 ## License

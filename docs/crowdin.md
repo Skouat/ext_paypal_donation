@@ -17,7 +17,7 @@ This client is a Command Line Interface tool and must also be installed on your 
   - Go tho the project directory and use the proper branch
     ```shell
     cd ext_paypal_donation
-    git checkout develop-3.3.x
+    git checkout develop-4.0.x
     ```
   - Check that all works as expected (if not check your [Client installation](https://support.crowdin.com/cli-tool/)).
     ```shell
