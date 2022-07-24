@@ -1,0 +1,22 @@
+Subject: New donation notification  - {{ SITENAME }}
+
+Hello {{ USERNAME }},
+
+Your donation to "{{ SITENAME }}" was received.
+
+Information about your donation:
+
+----------------------------
+Transaction ID: {{ TXN_ID }}
+
+Sender: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+
+Amount donated: {{ MC_GROSS }}
+Amount received by "{{ SITENAME }}": {{ NET_AMOUNT }}
+
+----------------------------
+
+If you no longer wish to receive the donation confirmation email, click on the following link:
+{{ U_NOTIFICATION_SETTINGS }}
+
+{{ EMAIL_SIG }}
