@@ -1,0 +1,25 @@
+Subject: Suspicious donation notification  - {{ SITENAME }}
+
+Hello {{ USERNAME }},
+
+Your board has received a PayPal donation. You should reconsider this one because errors have been detected.
+Until you approve this donation, it will not be handled by PPDE.
+
+----------------------------
+Transaction ID: {{ TXN_ID }}
+
+Donor: {{ PAYER_USERNAME }} ({{ PAYER_EMAIL }})
+
+Errors detected:
+{{ TXN_ERRORS }}
+
+----------------------------
+
+View the transactions log for more details.
+
+-----
+
+If you no longer wish to receive updates about new donations, please update your notification settings here:
+{{ U_NOTIFICATION_SETTINGS }}
+
+{{ EMAIL_SIG }}
