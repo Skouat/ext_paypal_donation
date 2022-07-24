@@ -16,7 +16,7 @@ Montant reçu par « {{ SITENAME }} » : {{ NET_AMOUNT }}
 
 ----------------------------
 
-Si vous ne souhaitez plus recevoir le courriel de confirmation de votre don, cliquez sur le lien suivant :
+If you no longer wish to receive the donation confirmation email, click on the following link:
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}
