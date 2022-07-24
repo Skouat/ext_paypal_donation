@@ -18,7 +18,7 @@ Consultez le journal des transactions pour connaître le détail de cette transa
 
 -----
 
-Si vous ne souhaitez plus être notifié des dons reçus, cliquez sur le lien suivant :
+Si vous ne souhaitez plus être notifié de la réception d’un don, veuillez modifier vos paramètres de notifications en cliquant sur le lien suivant :
 {{ U_NOTIFICATION_SETTINGS }}
 
 {{ EMAIL_SIG }}
