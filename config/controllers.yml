@@ -5,10 +5,9 @@ services:
             - '@service_container'
             - '@dbal.conn'
             - '@config'
-            - '@filesystem'
+            - '@finder.factory'
             - '%tables.ext%'
             - '%core.root_path%'
-            - '%core.php_ext%'
             - '@cache'
 
     skouat.ppde.ipn_listener:
