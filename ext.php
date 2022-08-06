@@ -50,7 +50,7 @@ class ext extends \phpbb\extension\base
 	public function enable_step($old_state)
 	{
 		// Empty means nothing has run yet
-		if ($old_state === '')
+		if ($old_state == '')
 		{
 			// Enable notifications
 			return $this->notification_handler('enable', $this->notification_types());
@@ -70,7 +70,7 @@ class ext extends \phpbb\extension\base
 	public function disable_step($old_state)
 	{
 		// Empty means nothing has run yet
-		if ($old_state === '')
+		if ($old_state == '')
 		{
 			// Disable notifications
 			return $this->notification_handler('disable', $this->notification_types());
@@ -90,7 +90,7 @@ class ext extends \phpbb\extension\base
 	public function purge_step($old_state)
 	{
 		// Empty means nothing has run yet
-		if ($old_state === '')
+		if ($old_state == '')
 		{
 			// Purge notifications
 			return $this->notification_handler('purge', $this->notification_types());
