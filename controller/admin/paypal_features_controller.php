@@ -146,7 +146,7 @@ class paypal_features_controller extends admin_main
 		$this->ppde_ipn_paypal->check_tls();
 		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
-			$this->config->set('ppde_ipn_enable', (string) false);
+			$this->config->set('ppde_ipn_enable', "");
 			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
