@@ -368,7 +368,7 @@ class donation_pages_controller extends admin_main
 	{
 		if ($bbcode_enabled)
 		{
-			$this->include_function('display_custom_bbcodes', $this->phpbb_root_path . 'includes/functions_display.' . $this->php_ext);
+			$this->include_function('functions_display', 'display_custom_bbcodes');
 			display_custom_bbcodes();
 		}
 	}
@@ -376,17 +376,17 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Includes the file that contains the function, if not loaded.
 	 *
-	 * @param string $function_name     Name of the function to test
-	 * @param string $function_filepath Path of the file that containing the function
+	 * @param string $file          Path of the file that containing the function
+	 * @param string $function_name Name of the function to test
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function include_function($function_name, $function_filepath): void
+	private function include_function($file, $function_name): void
 	{
 		if (!function_exists($function_name))
 		{
-			include($function_filepath);
+			include($this->phpbb_root_path . 'includes/' . $file . '.' . $this->php_ext);
 		}
 	}
 
@@ -400,7 +400,7 @@ class donation_pages_controller extends admin_main
 	{
 		if ($smilies_enabled)
 		{
-			$this->include_function('generate_smilies', $this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			$this->include_function('includes/functions_posting', 'generate_smilies');
 			generate_smilies('inline', 0);
 		}
 	}
