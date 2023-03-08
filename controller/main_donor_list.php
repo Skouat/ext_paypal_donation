@@ -70,7 +70,7 @@ class main_donor_list extends main_controller
 			$sort_key = $default_key;
 		}
 
-		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir === 'a') ? 'ASC' : 'DESC');
+		$order_by = ($sort_key === 'a' ? $sort_key_sql[$sort_key] . ' ': 'MAX(' . $sort_key_sql[$sort_key] . ') ') . (($sort_dir === 'a') ? 'ASC' : 'DESC');
 
 		// Build a relevant pagination_url and sort_url.
 		// We do not use request_var() here directly to save some calls (not all variables are set)
