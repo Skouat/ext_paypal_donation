@@ -66,8 +66,8 @@ class donation_pages_controller extends admin_main
 		request $request,
 		template $template,
 		user $user,
-		$phpbb_root_path,
-		$php_ext
+		string $phpbb_root_path,
+		string $php_ext
 	)
 	{
 		$this->container = $container;
@@ -400,7 +400,7 @@ class donation_pages_controller extends admin_main
 	{
 		if ($smilies_enabled)
 		{
-			$this->include_function('includes/functions_posting', 'generate_smilies');
+			$this->include_function('functions_posting', 'generate_smilies');
 			generate_smilies('inline', 0);
 		}
 	}
