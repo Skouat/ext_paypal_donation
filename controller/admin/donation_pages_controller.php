@@ -223,7 +223,7 @@ class donation_pages_controller extends admin_main
 		// Set the message parse options in the entity
 		foreach ($message_parse_options as $function => $enabled)
 		{
-			call_user_func([$entity, ($enabled ? 'message_enable_' : 'message_disable_') . $function]);
+			$entity->{($enabled ? 'message_enable_' : 'message_disable_') . $function}();
 		}
 
 		unset($message_parse_options);

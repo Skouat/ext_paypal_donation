@@ -55,7 +55,7 @@ class post_data
 		foreach ($data_ary['force_settings'] as $control_point => $params)
 		{
 			// Calling the set_post_data_function
-			$value = call_user_func_array([$this, 'set_post_data_' . $control_point], [$data_ary['value'], $params]);
+			$value = $this->{'set_post_data_' . $control_point}($data_ary['value'], $params);
 		}
 		unset($control_point);
 
@@ -126,7 +126,7 @@ class post_data
 		foreach ($data_ary['condition_check'] as $control_point => $params)
 		{
 			// Calling the check_post_data_function
-			if (call_user_func_array([$this, 'check_post_data_' . $control_point], [$data_ary['value'], $params]))
+			if ($this->{'check_post_data_' . $control_point}($data_ary['value'], $params))
 			{
 				$check[] = true;
 				continue;
