@@ -58,26 +58,8 @@ class vars
 	 */
 	public function get_vars(): array
 	{
-		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
-		$this->dp_vars = [
-			0 => ['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
-			1 => ['var' => '{USERNAME}', 'value' => $this->user->data['username']],
-			2 => ['var' => '{SITE_NAME}', 'value' => $this->config['sitename']],
-			3 => ['var' => '{SITE_DESC}', 'value' => $this->config['site_desc']],
-			4 => ['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
-			5 => ['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
-			6 => ['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
-			7 => ['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_goal'],
-				$default_currency_data[0]['currency_iso_code'],
-				$default_currency_data[0]['currency_symbol'],
-				(bool) $default_currency_data[0]['currency_on_left'])],
-			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_raised'],
-				$default_currency_data[0]['currency_iso_code'],
-				$default_currency_data[0]['currency_symbol'],
-				(bool) $default_currency_data[0]['currency_on_left'])],
-		];
+		$currency_data = $this->get_currency_data();
+		$this->dp_vars = $this->populate_template_vars($currency_data);
 
 		if ($this->actions_core->is_in_admin())
 		{
@@ -87,19 +69,45 @@ class vars
 		return $this->dp_vars;
 	}
 
+	private function get_currency_data(): array
+	{
+		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
+
+		return [
+			$default_currency_data[0]['currency_iso_code'],
+			$default_currency_data[0]['currency_symbol'],
+			(bool) $default_currency_data[0]['currency_on_left'],
+		];
+	}
+
+	private function populate_template_vars(array $currency_data): array
+	{
+		return [
+			0 => ['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
+			1 => ['var' => '{USERNAME}', 'value' => $this->user->data['username']],
+			2 => ['var' => '{SITE_NAME}', 'value' => $this->config['sitename']],
+			3 => ['var' => '{SITE_DESC}', 'value' => $this->config['site_desc']],
+			4 => ['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
+			5 => ['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
+			6 => ['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
+			7 => ['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
+				(float) $this->config['ppde_goal'], ...$currency_data)],
+			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
+				(float) $this->config['ppde_raised'], ...$currency_data)],
+		];
+	}
+
 	/**
-	 * Add language key for donation pages Predefined vars
+	 * Adds predefined language keys variables to the donation pages.
 	 *
 	 * @return void
 	 * @access private
 	 */
 	private function add_predefined_lang_vars(): void
 	{
-		//Add language entries for displaying the vars
-		foreach ($this->dp_vars as $index => $value)
-		{
-			$this->dp_vars[$index]['name'] = $this->language->lang('PPDE_DP_' . substr(substr($value['var'], 0, -1), 1));
-		}
+		array_walk($this->dp_vars, function (&$value) {
+			$value['name'] = $this->language->lang('PPDE_DP_' . trim($value['var'], '{}'));
+		});
 	}
 
 	/**
@@ -112,11 +120,7 @@ class vars
 	 */
 	public function replace_template_vars($message): string
 	{
-		$tpl_ary = [];
-		foreach ($this->dp_vars as $index => $value)
-		{
-			$tpl_ary[$value['var']] = $this->dp_vars[$index]['value'];
-		}
+		$tpl_ary = array_column($this->dp_vars, 'value', 'var');
 
 		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);
 	}

@@ -45,9 +45,9 @@ class ppde_module
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
 
-		if ($this->in_array_field($mode, 'module_name', $this::$available_mode))
+		if ($this->in_array_field($mode, 'module_name', self::$available_mode))
 		{
-			$this->module_info = $this->array_value($mode, 'module_name', $this::$available_mode);
+			$this->module_info = $this->array_value($mode, 'module_name', self::$available_mode);
 
 			// Load the module language file currently in use
 			$language->add_lang('acp_' . $mode, 'skouat/ppde');
@@ -74,16 +74,17 @@ class ppde_module
 	}
 
 	/**
-	 * Check if value is in array
+	 * Checks if a given value exists in a specific field of an array of items.
 	 *
-	 * @param mixed $needle
-	 * @param mixed $needle_field
-	 * @param array $haystack
+	 * @param mixed  $needle       The value to search for.
+	 * @param string $needle_field The field name to search in.
+	 * @param array  $haystack     The array to search in.
 	 *
-	 * @return bool
+	 * @return bool Returns true if the value is found in the specified field of any item in the array,
+	 *              otherwise returns false.
 	 * @access private
 	 */
-	private function in_array_field($needle, $needle_field, $haystack)
+	private function in_array_field($needle, $needle_field, $haystack): bool
 	{
 		foreach ($haystack as $item)
 		{
@@ -97,16 +98,18 @@ class ppde_module
 	}
 
 	/**
-	 * Return the selected array if value is in array
+	 * Finds and returns the first item in the haystack array that matches the provided needle value in the specified
+	 * needle field.
 	 *
-	 * @param mixed $needle
-	 * @param mixed $needle_field
-	 * @param array $haystack
+	 * @param mixed  $needle       The value to search for.
+	 * @param string $needle_field The field to search for the needle value in each item of the haystack array.
+	 * @param array  $haystack     The array to search through.
 	 *
 	 * @return array
-	 * @access private
+	 * The first item in the haystack array that matches the provided needle value in the specified needle field. If
+	 * no match is found, an empty array is returned.
 	 */
-	private function array_value($needle, $needle_field, $haystack)
+	private function array_value($needle, $needle_field, $haystack): array
 	{
 		foreach ($haystack as $item)
 		{
@@ -120,7 +123,7 @@ class ppde_module
 	}
 
 	/**
-	 * Switch to the mode selected
+	 * Switches the mode of the admin controller based on the given parameters.
 	 *
 	 * @param int                                      $id
 	 * @param string                                   $mode
@@ -130,7 +133,7 @@ class ppde_module
 	 * @throws \Exception
 	 * @access private
 	 */
-	private function switch_mode($id, $mode, $admin_controller)
+	private function switch_mode($id, $mode, $admin_controller): void
 	{
 		global $phpbb_container;
 
@@ -183,7 +186,7 @@ class ppde_module
 	 * @throws \Exception
 	 * @access private
 	 */
-	private function do_action($action, $controller)
+	private function do_action($action, $controller): void
 	{
 		global $phpbb_container;
 
@@ -221,7 +224,7 @@ class ppde_module
 					break;
 				}
 
-				// Request confirmation from the user to do the action for selected item
+				// Request confirmation from the user to perform the action for selected item
 				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
 
 				// Clear $action status

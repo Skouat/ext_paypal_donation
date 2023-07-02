@@ -35,7 +35,7 @@ class extension_manager extends \phpbb\extension\manager
 	 */
 	private function load_metadata(): array
 	{
-		$md_manager = $this->create_extension_metadata_manager($this::EXT_NAME);
+		$md_manager = $this->create_extension_metadata_manager(self::EXT_NAME);
 
 		try
 		{

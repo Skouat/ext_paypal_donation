@@ -133,7 +133,19 @@ class overview_controller extends admin_main
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
 		// Set output block vars for display in the template
-		$this->template->assign_vars([
+		$template_vars = $this->prepare_template_vars($ext_meta);
+		$this->template->assign_vars($template_vars);
+
+		if ($this->ppde_controller_main->use_sandbox())
+		{
+			$sandbox_template_vars = $this->prepare_sandbox_template_vars();
+			$this->template->assign_vars($sandbox_template_vars);
+		}
+	}
+
+	private function prepare_template_vars($ext_meta)
+	{
+		return array(
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
@@ -155,27 +167,31 @@ class overview_controller extends admin_main
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
 			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
 			'U_ACTION'                       => $this->u_action,
-		]);
-
-		if ($this->ppde_controller_main->use_sandbox())
-		{
-			// Set output block vars for display in the template
-			$this->template->assign_vars([
-				'S_IPN_TEST'                       => true,
-				'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
-				'SANDBOX_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count_ipn'),
-				'SANDBOX_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count_ipn'],
-				'SANDBOX_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count_ipn'),
-				'SANDBOX_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count_ipn'],
-				'SANDBOX_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count_ipn'),
-			]);
-		}
+		);
 	}
 
 	/**
-	 * Do action regarding the value of $action
+	 * Prepares the template variables for the PayPal sandbox environment.
 	 *
-	 * @param string $action Requested action
+	 * @return array An array of template variables for the PayPal sandbox environment.
+	 */
+	private function prepare_sandbox_template_vars()
+	{
+		return [
+			'S_IPN_TEST'                       => true,
+			'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
+			'SANDBOX_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count_ipn'),
+			'SANDBOX_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count_ipn'],
+			'SANDBOX_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count_ipn'),
+			'SANDBOX_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count_ipn'],
+			'SANDBOX_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count_ipn'),
+		];
+	}
+
+	/**
+	 * Executes the specified action.
+	 *
+	 * @param string $action The action to be executed.
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -183,16 +199,18 @@ class overview_controller extends admin_main
 	 */
 	private function do_action($action): void
 	{
-		if ($action)
+		if (!$action)
 		{
-			if (!confirm_box(true))
-			{
-				$this->display_confirm($action);
-				return;
-			}
-
-			$this->exec_action($action);
+			return;
 		}
+
+		if (!confirm_box(true))
+		{
+			$this->display_confirm($action);
+			return;
+		}
+
+		$this->exec_action($action);
 	}
 
 	/**

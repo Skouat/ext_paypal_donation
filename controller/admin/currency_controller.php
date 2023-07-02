@@ -120,7 +120,7 @@ class currency_controller extends admin_main
 		];
 
 		// Process the new page
-		$this->add_edit_currency_data($this->ppde_entity, $data);
+		$this->add_edit_currency_data($data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('add');
@@ -129,13 +129,12 @@ class currency_controller extends admin_main
 	/**
 	 * Process currency data to be added or edited
 	 *
-	 * @param \skouat\ppde\entity\currency $entity The currency entity object
-	 * @param array                        $data   The form data to be processed
+	 * @param array $data The form data to be processed
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function add_edit_currency_data($entity, $data): void
+	private function add_edit_currency_data($data): void
 	{
 		// Get form's POST actions (submit or preview)
 		$this->submit = $this->request->is_set_post('submit');
@@ -158,29 +157,29 @@ class currency_controller extends admin_main
 			'currency_enable'   => $data['currency_enable'],
 		];
 
-		$entity->set_entity_data($item_fields);
+		$this->ppde_entity->set_entity_data($item_fields);
 
 		// Check some settings before submitting data
 		$errors = array_merge($errors,
 			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($entity, 'name', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($entity, 'symbol', '', $this->submit_or_preview($this->submit))
+			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
 		);
 
 		// Insert or update currency
-		$this->submit_data($entity, $errors);
+		$this->submit_data($errors);
 
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars([
-			'CURRENCY_NAME'     => $entity->get_name(),
-			'CURRENCY_ISO_CODE' => $entity->get_iso_code(),
-			'CURRENCY_SYMBOL'   => $entity->get_symbol(),
-			'CURRENCY_POSITION' => $entity->get_currency_position(),
-			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
+			'CURRENCY_NAME'     => $this->ppde_entity->get_name(),
+			'CURRENCY_ISO_CODE' => $this->ppde_entity->get_iso_code(),
+			'CURRENCY_SYMBOL'   => $this->ppde_entity->get_symbol(),
+			'CURRENCY_POSITION' => $this->ppde_entity->get_currency_position(),
+			'CURRENCY_ENABLE'   => $this->ppde_entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
+			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $this->ppde_entity->get_id() . '">',
 			'S_PPDE_LOCALE_AVAILABLE'  => $this->ppde_locale->icu_requirements(),
 			'S_PPDE_LOCALE_CONFIGURED' => $this->ppde_locale->is_locale_configured(),
 		]);
@@ -189,26 +188,27 @@ class currency_controller extends admin_main
 	/**
 	 * Submit data to the database
 	 *
-	 * @param \skouat\ppde\entity\currency $entity The currency entity object
-	 * @param array                        $errors
+	 * @param array $errors
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function submit_data(\skouat\ppde\entity\currency $entity, array $errors): void
+	private function submit_data(array $errors): void
 	{
-		if (!$entity->get_id())
+		if (!$this->ppde_entity->get_id())
 		{
-			$this->trigger_error_data_already_exists($entity);
+			$this->trigger_error_data_already_exists($this->ppde_entity);
 		}
 
-		if ($this->can_submit_data($errors))
+		if (!$this->can_submit_data($errors))
 		{
-			$log_action = $entity->add_edit_data('set_order');
-			// Log and show user confirmation of the saved item and provide link back to the previous page
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), [$entity->get_name()]);
-			trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
+			return;
 		}
+
+		$log_action = $this->ppde_entity->add_edit_data('set_order');
+		// Log and show user confirmation of the saved item and provide link back to the previous page
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), [$this->ppde_entity->get_name()]);
+		trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 	}
 
 	/**
@@ -234,7 +234,7 @@ class currency_controller extends admin_main
 		];
 
 		// Process the new page
-		$this->add_edit_currency_data($this->ppde_entity, $data);
+		$this->add_edit_currency_data($data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('edit', $currency_id);

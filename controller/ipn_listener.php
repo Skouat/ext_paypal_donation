@@ -347,26 +347,43 @@ class ipn_listener
 	private function check_response(): bool
 	{
 		// Prepare data to include in report
-		$this->ppde_ipn_log->set_report_data($this->ppde_ipn_paypal->get_u_paypal(), $this->ppde_ipn_paypal->get_remote_used(), $this->ppde_ipn_paypal->get_report_response(), $this->ppde_ipn_paypal->get_response_status(), $this->transaction_data);
+		$this->ppde_ipn_log->set_report_data($this->ppde_ipn_paypal->get_u_paypal(),
+			$this->ppde_ipn_paypal->get_remote_used(),
+			$this->ppde_ipn_paypal->get_report_response(),
+			$this->ppde_ipn_paypal->get_response_status(),
+			$this->transaction_data);
 
 		if ($this->txn_is_verified())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = true;
-			$this->ppde_ipn_log->log_error("DEBUG VERIFIED:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error());
+			$this->log_debug_status('DEBUG_VERIFIED');
 		}
 		else if ($this->txn_is_invalid())
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->ppde_ipn_log->log_error("DEBUG INVALID:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error(), true);
+			$this->log_debug_status('DEBUG_INVALID', true);
 		}
 		else
 		{
 			$this->verified = $this->transaction_data['confirmed'] = false;
-			$this->ppde_ipn_log->log_error("DEBUG OTHER:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error());
-			$this->ppde_ipn_log->log_error($this->language->lang('UNEXPECTED_RESPONSE'), $this->ppde_ipn_log->is_use_log_error(), true);
+			$this->log_debug_status('DEBUG_OTHER');
+			$this->log_debug_status($this->language->lang('UNEXPECTED_RESPONSE'), true);
 		}
 
 		return $this->verified;
+	}
+
+	/**
+	 * Log debug status
+	 *
+	 * @param string $message
+	 * @param bool   $halt_script
+	 *
+	 * @access private
+	 */
+	private function log_debug_status($message, $halt_script = false): void
+	{
+		$this->ppde_ipn_log->log_error("{$message}:\n" . $this->ppde_ipn_log->get_text_report(), $this->ppde_ipn_log->is_use_log_error(), $halt_script);
 	}
 
 	/**

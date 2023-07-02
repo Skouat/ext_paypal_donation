@@ -59,11 +59,11 @@ class currency
 	}
 
 	/**
-	 * Get default currency symbol
+	 * Retrieves the default currency data.
 	 *
-	 * @param int $id Currency identifier; default: 0
+	 * @param int $id The ID of the currency (optional).
 	 *
-	 * @return array
+	 * @return array The default currency data as an array.
 	 * @access public
 	 */
 	public function get_default_currency_data($id = 0): array
@@ -72,15 +72,15 @@ class currency
 	}
 
 	/**
-	 * Format currency value, based on the PHP intl extension.
-	 * If this PHP Extension is not available, we switch on a basic currency formatter.
+	 * Formats the given value as currency based on the PHP intl extension, if available.
+	 * Otherwise, a basic currency formatter is used.
 	 *
-	 * @param float  $value
-	 * @param string $currency_iso_code
-	 * @param string $currency_symbol
-	 * @param bool   $on_left
-	 *
-	 * @return string
+	 * @param float  $value             The value to be formatted as currency.
+	 * @param string $currency_iso_code The ISO code of the currency.
+	 * @param string $currency_symbol   The symbol of the currency.
+	 * @param bool   $on_left           Determines whether the currency symbol should be placed on the left (default:
+	 *                                  true).
+	 * @return string The formatted currency string.
 	 * @access public
 	 */
 	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true): string
@@ -90,35 +90,35 @@ class currency
 			return $this->locale->numfmt_format_currency($this->locale->numfmt_create(), $value, $currency_iso_code);
 		}
 
-		return $this->currency_on_left($value, $currency_symbol, $on_left);
+		return $this->legacy_currency_format($value, $currency_symbol, $on_left);
 	}
 
 	/**
-	 * Put the currency on the left or on the right of the amount
+	 * Format a value as a legacy currency string
 	 *
-	 * @param float  $value
-	 * @param string $currency_symbol
-	 * @param bool   $on_left
-	 * @param string $dec_point
-	 * @param string $thousands_sep
-	 *
-	 * @return string
+	 * @param float  $value           The value to format as currency
+	 * @param string $currency_symbol The symbol to use as the currency symbol
+	 * @param bool   $on_left         Optional. Determines whether the currency symbol should be placed on the left or
+	 *                                right of the formatted value. Default is true (left side).
+	 * @param string $dec_point       Optional. The string to use as the decimal separator. Default is '.'.
+	 * @param string $thousands_sep   Optional. The string to use as the thousands separator. Default is an empty
+	 *                                string.
+	 * @return string The formatted value as a currency string
 	 * @access public
 	 */
-	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = ''): string
+	public function legacy_currency_format($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = ''): string
 	{
-		if ($on_left)
-		{
-			return $currency_symbol . number_format(round($value, 2), 2, $dec_point, $thousands_sep);
-		}
+		$formatted_value = number_format(round($value, 2), 2, $dec_point, $thousands_sep);
 
-		return number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency_symbol;
+		return $on_left
+			? $currency_symbol . $formatted_value
+			: $formatted_value . $currency_symbol;
 	}
 
 	/**
-	 * Build pull down menu options of available currency
+	 * Builds a currency select menu.
 	 *
-	 * @param int $config_value Currency identifier; default: 0
+	 * @param int $config_value The selected currency value from the configuration (default is 0).
 	 *
 	 * @return void
 	 * @access public
@@ -131,15 +131,32 @@ class currency
 		// Process each menu item for pull-down
 		foreach ($currency_items as $currency_item)
 		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('options', [
-				'CURRENCY_ID'        => (int) $currency_item['currency_id'],
-				'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
-				'CURRENCY_NAME'      => $currency_item['currency_name'],
-				'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
-				'S_CURRENCY_DEFAULT' => (int) $config_value === (int) $currency_item['currency_id'],
-			]);
+			$this->assign_currency_to_template($currency_item, $config_value);
 		}
 		unset ($currency_items);
+	}
+
+	/**
+	 * Assign currency information to the template.
+	 *
+	 * @param array $currency_item The currency item with the following keys:
+	 *                             - currency_id: The ID of the currency (integer).
+	 *                             - currency_iso_code: The ISO code of the currency (string).
+	 *                             - currency_name: The name of the currency (string).
+	 *                             - currency_symbol: The symbol of the currency (string).
+	 * @param int   $config_value  The configuration value used to determine the default currency (integer).
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function assign_currency_to_template(array $currency_item, int $config_value): void
+	{
+		$this->template->assign_block_vars('options', [
+			'CURRENCY_ID'        => (int) $currency_item['currency_id'],
+			'CURRENCY_ISO_CODE'  => $currency_item['currency_iso_code'],
+			'CURRENCY_NAME'      => $currency_item['currency_name'],
+			'CURRENCY_SYMBOL'    => $currency_item['currency_symbol'],
+			'S_CURRENCY_DEFAULT' => $config_value === (int) $currency_item['currency_id'],
+		]);
 	}
 }

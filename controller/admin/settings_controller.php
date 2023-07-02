@@ -164,47 +164,37 @@ class settings_controller extends admin_main
 	}
 
 	/**
-	 * Rebuild items list to conserve only numeric values
+	 * Rebuilds the items list to conserve only numeric values.
 	 *
-	 * @param string $config_value
-	 * @param int $added_value
+	 * @param string $config_value The config value representing the initial items list.
+	 * @param int    $added_value  The optional value to be added to the items list. Default is 0.
 	 *
-	 * @return string
+	 * @return string The rebuilt items list.
 	 * @access private
 	 */
-	private function rebuild_items_list($config_value, $added_value = 0): string
+	private function rebuild_items_list(string $config_value, int $added_value = 0): string
 	{
 		$items_list = explode(',', $config_value);
-		$merged_items = [];
 
-		$this->add_int_data_in_array($merged_items, $added_value);
+		// Map each item in the list to an integer value
+		$merged_items = array_map('intval', $items_list);
 
-		foreach ($items_list as $item)
+		// If $added_value is not zero, add it to $merged_items
+		if ($added_value !== 0)
 		{
-			$this->add_int_data_in_array($merged_items, $item);
+			$merged_items[] = $added_value;
 		}
-		unset($items_list);
+		// Remove '0' values from $merged_items
+		$merged_items = array_filter($merged_items);
 
-		natsort($merged_items);
+		// Remove any duplicate items
+		$merged_items = array_unique($merged_items);
 
-		return $this->check_config(implode(',', array_unique($merged_items)), 'string');
-	}
+		// Sort the items
+		sort($merged_items, SORT_NUMERIC);
 
-	/**
-	 * Only add by reference integer data in an array
-	 *
-	 * @param array  &$array
-	 * @param string  $var
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function add_int_data_in_array(&$array, $var): void
-	{
-		if (settype($var, 'integer') && $var !== 0)
-		{
-			$array[] = $var;
-		}
+		// Convert array back to string and return
+		return implode(',', $merged_items);
 	}
 
 	/**

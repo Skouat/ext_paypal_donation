@@ -200,7 +200,7 @@ class currency extends main
 	 */
 	public function set_order()
 	{
-		$order = (int) $this->get_max_order() + 1;
+		$order = $this->get_max_order() + 1;
 
 		/*
 		* If the data is out of range we'll throw an exception. We use 16777215 as a
@@ -231,7 +231,7 @@ class currency extends main
 		$field = $this->db->sql_fetchfield('max_order');
 		$this->db->sql_freeresult($result);
 
-		return $field;
+		return (int) $field;
 	}
 
 	/**

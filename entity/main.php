@@ -455,7 +455,7 @@ abstract class main
 		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
 
 		// Go through the basic fields and set them to our data array
-		foreach ($this->table_schema as $generic_field => $field)
+		foreach ($this->table_schema as $field)
 		{
 			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field['name']]))

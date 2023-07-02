@@ -55,17 +55,38 @@ class locale_icu
 		// Grab the list of all available locales
 		$locale_list = $this->get_locale_list();
 
-		// Process each locale item for pull-down
+		$this->process_locales($locale_list, $config_value);
+	}
+
+	/**
+	 * Process each locale item for pull-down
+	 *
+	 * @param array  $locale_list
+	 * @param string $config_value
+	 */
+	private function process_locales(array $locale_list, string $config_value): void
+	{
 		foreach ($locale_list as $locale => $locale_name)
 		{
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('locale_options', [
-				'LOCALE_ID'        => $locale,
-				'LOCALE_NAME'      => $locale_name,
-				'S_LOCALE_DEFAULT' => $config_value === $locale,
-			]);
+			$this->assign_locale_to_template($locale, $locale_name, $config_value);
 		}
-		unset ($locale, $locale_list);
+		unset ($locale);
+	}
+
+	/**
+	 * Assign locale options to the template
+	 *
+	 * @param string $locale
+	 * @param string $locale_name
+	 * @param string $config_value
+	 */
+	private function assign_locale_to_template(string $locale, string $locale_name, string $config_value): void
+	{
+		$this->template->assign_block_vars('locale_options', [
+			'LOCALE_ID'        => $locale,
+			'LOCALE_NAME'      => $locale_name,
+			'S_LOCALE_DEFAULT' => $config_value === $locale,
+		]);
 	}
 
 	/**
@@ -82,10 +103,10 @@ class locale_icu
 	/**
 	 * Build an array of all locales
 	 *
-	 * @return mixed
+	 * @return array
 	 * @access private
 	 */
-	private function get_locale_list()
+	private function get_locale_list(): array
 	{
 		$locale_items = \ResourceBundle::getLocales('');
 		foreach ($locale_items as $locale)
@@ -152,10 +173,10 @@ class locale_icu
 	 * @param float            $value
 	 * @param string           $currency_iso_code
 	 *
-	 * @return string
+	 * @return false|string
 	 * @access public
 	 */
-	public function numfmt_format_currency($fmt, $value, $currency_iso_code): string
+	public function numfmt_format_currency($fmt, $value, $currency_iso_code)
 	{
 		return numfmt_format_currency($fmt, (float) $value, (string) $currency_iso_code);
 	}
@@ -208,11 +229,11 @@ class locale_icu
 	/**
 	 * Checks if ICU version matches with requirement
 	 *
-	 * @return bool
+	 * @return bool|int
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function icu_version_compare(): bool
+	private function icu_version_compare()
 	{
 		$icu_min_version = '1.1.0';
 		$icu_version = $this->get_php_extension_version('intl', $this->icu_available_features());
