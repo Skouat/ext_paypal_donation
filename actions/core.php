@@ -223,8 +223,6 @@ class core
 
 	public function is_donor_is_member(): void
 	{
-		$anonymous_user = false;
-
 		if ($this->is_donor_anonymous())
 		{
 			$this->donor_is_member = $this->check_donor_status_based_on_email($this->transaction_data['payer_email']);

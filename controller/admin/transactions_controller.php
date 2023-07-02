@@ -270,7 +270,7 @@ class transactions_controller extends admin_main
 			}
 		}
 
-		return $this->ppde_operator->build_log_ary($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
+		return $this->ppde_operator->build_log_entries($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
 	}
 
 	/**
@@ -649,7 +649,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Tests if mc_fee is to high
+	 * Tests if mc_fee is too high
 	 *
 	 * @param array $data
 	 *
@@ -749,7 +749,7 @@ class transactions_controller extends admin_main
 	public function view(): void
 	{
 		// Request Identifier of the transaction
-		$transaction_id = $this->request->variable('id', 0);
+		$transaction_id = (int) $this->request->variable('id', 0);
 
 		// add additional fields to the table schema needed by entity->import()
 		$additional_table_schema = [
