@@ -55,13 +55,48 @@ class compare
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_lt($a, $b) { return $a < $b; }
-	private function compare_lte($a, $b) { return $a <= $b; }
-	private function compare_eq($a, $b) { return $a == $b; }
-	private function compare_id($a, $b) { return $a === $b; }
-	private function compare_gte($a, $b) { return $a >= $b; }
-	private function compare_gt($a, $b) { return $a > $b; }
-	private function compare_diff($a, $b) { return $a <> $b; }
-	private function compare_not_eq($a, $b) { return $a != $b; }
-	private function compare_not_id($a, $b) { return $a !== $b; }
+	private function compare_lt($a, $b)
+	{
+		return $a < $b;
+	}
+
+	private function compare_lte($a, $b)
+	{
+		return $a <= $b;
+	}
+
+	private function compare_eq($a, $b)
+	{
+		return $a == $b;
+	}
+
+	private function compare_id($a, $b)
+	{
+		return $a === $b;
+	}
+
+	private function compare_gte($a, $b)
+	{
+		return $a >= $b;
+	}
+
+	private function compare_gt($a, $b)
+	{
+		return $a > $b;
+	}
+
+	private function compare_diff($a, $b)
+	{
+		return $a <> $b;
+	}
+
+	private function compare_not_eq($a, $b)
+	{
+		return $a != $b;
+	}
+
+	private function compare_not_id($a, $b)
+	{
+		return $a !== $b;
+	}
 }
