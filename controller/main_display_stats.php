@@ -53,26 +53,50 @@ class main_display_stats
 	 */
 	public function display_stats(): void
 	{
-		if ($this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'])
+		if ($this->is_stats_enabled())
 		{
-			// Get data from the database
+			// Get data for the default currency
 			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 
-			$this->template->assign_vars([
-				'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
-				'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
-				'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
-
-				'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-				'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-				'L_PPDE_USED'   => $this->get_ppde_used_langkey($default_currency_data[0]['currency_iso_code'], $default_currency_data[0]['currency_symbol'], (bool) $default_currency_data[0]['currency_on_left']),
-
-				'S_PPDE_STATS_TEXT_ONLY' => $this->config['ppde_stats_text_only'],
-			]);
+			$this->assign_template_enable_vars();
+			$this->assign_template_lang_vars($default_currency_data);
+			$this->assign_template_stats_text_only_var();
 
 			// Generate statistics percent for display
-			$this->generate_stats_percent();
+			$this->generate_stats_proportion();
 		}
+	}
+
+	private function is_stats_enabled(): bool
+	{
+		return $this->config['ppde_goal_enable'] || $this->config['ppde_raised_enable'] || $this->config['ppde_used_enable'];
+	}
+
+	private function assign_template_enable_vars(): void
+	{
+		$this->template->assign_vars([
+			'PPDE_GOAL_ENABLE'   => $this->config['ppde_goal_enable'],
+			'PPDE_RAISED_ENABLE' => $this->config['ppde_raised_enable'],
+			'PPDE_USED_ENABLE'   => $this->config['ppde_used_enable'],
+		]);
+	}
+
+	private function assign_template_stats_text_only_var(): void
+	{
+		$this->template->assign_var('S_PPDE_STATS_TEXT_ONLY', $this->config['ppde_stats_text_only']);
+	}
+
+	private function assign_template_lang_vars(array $default_currency_data): void
+	{
+		$iso_code = $default_currency_data[0]['currency_iso_code'];
+		$symbol = $default_currency_data[0]['currency_symbol'];
+		$currency_on_left = (bool) $default_currency_data[0]['currency_on_left'];
+
+		$this->template->assign_vars([
+			'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($iso_code, $symbol, $currency_on_left),
+			'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($iso_code, $symbol, $currency_on_left),
+			'L_PPDE_USED'   => $this->get_ppde_used_langkey($iso_code, $symbol, $currency_on_left),
+		]);
 	}
 
 	/**
@@ -150,86 +174,89 @@ class main_display_stats
 	}
 
 	/**
-	 * Generate statistics percent for display
+	 * Generate statistics proportion for display
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function generate_stats_percent(): void
+	private function generate_stats_proportion(): void
 	{
-		if ($this->is_ppde_goal_stats())
-		{
-			$percent = $this->percent_value((float) $this->config['ppde_raised'], (float) $this->config['ppde_goal']);
-			$this->assign_vars_stats_percent('GOAL_NUMBER', $percent);
-		}
+		$stat_conditions = [
+			'GOAL_NUMBER' => ['condition' => $this->is_ppde_goal_stats(), 'nums' => ['ppde_raised', 'ppde_goal']],
+			'USED_NUMBER' => ['condition' => $this->is_ppde_used_stats(), 'nums' => ['ppde_used', 'ppde_raised']],
+		];
 
-		if ($this->is_ppde_used_stats())
+		foreach ($stat_conditions as $stat_name => $details)
 		{
-			$percent = $this->percent_value((float) $this->config['ppde_used'], (float) $this->config['ppde_raised']);
-			$this->assign_vars_stats_percent('USED_NUMBER', $percent, true);
+			if ($details['condition'])
+			{
+				$data = $details['nums'];
+				$percentage = $this->percentage_value((float) $this->config[$data[0]], (float) $this->config[$data[1]]);
+				$this->assign_vars_stats_proportion($stat_name, $percentage, $stat_name === 'USED_NUMBER');
+			}
 		}
 	}
 
 	/**
-	 * Checks if stats can be displayed
+	 * Verifies if stats can be shown
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_goal_stats(): bool
+	private function is_ppde_goal_stats()
 	{
 		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
 	}
 
 	/**
-	 * Checks if stats can be displayed
+	 * Verifies if statistics can be shown
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_used_stats(): bool
+	private function is_ppde_used_stats()
 	{
 		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
 	}
 
 	/**
-	 * Returns percent value
+	 * Gives back the percentage value
 	 *
 	 * @param float $multiplicand
-	 * @param float $dividend
+	 * @param float $divisor
 	 *
 	 * @return float
 	 * @access private
 	 */
-	private function percent_value($multiplicand, $dividend)
+	private function percentage_value($multiplicand, $divisor)
 	{
-		return ($multiplicand * 100) / $dividend;
+		return ($multiplicand * 100) / $divisor;
 	}
 
 	/**
-	 * Assign statistics percent vars to template
+	 * Assigns statistics proportion vars to the template
 	 *
-	 * @param string $varname
-	 * @param float  $percent
+	 * @param string $var_name
+	 * @param float  $proportion
 	 * @param bool   $reverse_css
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_percent($varname, $percent, $reverse_css = false): void
+	private function assign_vars_stats_proportion($var_name, $proportion, $reverse_css = false)
 	{
-		// Force $varname to be in upper case
-		$varname = strtoupper($varname);
+		// Enforcing $var_name to uppercase
+		$var_name = strtoupper($var_name);
 
 		$this->template->assign_vars([
-			'PPDE_' . $varname     => ($percent < 100) ? round($percent, 2) : round($percent),
-			'PPDE_CSS_' . $varname => $this->ppde_css_classname($percent, $reverse_css),
-			'S_' . $varname        => true,
+			'PPDE_' . $var_name     => ($proportion < 100) ? round($proportion, 2) : round($proportion),
+			'PPDE_CSS_' . $var_name => $this->ppde_css_classname($proportion, $reverse_css),
+			'S_' . $var_name        => true,
 		]);
 	}
 
 	/**
-	 * Returns the CSS class name based on the percent of stats
+	 * Gives back the CSS class name based on the proportion of the stats
 	 *
 	 * @param float $value
 	 * @param bool  $reverse
@@ -237,11 +264,10 @@ class main_display_stats
 	 * @return string
 	 * @access private
 	 */
-	private function ppde_css_classname($value, $reverse = false): string
+	private function ppde_css_classname($value, $reverse = false)
 	{
 		$css_reverse = '';
-		// Array of CSS class name
-		$css_data_ary = [
+		$css_data_array = [
 			10  => 'ten',
 			20  => 'twenty',
 			30  => 'thirty',
@@ -254,24 +280,37 @@ class main_display_stats
 			100 => 'hundred',
 		];
 
-		// Determine the index based on the value rounded up to the next highest
-		$index = ceil($value / 10) * 10;
+		$index = $this->calculate_index($value, $reverse);
 
-		// Reverse the CSS color
 		if ($reverse && $value < 100)
 		{
-			// Determine the index based on the value rounded to the next lowest integer.
-			$index = floor($value / 10) * 10;
-
 			$value = 100 - $value;
 			$css_reverse = '-reverse';
 		}
 
-		if (isset($css_data_ary[$index]) && $value < 100)
+		if (isset($css_data_array[$index]) && $value < 100)
 		{
-			return $css_data_ary[$index] . $css_reverse;
+			return $css_data_array[$index] . $css_reverse;
 		}
 
 		return $reverse ? 'red' : 'green';
+	}
+
+	/**
+	 * Calculate the index based on the value
+	 *
+	 * @param float $value
+	 * @param bool  $reverse
+	 *
+	 * @return int
+	 */
+	private function calculate_index($value, $reverse)
+	{
+		if ($reverse && $value < 100)
+		{
+			return floor($value / 10) * 10;
+		}
+
+		return ceil($value / 10) * 10;
 	}
 }

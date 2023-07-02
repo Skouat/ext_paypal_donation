@@ -37,137 +37,31 @@ class compare
 	 */
 	public function compare_value($value1, $value2, $operator): bool
 	{
-		if (array_key_exists($operator, self::$operators_table))
+		if (!array_key_exists($operator, self::$operators_table))
 		{
-			return call_user_func_array([$this, self::$operators_table[$operator]], [$value1, $value2]);
+			return false;
 		}
 
-		return false;
+		$method = self::$operators_table[$operator];
+		return $this->$method($value1, $value2);
 	}
 
 	/**
-	 * Method called by $this->compare_value
+	 * Methods are called by $this->compare_value
 	 *
-	 * @param $a
-	 * @param $b
+	 * @param mixed $a The first value to compare.
+	 * @param mixed $b The second value to compare.
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function compare_lt($a, $b): bool
-	{
-		return $a < $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_lte($a, $b): bool
-	{
-		return $a <= $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_eq($a, $b): bool
-	{
-		return $a == $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_id($a, $b): bool
-	{
-		return $a === $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gte($a, $b): bool
-	{
-		return $a >= $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_gt($a, $b): bool
-	{
-		return $a > $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_diff($a, $b): bool
-	{
-		return $a <> $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_not_eq($a, $b): bool
-	{
-		return $a != $b;
-	}
-
-	/**
-	 * Method called by $this->compare_value
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function compare_not_id($a, $b): bool
-	{
-		return $a !== $b;
-	}
+	private function compare_lt($a, $b) { return $a < $b; }
+	private function compare_lte($a, $b) { return $a <= $b; }
+	private function compare_eq($a, $b) { return $a == $b; }
+	private function compare_id($a, $b) { return $a === $b; }
+	private function compare_gte($a, $b) { return $a >= $b; }
+	private function compare_gt($a, $b) { return $a > $b; }
+	private function compare_diff($a, $b) { return $a <> $b; }
+	private function compare_not_eq($a, $b) { return $a != $b; }
+	private function compare_not_id($a, $b) { return $a !== $b; }
 }

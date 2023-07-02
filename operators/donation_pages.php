@@ -42,33 +42,14 @@ class donation_pages
 	 */
 	public function build_sql_data($lang_id = 0, $mode = 'all_pages'): string
 	{
-		return 'SELECT *
-				FROM ' . $this->ppde_donation_pages_table . '
-				WHERE page_lang_id = ' . (int) ($lang_id) .
-					$this->build_sql_and_page_title($mode) . '
-				ORDER BY page_title';
-	}
+		$query = 'SELECT * FROM ' . $this->ppde_donation_pages_table . ' WHERE page_lang_id = ' . (int) $lang_id;
 
-	/**
-	 * Set sql AND clause for the field 'page_title'
-	 *
-	 * @param string $mode
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function build_sql_and_page_title($mode): string
-	{
-		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
-		switch ($mode)
+		if (in_array($mode, ['body', 'cancel', 'success']))
 		{
-			case 'body':
-			case 'cancel':
-			case 'success':
-				return " AND page_title = 'donation_" . $mode . "'";
-			default:
-				return '';
+			$query .= " AND page_title = 'donation_{$mode}'";
 		}
+
+		return $query . ' ORDER BY page_title';
 	}
 
 	/**

@@ -225,29 +225,42 @@ class core
 	{
 		$anonymous_user = false;
 
-		// If the user_id is not anonymous
-		if ((int) $this->transaction_data['user_id'] !== ANONYMOUS)
+		if ($this->is_donor_anonymous())
 		{
-			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
+			$this->donor_is_member = $this->check_donor_status_based_on_email($this->transaction_data['payer_email']);
 
-			if (!$this->donor_is_member)
-			{
-				// No results, therefore the user is anonymous...
-				$anonymous_user = true;
-			}
 		}
 		else
 		{
-			// The user is anonymous by default
-			$anonymous_user = true;
+			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
+		}
+	}
+
+	/**
+	 * Determine if the donor is anonymous.
+	 *
+	 * @return bool True if the donor is anonymous, false otherwise.
+	 */
+	private
+	function is_donor_anonymous(): bool
+	{
+		return (int) $this->transaction_data['user_id'] === ANONYMOUS || !$this->check_donors_status('user', $this->transaction_data['user_id']);
+	}
+
+	/**
+	 * Checks the donor status based on email.
+	 *
+	 * @param string $email The email of the donor.
+	 * @return bool Returns true if the status of the donor is active, false otherwise.
+	 */
+	private function check_donor_status_based_on_email($email): bool
+	{
+		if (empty($email))
+		{
+			return false;
 		}
 
-		if ($anonymous_user && !empty($this->transaction_data['payer_email']))
-		{
-			// If the user is anonymous, check their PayPal email address with all known email hashes
-			// to determine if the user exists in the database with that email
-			$this->donor_is_member = $this->check_donors_status('email', $this->transaction_data['payer_email']);
-		}
+		return $this->check_donors_status('email', $email);
 	}
 
 	/**
@@ -423,9 +436,13 @@ class core
 	 */
 	public function log_to_db($data): void
 	{
-		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
+		$this->validate_and_set_transaction_data();
+		$this->ppde_entity_transaction->add_edit_data();
+	}
 
+	private function validate_and_set_transaction_data(): void
+	{
 		// Handle user_id data
 		$this->extract_user_id();
 		$this->validate_user_id();
@@ -435,17 +452,16 @@ class core
 		$this->ppde_entity_transaction->set_username($user_ary['username']);
 
 		// Set 'net_amount' in $this->transaction_data
-		$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		$this->transaction_data['net_amount'] = $this->net_amount(
+			$this->transaction_data['mc_gross'],
+			$this->transaction_data['mc_fee']
+		);
 
-		// List the data to be thrown into the database
 		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
 
 		// Load data in the entity
 		$this->ppde_entity_transaction->set_entity_data($data);
 		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
-
-		// Add or edit transaction data
-		$this->ppde_entity_transaction->add_edit_data();
 	}
 
 	/**
@@ -456,9 +472,24 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_transaction_data($transaction_data): void
+	public function set_transaction_data(array $transaction_data): void
 	{
-		$this->transaction_data = !empty($this->transaction_data) ? array_merge($this->transaction_data, $transaction_data) : $transaction_data;
+		$this->transaction_data = $this->merge_transaction_data($transaction_data);
+	}
+
+	/**
+	 * Merge transaction data if existing transaction data is not empty, else return passed transaction data
+	 *
+	 * @param array $transaction_data Array of the donation transaction.
+	 *
+	 * @return array Merged or original transaction data
+	 * @access private
+	 */
+	private function merge_transaction_data(array $transaction_data): array
+	{
+		return !empty($this->transaction_data)
+			? array_merge($this->transaction_data, $transaction_data)
+			: $transaction_data;
 	}
 
 	/**
@@ -494,6 +525,6 @@ class core
 	 */
 	public function is_in_admin(): bool
 	{
-		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
+		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin'];
 	}
 }

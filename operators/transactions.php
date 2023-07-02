@@ -53,13 +53,8 @@ class transactions
 				],
 			],
 			'ORDER_BY'  => 'txn.transaction_id',
+			'WHERE'     => ($transaction_id ? 'txn.transaction_id = ' . (int) $transaction_id : ''),
 		];
-
-		// Use WHERE clause when $currency_id is different from 0
-		if ((int) $transaction_id)
-		{
-			$sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $transaction_id;
-		}
 
 		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
@@ -84,12 +79,8 @@ class transactions
 							AND txn.payment_status = 'Completed'
 							AND txn.test_ipn = 0",
 			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
+			'ORDER_BY' => $order_by,
 		];
-
-		if ($order_by)
-		{
-			$sql_donorslist_ary['ORDER_BY'] = $order_by;
-		}
 
 		if ($detailed)
 		{
@@ -155,8 +146,7 @@ class transactions
 		}
 		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
 
-		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $count_sql_ary));
 		$field = (int) $this->db->sql_fetchfield('total_entries');
 		$this->db->sql_freeresult($result);
 
@@ -222,10 +212,9 @@ class transactions
 		if (!empty($keywords))
 		{
 			// Build pattern and keywords...
-			foreach ($keywords as $index => $value)
-			{
-				$keywords[$index] = $this->db->sql_like_expression($this->db->get_any_char() . $value . $this->db->get_any_char());
-			}
+			$keywords = array_map(function ($keyword) {
+				return $this->db->sql_like_expression($this->db->get_any_char() . $keyword . $this->db->get_any_char());
+			}, $keywords);
 
 			$sql_keywords = ' ' . $statement_operator . ' (';
 			$columns = ['txn.txn_id', 'u.username'];
@@ -255,6 +244,7 @@ class transactions
 	 */
 	public function query_donor_user_data($type = 'user', $arg = 1)
 	{
+		$sql_where = '';
 
 		switch ($type)
 		{
@@ -267,8 +257,6 @@ class transactions
 			case 'email':
 				$sql_where = " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
 			break;
-			default:
-				$sql_where = '';
 		}
 
 		$sql = 'SELECT user_id, username, user_ppde_donated_amount
@@ -278,7 +266,7 @@ class transactions
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		return $row;
+		return $row ?: [];
 	}
 
 	/**
@@ -292,16 +280,16 @@ class transactions
 	 * @return array $log
 	 * @access public
 	 */
-	public function build_log_ary($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0): array
+	public function build_log_entries($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0): array
 	{
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
 
-		$log = [];
+		$log_entries = [];
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$log[] = [
+			$log_entries[] = [
 				'confirmed'      => $row['confirmed'],
 				'payment_date'   => $row['payment_date'],
 				'payment_status' => $row['payment_status'],
@@ -315,105 +303,106 @@ class transactions
 
 		$this->db->sql_freeresult($result);
 
-		return $log;
+		return $log_entries;
 	}
 
 	/**
 	 * Build transaction url for placing into templates.
 	 *
-	 * @param int    $id         The users transaction id
+	 * @param int    $id         The user's transaction id
 	 * @param string $txn_id     The txn number id
 	 * @param string $custom_url optional parameter to specify a profile url. The transaction id get appended to this
 	 *                           url as &amp;id={id}
-	 * @param bool   $colour     If false the color #FF0000 will be applied on the URL.
+	 * @param bool   $colour     If false, the color #FF0000 will be applied on the URL.
 	 *
 	 * @return string A string consisting of what is wanted.
 	 * @access private
 	 */
 	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false): string
 	{
-		static $_profile_cache;
-
 		// We cache some common variables we need within this function
-		if (empty($_profile_cache))
+		$transaction_templates = [
+			'tpl_nourl'      => '{{ TRANSACTION }}',
+			'tpl_url'        => '<a href="{{ TXN_URL }}">{{ TRANSACTION }}</a>',
+			'tpl_url_colour' => '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>',
+		];
+
+		// Returns the correct transaction url
+
+		if (!$txn_id)
 		{
-			$_profile_cache['tpl_nourl'] = '{{ TRANSACTION }}';
-			$_profile_cache['tpl_url'] = '<a href="{{ TXN_URL }}">{{ TRANSACTION }}</a>';
-			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>';
+			return str_replace('{{ TRANSACTION }}', $txn_id, $transaction_templates['tpl_nourl']);
 		}
 
-		// Build correct transaction url
-		$txn_url = '';
-		if ($txn_id)
+		$txn_url = ($custom_url !== '') ? $custom_url . '&amp;action=view&amp;id=' . $id : $txn_id;
+		if ($colour)
 		{
-			$txn_url = ($custom_url !== '') ? $custom_url . '&amp;action=view&amp;id=' . $id : $txn_id;
+			return str_replace(
+				['{{ TXN_URL }}', '{{ TRANSACTION }}'],
+				[$txn_url, $txn_id],
+				$transaction_templates['tpl_url']
+			);
 		}
-
-		// Return
-
-		if (!$txn_url)
-		{
-			return str_replace('{{ TRANSACTION }}', $txn_id, $_profile_cache['tpl_nourl']);
-		}
-
-		return str_replace(['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'], [$txn_url, 'color: #ff0000;', $txn_id], (!$colour) ? $_profile_cache['tpl_url_colour'] : $_profile_cache['tpl_url']);
+		return str_replace(
+			['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'],
+			[$txn_url, 'color: #ff0000;', $txn_id],
+			$transaction_templates['tpl_url_colour']
+		);
 	}
 
 	/**
-	 * Returns SQL WHERE clause for all marked items
+	 * Builds the SQL WHERE clause for marked transactions.
 	 *
-	 * @param $marked
+	 * @param array $marked The array of marked transaction IDs.
 	 *
-	 * @return string
-	 * @access public
+	 * @return string The SQL WHERE clause.
 	 */
 	public function build_marked_where_sql($marked): string
 	{
-		$sql_in = [];
-		foreach ($marked as $mark)
+		if (!is_array($marked) || empty($marked))
 		{
-			$sql_in[] = $mark;
+			return '';
 		}
 
-		return ' WHERE ' . $this->db->sql_in_set('transaction_id', $sql_in);
+		return ' WHERE ' . $this->db->sql_in_set('transaction_id', array_map('intval', $marked));
 	}
 
 	/**
 	 * Returns the count result for updating stats
 	 *
-	 * @param string $type
-	 * @param bool   $test_ipn
+	 * @param string $type     The type of query to be executed.
+	 * @param bool   $test_ipn The value indicating whether to use test IPN.
 	 *
 	 * @return int
 	 * @access public
 	 */
-	public function sql_query_count_result($type, $test_ipn): int
+	public function sql_query_count_result(string $type, bool $test_ipn): int
 	{
-		switch ($type)
+		$is_transactions_count = strpos($type, 'transactions_count') !== false;
+		$is_known_donors_count = strpos($type, 'known_donors_count') !== false;
+		$is_anonymous_donors_count = strpos($type, 'anonymous_donors_count') !== false;
+
+		$field_name = $is_transactions_count ? 'txn_id' : 'payer_id';
+		$sql_ary = $this->sql_select_stats_main($field_name);
+		$test_ipn_str = (int) $test_ipn;
+
+		if ($is_transactions_count)
 		{
-			case 'ppde_transactions_count':
-			case 'ppde_transactions_count_ipn':
-				$sql_ary = $this->sql_select_stats_main('txn_id');
-				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
-			break;
-			case 'ppde_known_donors_count':
-			case 'ppde_known_donors_count_ipn':
-				$sql_ary = $this->sql_select_stats_main('payer_id');
-				$sql_ary['LEFT_JOIN'] = [
-					[
-						'FROM' => [USERS_TABLE => 'u'],
-						'ON'   => 'txn.user_id = u.user_id',
-					],
-				];
-				$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . (int) $test_ipn;
-			break;
-			case 'ppde_anonymous_donors_count':
-			case 'ppde_anonymous_donors_count_ipn':
-				$sql_ary = $this->sql_select_stats_main('payer_id');
-				$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . (int) $test_ipn;
-			break;
-			default:
-				$sql_ary = $this->sql_select_stats_main('txn_id');
+			$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . $test_ipn_str;
+		}
+		else if ($is_known_donors_count)
+		{
+			$sql_ary['LEFT_JOIN'] = [
+				[
+					'FROM' => [USERS_TABLE => 'u'],
+					'ON'   => 'txn.user_id = u.user_id',
+				],
+			];
+			$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . $test_ipn_str;
+		}
+		else if ($is_anonymous_donors_count)
+		{
+			$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . $test_ipn_str;
 		}
 
 		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
@@ -431,7 +420,7 @@ class transactions
 	 * @return array
 	 * @access private
 	 */
-	private function sql_select_stats_main($field_name): array
+	private function sql_select_stats_main(string $field_name): array
 	{
 		return [
 			'SELECT' => 'COUNT(DISTINCT txn.' . $field_name . ') AS count_result',
