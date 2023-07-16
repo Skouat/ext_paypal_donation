@@ -486,7 +486,7 @@ class ipn_listener
 			 * Event that is triggered when a transaction has been successfully completed
 			 *
 			 * @event skouat.ppde.do_actions_completed_before
-			 * @var array    'transaction_data'    Array containing transaction data
+			 * @var array    transaction_data    Array containing transaction data
 			 * @since 1.0.3
 			 */
 			$vars = [
