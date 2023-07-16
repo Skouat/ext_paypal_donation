@@ -14,11 +14,13 @@ use skouat\ppde\controller\ipn_paypal;
 
 abstract class admin_main
 {
+	protected const SECONDS_IN_A_DAY = 86400;
+
 	/** @var array */
 	protected $args = [];
-	/** @var object \phpbb\config\config */
+	/** @var \phpbb\config\config */
 	protected $config;
-	/** @var object Symfony\Component\DependencyInjection\ContainerInterface */
+	/** @var Symfony\Component\DependencyInjection\ContainerInterface */
 	protected $container;
 	/** @var string */
 	protected $id_prefix_name;

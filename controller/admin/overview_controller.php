@@ -303,6 +303,6 @@ class overview_controller extends admin_main
 	 */
 	private function get_install_days()
 	{
-		return (float) (time() - $this->config['ppde_install_date']) / 86400;
+		return (float) (time() - $this->config['ppde_install_date']) / self::SECONDS_IN_A_DAY;
 	}
 }

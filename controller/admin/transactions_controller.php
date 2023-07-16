@@ -168,7 +168,7 @@ class transactions_controller extends admin_main
 		gen_sort_selects($limit_days, $sort_by_text, $this->args['hidden_fields']['st'], $this->args['hidden_fields']['sk'], $this->args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
 		// Define where and sort sql for use in displaying transactions
-		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
+		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * self::SECONDS_IN_A_DAY)) : 0;
 		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
 
 		$keywords = $this->request->variable('keywords', '', true);
@@ -390,13 +390,13 @@ class transactions_controller extends admin_main
 	 * @param string $username
 	 * @param int    $donor_id
 	 *
-	 * @return int
-	 * @throws transaction_exception
+	 * @return int returns user_id
+	 * @throws transaction_exception if the user_id is less than or equal to the default value for ANONYMOUS.
 	 * @access private
 	 */
 	private function validate_user_id($username, $donor_id = 0): int
 	{
-		if (($username === '') && ($donor_id === ANONYMOUS || $this->request->is_set('u')))
+		if ($this->should_return_anonymous($username, $donor_id))
 		{
 			return ANONYMOUS;
 		}
@@ -409,6 +409,20 @@ class transactions_controller extends admin_main
 		}
 
 		return $user_id;
+	}
+
+	/**
+	 * Determines if the given username and donor ID should result in an anonymous response.
+	 *
+	 * @param string $username The username to check.
+	 * @param int    $donor_id The donor ID to check.
+	 * @return bool Returns true if the username is empty and either the donor ID is ANONYMOUS or the 'u' parameter is
+	 *                         set in the URL. Otherwise, returns false.
+	 */
+	private function should_return_anonymous(string $username, int $donor_id): bool
+	{
+		// if the username is empty and (donor_id is ANONYMOUS or 'u' parameter is set in URL),
+		return $username === '' && ($donor_id === ANONYMOUS || $this->request->is_set('u'));
 	}
 
 	public function approve(): void
@@ -467,23 +481,7 @@ class transactions_controller extends admin_main
 
 		if ($this->request->is_set_post('submit'))
 		{
-			try
-			{
-				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
-
-				// Prepare transaction settings before doing actions
-				$this->ppde_actions->set_transaction_data($transaction_data);
-				$this->ppde_actions->is_donor_is_member();
-
-				$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
-
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
-				trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
-			}
-			catch (transaction_exception $e)
-			{
-				$errors = $e->get_errors();
-			}
+			$errors = $this->process_transaction($transaction_data, $errors);
 		}
 
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
@@ -503,6 +501,50 @@ class transactions_controller extends admin_main
 	}
 
 	/**
+	 * Process a transaction with the given transaction data and handle any errors that occur.
+	 *
+	 * @param array $transaction_data The data for the transaction.
+	 * @param array $errors           The array to store any errors that occur during processing.
+	 *
+	 * @return array The updated array of errors after processing the transaction.
+	 */
+	private function process_transaction(array $transaction_data, array $errors): array
+	{
+		try
+		{
+			$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
+
+			// Prepare transaction settings before doing actions
+			$this->ppde_actions->set_transaction_data($transaction_data);
+			$this->ppde_actions->is_donor_is_member();
+
+			$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
+
+			$this->log_transaction($transaction_data);
+		}
+		catch (transaction_exception $e)
+		{
+			$errors = $e->get_errors();
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Logs an entry in the phpBB admin log.
+	 *
+	 * @param array $transaction_data The data of the transaction to be logged.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function log_transaction(array $transaction_data): void
+	{
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
+		trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+	}
+
+	/**
 	 * Returns requested data from manual transaction form
 	 *
 	 * @return array
@@ -517,9 +559,9 @@ class transactions_controller extends admin_main
 			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
 			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
 			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
-			'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
+			'MT_MC_GROSS'           => $this->request->variable('mc_gross', 0.0),
 			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
-			'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
+			'MT_MC_FEE'             => $this->request->variable('mc_fee', 0.0),
 			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
 			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
 			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
@@ -801,7 +843,7 @@ class transactions_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function display_log_assign_template_vars($row): void
+	protected function display_log_assign_template_vars(array $row): void
 	{
 		$this->template->assign_block_vars('log', [
 			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
@@ -818,14 +860,14 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Set output vars for display in the template
+	 * Assigns action template variables
 	 *
-	 * @param array $data
+	 * @param array $data The data array containing the necessary information for assigning template variables.
 	 *
 	 * @return void
 	 * @access protected
 	 */
-	protected function action_assign_template_vars($data)
+	protected function action_assign_template_vars(array $data): void
 	{
 		$s_hidden_fields = build_hidden_fields([
 			'id'                  => $data['transaction_id'],
@@ -858,7 +900,7 @@ class transactions_controller extends admin_main
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
+			'S_CONVERT'                       => !((int) $data['settle_amount'] === 0 && empty($data['exchange_rate'])),
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

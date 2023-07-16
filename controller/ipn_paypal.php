@@ -123,11 +123,21 @@ class ipn_paypal
 		if ($this->curl_fsock['curl'])
 		{
 			$this->curl_post($this->args_return_uri);
+			return;
 		}
-		else
-		{
-			$this->ppde_ipn_log->log_error($this->language->lang('NO_CONNECTION_DETECTED'), $this->ppde_ipn_log->is_use_log_error(), true, E_USER_ERROR, $data);
-		}
+
+		$this->log_paypal_connection_error($data);
+	}
+
+	private function log_paypal_connection_error($data): void
+	{
+		$this->ppde_ipn_log->log_error(
+			$this->language->lang('NO_CONNECTION_DETECTED'),
+			$this->ppde_ipn_log->is_use_log_error(),
+			true,
+			E_USER_ERROR,
+			$data
+		);
 	}
 
 	/**
@@ -144,19 +154,41 @@ class ipn_paypal
 	 */
 	private function curl_post($encoded_data): void
 	{
+		$ch = $this->init_curl_session($encoded_data);
+		$this->valuate_response(curl_exec($ch), $ch);
+		if ($this->ppde_ipn_log->is_use_log_error())
+		{
+			$this->parse_curl_response();
+		}
+		curl_close($ch);
+	}
+
+	/**
+	 * Initializes a cURL session with the specified encoded data.
+	 *
+	 * @param string $encoded_data The encoded data to be sent in the cURL request.
+	 *
+	 * @return resource Returns a cURL session handle on success, false on failure.
+	 * @access private
+	 */
+	private function init_curl_session($encoded_data)
+	{
 		$ch = curl_init($this->u_paypal);
-		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
-		curl_setopt($ch, CURLOPT_SSLVERSION, 6);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, [
-			'User-Agent: PHP-IPN-Verification-Script',
-			'Connection: Close',
+
+		curl_setopt_array($ch, [
+			CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+			CURLOPT_POST           => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POSTFIELDS     => $encoded_data,
+			CURLOPT_SSLVERSION     => 6,
+			CURLOPT_SSL_VERIFYPEER => 1,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_FORBID_REUSE   => true,
+			CURLOPT_CONNECTTIMEOUT => 30,
+			CURLOPT_HTTPHEADER     => [
+				'User-Agent: PHP-IPN-Verification-Script',
+				'Connection: Close',
+			],
 		]);
 
 		if ($this->ppde_ipn_log->is_use_log_error())
@@ -165,21 +197,56 @@ class ipn_paypal
 			curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		}
 
-		$this->report_response = $this->response = curl_exec($ch);
+		return $ch;
+	}
+
+	/**
+	 * Updates the response status and logs any cURL errors.
+	 *
+	 * @param mixed    $response The response received from the API call.
+	 * @param resource $ch       The cURL handle used to make the API call.
+	 * @return void
+	 */
+	private function valuate_response($response, $ch)
+	{
+		$this->report_response = $response;
 		if (curl_errno($ch) != 0)
 		{
-			// cURL error
-			$this->ppde_ipn_log->log_error($this->language->lang('CURL_ERROR', curl_errno($ch) . ' (' . curl_error($ch) . ')'), $this->ppde_ipn_log->is_use_log_error());
+			$this->log_curl_error($ch);
 		}
 		else
 		{
-			$info = curl_getinfo($ch);
-			$this->response_status = $info['http_code'];
+			$this->response_status = curl_getinfo($ch)['http_code'];
 		}
-		curl_close($ch);
+	}
 
+	/**
+	 * Log the error message from a cURL request.
+	 *
+	 * @param resource $ch The cURL handle.
+	 * @return void
+	 */
+	private function log_curl_error($ch): void
+	{
+		$this->ppde_ipn_log->log_error(
+			$this->language->lang('CURL_ERROR', curl_errno($ch) . ' (' . curl_error($ch) . ')'),
+			$this->ppde_ipn_log->is_use_log_error()
+		);
+	}
+
+	/**
+	 * Parses the cURL response and separates the response headers from the payload.
+	 *
+	 * This method splits the response by the double line-break "\r\n\r\n". It then trims the response headers and
+	 * stores the trimmed payload as the new response.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function parse_curl_response(): void
+	{
 		// Split response headers and payload, a better way for strcmp
-		$tokens = explode("\r\n\r\n", trim($this->response));
+		$tokens = explode("\r\n\r\n", trim($this->report_response));
 		$this->response = trim(end($tokens));
 	}
 
@@ -283,7 +350,11 @@ class ipn_paypal
 	}
 
 	/**
-	 * Check if website use TLS 1.2
+	 * Check TLS configuration.
+	 *
+	 * This method checks the TLS configuration using a CURL request to a specified TLS host.
+	 * If the TLS version matches one of the allowed versions, it sets the 'ppde_tls_detected' config value to true.
+	 * Otherwise, it sets it to false.
 	 *
 	 * @return void
 	 * @access public
@@ -301,14 +372,18 @@ class ipn_paypal
 		// Analyse response
 		$json = json_decode($this->response);
 
-		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
+		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version'], true))
 		{
 			$this->config->set('ppde_tls_detected', true);
 		}
 	}
 
 	/**
-	 * Set config value for cURL
+	 * Set the remote detected value.
+	 *
+	 * This method retrieves the extension metadata using the PPDE Extension Manager
+	 * and checks if curl is detected on the remote server. It then sets the value
+	 * of 'ppde_curl_detected' in the configuration based on the check result.
 	 *
 	 * @return void
 	 * @access public
@@ -316,7 +391,6 @@ class ipn_paypal
 	public function set_remote_detected(): void
 	{
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-
 		$this->config->set('ppde_curl_detected', $this->check_curl($ext_meta['extra']['version-check']['host']));
 	}
 
@@ -330,21 +404,43 @@ class ipn_paypal
 	 */
 	public function check_curl($host): bool
 	{
-		if (function_exists('curl_init') && function_exists('curl_exec'))
+		if ($this->is_curl_available())
 		{
-			$ch = curl_init($host);
-
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			$this->response = curl_exec($ch);
-			$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-			curl_close($ch);
-
-			return $this->response !== false || $this->response_status !== '0';
+			return $this->execute_curl_request($host);
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if cURL is available.
+	 *
+	 * @return bool Returns true if cURL is available, false otherwise.
+	 */
+	private function is_curl_available(): bool
+	{
+		return extension_loaded('curl') && function_exists('curl_init');
+	}
+
+	/**
+	 * Execute a cURL request.
+	 *
+	 * @param string $host The host to send the cURL request to.
+	 *
+	 * @return bool Returns true if the cURL request is successful or false otherwise.
+	 */
+	private function execute_curl_request(string $host): bool
+	{
+		$ch = curl_init($host);
+
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		$this->response = curl_exec($ch);
+		$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		curl_close($ch);
+
+		return $this->response !== false || $this->response_status !== '0';
 	}
 
 	/**
@@ -387,52 +483,72 @@ class ipn_paypal
 	 */
 	public function set_args_return_uri(): void
 	{
-		$values = [];
 		// Add the cmd=_notify-validate for PayPal
 		$this->args_return_uri = 'cmd=_notify-validate';
 
-		// Grab the post data form and set in an array to be used in the URI to PayPal
-		foreach ($this->get_postback_args() as $key => $value)
-		{
-			$values[] = $key . '=' . urlencode($value);
-		}
+		// Grab the post data form and set in an array to be used in the uri to PayPal
+		$postback_args = $this->get_postback_args();
+		$query_strings = http_build_query($postback_args);
 
-		// Implode the array into a string URI
-		$this->args_return_uri .= '&' . implode('&', $values);
+		// Append the uri with the query strings
+		$this->args_return_uri .= '&' . $query_strings;
 	}
 
 	/**
-	 * Get $_POST content as is. This is used to Postback args to PayPal or for tracking errors.
-	 * Based on official PayPal IPN class (https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php)
+	 * Sets the postback arguments for the current object.
+	 *
+	 * This is used to Postback args to PayPal or for tracking errors.
+	 * Based on official PayPal IPN class.
+	 * Ref. https://github.com/paypal/ipn-code-samples/blob/master/php/PaypalIPN.php#L67-L81
 	 *
 	 * @return void
 	 * @access public
 	 */
 	public function set_postback_args(): void
 	{
-		$raw_post_data = file_get_contents('php://input');
-		$raw_post_array = explode('&', $raw_post_data);
+		$postback_args = $this->get_decoded_input_params();
 
-		foreach ($raw_post_array as $keyval)
+		foreach ($postback_args as $key => $value)
 		{
-			$keyval = explode('=', $keyval);
-			if (count($keyval) === 2)
+			if ($this->is_payment_date_and_has_plus($key, $value))
 			{
-				// Since we do not want the plus in the datetime string to be encoded to a space, we manually encode it.
-				if ($keyval[0] === 'payment_date')
-				{
-					if (substr_count($keyval[1], '+') === 1)
-					{
-						$keyval[1] = str_replace('+', '%2B', $keyval[1]);
-					}
-				}
-				$this->postback_args[$keyval[0]] = urldecode($keyval[1]);
+				$postback_args[$key] = str_replace('+', '%2B', $value);
 			}
 		}
+		$this->postback_args = $postback_args;
 	}
 
 	/**
-	 * @return array
+	 * Retrieves the decoded input parameters.
+	 *
+	 * @return array The input parameters after being decoded.
+	 * @access private
+	 */
+	private function get_decoded_input_params(): array
+	{
+		parse_str(file_get_contents('php://input'), $params);
+		return array_map('urldecode', $params);
+	}
+
+	/**
+	 * Check if the given key is 'payment_date' and the value contains a '+'.
+	 *
+	 * @param string $key   The key to check.
+	 * @param string $value The value to check.
+	 *
+	 * @return bool Returns true if the key is 'payment_date' and the value contains a '+', otherwise returns false.
+	 * @access private
+	 */
+	private function is_payment_date_and_has_plus(string $key, string $value): bool
+	{
+		return $key === 'payment_date' && strpos($value, '+') !== false;
+	}
+
+	/**
+	 * Retrieves the postback arguments.
+	 *
+	 * @return array The postback arguments.
+	 * @access public
 	 */
 	public function get_postback_args(): array
 	{

@@ -110,14 +110,13 @@ class post_data
 
 	/**
 	 * Check requirements for data value.
-	 * If a check fails, error message are stored in $this->error_message
+	 * If a check fails, error messages are stored in $this->error_message
 	 *
 	 * @param array $data_ary
 	 *
 	 * @return array
 	 * @access public
 	 */
-
 	public function call_func($data_ary): array
 	{
 		$check = [];

@@ -330,11 +330,38 @@ class ipn_listener
 	 */
 	private function check_account_id(): void
 	{
-		$account_value = !empty($this->transaction_data['test_ipn']) ? $this->config['ppde_sandbox_address'] : $this->config['ppde_account_id'];
-		if (strtoupper($account_value) !== strtoupper($this->transaction_data['receiver_id']) && strtolower($account_value) !== strtolower($this->transaction_data['receiver_email']))
+		if ($this->is_invalid_txn_account_id())
 		{
 			$this->transaction_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_ACCOUNT_ID');
 		}
+	}
+
+	/**
+	 * Checks if the transaction account ID is invalid.
+	 *
+	 * @return bool Returns true if the transaction account ID is invalid, false otherwise.
+	 */
+	private function is_invalid_txn_account_id(): bool
+	{
+		$account_value_lower = strtolower($this->get_account_value());
+
+		return !in_array($account_value_lower, [
+			strtolower($this->transaction_data['receiver_id']),
+			strtolower($this->transaction_data['receiver_email']),
+			strtolower($this->transaction_data['business']),
+		], true);
+	}
+
+	/**
+	 * Get the account value depending on whether the transaction is an IPN test or not..
+	 *
+	 * @return string The account value.
+	 */
+	private function get_account_value(): string
+	{
+		return !empty($this->transaction_data['test_ipn'])
+			? $this->config['ppde_sandbox_address']
+			: $this->config['ppde_account_id'];
 	}
 
 	/**
@@ -459,7 +486,7 @@ class ipn_listener
 			 * Event that is triggered when a transaction has been successfully completed
 			 *
 			 * @event skouat.ppde.do_actions_completed_before
-			 * @var array    transaction_data    Array containing transaction data
+			 * @var array $vars ['transaction_data']    Array containing transaction data
 			 * @since 1.0.3
 			 */
 			$vars = [

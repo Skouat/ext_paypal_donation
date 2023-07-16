@@ -84,7 +84,7 @@ class main_controller
 
 	public function handle()
 	{
-		// We stop the execution of the code because nothing need to be returned to phpBB.
+		// We stop the execution of the code because nothing needs to be returned to phpBB.
 		garbage_collection();
 		exit_handler();
 	}
@@ -153,7 +153,7 @@ class main_controller
 	}
 
 	/**
-	 * Check if Sandbox could be use by founders based on config value
+	 * Check if Sandbox can be used by founders based on config value
 	 *
 	 * @return bool
 	 * @access public
