@@ -20,7 +20,7 @@ abstract class admin_main
 	protected $args = [];
 	/** @var \phpbb\config\config */
 	protected $config;
-	/** @var Symfony\Component\DependencyInjection\ContainerInterface */
+	/** @var \Symfony\Component\DependencyInjection\ContainerInterface */
 	protected $container;
 	/** @var string */
 	protected $id_prefix_name;
