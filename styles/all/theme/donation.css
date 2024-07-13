@@ -1,6 +1,16 @@
 /* PayPal Donation
 ---------------------------------------- */
 
+/* PayPal Donation page */
+
+.section-app\/donate .content {
+	font-size: 1.3em;
+}
+
+.section-app\/donate .content ul {
+	margin: 0.8em 0 0.9em 3em;
+}
+
 /* PayPal Button */
 .paypalbutton {
 	font-size: 14px;

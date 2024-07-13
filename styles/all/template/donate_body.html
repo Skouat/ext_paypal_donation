@@ -3,7 +3,7 @@
 {% if S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' %}
 	<h2>{{ SITENAME }} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
 	{% if DONATION_BODY %}
-	<div class="panel">
+	<div class="content post bg1">
 		{{ DONATION_BODY }}
 	</div>
 	{% endif %}
@@ -15,7 +15,7 @@
 	{% endif %}
 
 	{% if DONATION_BODY %}
-	<div class="panel">
+	<div class="content post bg1">
 		{{ DONATION_BODY }}
 	</div>
 	{% endif %}
