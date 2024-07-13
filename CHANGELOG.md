@@ -1,6 +1,8 @@
 # Changelog
 ## 3.0.5 - 2023-07-16
-  - Fix: SQL error on donors list when SQL modes is set to `ONLY_FULL_GROUP_BY` 
+  - Fix: Extension uninstallation fails
+  - Fix: Transaction assigned to anonymous and auto-group not working
+  - Fix: SQL error on donors list when SQL modes is set to `ONLY_FULL_GROUP_BY`
   - Change: Remove JS cdata and type (thanks to cabot)
   - Code refactoring
 
@@ -54,11 +56,11 @@
   - Code changes following phpBB Customisation Team reports
 
 ## 2.1.2 - 2019-11-19
-  - Change: Temporarily disable TLS check because PayPal TLS website is down  
+  - Change: Temporarily disable TLS check because PayPal TLS website is down
   - Change: Add `payer_donated_amount` on `donors_group_user_add()` event (thanks to Dark❶)
   - Fix: Auto group feature does not work (#75)
   - Fix: SQL Error when accessing on list of donors (#78)
-  - Fix: English wording 
+  - Fix: English wording
   - Remove: Remove abilities to enable/disable text formatting on Donation Pages
 
 ## 2.1.1 - 2019-05-26
