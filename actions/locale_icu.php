@@ -70,7 +70,6 @@ class locale_icu
 		{
 			$this->assign_locale_to_template($locale, $locale_name, $config_value);
 		}
-		unset ($locale);
 	}
 
 	/**
@@ -108,12 +107,10 @@ class locale_icu
 	 */
 	private function get_locale_list(): array
 	{
-		$locale_items = \ResourceBundle::getLocales('');
-		foreach ($locale_items as $locale)
+		foreach (\ResourceBundle::getLocales('') as $locale)
 		{
 			$locale_ary[$locale] = \Locale::getDisplayName($locale, $this->user->lang_name);
 		}
-		unset ($locale_items);
 
 		natsort($locale_ary);
 
@@ -133,15 +130,22 @@ class locale_icu
 	/**
 	 * Gets the currency symbol based on ISO code
 	 *
-	 * @param $currency_iso_code
+	 * @param string $currency_iso_code
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_currency_symbol($currency_iso_code): string
+	public function get_currency_symbol(string $currency_iso_code): string
 	{
-		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
-		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+		try
+		{
+			$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
+			return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+		}
+		catch (\Exception $e)
+		{
+			return "";
+		}
 	}
 
 	/**
@@ -176,9 +180,9 @@ class locale_icu
 	 * @return false|string
 	 * @access public
 	 */
-	public function numfmt_format_currency($fmt, $value, $currency_iso_code)
+	public function numfmt_format_currency($fmt, float $value, string $currency_iso_code)
 	{
-		return numfmt_format_currency($fmt, (float) $value, (string) $currency_iso_code);
+		return numfmt_format_currency($fmt, $value, $currency_iso_code);
 	}
 
 	/**
