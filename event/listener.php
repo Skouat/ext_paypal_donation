@@ -73,11 +73,12 @@ class listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
-			'core.index_modify_page_title'       => 'load_index_data',
-			'core.page_header'                   => 'add_page_header_link',
-			'core.permissions'                   => 'add_permissions',
-			'core.user_setup'                    => 'load_language_on_setup',
-			'core.viewonline_overwrite_location' => 'viewonline_page',
+			'core.index_modify_page_title'               => 'load_index_data',
+			'core.page_header'                           => 'add_page_header_link',
+			'core.permissions'                           => 'add_permissions',
+			'core.user_setup'                            => 'load_language_on_setup',
+			'core.viewonline_overwrite_location'         => 'viewonline_page',
+			'dark1.usernotificationcontrol.add_ext_lang' => 'dark1_unc_add_lang',
 		];
 	}
 
@@ -197,5 +198,12 @@ class listener implements EventSubscriberInterface
 		$event->update_subarray('permissions', 'a_ppde_manage', ['lang' => 'ACL_A_PPDE_MANAGE', 'cat' => 'ppde']);
 		$event->update_subarray('permissions', 'u_ppde_use', ['lang' => 'ACL_U_PPDE_USE', 'cat' => 'ppde']);
 		$event->update_subarray('permissions', 'u_ppde_view_donorlist', ['lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde']);
+	}
+
+	public function dark1_unc_add_lang($event)
+	{
+		$add_ext_lang = $event['add_ext_lang'];
+		$add_ext_lang['skouat/ppde'] = [ 'info_ucp_donation' ];
+		$event['add_ext_lang'] = $add_ext_lang;
 	}
 }
