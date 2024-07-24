@@ -1,8 +1,10 @@
 # Changelog
-## 3.0.5 - 2023-07-16
+## 3.0.5 - 2024-07-24
+  - Add: compatibility with Dark❶'s User Notification Control extension (#109)
   - Fix: Extension uninstallation fails
   - Fix: Transaction assigned to anonymous and auto-group not working
   - Fix: SQL error on donors list when SQL modes is set to `ONLY_FULL_GROUP_BY`
+  - Fix: Transactions were incorrectly processed as anonymous, preventing automatic group assignment (#98)
   - Change: Remove JS cdata and type (thanks to cabot)
   - Code refactoring
 
