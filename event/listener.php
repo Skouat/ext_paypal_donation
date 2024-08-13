@@ -200,10 +200,18 @@ class listener implements EventSubscriberInterface
 		$event->update_subarray('permissions', 'u_ppde_view_donorlist', ['lang' => 'ACL_U_PPDE_VIEW_DONORLIST', 'cat' => 'ppde']);
 	}
 
-	public function dark1_unc_add_lang($event)
+	/**
+	 * Load language keys for the extension “User Notification Control”
+	 *
+	 * @param \phpbb\event\data $event The event object
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function dark1_unc_add_lang($event): void
 	{
 		$add_ext_lang = $event['add_ext_lang'];
-		$add_ext_lang['skouat/ppde'] = [ 'info_ucp_donation' ];
+		$add_ext_lang['skouat/ppde'] = ['info_ucp_donation'];
 		$event['add_ext_lang'] = $add_ext_lang;
 	}
 }
