@@ -13,21 +13,20 @@
 
 /* PayPal Button */
 .paypalbutton {
+	--button-bg-lightness: 63%;
 	font-size: 14px;
 	font-weight: bold;
-	font-style: italic;
-	background: #fffdf8;
-	background: -moz-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: -o-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: -webkit-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: linear-gradient(to bottom, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	filter: progid:dximagetransform.microsoft.gradient(startColorstr="#fffdf8", endColorstr="#ffeed3", GradientType=0);
-	border: 1px solid #ff9933;
-	border-radius: 13px;
+	background: hsl(42, 100%, var(--button-bg-lightness));
+	color: #003087;
+	border-radius: 1000px;
+	border: 1px solid hsl(42, 100%, calc(var(--button-bg-lightness) - 6%));
 	box-shadow: 0 2px 0 rgba(109, 109, 109, 0.3);
-	color: #294669;
-	height: 26px;
-	padding: 0 12px;
+	padding: 10px 40px;
+	transition: background 0.15s;
+}
+
+.paypalbutton:hover {
+	--button-bg-lightness: 77%;
 }
 
 /* PayPal loader */
