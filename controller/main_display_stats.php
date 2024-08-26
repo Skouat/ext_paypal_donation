@@ -192,7 +192,7 @@ class main_display_stats
 			{
 				$data = $details['nums'];
 				$percentage = $this->percentage_value((float) $this->config[$data[0]], (float) $this->config[$data[1]]);
-				$this->assign_vars_stats_proportion($stat_name, $percentage, $stat_name === 'USED_NUMBER');
+				$this->assign_vars_stats_proportion($stat_name, $percentage);
 			}
 		}
 	}
@@ -243,74 +243,14 @@ class main_display_stats
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_proportion($var_name, $proportion, $reverse_css = false)
+	private function assign_vars_stats_proportion($var_name, $proportion)
 	{
 		// Enforcing $var_name to uppercase
 		$var_name = strtoupper($var_name);
 
 		$this->template->assign_vars([
 			'PPDE_' . $var_name     => ($proportion < 100) ? round($proportion, 2) : round($proportion),
-			'PPDE_CSS_' . $var_name => $this->ppde_css_classname($proportion, $reverse_css),
 			'S_' . $var_name        => true,
 		]);
-	}
-
-	/**
-	 * Gives back the CSS class name based on the proportion of the stats
-	 *
-	 * @param float $value
-	 * @param bool  $reverse
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function ppde_css_classname($value, $reverse = false)
-	{
-		$css_reverse = '';
-		$css_data_array = [
-			10  => 'ten',
-			20  => 'twenty',
-			30  => 'thirty',
-			40  => 'forty',
-			50  => 'fifty',
-			60  => 'sixty',
-			70  => 'seventy',
-			80  => 'eighty',
-			90  => 'ninety',
-			100 => 'hundred',
-		];
-
-		$index = $this->calculate_index($value, $reverse);
-
-		if ($reverse && $value < 100)
-		{
-			$value = 100 - $value;
-			$css_reverse = '-reverse';
-		}
-
-		if (isset($css_data_array[$index]) && $value < 100)
-		{
-			return $css_data_array[$index] . $css_reverse;
-		}
-
-		return $reverse ? 'red' : 'green';
-	}
-
-	/**
-	 * Calculate the index based on the value
-	 *
-	 * @param float $value
-	 * @param bool  $reverse
-	 *
-	 * @return int
-	 */
-	private function calculate_index($value, $reverse)
-	{
-		if ($reverse && $value < 100)
-		{
-			return floor($value / 10) * 10;
-		}
-
-		return ceil($value / 10) * 10;
 	}
 }
