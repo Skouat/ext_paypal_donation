@@ -13,20 +13,16 @@
 
 /* PayPal Button */
 .paypalbutton {
-	--button-bg-lightness: 63%;
 	font-size: 14px;
 	font-weight: bold;
-	background: hsl(42, 100%, var(--button-bg-lightness));
+	background: #ffc439;
 	color: #003087;
 	border-radius: 1000px;
-	border: 1px solid hsl(42, 100%, calc(var(--button-bg-lightness) - 6%));
-	box-shadow: 0 2px 0 rgba(109, 109, 109, 0.3);
 	padding: 10px 40px;
-	transition: background 0.15s;
 }
 
 .paypalbutton:hover {
-	--button-bg-lightness: 77%;
+	box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, 0.05);
 }
 
 /* PayPal loader */
