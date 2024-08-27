@@ -1,11 +1,13 @@
 # Changelog
-## 3.0.5 - 2024-07-24
+## 3.0.5 - 2024-08-27
   - Add: compatibility with Dark❶'s User Notification Control extension (#109)
   - Fix: Extension uninstallation fails
   - Fix: Transaction assigned to anonymous and auto-group not working
   - Fix: SQL error on donors list when SQL modes is set to `ONLY_FULL_GROUP_BY`
   - Fix: Transactions were incorrectly processed as anonymous, preventing automatic group assignment (#98)
   - Change: Remove JS cdata and type (thanks to cabot)
+  - Change: Update PayPal button style (thanks to cabot)
+  - Change: Progress bar styles updated (thanks to cabot)
   - Code refactoring
 
 ## 3.0.4 - 2021-04-20
