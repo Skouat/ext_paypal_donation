@@ -40,9 +40,6 @@
 	height: 20px;
 	margin: -10px 0 0 -35px;
 	content: "";
-	-webkit-animation: paypal_loader 0.7s infinite linear;
-	-moz-animation: paypal_loader 0.7s infinite linear;
-	-o-animation: paypal_loader 0.7s infinite linear;
 	animation: paypal_loader 0.7s infinite linear;
 }
 
