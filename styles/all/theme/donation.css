@@ -85,6 +85,7 @@
 	border-radius: var(--ppdeRadius);
 	box-shadow: 0 2px 0 rgba(109, 109, 109, 0.3);
 	flex: 1;
+	overflow: auto;
 }
 
 .progress-color {
@@ -95,13 +96,11 @@
 	position: relative;
 	height: var(--ppdeHeight);
 	width: min(calc(var(--progval) * 1%), 100%);
-}
-
-.progress-bg-color {
 	background-color: hsl(min(calc(var(--progval)), 100), 100%, 40%);
+	overflow: auto;
 }
 
-.progress-bg-color-reverse {
+.progress-used {
 	background-color: hsl(min(calc(100 - min(var(--progval), 100)), 100), 100%, 40%);
 }
 
