@@ -22,7 +22,7 @@
 
 	<div class="panel">
 		<form action="{{ S_PPDE_FORM_ACTION }}" method="post">
-			<div class="donate_value">
+			<div class="donation-value">
 				{% if PPDE_LIST_VALUE %}
 				<select name="amount" id="amount">{{ PPDE_LIST_VALUE }}</select>
 				{% else %}
@@ -37,11 +37,17 @@
 			<fieldset class="submit-buttons">
 				{{ S_HIDDEN_FIELDS }}
 				<div id="paypalbutton">
-					<button class="paypalbutton" type="submit" name="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';">
+					<button type="submit" class="paypal-button" name="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='inline-flex';">
 						<i class="icon fa-paypal" aria-hidden="true"></i> {{ lang('PPDE_DONATION_BUTTON_TITLE') }}
 					</button>
 				</div>
-				<div id="processingpaypal" class="spinner loading">{{ lang('PPDE_CONTACT_PAYPAL') }}</div>
+				<div id="processingpaypal" class="paypal-loading">
+					<span class="fa-stack fa-2x">
+						<i class="fa fa-circle-o-notch fa-spin fa-stack-2x"></i>
+						<i class="fa fa-lock fa-stack-1x"></i>
+					</span>
+					<span>{{ lang('PPDE_CONTACT_PAYPAL') }}</span>
+				</div>
 			</fieldset>
 		</form>
 	</div>

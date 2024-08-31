@@ -12,7 +12,7 @@
 }
 
 /* PayPal Button */
-.paypalbutton {
+.paypal-button {
 	font-size: 14px;
 	font-weight: bold;
 	background: #ffc439;
@@ -21,36 +21,23 @@
 	padding: 10px 40px;
 }
 
-.paypalbutton:hover {
+.paypal-button:hover {
 	box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, 0.05);
 }
 
 /* PayPal loader */
-.spinner.loading {
+.paypal-loading {
 	display: none;
-	padding: 7px 0 6px;
+	align-items: center;
+	gap: 0.5em;
 }
 
-.spinner.loading:before {
-	border: 6px solid #cccccc;
-	border-top-color: #2180c0;
-	border-radius: 100%;
-	position: absolute;
-	width: 20px;
-	height: 20px;
-	margin: -10px 0 0 -35px;
-	content: "";
-	animation: paypal_loader 0.7s infinite linear;
+.paypal-loading .fa-stack {
+	color: #0070e0;
 }
 
-@keyframes paypal_loader {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(359deg);
-	}
+.submit-buttons:has(.paypal-loading) {
+	min-height: 48px;
 }
 
 /* Progress bar */
@@ -114,13 +101,13 @@
 }
 
 /* Text donation stats */
-.donation_stats {
+.donation-stats {
 	text-align: center;
 	margin-top: 10px;
 }
 
 /* form displaying */
-.donate_value {
+.donation-value {
 	text-align: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
