@@ -1,0 +1,14 @@
+{% if S_PPDE_LINK_ENABLED %}
+	<li class="nav-item">
+		<a class="nav-link px-1 py-0 text-body" href="{{ U_PPDE_DONATE }}" rel="help" title="{{ lang('PPDE_HEADER_LINK_TITLE') }}" role="menuitem">
+			<i class="fa fs-5 fa-paypal fa-fw" aria-hidden="true"></i><span>{{ lang('PPDE_HEADER_LINK_TITLE') }}</span>
+		</a>
+	</li>
+{% endif %}
+{% if S_PPDE_LINK_DONORLIST_ENABLED %}
+	<li class="nav-item">
+		<a class="nav-link px-1 py-0 text-body" href="{{ U_PPDE_DONORLIST }}" rel="help" title="{{ lang('PPDE_HEADER_DONORLIST_LINK_TITLE') }}" role="menuitem">
+			<i class="fa fs-5 fa-users fa-fw" aria-hidden="true"></i><span>{{ lang('PPDE_HEADER_DONORLIST_LINK_TITLE') }}</span>
+		</a>
+	</li>
+{% endif %}
