@@ -45,9 +45,12 @@ class ppde_module
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
 
-		if ($this->in_array_field($mode, 'module_name', self::$available_mode))
+		$is_in_array_field = in_array($mode, array_column(self::$available_mode, 'module_name'), true);
+		if ($is_in_array_field)
 		{
-			$this->module_info = $this->array_value($mode, 'module_name', self::$available_mode);
+			$this->module_info = current(array_filter(self::$available_mode, function ($item) use ($mode) {
+				return $item['module_name'] === $mode;
+			})) ?: [];
 
 			// Load the module language file currently in use
 			$language->add_lang('acp_' . $mode, 'skouat/ppde');
@@ -71,55 +74,6 @@ class ppde_module
 		{
 			trigger_error('NO_MODE', E_USER_ERROR);
 		}
-	}
-
-	/**
-	 * Checks if a given value exists in a specific field of an array of items.
-	 *
-	 * @param mixed  $needle       The value to search for.
-	 * @param string $needle_field The field name to search in.
-	 * @param array  $haystack     The array to search in.
-	 *
-	 * @return bool Returns true if the value is found in the specified field of any item in the array,
-	 *              otherwise returns false.
-	 * @access private
-	 */
-	private function in_array_field($needle, $needle_field, $haystack): bool
-	{
-		foreach ($haystack as $item)
-		{
-			if (isset($item[$needle_field]) && $item[$needle_field] === $needle)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Finds and returns the first item in the haystack array that matches the provided needle value in the specified
-	 * needle field.
-	 *
-	 * @param mixed  $needle       The value to search for.
-	 * @param string $needle_field The field to search for the needle value in each item of the haystack array.
-	 * @param array  $haystack     The array to search through.
-	 *
-	 * @return array
-	 * The first item in the haystack array that matches the provided needle value in the specified needle field. If
-	 * no match is found, an empty array is returned.
-	 */
-	private function array_value($needle, $needle_field, $haystack): array
-	{
-		foreach ($haystack as $item)
-		{
-			if (isset($item[$needle_field]) && $item[$needle_field] === $needle)
-			{
-				return $item;
-			}
-		}
-
-		return [];
 	}
 
 	/**
