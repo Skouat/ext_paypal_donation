@@ -144,6 +144,14 @@ abstract class admin_main
 	{
 	}
 
+	/**
+	 * Approve an item.
+	 *
+	 * This method should be implemented by child classes to handle
+	 * the approval process for specific items.
+	 *
+	 * @return void
+	 */
 	public function approve(): void
 	{
 	}

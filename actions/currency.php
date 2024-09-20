@@ -140,10 +140,10 @@ class currency
 	 * Assign currency information to the template.
 	 *
 	 * @param array $currency_item The currency item with the following keys:
-	 *                             - currency_id: The ID of the currency (integer).
-	 *                             - currency_iso_code: The ISO code of the currency (string).
-	 *                             - currency_name: The name of the currency (string).
-	 *                             - currency_symbol: The symbol of the currency (string).
+	 *                             - currency_id (int): The ID of the currency.
+	 *                             - currency_iso_code (string): The ISO code of the currency.
+	 *                             - currency_name (string): The name of the currency.
+	 *                             - currency_symbol (string): The symbol of the currency.
 	 * @param int   $config_value  The configuration value used to determine the default currency (integer).
 	 *
 	 * @return void
