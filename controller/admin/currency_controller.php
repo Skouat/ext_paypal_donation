@@ -136,19 +136,37 @@ class currency_controller extends admin_main
 	 */
 	private function add_edit_currency_data(array $data): void
 	{
-		// Get form's POST actions (submit or preview)
 		$this->submit = $this->is_form_submitted();
 
-		// Create an array to collect errors that will be output to the user
+		$errors = $this->validate_currency_data();
+
+		$this->set_currency_entity_data($data);
+
+		// Insert or update currency
+		$this->submit_data($errors);
+
+		$this->assign_template_vars($errors);
+	}
+
+	private function validate_currency_data(): array
+	{
 		$errors = [];
 
-		// Get the currency symbol if PHP intl is available.
+		return array_merge($errors,
+			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
+		);
+	}
+
+	private function set_currency_entity_data(array $data): void
+	{
 		if ($this->ppde_locale->is_locale_configured())
 		{
 			$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);
 		}
 
-		// Set the currency's data in the entity
 		$item_fields = [
 			'name'              => $data['currency_name'],
 			'iso_code'          => $data['currency_iso_code'],
@@ -158,19 +176,10 @@ class currency_controller extends admin_main
 		];
 
 		$this->ppde_entity->set_entity_data($item_fields);
+	}
 
-		// Check some settings before submitting data
-		$errors = array_merge($errors,
-			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
-		);
-
-		// Insert or update currency
-		$this->submit_data($errors);
-
-		// Set output vars for display in the template
+	private function assign_template_vars(array $errors): void
+	{
 		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars([
 			'CURRENCY_NAME'     => $this->ppde_entity->get_name(),
@@ -345,7 +354,7 @@ class currency_controller extends admin_main
 	 * @return void
 	 * @access protected
 	 */
-	protected function currency_assign_template_vars($data): void
+	protected function currency_assign_template_vars(array $data): void
 	{
 		if (!$data['currency_enable'])
 		{
