@@ -479,7 +479,7 @@ class transactions_controller extends admin_main
 
 		$transaction_data = $this->request_transaction_vars();
 
-		if ($this->request->is_set_post('submit'))
+		if ($this->is_form_submitted())
 		{
 			$errors = $this->process_transaction($transaction_data, $errors);
 		}

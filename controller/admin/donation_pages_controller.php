@@ -223,7 +223,7 @@ class donation_pages_controller extends admin_main
 	private function add_edit_donation_page_data($data): void
 	{
 		// Get form's POST actions (submit or preview)
-		$this->submit = $this->request->is_set_post('submit');
+		$this->submit = $this->is_form_submitted();
 		$this->preview = $this->request->is_set_post('preview');
 
 		// Create an array to collect errors that will be output to the user

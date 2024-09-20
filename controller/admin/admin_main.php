@@ -263,7 +263,7 @@ abstract class admin_main
 	 */
 	protected function submit_settings(): void
 	{
-		$this->submit = $this->request->is_set_post('submit');
+		$this->submit = $this->is_form_submitted();
 
 		// Test if the submitted form is valid
 		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
@@ -385,9 +385,19 @@ abstract class admin_main
 	 * @return bool
 	 * @access protected
 	 */
-	protected function submit_or_preview($submit = false, $preview = false): bool
+	protected function submit_or_preview(bool $submit = false, bool $preview = false): bool
 	{
 		return $submit || $preview;
+	}
+
+	/**
+	 * Checks if the form has been submitted.
+	 *
+	 * @return bool Returns true if the form has been submitted, false otherwise.
+	 */
+	protected function is_form_submitted(): bool
+	{
+		return $this->request->is_set_post('submit');
 	}
 
 	/**
