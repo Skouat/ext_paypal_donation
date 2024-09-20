@@ -234,16 +234,11 @@ class transactions_controller extends admin_main
 	 *
 	 * @param int $selected_days Number of days to look back for transactions.
 	 *
-	 * @return int|null The calculated timestamp, or null if no day limit is set.
+	 * @return int The calculated timestamp, or 0 if no day limit is set.
 	 */
-	private function calculate_timestamp(int $selected_days)
+	private function calculate_timestamp(int $selected_days): int
 	{
-		if ($selected_days > 0)
-		{
-			return time() - ($selected_days * self::SECONDS_IN_A_DAY);
-		}
-
-		return null;
+		return $selected_days > 0 ? time() - ($selected_days * self::SECONDS_IN_A_DAY) : 0;
 	}
 
 	/**
