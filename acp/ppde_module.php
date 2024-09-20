@@ -13,13 +13,13 @@ namespace skouat\ppde\acp;
 class ppde_module
 {
 	/** @var array */
-	private static $available_mode = [
-		['module_name' => 'currency', 'lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'],
-		['module_name' => 'donation_pages', 'lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'],
-		['module_name' => 'overview'],
-		['module_name' => 'paypal_features'],
-		['module_name' => 'settings'],
-		['module_name' => 'transactions', 'lang_key_prefix' => 'PPDE_DT_', 'id_prefix_name' => 'transaction'],
+	private static $module_config = [
+		'currency'        => ['lang_key_prefix' => 'PPDE_DC_', 'id_prefix_name' => 'currency'],
+		'donation_pages'  => ['lang_key_prefix' => 'PPDE_DP_', 'id_prefix_name' => 'page'],
+		'overview'        => [],
+		'paypal_features' => [],
+		'settings'        => [],
+		'transactions'    => ['lang_key_prefix' => 'PPDE_DT_', 'id_prefix_name' => 'transaction'],
 	];
 	/** @var string */
 	public $u_action;
@@ -45,13 +45,9 @@ class ppde_module
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
 
-		$is_in_array_field = in_array($mode, array_column(self::$available_mode, 'module_name'), true);
-		if ($is_in_array_field)
+		if (isset(self::$module_config[$mode]))
 		{
-			$this->module_info = current(array_filter(self::$available_mode, static function($item) use ($mode)
-			{
-				return $item['module_name'] === $mode;
-			})) ?: [];
+			$this->module_info = self::$module_config[$mode];
 
 			// Load the module language file currently in use
 			$language->add_lang('acp_' . $mode, 'skouat/ppde');
@@ -110,7 +106,8 @@ class ppde_module
 			// no break;
 			case 'transactions':
 				// Request the item ID
-				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
+				$id_prefix_name = $this->module_info['id_prefix_name'] ?? $mode;
+				$admin_controller->set_item_id($request->variable($id_prefix_name . '_id', 0));
 
 				// Send module IDs to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
@@ -155,7 +152,7 @@ class ppde_module
 			case 'edit':
 			case 'view':
 				// Set the page title for our ACP page
-				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
+				$this->page_title = ($this->module_info['lang_key_prefix'] ?? '') . 'CONFIG';
 
 				// Call the method in the admin controller based on the $action value
 				$controller->$action();
@@ -180,7 +177,8 @@ class ppde_module
 				}
 
 				// Request confirmation from the user to perform the action for selected item
-				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
+				$lang_key_prefix = $this->module_info['lang_key_prefix'] ?? '';
+				confirm_box(false, $language->lang($lang_key_prefix . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
 
 				// Clear $action status
 				$controller->set_action($action);
