@@ -199,7 +199,6 @@ class main_display_stats
 		{
 			if ($details['condition'])
 			{
-				$data = $details['nums'];
 				$percentage = $this->percentage_value(
 					(float) $this->config[$details['numerator']],
 					(float) $this->config[$details['denominator']]
@@ -240,7 +239,7 @@ class main_display_stats
 	 * @return float
 	 * @access private
 	 */
-	private function percentage_value($multiplicand, $divisor): float
+	private function percentage_value(float $multiplicand, float $divisor): float
 	{
 		if ($divisor == 0)
 		{
