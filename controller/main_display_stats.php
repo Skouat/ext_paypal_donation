@@ -191,8 +191,8 @@ class main_display_stats
 	private function generate_stats_percentage(): void
 	{
 		$stat_conditions = [
-			'GOAL_NUMBER' => ['condition' => $this->is_ppde_goal_stats(), 'nums' => ['ppde_raised', 'ppde_goal']],
-			'USED_NUMBER' => ['condition' => $this->is_ppde_used_stats(), 'nums' => ['ppde_used', 'ppde_raised']],
+			'GOAL_NUMBER' => ['condition' => $this->is_ppde_goal_stats(), 'numerator' => 'ppde_raised', 'denominator' => 'ppde_goal'],
+			'USED_NUMBER' => ['condition' => $this->is_ppde_used_stats(), 'numerator' => 'ppde_used', 'denominator' => 'ppde_raised'],
 		];
 
 		foreach ($stat_conditions as $stat_name => $details)
@@ -200,7 +200,10 @@ class main_display_stats
 			if ($details['condition'])
 			{
 				$data = $details['nums'];
-				$percentage = $this->percentage_value((float) $this->config[$data[0]], (float) $this->config[$data[1]]);
+				$percentage = $this->percentage_value(
+					(float) $this->config[$details['numerator']],
+					(float) $this->config[$details['denominator']]
+				);
 				$this->assign_vars_stats_percentage($stat_name, $percentage);
 			}
 		}
@@ -212,7 +215,7 @@ class main_display_stats
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_goal_stats()
+	private function is_ppde_goal_stats(): bool
 	{
 		return $this->config['ppde_goal_enable'] && (int) $this->config['ppde_goal'] > 0;
 	}
@@ -223,7 +226,7 @@ class main_display_stats
 	 * @return bool
 	 * @access private
 	 */
-	private function is_ppde_used_stats()
+	private function is_ppde_used_stats(): bool
 	{
 		return $this->config['ppde_used_enable'] && (int) $this->config['ppde_raised'] > 0 && (int) $this->config['ppde_used'] > 0;
 	}
@@ -237,9 +240,13 @@ class main_display_stats
 	 * @return float
 	 * @access private
 	 */
-	private function percentage_value($multiplicand, $divisor)
+	private function percentage_value($multiplicand, $divisor): float
 	{
-		return ($multiplicand * 100) / $divisor;
+		if ($divisor == 0)
+		{
+			return 0.0;
+		}
+		return round(($multiplicand * 100) / $divisor, 2);
 	}
 
 	/**
@@ -256,8 +263,8 @@ class main_display_stats
 		$var_name = strtoupper($var_name);
 
 		$this->template->assign_vars([
-			'PPDE_' . $var_name          => ($percentage < 100) ? round($percentage, 2) : round($percentage),
-			'PPDE_' . $var_name . '_CSS' => max(0, min(100, round($percentage, 2))),
+			'PPDE_' . $var_name          => ($percentage < 100) ? $percentage : round($percentage),
+			'PPDE_' . $var_name . '_CSS' => max(0, min(100, $percentage)),
 			'S_' . $var_name             => true,
 		]);
 	}
