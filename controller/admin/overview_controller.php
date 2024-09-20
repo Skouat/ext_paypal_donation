@@ -123,7 +123,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access public
 	 */
-	public function display_overview($action): void
+	public function display_overview(string $action): void
 	{
 		$this->ppde_first_start();
 
@@ -143,51 +143,6 @@ class overview_controller extends admin_main
 		}
 	}
 
-	private function prepare_template_vars($ext_meta)
-	{
-		return array(
-			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
-			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
-			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
-			'PPDE_ESI_VERSION'               => $ext_meta['version'],
-			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
-			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
-			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
-			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
-			'S_CURL'                         => $this->config['ppde_curl_detected'],
-			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
-			'S_SSL'                          => $this->config['ppde_curl_detected'],
-			'S_TLS'                          => $this->config['ppde_tls_detected'],
-			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
-			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
-			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
-			'STATS_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count'),
-			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
-			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
-			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
-			'U_ACTION'                       => $this->u_action,
-		);
-	}
-
-	/**
-	 * Prepares the template variables for the PayPal sandbox environment.
-	 *
-	 * @return array An array of template variables for the PayPal sandbox environment.
-	 */
-	private function prepare_sandbox_template_vars()
-	{
-		return [
-			'S_IPN_TEST'                       => true,
-			'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
-			'SANDBOX_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count_ipn'),
-			'SANDBOX_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count_ipn'],
-			'SANDBOX_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count_ipn'),
-			'SANDBOX_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count_ipn'],
-			'SANDBOX_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count_ipn'),
-		];
-	}
-
 	/**
 	 * Executes the specified action.
 	 *
@@ -197,7 +152,7 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function do_action($action): void
+	private function do_action(string $action): void
 	{
 		if (!$action)
 		{
@@ -221,7 +176,7 @@ class overview_controller extends admin_main
 	 * @return void
 	 * @access private
 	 */
-	private function display_confirm($action): void
+	private function display_confirm(string $action): void
 	{
 		switch ($action)
 		{
@@ -251,35 +206,53 @@ class overview_controller extends admin_main
 	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function exec_action($action): void
+	private function exec_action(string $action): void
 	{
 		if (!$this->auth->acl_get('a_ppde_manage'))
 		{
 			trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		switch ($action)
+		$action_handlers = [
+			'date'    => [$this, 'handle_date_action'],
+			'esi'     => [$this, 'handle_esi_action'],
+			'sandbox' => [$this, 'handle_sandbox_action'],
+			'stats'   => [$this, 'handle_stats_action'],
+		];
+
+		if (!isset($action_handlers[$action]))
 		{
-			case 'date':
-				$this->config->set('ppde_install_date', time() - 1);
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
-			break;
-			case 'esi':
-				$this->config->set('ppde_first_start', 1);
-				$this->ppde_first_start();
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
-			break;
-			case 'sandbox':
-				$this->ppde_actions->set_ipn_test_properties(true);
-				$this->ppde_actions->update_overview_stats();
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
-			break;
-			case 'stats':
-				$this->ppde_actions->set_ipn_test_properties(false);
-				$this->ppde_actions->update_overview_stats();
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
-			break;
+			trigger_error($this->language->lang('NO_MODE') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
+
+		call_user_func($action_handlers[$action]);
+	}
+
+	private function prepare_template_vars($ext_meta): array
+	{
+		return array(
+			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
+			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
+			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
+			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION'               => $ext_meta['version'],
+			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
+			'S_CURL'                         => $this->config['ppde_curl_detected'],
+			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
+			'S_SSL'                          => $this->config['ppde_curl_detected'],
+			'S_TLS'                          => $this->config['ppde_tls_detected'],
+			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
+			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
+			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
+			'STATS_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count'),
+			'STATS_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count'],
+			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
+			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
+			'U_ACTION'                       => $this->u_action,
+		);
 	}
 
 	/**
@@ -290,7 +263,7 @@ class overview_controller extends admin_main
 	 * @return string
 	 * @access private
 	 */
-	private function per_day_stats($config_name): string
+	private function per_day_stats(string $config_name): string
 	{
 		return sprintf('%.2f', (float) $this->config[$config_name] / $this->get_install_days());
 	}
@@ -301,8 +274,77 @@ class overview_controller extends admin_main
 	 * @return float
 	 * @access private
 	 */
-	private function get_install_days()
+	private function get_install_days(): float
 	{
-		return (float) (time() - $this->config['ppde_install_date']) / self::SECONDS_IN_A_DAY;
+		return (time() - $this->config['ppde_install_date']) / self::SECONDS_IN_A_DAY;
+	}
+
+	/**
+	 * Prepares the template variables for the PayPal sandbox environment.
+	 *
+	 * @return array An array of template variables for the PayPal sandbox environment.
+	 */
+	private function prepare_sandbox_template_vars(): array
+	{
+		return [
+			'S_IPN_TEST'                       => true,
+			'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
+			'SANDBOX_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count_ipn'),
+			'SANDBOX_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count_ipn'],
+			'SANDBOX_KNOWN_DONORS_PER_DAY'     => $this->per_day_stats('ppde_known_donors_count_ipn'),
+			'SANDBOX_TRANSACTIONS_COUNT'       => $this->config['ppde_transactions_count_ipn'],
+			'SANDBOX_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count_ipn'),
+		];
+	}
+
+	/**
+	 * Handles the 'date' action.
+	 * Resets the installation date to yesterday and logs the action.
+	 *
+	 * @return void
+	 */
+	private function handle_date_action(): void
+	{
+		$this->config->set('ppde_install_date', time() - 1);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
+	}
+
+	/**
+	 * Handles the 'esi' (Extension System Information) action.
+	 * Triggers a retest of the extension's system information and logs the action.
+	 *
+	 * @return void
+	 */
+	private function handle_esi_action(): void
+	{
+		$this->config->set('ppde_first_start', 1);
+		$this->ppde_first_start();
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
+	}
+
+	/**
+	 * Handles the 'sandbox' action.
+	 * Updates the overview statistics for the sandbox environment and logs the action.
+	 *
+	 * @return void
+	 */
+	private function handle_sandbox_action(): void
+	{
+		$this->ppde_actions->set_ipn_test_properties(true);
+		$this->ppde_actions->update_overview_stats();
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
+	}
+
+	/**
+	 * Handles the 'stats' action.
+	 * Updates the overview statistics for the live environment and logs the action.
+	 *
+	 * @return void
+	 */
+	private function handle_stats_action(): void
+	{
+		$this->ppde_actions->set_ipn_test_properties(false);
+		$this->ppde_actions->update_overview_stats();
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
 	}
 }
