@@ -133,11 +133,91 @@ class transactions_controller extends admin_main
 	 */
 	public function display(): void
 	{
-		/** @type \phpbb\pagination $pagination */
-		$pagination = $this->container->get('pagination');
+		// Sorting and pagination setup
+		$sort_by_text = $this->get_sort_by_text_options();
+		$sort_by_sql = $this->get_sort_options();
+		$sort_key = $this->request->variable('sk', 't');
+		$sort_dir = $this->request->variable('sd', 'd');
+		$start = $this->request->variable('start', 0);
+		$limit = (int) $this->config['topics_per_page'];
 
-		// Sorting
-		$limit_days = [
+		// Filtering setup
+		$limit_days = $this->get_limit_day_options();
+		$selected_days = $this->request->variable('st', 0);
+		$keywords = $this->request->variable('keywords', '', true);
+
+		// Generate sorting and filtering selects
+		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
+		gen_sort_selects($limit_days, $sort_by_text, $selected_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
+
+		// Prepare SQL conditions
+		$sql_where = $this->prepare_sql_where($selected_days, $keywords);
+		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir === 'd') ? 'DESC' : 'ASC');
+
+		// Fetch log data
+		$log_data = [];
+		$log_count = 0;
+		$this->view_txn_log($log_data, $log_count, $limit, $start, $sql_where, $sql_sort, $keywords);
+
+		// Generate pagination
+		$this->generate_pagination($log_count, $limit, $start, $u_sort_param, $keywords);
+
+		// Assign template variables
+		$this->template->assign_vars([
+			'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
+			'S_KEYWORDS'   => $keywords,
+			'S_LIMIT_DAYS' => $s_limit_days,
+			'S_SORT_KEY'   => $s_sort_key,
+			'S_SORT_DIR'   => $s_sort_dir,
+			'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $this->get_keywords_param($keywords) . '&amp;start=' . $start,
+		]);
+
+		// Assign log entries to template
+		$this->assign_log_entries_to_template($log_data);
+	}
+
+	/**
+	 * Get sort by text options for transactions.
+	 *
+	 * @return array An associative array of sort options and their corresponding language strings.
+	 */
+	private function get_sort_by_text_options(): array
+	{
+		return [
+			'txn'      => $this->language->lang('PPDE_DT_SORT_TXN_ID'),
+			'u'        => $this->language->lang('PPDE_DT_SORT_DONORS'),
+			'ipn'      => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'),
+			'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
+			'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
+			't'        => $this->language->lang('SORT_DATE'),
+		];
+	}
+
+	/**
+	 * Get sort options for transactions.
+	 *
+	 * @return array An associative array of sort keys and their corresponding SQL column names.
+	 */
+	private function get_sort_options(): array
+	{
+		return [
+			'txn'      => 'txn.txn_id',
+			'u'        => 'u.username_clean',
+			'ipn'      => 'txn.confirmed',
+			'ipn_test' => 'txn.test_ipn',
+			'ps'       => 'txn.payment_status',
+			't'        => 'txn.payment_date',
+		];
+	}
+
+	/**
+	 * Get limit day options for filtering.
+	 *
+	 * @return array An associative array of day limits and their corresponding language strings.
+	 */
+	private function get_limit_day_options(): array
+	{
+		return [
 			0   => $this->language->lang('ALL_ENTRIES'),
 			1   => $this->language->lang('1_DAY'),
 			7   => $this->language->lang('7_DAYS'),
@@ -147,91 +227,64 @@ class transactions_controller extends admin_main
 			180 => $this->language->lang('6_MONTHS'),
 			365 => $this->language->lang('1_YEAR'),
 		];
-		$sort_by_text = [
-			'txn'      => $this->language->lang('PPDE_DT_SORT_TXN_ID'),
-			'u'        => $this->language->lang('PPDE_DT_SORT_DONORS'),
-			'ipn'      => $this->language->lang('PPDE_DT_SORT_IPN_STATUS'),
-			'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
-			'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
-			't'        => $this->language->lang('SORT_DATE'),
-		];
-		$sort_by_sql = [
-			'txn'      => 'txn.txn_id',
-			'u'        => 'u.username_clean',
-			'ipn'      => 'txn.confirmed',
-			'ipn_test' => 'txn.test_ipn',
-			'ps'       => 'txn.payment_status',
-			't'        => 'txn.payment_date',
-		];
-
-		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
-		gen_sort_selects($limit_days, $sort_by_text, $this->args['hidden_fields']['st'], $this->args['hidden_fields']['sk'], $this->args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
-
-		// Define where and sort sql for use in displaying transactions
-		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * self::SECONDS_IN_A_DAY)) : 0;
-		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
-
-		$keywords = $this->request->variable('keywords', '', true);
-		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
-
-		// Grab log data
-		$log_data = [];
-		$log_count = 0;
-
-		$this->view_txn_log($log_data, $log_count, (int) $this->config['topics_per_page'], $this->args['hidden_fields']['start'], $sql_where, $sql_sort, $keywords);
-
-		$base_url = $this->u_action . '&amp;' . $u_sort_param . $keywords_param;
-		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $this->args['hidden_fields']['start']);
-
-		$this->template->assign_vars([
-			'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
-			'S_KEYWORDS'   => $keywords,
-			'S_LIMIT_DAYS' => $s_limit_days,
-			'S_SORT_KEY'   => $s_sort_key,
-			'S_SORT_DIR'   => $s_sort_dir,
-			'U_ACTION'     => $this->u_action . '&amp;' . $u_sort_param . $keywords_param . '&amp;start=' . $this->args['hidden_fields']['start'],
-		]);
-
-		array_map([$this, 'display_log_assign_template_vars'], $log_data);
 	}
 
 	/**
-	 * View log
+	 * Prepare SQL where clause based on filtering options.
 	 *
-	 * @param array  &$log         The result array with the logs
-	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
-	 *                             database. Otherwise an integer with the number of total matching entries is returned.
-	 * @param int     $limit       Limit the number of entries that are returned
-	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
-	 * @param int     $limit_days
-	 * @param string  $sort_by     SQL order option, e.g. 'l.log_time DESC'
-	 * @param string  $keywords    Will only return log entries that have the keywords in log_operation or log_data
+	 * @param int    $selected_days Number of days to limit the search to.
+	 * @param string $keywords      Keywords to search for.
 	 *
-	 * @return int Returns the offset of the last valid page, if the specified offset was invalid (too high)
+	 * @return string The prepared SQL where clause.
+	 */
+	private function prepare_sql_where(int $selected_days, string $keywords): string
+	{
+		$sql_where = '';
+		if ($selected_days)
+		{
+			$sql_where = time() - ($selected_days * self::SECONDS_IN_A_DAY);
+		}
+
+		return $sql_where;
+	}
+
+	/**
+	 * View transaction log.
+	 *
+	 * @param array &$log        The result array with the logs.
+	 * @param mixed &$log_count  If $log_count is set to false, we will skip counting all entries in the database.
+	 *                           Otherwise an integer with the number of total matching entries is returned.
+	 * @param int    $limit      Limit the number of entries that are returned.
+	 * @param int    $offset     Offset when fetching the log entries, e.g. when paginating.
+	 * @param int    $limit_days Number of days to limit the search to.
+	 * @param string $sort_by    SQL order option, e.g. 'l.log_time DESC'.
+	 * @param string $keywords   Will only return log entries that have the keywords in log_operation or log_data.
+	 *
+	 * @return void Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
-	private function view_txn_log(&$log, &$log_count, $limit = 0, $offset = 0, $limit_days = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): int
+	private function view_txn_log(array &$log, &$log_count, int $limit = 0, int $offset = 0, int $limit_days = 0, string $sort_by = 'txn.payment_date DESC', string $keywords = ''): void
 	{
 		$count_logs = ($log_count !== false);
 
 		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
 		$log_count = $this->get_log_count();
-
-		return $this->get_valid_offset();
 	}
 
 	/**
-	 * @param bool   $count_logs
-	 * @param int    $limit
-	 * @param int    $offset
-	 * @param int    $log_time
-	 * @param string $sort_by
-	 * @param string $keywords
+	 * Get logs based on specified parameters.
 	 *
-	 * @return array $log
+	 * @param bool   $count_logs Whether to count the total number of logs.
+	 * @param int    $limit      Maximum number of logs to retrieve.
+	 * @param int    $offset     Starting point for retrieving logs.
+	 * @param int    $log_time   Timestamp to filter logs.
+	 * @param string $sort_by    SQL ORDER BY clause.
+	 * @param string $keywords   Keywords to filter logs.
+	 *
+	 * @return array Array of log entries.
 	 * @access private
 	 */
-	private function get_logs($count_logs = true, $limit = 0, $offset = 0, $log_time = 0, $sort_by = 'txn.payment_date DESC', $keywords = ''): array
+	private function get_logs(bool $count_logs = true, int $limit = 0, int $offset = 0, int $log_time = 0, string $sort_by = 'txn.payment_date DESC', string $keywords = ''): array
 	{
 		$this->entry_count = 0;
 		$this->last_page_offset = $offset;
@@ -274,7 +327,9 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * @return int
+	 * Get the total count of log entries.
+	 *
+	 * @return int The total number of log entries.
 	 */
 	public function get_log_count(): int
 	{
@@ -282,11 +337,55 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * @return int
+	 * Generate pagination for transaction list.
+	 *
+	 * @param int    $log_count    Total number of log entries.
+	 * @param int    $limit        Number of entries per page.
+	 * @param int    $start        Starting offset for the current page.
+	 * @param string $u_sort_param URL parameters for sorting.
+	 * @param string $keywords     Search keywords.
 	 */
-	public function get_valid_offset(): int
+	private function generate_pagination(int $log_count, int $limit, int $start, string $u_sort_param, string $keywords): void
 	{
-		return (int) $this->last_page_offset ?: 0;
+		$pagination = $this->container->get('pagination');
+		$base_url = $this->u_action . '&amp;' . $u_sort_param . $this->get_keywords_param($keywords);
+		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, $limit, $start);
+	}
+
+	/**
+	 * Get keywords parameter for URL.
+	 *
+	 * @param string $keywords Search keywords.
+	 *
+	 * @return string URL-encoded keywords parameter.
+	 */
+	private function get_keywords_param(string $keywords): string
+	{
+		return !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
+	}
+
+	/**
+	 * Assign log entries to template.
+	 *
+	 * @param array $log_data Array of log entries.
+	 */
+	private function assign_log_entries_to_template(array $log_data): void
+	{
+		foreach ($log_data as $row)
+		{
+			$this->template->assign_block_vars('log', [
+				'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+				'DATE'             => $this->user->format_date($row['payment_date']),
+				'ID'               => $row['transaction_id'],
+				'PAYMENT_STATUS'   => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status'])]),
+				'TXN_ID'           => $row['txn_id'],
+				'USERNAME'         => $row['username_full'],
+				'S_CONFIRMED'      => (bool) $row['confirmed'],
+				'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
+				'S_TXN_ERRORS'     => !empty($row['txn_errors']),
+				'S_TEST_IPN'       => (bool) $row['test_ipn'],
+			]);
+		}
 	}
 
 	/**
@@ -425,51 +524,6 @@ class transactions_controller extends admin_main
 		return $username === '' && ($donor_id === ANONYMOUS || $this->request->is_set('u'));
 	}
 
-	public function approve(): void
-	{
-		$transaction_id = (int) $this->args['hidden_fields']['id'];
-		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
-
-		// Update DB record
-		$this->ppde_entity->load($transaction_id);
-		$this->ppde_entity->set_txn_errors_approved($txn_approved);
-		$this->ppde_entity->save(false);
-
-		// Prepare transaction settings before doing actions
-		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
-		$this->ppde_actions->set_transaction_data($transaction_data[0]);
-		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
-		$this->ppde_actions->is_donor_is_member();
-
-		if ($txn_approved)
-		{
-			$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
-		}
-
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
-	}
-
-	/**
-	 * Does actions for validated transaction
-	 *
-	 * @param bool $is_member
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function do_transactions_actions($is_member): void
-	{
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if ($is_member)
-		{
-			$this->ppde_actions->update_donor_stats();
-			$this->ppde_actions->donors_group_user_add();
-			$this->ppde_actions->notification->notify_donor_donation_received();
-		}
-	}
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -483,21 +537,33 @@ class transactions_controller extends admin_main
 		{
 			$errors = $this->process_transaction($transaction_data, $errors);
 		}
+		$this->prepare_add_template($errors, $transaction_data);
+	}
 
-		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
-
-		$this->s_error_assign_template_vars($errors);
-
-		$this->template->assign_vars($transaction_data);
-
-		$this->template->assign_vars([
-			'U_ACTION'             => $this->u_action,
-			'U_BACK'               => $this->u_action,
-			'S_ADD'                => true,
-			'ANONYMOUS_USER_ID'    => ANONYMOUS,
-			'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
-			'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
-		]);
+	/**
+	 * Returns requested data from manual transaction form
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function request_transaction_vars(): array
+	{
+		return [
+			'MT_ANONYMOUS'          => $this->request->is_set('u'),
+			'MT_USERNAME'           => $this->request->variable('username', '', true),
+			'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
+			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
+			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
+			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
+			'MT_MC_GROSS'           => $this->request->variable('mc_gross', 0.0),
+			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
+			'MT_MC_FEE'             => $this->request->variable('mc_fee', 0.0),
+			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
+			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
+			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
+			'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
+			'MT_MEMO'               => $this->request->variable('memo', '', true),
+		];
 	}
 
 	/**
@@ -528,46 +594,6 @@ class transactions_controller extends admin_main
 		}
 
 		return $errors;
-	}
-
-	/**
-	 * Logs an entry in the phpBB admin log.
-	 *
-	 * @param array $transaction_data The data of the transaction to be logged.
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function log_transaction(array $transaction_data): void
-	{
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
-		trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
-	}
-
-	/**
-	 * Returns requested data from manual transaction form
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function request_transaction_vars(): array
-	{
-		return [
-			'MT_ANONYMOUS'          => $this->request->is_set('u'),
-			'MT_USERNAME'           => $this->request->variable('username', '', true),
-			'MT_FIRST_NAME'         => $this->request->variable('first_name', '', true),
-			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
-			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
-			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
-			'MT_MC_GROSS'           => $this->request->variable('mc_gross', 0.0),
-			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
-			'MT_MC_FEE'             => $this->request->variable('mc_fee', 0.0),
-			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
-			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
-			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
-			'MT_PAYMENT_TIME'       => $this->request->variable('payment_time', $this->user->format_date(time(), 'H:i:s')),
-			'MT_MEMO'               => $this->request->variable('memo', '', true),
-		];
 	}
 
 	/**
@@ -761,6 +787,62 @@ class transactions_controller extends admin_main
 	}
 
 	/**
+	 * Does actions for validated transaction
+	 *
+	 * @param bool $is_member
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function do_transactions_actions($is_member): void
+	{
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+
+		if ($is_member)
+		{
+			$this->ppde_actions->update_donor_stats();
+			$this->ppde_actions->donors_group_user_add();
+			$this->ppde_actions->notification->notify_donor_donation_received();
+		}
+	}
+
+	/**
+	 * Logs an entry in the phpBB admin log.
+	 *
+	 * @param array $transaction_data The data of the transaction to be logged.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function log_transaction(array $transaction_data): void
+	{
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
+		trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+	}
+
+	/**
+	 * Prepare and assign template variables for adding a new transaction.
+	 *
+	 * @param array $errors           Array of error messages.
+	 * @param array $transaction_data Transaction data to be displayed in the form.
+	 */
+	private function prepare_add_template(array $errors, array $transaction_data): void
+	{
+		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
+		$this->s_error_assign_template_vars($errors);
+		$this->template->assign_vars($transaction_data);
+		$this->template->assign_vars([
+			'U_ACTION'             => $this->u_action,
+			'U_BACK'               => $this->u_action,
+			'S_ADD'                => true,
+			'ANONYMOUS_USER_ID'    => ANONYMOUS,
+			'U_FIND_USERNAME'      => append_sid($this->phpbb_root_path . 'memberlist.' . $this->php_ext, 'mode=searchuser&amp;form=manual_transaction&amp;field=username&amp;select_single=true'),
+			'PAYMENT_TIME_FORMATS' => $this->get_payment_time_examples(),
+		]);
+	}
+
+	/**
 	 * Returns a list of valid times that the user can provide in the manual transaction form
 	 *
 	 * @return array Array of strings representing the current time, each in a different format
@@ -783,6 +865,33 @@ class transactions_controller extends admin_main
 		}
 
 		return $examples;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function approve(): void
+	{
+		$transaction_id = (int) $this->args['hidden_fields']['id'];
+		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
+
+		// Update DB record
+		$this->ppde_entity->load($transaction_id);
+		$this->ppde_entity->set_txn_errors_approved($txn_approved);
+		$this->ppde_entity->save(false);
+
+		// Prepare transaction settings before doing actions
+		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
+		$this->ppde_actions->set_transaction_data($transaction_data[0]);
+		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
+		$this->ppde_actions->is_donor_is_member();
+
+		if ($txn_approved)
+		{
+			$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
+		}
+
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 	}
 
 	/**
@@ -836,75 +945,129 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Set log output vars for display in the template
+	 * Assign action template variables.
 	 *
-	 * @param array $row
-	 *
-	 * @return void
-	 * @access protected
-	 */
-	protected function display_log_assign_template_vars(array $row): void
-	{
-		$this->template->assign_block_vars('log', [
-			'CONFIRMED'        => ($row['confirmed']) ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-			'DATE'             => $this->user->format_date($row['payment_date']),
-			'ID'               => $row['transaction_id'],
-			'PAYMENT_STATUS'   => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($row['payment_status'])]),
-			'TXN_ID'           => $row['txn_id'],
-			'USERNAME'         => $row['username_full'],
-			'S_CONFIRMED'      => (bool) $row['confirmed'],
-			'S_PAYMENT_STATUS' => strtolower($row['payment_status']) === 'completed',
-			'S_TXN_ERRORS'     => !empty($row['txn_errors']),
-			'S_TEST_IPN'       => (bool) $row['test_ipn'],
-		]);
-	}
-
-	/**
-	 * Assigns action template variables
-	 *
-	 * @param array $data The data array containing the necessary information for assigning template variables.
+	 * @param array $data Transaction data.
 	 *
 	 * @return void
 	 * @access protected
 	 */
 	protected function action_assign_template_vars(array $data): void
 	{
+		$this->assign_hidden_fields($data);
+		$this->assign_currency_data($data);
+		$this->assign_user_data($data);
+		$this->assign_transaction_details($data);
+		$this->assign_payment_details($data);
+		$this->assign_error_data($data);
+	}
+
+	private function assign_hidden_fields(array $data): void
+	{
 		$s_hidden_fields = build_hidden_fields([
 			'id'                  => $data['transaction_id'],
 			'donor_id'            => $data['user_id'],
 			'txn_errors_approved' => $data['txn_errors_approved'],
 		]);
+		$this->template->assign_var('S_HIDDEN_FIELDS', $s_hidden_fields);
+	}
 
+	/**
+	 * Assign currency data to template variables.
+	 *
+	 * @param array $data Transaction data.
+	 */
+	private function assign_currency_data(array $data): void
+	{
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
 		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
 
 		$this->template->assign_vars([
+			'EXCHANGE_RATE'                   => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
+			'MC_GROSS'                        => $this->format_currency($data['mc_gross'], $currency_mc_data[0]),
+			'MC_FEE'                          => $this->format_currency($data['mc_fee'], $currency_mc_data[0]),
+			'MC_NET'                          => $this->format_currency($data['net_amount'], $currency_mc_data[0]),
+			'SETTLE_AMOUNT'                   => $this->format_currency($data['settle_amount'], $currency_settle_data[0]),
+			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
+			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
+			'S_CONVERT'                       => !((int) $data['settle_amount'] === 0 && empty($data['exchange_rate'])),
+		]);
+	}
+
+	/**
+	 * Format currency amount.
+	 *
+	 * @param float $amount        The amount to format.
+	 * @param array $currency_data Currency data including ISO code, symbol, and position.
+	 * @return string Formatted currency string.
+	 */
+	private function format_currency(float $amount, array $currency_data): string
+	{
+		return $this->ppde_actions_currency->format_currency(
+			$amount,
+			$currency_data['currency_iso_code'],
+			$currency_data['currency_symbol'],
+			(bool) $currency_data['currency_on_left']
+		);
+	}
+
+	/**
+	 * Assign user data to template variables.
+	 *
+	 * @param array $data Transaction data.
+	 */
+	private function assign_user_data(array $data): void
+	{
+		$this->template->assign_vars([
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
-			'EXCHANGE_RATE'  => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-			'ITEM_NAME'      => $data['item_name'],
-			'ITEM_NUMBER'    => $data['item_number'],
-			'MC_GROSS'       => $this->ppde_actions_currency->format_currency((float) $data['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'MC_FEE'         => $this->ppde_actions_currency->format_currency((float) $data['mc_fee'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'MC_NET'         => $this->ppde_actions_currency->format_currency((float) $data['net_amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			'MEMO'           => $data['memo'],
 			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
 			'PAYER_EMAIL'    => $data['payer_email'],
 			'PAYER_ID'       => $data['payer_id'],
 			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
-			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
+		]);
+	}
+
+	/**
+	 * Assign transaction details to template variables.
+	 *
+	 * @param array $data Transaction data.
+	 */
+	private function assign_transaction_details(array $data): void
+	{
+		$this->template->assign_vars([
+			'ITEM_NAME'      => $data['item_name'],
+			'ITEM_NUMBER'    => $data['item_number'],
+			'MEMO'           => $data['memo'],
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
 			'TXN_ID'         => $data['txn_id'],
+		]);
+	}
 
-			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
-			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => !((int) $data['settle_amount'] === 0 && empty($data['exchange_rate'])),
-			'S_ERROR'                         => !empty($data['txn_errors']),
-			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
-			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,
-			'ERROR_MSG'                       => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
+	/**
+	 * Assign payment details to template variables.
+	 *
+	 * @param array $data Transaction data.
+	 */
+	private function assign_payment_details(array $data): void
+	{
+		$this->template->assign_vars([
+			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
+			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
+		]);
+	}
+
+	/**
+	 * Assign error data to template variables.
+	 *
+	 * @param array $data Transaction data.
+	 */
+	private function assign_error_data(array $data): void
+	{
+		$this->template->assign_vars([
+			'S_ERROR'          => !empty($data['txn_errors']),
+			'S_ERROR_APPROVED' => !empty($data['txn_errors_approved']),
+			'ERROR_MSG'        => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
 		]);
 	}
 }
