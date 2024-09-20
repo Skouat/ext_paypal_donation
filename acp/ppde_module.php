@@ -48,7 +48,8 @@ class ppde_module
 		$is_in_array_field = in_array($mode, array_column(self::$available_mode, 'module_name'), true);
 		if ($is_in_array_field)
 		{
-			$this->module_info = current(array_filter(self::$available_mode, function ($item) use ($mode) {
+			$this->module_info = current(array_filter(self::$available_mode, static function($item) use ($mode)
+			{
 				return $item['module_name'] === $mode;
 			})) ?: [];
 
