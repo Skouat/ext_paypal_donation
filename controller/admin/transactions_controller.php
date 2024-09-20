@@ -151,13 +151,13 @@ class transactions_controller extends admin_main
 		gen_sort_selects($limit_days, $sort_by_text, $selected_days, $sort_key, $sort_dir, $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
 		// Prepare SQL conditions
-		$sql_where = $this->prepare_sql_where($selected_days, $keywords);
 		$sql_sort = $sort_by_sql[$sort_key] . ' ' . (($sort_dir === 'd') ? 'DESC' : 'ASC');
 
 		// Fetch log data
 		$log_data = [];
 		$log_count = 0;
-		$this->view_txn_log($log_data, $log_count, $limit, $start, $sql_where, $sql_sort, $keywords);
+		$log_time = $this->calculate_timestamp($selected_days);
+		$this->view_txn_log($log_data, $log_count, $limit, $start, $log_time, $sql_sort, $keywords);
 
 		// Generate pagination
 		$this->generate_pagination($log_count, $limit, $start, $u_sort_param, $keywords);
@@ -230,22 +230,20 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Prepare SQL where clause based on filtering options.
+	 * Calculate the timestamp for filtering transactions based on the selected number of days.
 	 *
-	 * @param int    $selected_days Number of days to limit the search to.
-	 * @param string $keywords      Keywords to search for.
+	 * @param int $selected_days Number of days to look back for transactions.
 	 *
-	 * @return string The prepared SQL where clause.
+	 * @return int|null The calculated timestamp, or null if no day limit is set.
 	 */
-	private function prepare_sql_where(int $selected_days, string $keywords): string
+	private function calculate_timestamp(int $selected_days)
 	{
-		$sql_where = '';
-		if ($selected_days)
+		if ($selected_days > 0)
 		{
-			$sql_where = time() - ($selected_days * self::SECONDS_IN_A_DAY);
+			return time() - ($selected_days * self::SECONDS_IN_A_DAY);
 		}
 
-		return $sql_where;
+		return null;
 	}
 
 	/**
@@ -256,18 +254,18 @@ class transactions_controller extends admin_main
 	 *                           Otherwise an integer with the number of total matching entries is returned.
 	 * @param int    $limit      Limit the number of entries that are returned.
 	 * @param int    $offset     Offset when fetching the log entries, e.g. when paginating.
-	 * @param int    $limit_days Number of days to limit the search to.
+	 * @param int    $log_time   Timestamp to filter logs.
 	 * @param string $sort_by    SQL order option, e.g. 'l.log_time DESC'.
 	 * @param string $keywords   Will only return log entries that have the keywords in log_operation or log_data.
 	 *
 	 * @return void Returns the offset of the last valid page, if the specified offset was invalid (too high)
 	 * @access private
 	 */
-	private function view_txn_log(array &$log, &$log_count, int $limit = 0, int $offset = 0, int $limit_days = 0, string $sort_by = 'txn.payment_date DESC', string $keywords = ''): void
+	private function view_txn_log(array &$log, &$log_count, int $limit = 0, int $offset = 0, int $log_time = 0, string $sort_by = 'txn.payment_date DESC', string $keywords = ''): void
 	{
 		$count_logs = ($log_count !== false);
 
-		$log = $this->get_logs($count_logs, $limit, $offset, $limit_days, $sort_by, $keywords);
+		$log = $this->get_logs($count_logs, $limit, $offset, $log_time, $sort_by, $keywords);
 		$log_count = $this->get_log_count();
 	}
 
