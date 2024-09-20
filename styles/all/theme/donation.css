@@ -73,19 +73,43 @@
 }
 
 .progress-color {
-	border-radius: var(--ppdeRadius);
+	--ppdeBgSaturation: 100%;
+	--ppdeBgLightness: 40%;
+	--ppdeWidth: min(calc(var(--progval) * 1%), 100%);
+	--ppdeBgColor: hsl(var(--ppdeBgHue, var(--progval, 100)), var(--ppdeBgSaturation), var(--ppdeBgLightness));
+	border-radius: var(--ppdeRadius, 10px);
 	box-shadow:
-		inset 0 10px 10px rgba(255, 255, 255, 0.3),
-		inset 0 -10px 10px rgba(0, 0, 0, 0.5);
+			inset 0 10px 10px rgba(255, 255, 255, 0.3),
+			inset 0 -10px 10px rgba(0, 0, 0, 0.5);
 	position: relative;
-	height: var(--ppdeHeight);
-	width: min(calc(var(--progval) * 1%), 100%);
-	background-color: hsl(min(calc(var(--progval)), 100), 100%, 40%);
-	overflow: auto;
+	height: var(--ppdeHeight, 20px);
+	width: var(--ppdeWidth);
+	background-color: var(--ppdeBgColor);
+	overflow: hidden;
+	animation: ppdeProgress 2s;
 }
 
 .progress-used {
-	background-color: hsl(min(calc(100 - min(var(--progval), 100)), 100), 100%, 40%);
+	--ppdeBgHue: calc(100 - min(var(--progval), 100));
+	--ppdeHueFrom: 100;
+}
+
+@media (prefers-reduced-motion) {
+	.progress-color {
+		animation: none;
+	}
+}
+
+@keyframes ppdeProgress {
+	from {
+		width: 0;
+		background-color: hsl(var(--ppdeHueFrom, 0), var(--ppdeBgSaturation), var(--ppdeBgLightness));
+	}
+
+	to {
+		width: var(--ppdeWidth);
+		background-color: var(--ppdeBgColor);
+	}
 }
 
 .progress-color:before {
