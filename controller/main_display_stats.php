@@ -63,7 +63,7 @@ class main_display_stats
 			$this->assign_template_stats_text_only_var();
 
 			// Generate statistics percent for display
-			$this->generate_stats_proportion();
+			$this->generate_stats_percentage();
 		}
 	}
 
@@ -174,12 +174,12 @@ class main_display_stats
 	}
 
 	/**
-	 * Generate statistics proportion for display
+	 * Generate statistics percentage for display
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function generate_stats_proportion(): void
+	private function generate_stats_percentage(): void
 	{
 		$stat_conditions = [
 			'GOAL_NUMBER' => ['condition' => $this->is_ppde_goal_stats(), 'nums' => ['ppde_raised', 'ppde_goal']],
@@ -192,7 +192,7 @@ class main_display_stats
 			{
 				$data = $details['nums'];
 				$percentage = $this->percentage_value((float) $this->config[$data[0]], (float) $this->config[$data[1]]);
-				$this->assign_vars_stats_proportion($stat_name, $percentage);
+				$this->assign_vars_stats_percentage($stat_name, $percentage);
 			}
 		}
 	}
@@ -237,20 +237,19 @@ class main_display_stats
 	 * Assigns statistics proportion vars to the template
 	 *
 	 * @param string $var_name
-	 * @param float  $proportion
-	 * @param bool   $reverse_css
-	 *
+	 * @param float  $percentage
 	 * @return void
 	 * @access private
 	 */
-	private function assign_vars_stats_proportion($var_name, $proportion)
+	private function assign_vars_stats_percentage(string $var_name, float $percentage): void
 	{
 		// Enforcing $var_name to uppercase
 		$var_name = strtoupper($var_name);
 
 		$this->template->assign_vars([
-			'PPDE_' . $var_name     => ($proportion < 100) ? round($proportion, 2) : round($proportion),
-			'S_' . $var_name        => true,
+			'PPDE_' . $var_name          => ($percentage < 100) ? round($percentage, 2) : round($percentage),
+			'PPDE_' . $var_name . '_CSS' => max(0, min(100, round($percentage, 2))),
+			'S_' . $var_name             => true,
 		]);
 	}
 }

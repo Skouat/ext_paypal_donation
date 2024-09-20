@@ -75,8 +75,8 @@
 .progress-color {
 	--ppdeBgSaturation: 100%;
 	--ppdeBgLightness: 40%;
-	--ppdeWidth: min(calc(var(--progval) * 1%), 100%);
-	--ppdeBgColor: hsl(var(--ppdeBgHue, var(--progval, 100)), var(--ppdeBgSaturation), var(--ppdeBgLightness));
+	--ppdeWidth: calc(var(--progval) * 1%);
+	--ppdeBgColor: hsl(var(--ppdeBgHue, var(--progval)), var(--ppdeBgSaturation), var(--ppdeBgLightness));
 	border-radius: var(--ppdeRadius, 10px);
 	box-shadow:
 			inset 0 10px 10px rgba(255, 255, 255, 0.3),
@@ -90,7 +90,7 @@
 }
 
 .progress-used {
-	--ppdeBgHue: calc(100 - min(var(--progval), 100));
+	--ppdeBgHue: calc(100 - var(--progval));
 	--ppdeHueFrom: 100;
 }
 
