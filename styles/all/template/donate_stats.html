@@ -4,13 +4,17 @@
 <h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
 {% endif %}
 
-{% if S_GOAL_NUMBER && not S_PPDE_STATS_TEXT_ONLY %}
+{% macro progress_bar(val, css_val, extra_classes) %}
 <div class="progress">
-	<div class="progress-value bg3">{{ PPDE_GOAL_NUMBER }} %</div>
+	<div class="progress-value bg3">{{ val }} %</div>
 	<div class="progress-grey">
-		<div class="progress-color" style="--progval: {{ PPDE_GOAL_NUMBER_CSS }};"></div>
+		<div class="progress-color{{ extra_classes|default('') }}" style="--progval: {{ css_val }};"></div>
 	</div>
 </div>
+{% endmacro %}
+
+{% if S_GOAL_NUMBER && not S_PPDE_STATS_TEXT_ONLY %}
+	{{ _self.progress_bar(PPDE_GOAL_NUMBER, PPDE_GOAL_NUMBER_CSS) }}
 {% endif %}
 
 <p class="donation-stats">
@@ -25,12 +29,7 @@
 </p>
 
 {% if not S_PPDE_STATS_TEXT_ONLY %}
-<div class="progress">
-	<div class="progress-value bg3">{{ PPDE_USED_NUMBER }} %</div>
-	<div class="progress-grey">
-		<div class="progress-color progress-used" style="--progval: {{ PPDE_USED_NUMBER_CSS }};"></div>
-	</div>
-</div>
+	{{ _self.progress_bar(PPDE_USED_NUMBER, PPDE_USED_NUMBER_CSS, progress-used) }}
 {% endif %}
 
 <p class="donation-stats">
