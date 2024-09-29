@@ -5,10 +5,10 @@
 {% endif %}
 
 {% macro progress_bar(val, css_val, extra_classes) %}
-<div class="progress">
+<div class="ppde-progress">
 	<div class="progress-value bg3">{{ val }} %</div>
 	<div class="progress-grey">
-		<div class="progress-color{{ extra_classes|default('') }}" style="--progval: {{ css_val }};"></div>
+		<div class="progress-color{{ extra_classes|default('') }}" style="--ppde-progress-val: {{ css_val }};"></div>
 	</div>
 </div>
 {% endmacro %}

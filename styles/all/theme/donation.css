@@ -41,22 +41,18 @@
 }
 
 /* Progress bar */
-.progress {
-	--ppdeHeight: clamp(16px, 2vw, 26px);
-	--ppdeRadius: 10px;
+.ppde-progress {
+	--ppde-progress-height: clamp(16px, 2vw, 26px);
+	--ppde-border-radius: 10px;
 	display: flex;
 	gap: 6px;
-}
-
-.rtl {
-	--lg45: 45deg;
 }
 
 .progress-value {
 	flex: 0 0 8ch;
 	font-size: 12px;
 	font-weight: bold;
-	border-radius: var(--ppdeRadius);
+	border-radius: var(--ppde-border-radius);
 	padding: 1px 10px;
 	display: flex;
 	justify-content: center;
@@ -66,55 +62,41 @@
 .progress-grey {
 	background: #333333;
 	background: linear-gradient(to bottom, #333333 0%, #666666 100%);
-	border-radius: var(--ppdeRadius);
+	border-radius: var(--ppde-border-radius);
 	box-shadow: 0 2px 0 rgba(109, 109, 109, 0.3);
 	flex: 1;
 	overflow: auto;
 }
 
 .progress-color {
-	--ppdeBgSaturation: 100%;
-	--ppdeBgLightness: 40%;
-	--ppdeWidth: calc(var(--progval) * 1%);
-	--ppdeBgColor: hsl(var(--ppdeBgHue, var(--progval)), var(--ppdeBgSaturation), var(--ppdeBgLightness));
-	border-radius: var(--ppdeRadius, 10px);
+	--ppde-bg-saturation: 100%;
+	--ppde-bg-lightness: 40%;
+	--ppde-calc-width: calc(var(--ppde-progress-val) * 1%);
+	--ppde-bg-hsl: hsl(var(--ppde-bg-hue, var(--ppde-progress-val)), var(--ppde-bg-saturation), var(--ppde-bg-lightness));
+	border-radius: var(--ppde-border-radius, 10px);
 	box-shadow:
 			inset 0 10px 10px rgba(255, 255, 255, 0.3),
 			inset 0 -10px 10px rgba(0, 0, 0, 0.5);
 	position: relative;
-	height: var(--ppdeHeight, 20px);
-	width: var(--ppdeWidth);
-	background-color: var(--ppdeBgColor);
+	height: var(--ppde-progress-height, 20px);
+	width: var(--ppde-calc-width);
+	background-color: var(--ppde-bg-hsl);
 	overflow: hidden;
-	animation: ppdeProgress 2s;
+	animation: ppde-move-start-to-end 2s;
 }
 
 .progress-used {
-	--ppdeBgHue: calc(100 - var(--progval));
-	--ppdeHueFrom: 100;
+	--ppde-bg-hue: calc(100 - var(--ppde-progress-val));
+	--ppde-animation-hue-from: 100;
 }
 
-@media (prefers-reduced-motion) {
-	.progress-color {
-		animation: none;
-	}
-}
-
-@keyframes ppdeProgress {
-	from {
-		width: 0;
-		background-color: hsl(var(--ppdeHueFrom, 0), var(--ppdeBgSaturation), var(--ppdeBgLightness));
-	}
-
-	to {
-		width: var(--ppdeWidth);
-		background-color: var(--ppdeBgColor);
-	}
+.rtl {
+	--ppde-gradient-angle: 45deg;
 }
 
 .progress-color:before {
-	background-image: linear-gradient(var(--lg45, -45deg), rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-	background-size: var(--ppdeHeight) var(--ppdeHeight);
+	background-image: linear-gradient(var(--ppde-gradient-angle, -45deg), rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+	background-size: var(--ppde-progress-height) var(--ppde-progress-height);
 	position: absolute;
 	z-index: 1;
 	top: 0;
@@ -135,4 +117,24 @@
 	text-align: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+
+/* Don't animate progress bar according to user's preference (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+	.progress-color {
+		animation: none;
+	}
+}
+
+/* Animation keyframes */
+@keyframes ppde-move-start-to-end {
+	from {
+		width: 0;
+		background-color: hsl(var(--ppde-animation-hue-from, 0), var(--ppde-bg-saturation), var(--ppde-bg-lightness));
+	}
+
+	to {
+		width: var(--ppde-calc-width);
+		background-color: var(--ppde-bg-hsl);
+	}
 }
