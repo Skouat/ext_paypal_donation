@@ -18,9 +18,6 @@ class post_data
 {
 	private const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-	/**
-	 * Services properties declaration
-	 */
 	protected $language;
 	protected $ppde_operator_compare;
 	protected $request;
@@ -31,7 +28,6 @@ class post_data
 	 * @param language $language              Language object
 	 * @param compare  $ppde_operator_compare Compare operator object
 	 * @param request  $request               Request object
-	 * @access public
 	 */
 	public function __construct(language $language, compare $ppde_operator_compare, request $request)
 	{
@@ -44,9 +40,7 @@ class post_data
 	 * Check requirements for data value.
 	 *
 	 * @param array $data_ary
-	 *
 	 * @return mixed
-	 * @access public
 	 */
 	public function set_func($data_ary)
 	{
@@ -66,13 +60,10 @@ class post_data
 	 * Request predefined variable from super global
 	 *
 	 * @param array $data_ary List of data to request
-	 *
 	 * @return array
-	 * @access public
 	 */
 	public function get_post_data($data_ary = []): array
 	{
-		// Request variables
 		if (is_array($data_ary['default']))
 		{
 			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
@@ -89,9 +80,7 @@ class post_data
 	 * Check if some settings are valid.
 	 *
 	 * @param array $data_ary
-	 *
 	 * @return array
-	 * @access public
 	 */
 	public function check_post_data($data_ary = []): array
 	{
@@ -113,9 +102,7 @@ class post_data
 	 * If a check fails, error messages are stored in $this->error_message
 	 *
 	 * @param array $data_ary
-	 *
 	 * @return array
-	 * @access public
 	 */
 	public function call_func($data_ary): array
 	{
@@ -141,13 +128,10 @@ class post_data
 
 	/**
 	 * Check Post data length.
-	 * Called by $this->check_post_data() method
 	 *
 	 * @param string $value
 	 * @param array  $statement
-	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function check_post_data_length($value, $statement): bool
 	{
@@ -159,9 +143,7 @@ class post_data
 	 * Return false if it contains non ASCII chars.
 	 *
 	 * @param string $value
-	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function check_post_data_ascii($value): bool
 	{
@@ -170,13 +152,10 @@ class post_data
 
 	/**
 	 * Check Post data content based on an array list.
-	 * Called by $this->check_post_data() method
 	 *
 	 * @param string $value
 	 * @param array  $content_ary
-	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function check_post_data_content($value, $content_ary): bool
 	{
@@ -185,12 +164,9 @@ class post_data
 
 	/**
 	 * Check if Post data is empty.
-	 * Called by $this->check_post_data() method
 	 *
 	 * @param string $value
-	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function check_post_data_empty($value): bool
 	{
@@ -199,13 +175,10 @@ class post_data
 
 	/**
 	 * Set Post data length.
-	 * Called by $this->set_post_data() method
 	 *
-	 * @param string  $value
-	 * @param integer $length
-	 *
+	 * @param string $value
+	 * @param int    $length
 	 * @return string
-	 * @access public
 	 */
 	public function set_post_data_length($value, $length): string
 	{
@@ -214,13 +187,10 @@ class post_data
 
 	/**
 	 * Set Post data to lowercase.
-	 * Called by $this->set_post_data() method
 	 *
 	 * @param string $value
 	 * @param bool   $force
-	 *
 	 * @return string
-	 * @access public
 	 */
 	public function set_post_data_lowercase($value, $force = false): string
 	{
@@ -229,13 +199,10 @@ class post_data
 
 	/**
 	 * Set Post data to date/time format.
-	 * Called by $this->set_post_data() method
 	 *
 	 * @param string $value
 	 * @param bool   $force
-	 *
 	 * @return string
-	 * @access public
 	 */
 	public function set_post_data_strtotime($value, $force = false): string
 	{

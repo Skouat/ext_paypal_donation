@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -24,17 +24,14 @@ class vars
 	protected $user;
 
 	/**
-	 * currency constructor.
+	 * Constructor
 	 *
 	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object
 	 * @param config                        $config           Config object
 	 * @param language                      $language         Language object
 	 * @param user                          $user             User object
-	 *
-	 * @access public
 	 */
-
 	public function __construct(
 		core $actions_core,
 		currency $actions_currency,
@@ -54,7 +51,6 @@ class vars
 	 * Get template vars
 	 *
 	 * @return array $this->dp_vars
-	 * @access public
 	 */
 	public function get_vars(): array
 	{
@@ -69,6 +65,11 @@ class vars
 		return $this->dp_vars;
 	}
 
+	/**
+	 * Get currency data
+	 *
+	 * @return array
+	 */
 	private function get_currency_data(): array
 	{
 		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
@@ -80,6 +81,12 @@ class vars
 		];
 	}
 
+	/**
+	 * Populate template vars
+	 *
+	 * @param array $currency_data
+	 * @return array
+	 */
 	private function populate_template_vars(array $currency_data): array
 	{
 		return [
@@ -101,7 +108,6 @@ class vars
 	 * Adds predefined language keys variables to the donation pages.
 	 *
 	 * @return void
-	 * @access private
 	 */
 	private function add_predefined_lang_vars(): void
 	{
@@ -114,9 +120,7 @@ class vars
 	 * Replace template vars in the message
 	 *
 	 * @param string $message
-	 *
 	 * @return string
-	 * @access public
 	 */
 	public function replace_template_vars($message): string
 	{
