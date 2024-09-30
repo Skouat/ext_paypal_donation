@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2021 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -42,7 +42,7 @@ class post_data
 	 * @param array $data_ary
 	 * @return mixed
 	 */
-	public function set_func($data_ary)
+	public function set_func(array $data_ary)
 	{
 		$value = $data_ary['value'];
 
@@ -62,7 +62,7 @@ class post_data
 	 * @param array $data_ary List of data to request
 	 * @return array
 	 */
-	public function get_post_data($data_ary = []): array
+	public function get_post_data(array $data_ary): array
 	{
 		if (is_array($data_ary['default']))
 		{
@@ -82,9 +82,10 @@ class post_data
 	 * @param array $data_ary
 	 * @return array
 	 */
-	public function check_post_data($data_ary = []): array
+	public function check_post_data(array $data_ary): array
 	{
 		$data_ary['txn_errors'] = '';
+
 		// Check all conditions declared for this post_data
 		if (isset($data_ary['condition_check']))
 		{
@@ -104,7 +105,7 @@ class post_data
 	 * @param array $data_ary
 	 * @return array
 	 */
-	public function call_func($data_ary): array
+	public function call_func(array $data_ary): array
 	{
 		$check = [];
 		$check['txn_errors'] = '';
@@ -206,6 +207,6 @@ class post_data
 	 */
 	public function set_post_data_strtotime($value, $force = false): string
 	{
-		return $force ? strtotime($value) : $value;
+		return $force ? (string) strtotime($value) : $value;
 	}
 }

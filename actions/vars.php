@@ -90,16 +90,16 @@ class vars
 	private function populate_template_vars(array $currency_data): array
 	{
 		return [
-			0 => ['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
-			1 => ['var' => '{USERNAME}', 'value' => $this->user->data['username']],
-			2 => ['var' => '{SITE_NAME}', 'value' => $this->config['sitename']],
-			3 => ['var' => '{SITE_DESC}', 'value' => $this->config['site_desc']],
-			4 => ['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
-			5 => ['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
-			6 => ['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
-			7 => ['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
+			['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
+			['var' => '{USERNAME}', 'value' => $this->user->data['username']],
+			['var' => '{SITE_NAME}', 'value' => $this->config['sitename']],
+			['var' => '{SITE_DESC}', 'value' => $this->config['site_desc']],
+			['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
+			['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
+			['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
+			['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
 				(float) $this->config['ppde_goal'], ...$currency_data)],
-			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
+			['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
 				(float) $this->config['ppde_raised'], ...$currency_data)],
 		];
 	}
@@ -111,9 +111,10 @@ class vars
 	 */
 	private function add_predefined_lang_vars(): void
 	{
-		array_walk($this->dp_vars, function (&$value) {
+		foreach ($this->dp_vars as &$value)
+		{
 			$value['name'] = $this->language->lang('PPDE_DP_' . trim($value['var'], '{}'));
-		});
+		}
 	}
 
 	/**
@@ -122,7 +123,7 @@ class vars
 	 * @param string $message
 	 * @return string
 	 */
-	public function replace_template_vars($message): string
+	public function replace_template_vars(string $message): string
 	{
 		$tpl_ary = array_column($this->dp_vars, 'value', 'var');
 
