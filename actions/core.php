@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -239,8 +239,7 @@ class core
 	 *
 	 * @return bool True if the donor is anonymous, false otherwise.
 	 */
-	private
-	function is_donor_anonymous(): bool
+	private	function is_donor_anonymous(): bool
 	{
 		return (int) $this->transaction_data['user_id'] === ANONYMOUS || !$this->check_donors_status('user', $this->transaction_data['user_id']);
 	}

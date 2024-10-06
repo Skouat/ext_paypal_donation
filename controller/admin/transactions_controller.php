@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -972,36 +972,19 @@ class transactions_controller extends admin_main
 	 */
 	private function assign_currency_data(array $data): void
 	{
-		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
-		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+		$this->ppde_actions_currency->set_currency_data_from_iso_code($data['mc_currency']);
+		$this->ppde_actions_currency->set_currency_data_from_iso_code($data['settle_currency']);
 
 		$this->template->assign_vars([
 			'EXCHANGE_RATE'                   => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-			'MC_GROSS'                        => $this->format_currency($data['mc_gross'], $currency_mc_data[0]),
-			'MC_FEE'                          => $this->format_currency($data['mc_fee'], $currency_mc_data[0]),
-			'MC_NET'                          => $this->format_currency($data['net_amount'], $currency_mc_data[0]),
-			'SETTLE_AMOUNT'                   => $this->format_currency($data['settle_amount'], $currency_settle_data[0]),
+			'MC_GROSS'                        => $this->ppde_actions_currency->format_currency($data['mc_gross']),
+			'MC_FEE'                          => $this->ppde_actions_currency->format_currency($data['mc_fee']),
+			'MC_NET'                          => $this->ppde_actions_currency->format_currency($data['net_amount']),
+			'SETTLE_AMOUNT'                   => $this->ppde_actions_currency->format_currency($data['settle_amount']),
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => !((int) $data['settle_amount'] === 0 && empty($data['exchange_rate'])),
 		]);
-	}
-
-	/**
-	 * Format currency amount.
-	 *
-	 * @param float $amount        The amount to format.
-	 * @param array $currency_data Currency data including ISO code, symbol, and position.
-	 * @return string Formatted currency string.
-	 */
-	private function format_currency(float $amount, array $currency_data): string
-	{
-		return $this->ppde_actions_currency->format_currency(
-			$amount,
-			$currency_data['currency_iso_code'],
-			$currency_data['currency_symbol'],
-			(bool) $currency_data['currency_on_left']
-		);
 	}
 
 	/**

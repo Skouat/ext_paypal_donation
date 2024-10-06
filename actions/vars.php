@@ -50,12 +50,12 @@ class vars
 	/**
 	 * Get template vars
 	 *
-	 * @return array $this->dp_vars
+	 * @return array Array of template variables
 	 */
 	public function get_vars(): array
 	{
-		$currency_data = $this->get_currency_data();
-		$this->dp_vars = $this->populate_template_vars($currency_data);
+		$this->actions_currency->set_default_currency_data((int) $this->config['ppde_default_currency']);
+		$this->dp_vars = $this->populate_template_vars();
 
 		if ($this->actions_core->is_in_admin())
 		{
@@ -66,48 +66,27 @@ class vars
 	}
 
 	/**
-	 * Get currency data
-	 *
-	 * @return array
-	 */
-	private function get_currency_data(): array
-	{
-		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
-
-		return [
-			$default_currency_data[0]['currency_iso_code'],
-			$default_currency_data[0]['currency_symbol'],
-			(bool) $default_currency_data[0]['currency_on_left'],
-		];
-	}
-
-	/**
 	 * Populate template vars
 	 *
-	 * @param array $currency_data
-	 * @return array
+	 * @return array Array of template variables
 	 */
-	private function populate_template_vars(array $currency_data): array
+	private function populate_template_vars(): array
 	{
 		return [
-			['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
-			['var' => '{USERNAME}', 'value' => $this->user->data['username']],
-			['var' => '{SITE_NAME}', 'value' => $this->config['sitename']],
-			['var' => '{SITE_DESC}', 'value' => $this->config['site_desc']],
-			['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
-			['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
-			['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
-			['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_goal'], ...$currency_data)],
-			['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_raised'], ...$currency_data)],
+			['var' => '{USER_ID}',         'value' => $this->user->data['user_id']],
+			['var' => '{USERNAME}',        'value' => $this->user->data['username']],
+			['var' => '{SITE_NAME}',       'value' => $this->config['sitename']],
+			['var' => '{SITE_DESC}',       'value' => $this->config['site_desc']],
+			['var' => '{BOARD_CONTACT}',   'value' => $this->config['board_contact']],
+			['var' => '{BOARD_EMAIL}',     'value' => $this->config['board_email']],
+			['var' => '{BOARD_SIG}',       'value' => $this->config['board_email_sig']],
+			['var' => '{DONATION_GOAL}',   'value' => $this->actions_currency->format_currency((float) $this->config['ppde_goal'])],
+			['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency((float) $this->config['ppde_raised'])],
 		];
 	}
 
 	/**
 	 * Adds predefined language keys variables to the donation pages.
-	 *
-	 * @return void
 	 */
 	private function add_predefined_lang_vars(): void
 	{
@@ -120,13 +99,12 @@ class vars
 	/**
 	 * Replace template vars in the message
 	 *
-	 * @param string $message
-	 * @return string
+	 * @param string $message The message containing template variables
+	 * @return string The message with template variables replaced
 	 */
 	public function replace_template_vars(string $message): string
 	{
 		$tpl_ary = array_column($this->dp_vars, 'value', 'var');
-
-		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);
+		return strtr($message, $tpl_ary);
 	}
 }

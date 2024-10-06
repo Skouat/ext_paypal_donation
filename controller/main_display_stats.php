@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -56,10 +56,10 @@ class main_display_stats
 		if ($this->is_stats_enabled())
 		{
 			// Get data for the default currency
-			$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
+			$this->ppde_actions_currency->set_default_currency_data((int) $this->config['ppde_default_currency']);
 
 			$this->assign_template_enable_vars();
-			$this->assign_template_lang_vars($default_currency_data);
+			$this->assign_template_lang_vars();
 			$this->assign_template_stats_text_only_var();
 
 			// Generate statistics percent for display
@@ -86,30 +86,21 @@ class main_display_stats
 		$this->template->assign_var('S_PPDE_STATS_TEXT_ONLY', $this->config['ppde_stats_text_only']);
 	}
 
-	private function assign_template_lang_vars(array $default_currency_data): void
+	private function assign_template_lang_vars(): void
 	{
-		$iso_code = $default_currency_data[0]['currency_iso_code'];
-		$symbol = $default_currency_data[0]['currency_symbol'];
-		$currency_on_left = (bool) $default_currency_data[0]['currency_on_left'];
-
 		$this->template->assign_vars([
-			'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey($iso_code, $symbol, $currency_on_left),
-			'L_PPDE_RAISED' => $this->get_ppde_raised_langkey($iso_code, $symbol, $currency_on_left),
-			'L_PPDE_USED'   => $this->get_ppde_used_langkey($iso_code, $symbol, $currency_on_left),
+			'L_PPDE_GOAL'   => $this->get_ppde_goal_langkey(),
+			'L_PPDE_RAISED' => $this->get_ppde_raised_langkey(),
+			'L_PPDE_USED'   => $this->get_ppde_used_langkey(),
 		]);
 	}
 
 	/**
 	 * Retrieve the language key for donation goal
 	 *
-	 * @param string $currency_iso_code
-	 * @param string $currency_symbol Currency symbol
-	 * @param bool   $on_left         Symbol position
-	 *
 	 * @return string
-	 * @access public
 	 */
-	public function get_ppde_goal_langkey(string $currency_iso_code, string $currency_symbol, bool $on_left = true): string
+	public function get_ppde_goal_langkey(): string
 	{
 		$goal = (int) $this->config['ppde_goal'];
 		$raised = (int) $this->config['ppde_raised'];
@@ -124,21 +115,16 @@ class main_display_stats
 			return $this->language->lang('PPDE_DONATE_GOAL_REACHED');
 		}
 
-		$formatted_goal = $this->ppde_actions_currency->format_currency((float) $goal, $currency_iso_code, $currency_symbol, $on_left);
+		$formatted_goal = $this->ppde_actions_currency->format_currency((float) $goal);
 		return $this->language->lang('PPDE_DONATE_GOAL_RAISE', $formatted_goal);
 	}
 
 	/**
 	 * Retrieve the language key for donation raised
 	 *
-	 * @param string $currency_iso_code
-	 * @param string $currency_symbol Currency symbol
-	 * @param bool   $on_left         Symbol position
-	 *
 	 * @return string
-	 * @access public
 	 */
-	public function get_ppde_raised_langkey(string $currency_iso_code, string $currency_symbol, bool $on_left = true): string
+	public function get_ppde_raised_langkey(): string
 	{
 		$raised = (int) $this->config['ppde_raised'];
 
@@ -147,21 +133,16 @@ class main_display_stats
 			return $this->language->lang('PPDE_DONATE_NOT_RECEIVED');
 		}
 
-		$formatted_raised = $this->ppde_actions_currency->format_currency((float) $raised, $currency_iso_code, $currency_symbol, $on_left);
+		$formatted_raised = $this->ppde_actions_currency->format_currency((float) $raised);
 		return $this->language->lang('PPDE_DONATE_RECEIVED', $formatted_raised);
 	}
 
 	/**
 	 * Retrieve the language key for donation used
 	 *
-	 * @param string $currency_iso_code
-	 * @param string $currency_symbol Currency symbol
-	 * @param bool   $on_left         Symbol position
-	 *
 	 * @return string
-	 * @access public
 	 */
-	public function get_ppde_used_langkey(string $currency_iso_code, string $currency_symbol, bool $on_left = true): string
+	public function get_ppde_used_langkey(): string
 	{
 		$used = (int) $this->config['ppde_used'];
 		$raised = (int) $this->config['ppde_raised'];
@@ -171,11 +152,11 @@ class main_display_stats
 			return $this->language->lang('PPDE_DONATE_NOT_USED');
 		}
 
-		$formatted_used = $this->ppde_actions_currency->format_currency((float) $used, $currency_iso_code, $currency_symbol, $on_left);
+		$formatted_used = $this->ppde_actions_currency->format_currency((float) $used);
 
 		if ($used < $raised)
 		{
-			$formatted_raised = $this->ppde_actions_currency->format_currency((float) $raised, $currency_iso_code, $currency_symbol, $on_left);
+			$formatted_raised = $this->ppde_actions_currency->format_currency((float) $raised);
 			return $this->language->lang('PPDE_DONATE_USED', $formatted_used, $formatted_raised);
 		}
 

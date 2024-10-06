@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -127,12 +127,13 @@ class main_donor_list extends main_controller
 		{
 			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
-			$currency_mc_data = $this->ppde_actions_currency->get_currency_data($last_donation_data[0]['mc_currency']);
+			$this->ppde_actions_currency->set_currency_data_from_iso_code($last_donation_data[0]['mc_currency']);
+
 			$this->template->assign_block_vars('donorrow', [
 				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
-				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $last_donation_data[0]['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $last_donation_data[0]['mc_gross']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency((float) $data['amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency((float) $data['amount']),
 			]);
 		}
 
