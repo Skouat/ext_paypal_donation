@@ -1,0 +1,15 @@
+services:
+    skouat.ppde.includes.transaction_template_helper:
+        class: skouat\ppde\includes\transaction_template_helper
+        arguments:
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@skouat.ppde.actions.currency'
+
+    skouat.ppde.includes.transaction_validator:
+        class: skouat\ppde\includes\transaction_validator
+        arguments:
+            - '@language'
+            - '@user'
+            - '@user_loader'

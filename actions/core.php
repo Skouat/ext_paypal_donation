@@ -150,21 +150,173 @@ class core
 	}
 
 	/**
-	 * Updates the amount of donation raised
+	 * Checks if the donor is a member then gets payer_data values
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function update_raised_amount(): void
-	{
-		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
 
-		if (!empty($this->transaction_data['settle_amount']))
+	public function is_donor_is_member(): void
+	{
+		if ($this->is_donor_anonymous())
 		{
-			$net_amount = $this->transaction_data['settle_amount'];
+			$this->donor_is_member = $this->check_donor_status_based_on_email($this->transaction_data['payer_email']);
+
+		}
+		else
+		{
+			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function get_donor_is_member(): bool
+	{
+		return $this->donor_is_member;
+	}
+
+	/**
+	 * Determine if the donor is anonymous.
+	 *
+	 * @return bool True if the donor is anonymous, false otherwise.
+	 */
+	private function is_donor_anonymous(): bool
+	{
+		return (int) $this->transaction_data['user_id'] === ANONYMOUS || !$this->check_donors_status('user', $this->transaction_data['user_id']);
+	}
+
+	/**
+	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 *
+	 * @param string     $type Allowed value : 'user' or 'email'
+	 * @param string|int $args If $type is set to 'user', $args must be a user id.
+	 *                         If $type is set to 'email', $args must be an email address
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function check_donors_status($type, $args): bool
+	{
+		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
+
+		return (bool) count((array) $this->payer_data);
+	}
+
+	/**
+	 * Checks the donor status based on email.
+	 *
+	 * @param string $email The email of the donor.
+	 * @return bool Returns true if the status of the donor is active, false otherwise.
+	 */
+	private function check_donor_status_based_on_email($email): bool
+	{
+		if (empty($email))
+		{
+			return false;
 		}
 
-		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount);
+		return $this->check_donors_status('email', $email);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_payer_data(): array
+	{
+		return (count($this->payer_data) != 0) ? $this->payer_data : [];
+	}
+
+	/**
+	 * Log the transaction to the database
+	 *
+	 * @param array $data Transaction data array
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function log_to_db($data): void
+	{
+		$this->set_transaction_data($data);
+		$this->validate_and_set_transaction_data();
+		$this->ppde_entity_transaction->add_edit_data();
+	}
+
+	/**
+	 * Set Transaction Data array
+	 *
+	 * @param array $transaction_data Array of the donation transaction.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_transaction_data(array $transaction_data): void
+	{
+		$this->transaction_data = $this->merge_transaction_data($transaction_data);
+	}
+
+	/**
+	 * Merge transaction data if existing transaction data is not empty, else return passed transaction data
+	 *
+	 * @param array $transaction_data Array of the donation transaction.
+	 *
+	 * @return array Merged or original transaction data
+	 * @access private
+	 */
+	private function merge_transaction_data(array $transaction_data): array
+	{
+		return !empty($this->transaction_data)
+			? array_merge($this->transaction_data, $transaction_data)
+			: $transaction_data;
+	}
+
+	private function validate_and_set_transaction_data(): void
+	{
+		// Handle user_id data
+		$this->extract_user_id();
+		$this->validate_user_id();
+
+		// Set username in extra_data property in $entity
+		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$this->ppde_entity_transaction->set_username($user_ary['username']);
+
+		// Set 'net_amount' in $this->transaction_data
+		$this->transaction_data['net_amount'] = $this->net_amount(
+			$this->transaction_data['mc_gross'],
+			$this->transaction_data['mc_fee']
+		);
+
+		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
+
+		// Load data in the entity
+		$this->ppde_entity_transaction->set_entity_data($data);
+		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
+	}
+
+	/**
+	 * Retrieve user_id from custom args
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function extract_user_id(): void
+	{
+		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['custom'], 4), -1);
+	}
+
+	/**
+	 * Avoid the user_id to be set to 0
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function validate_user_id(): void
+	{
+		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
+		{
+			$this->transaction_data['user_id'] = ANONYMOUS;
+		}
 	}
 
 	/**
@@ -181,6 +333,35 @@ class core
 	public function net_amount($amount, $fee, $dec_point = '.', $thousands_sep = ''): string
 	{
 		return number_format((float) $amount - (float) $fee, 2, $dec_point, $thousands_sep);
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_in_admin(): bool
+	{
+		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin'];
+	}
+
+	/**
+	 * Perform actions for validated transaction
+	 *
+	 * @param bool $is_member
+	 */
+	public function do_transactions_actions($is_member): void
+	{
+		$this->update_overview_stats();
+		$this->update_raised_amount();
+
+		if ($is_member)
+		{
+			$this->update_donor_stats();
+			$this->donors_group_user_add();
+			$this->notification->notify_donor_donation_received();
+		}
 	}
 
 	/**
@@ -215,82 +396,21 @@ class core
 	}
 
 	/**
-	 * Checks if the donor is a member then gets payer_data values
+	 * Updates the amount of donation raised
 	 *
 	 * @return void
 	 * @access public
 	 */
-
-	public function is_donor_is_member(): void
+	public function update_raised_amount(): void
 	{
-		if ($this->is_donor_anonymous())
-		{
-			$this->donor_is_member = $this->check_donor_status_based_on_email($this->transaction_data['payer_email']);
+		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
 
-		}
-		else
+		if (!empty($this->transaction_data['settle_amount']))
 		{
-			$this->donor_is_member = $this->check_donors_status('user', $this->transaction_data['user_id']);
-		}
-	}
-
-	/**
-	 * Determine if the donor is anonymous.
-	 *
-	 * @return bool True if the donor is anonymous, false otherwise.
-	 */
-	private	function is_donor_anonymous(): bool
-	{
-		return (int) $this->transaction_data['user_id'] === ANONYMOUS || !$this->check_donors_status('user', $this->transaction_data['user_id']);
-	}
-
-	/**
-	 * Checks the donor status based on email.
-	 *
-	 * @param string $email The email of the donor.
-	 * @return bool Returns true if the status of the donor is active, false otherwise.
-	 */
-	private function check_donor_status_based_on_email($email): bool
-	{
-		if (empty($email))
-		{
-			return false;
+			$net_amount = $this->transaction_data['settle_amount'];
 		}
 
-		return $this->check_donors_status('email', $email);
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function get_donor_is_member(): bool
-	{
-		return $this->donor_is_member;
-	}
-
-	/**
-	 * Gets donor informations (user id, username, amount donated) and returns if exists
-	 *
-	 * @param string     $type Allowed value : 'user' or 'email'
-	 * @param string|int $args If $type is set to 'user', $args must be a user id.
-	 *                         If $type is set to 'email', $args must be an email address
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function check_donors_status($type, $args): bool
-	{
-		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
-
-		return (bool) count((array) $this->payer_data);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_payer_data(): array
-	{
-		return (count($this->payer_data) != 0) ? $this->payer_data : [];
+		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount);
 	}
 
 	/**
@@ -421,107 +541,5 @@ class core
 		$this->check_donors_status('user', $this->payer_data['user_id']);
 
 		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'];
-	}
-
-	/**
-	 * Log the transaction to the database
-	 *
-	 * @param array $data Transaction data array
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function log_to_db($data): void
-	{
-		$this->set_transaction_data($data);
-		$this->validate_and_set_transaction_data();
-		$this->ppde_entity_transaction->add_edit_data();
-	}
-
-	private function validate_and_set_transaction_data(): void
-	{
-		// Handle user_id data
-		$this->extract_user_id();
-		$this->validate_user_id();
-
-		// Set username in extra_data property in $entity
-		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
-		$this->ppde_entity_transaction->set_username($user_ary['username']);
-
-		// Set 'net_amount' in $this->transaction_data
-		$this->transaction_data['net_amount'] = $this->net_amount(
-			$this->transaction_data['mc_gross'],
-			$this->transaction_data['mc_fee']
-		);
-
-		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
-
-		// Load data in the entity
-		$this->ppde_entity_transaction->set_entity_data($data);
-		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
-	}
-
-	/**
-	 * Set Transaction Data array
-	 *
-	 * @param array $transaction_data Array of the donation transaction.
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_transaction_data(array $transaction_data): void
-	{
-		$this->transaction_data = $this->merge_transaction_data($transaction_data);
-	}
-
-	/**
-	 * Merge transaction data if existing transaction data is not empty, else return passed transaction data
-	 *
-	 * @param array $transaction_data Array of the donation transaction.
-	 *
-	 * @return array Merged or original transaction data
-	 * @access private
-	 */
-	private function merge_transaction_data(array $transaction_data): array
-	{
-		return !empty($this->transaction_data)
-			? array_merge($this->transaction_data, $transaction_data)
-			: $transaction_data;
-	}
-
-	/**
-	 * Retrieve user_id from custom args
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function extract_user_id(): void
-	{
-		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['custom'], 4), -1);
-	}
-
-	/**
-	 * Avoid the user_id to be set to 0
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function validate_user_id(): void
-	{
-		if (empty($this->transaction_data['user_id']) || !is_numeric($this->transaction_data['user_id']))
-		{
-			$this->transaction_data['user_id'] = ANONYMOUS;
-		}
-	}
-
-	/**
-	 * Check we are in the ACP
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_in_admin(): bool
-	{
-		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin'];
 	}
 }

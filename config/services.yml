@@ -2,6 +2,7 @@ imports:
     - { resource: actions.yml }
     - { resource: controllers.yml }
     - { resource: entities.yml }
+    - { resource: includes.yml }
     - { resource: notifications.yml }
     - { resource: operators.yml }
     - { resource: tables.yml }

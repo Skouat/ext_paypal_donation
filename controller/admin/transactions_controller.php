@@ -21,6 +21,8 @@ use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
 use skouat\ppde\exception\transaction_exception;
+use skouat\ppde\includes\transaction_template_helper;
+use skouat\ppde\includes\transaction_validator;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -32,13 +34,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @property string             lang_key_prefix    Prefix for the messages thrown by exceptions
  * @property language           language           Language user object
  * @property log                log                The phpBB log system
- * @property string             module_name        Name of the module currently used
  * @property request            request            Request object
- * @property bool               submit             State of submit $_POST variable
  * @property template           template           Template object
  * @property string             u_action           Action URL
  * @property user               user               User object
- * @property user_loader        user_loader        User loader object
  */
 class transactions_controller extends admin_main
 {
@@ -54,8 +53,8 @@ class transactions_controller extends admin_main
 	protected $ppde_actions;
 	protected $ppde_actions_currency;
 	protected $ppde_entity;
-	protected $table_prefix;
-	protected $table_ppde_transactions;
+	protected $template_helper;
+	protected $transaction_validator;
 
 	/**
 	 * Constructor
@@ -76,8 +75,6 @@ class transactions_controller extends admin_main
 	 * @param string                           $adm_relative_path          phpBB admin relative path
 	 * @param string                           $phpbb_root_path            phpBB root path
 	 * @param string                           $php_ext                    phpEx
-	 * @param string                           $table_prefix               The table prefix
-	 * @param string                           $table_ppde_transactions    Name of the table used to store data
 	 */
 	public function __construct(
 		auth $auth,
@@ -93,11 +90,11 @@ class transactions_controller extends admin_main
 		template $template,
 		user $user,
 		user_loader $user_loader,
+		transaction_template_helper $template_helper,
+		transaction_validator $transaction_validator,
 		string $adm_relative_path,
 		string $phpbb_root_path,
-		string $php_ext,
-		string $table_prefix,
-		string $table_ppde_transactions
+		string $php_ext
 	)
 	{
 		$this->auth = $auth;
@@ -113,12 +110,12 @@ class transactions_controller extends admin_main
 		$this->template = $template;
 		$this->user = $user;
 		$this->user_loader = $user_loader;
+		$this->template_helper = $template_helper;
+		$this->transaction_validator = $transaction_validator;
 		$this->adm_relative_path = $adm_relative_path;
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		$this->table_prefix = $table_prefix;
-		$this->table_ppde_transactions = $table_ppde_transactions;
 		parent::__construct(
 			'transactions',
 			'PPDE_DT',
@@ -459,7 +456,7 @@ class transactions_controller extends admin_main
 
 		try
 		{
-			$user_id = $this->validate_user_id($username, $donor_id);
+			$user_id = $this->transaction_validator->validate_user_id($username, $donor_id);
 			$this->update_transaction($transaction_id, $user_id);
 			$this->log_action('DT_UPDATED');
 		}
@@ -587,7 +584,7 @@ class transactions_controller extends admin_main
 		$this->ppde_actions->set_transaction_data($transaction_data);
 		$this->ppde_actions->is_donor_is_member();
 
-		$this->do_transactions_actions(
+		$this->ppde_actions->do_transactions_actions(
 			$this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']
 		);
 	}
@@ -614,7 +611,7 @@ class transactions_controller extends admin_main
 
 		try
 		{
-			$payment_date_time = $this->validate_payment_date_time($transaction_data);
+			$payment_date_time = $this->transaction_validator->validate_payment_date_time($transaction_data);
 		}
 		catch (transaction_exception $e)
 		{
@@ -623,7 +620,7 @@ class transactions_controller extends admin_main
 
 		try
 		{
-			$this->validate_transaction_amounts($transaction_data);
+			$this->transaction_validator->validate_transaction_amounts($transaction_data);
 		}
 		catch (transaction_exception $e)
 		{
@@ -772,24 +769,6 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Perform actions for validated transaction
-	 *
-	 * @param bool $is_member
-	 */
-	private function do_transactions_actions($is_member): void
-	{
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if ($is_member)
-		{
-			$this->ppde_actions->update_donor_stats();
-			$this->ppde_actions->donors_group_user_add();
-			$this->ppde_actions->notification->notify_donor_donation_received();
-		}
-	}
-
-	/**
 	 * Prepare and assign template variables for adding a new transaction
 	 *
 	 * @param array $errors           Array of error messages
@@ -928,108 +907,11 @@ class transactions_controller extends admin_main
 	 */
 	protected function action_assign_template_vars(array $data): void
 	{
-		$this->assign_hidden_fields($data);
-		$this->assign_currency_data($data);
-		$this->assign_user_data($data);
-		$this->assign_transaction_details($data);
-		$this->assign_payment_details($data);
-		$this->assign_error_data($data);
-	}
-
-	/**
-	 * Assign hidden fields
-	 *
-	 * @param array $data
-	 */
-	private function assign_hidden_fields(array $data): void
-	{
-		$s_hidden_fields = build_hidden_fields([
-			'id'                  => $data['transaction_id'],
-			'donor_id'            => $data['user_id'],
-			'txn_errors_approved' => $data['txn_errors_approved'],
-		]);
-		$this->template->assign_var('S_HIDDEN_FIELDS', $s_hidden_fields);
-	}
-
-	/**
-	 * Assign currency data to template variables
-	 *
-	 * @param array $data Transaction data
-	 */
-	private function assign_currency_data(array $data): void
-	{
-		$this->ppde_actions_currency->set_currency_data_from_iso_code($data['mc_currency']);
-		$this->ppde_actions_currency->set_currency_data_from_iso_code($data['settle_currency']);
-
-		$this->template->assign_vars([
-			'EXCHANGE_RATE'                   => '1 ' . $data['mc_currency'] . ' = ' . $data['exchange_rate'] . ' ' . $data['settle_currency'],
-			'MC_GROSS'                        => $this->ppde_actions_currency->format_currency($data['mc_gross']),
-			'MC_FEE'                          => $this->ppde_actions_currency->format_currency($data['mc_fee']),
-			'MC_NET'                          => $this->ppde_actions_currency->format_currency($data['net_amount']),
-			'SETTLE_AMOUNT'                   => $this->ppde_actions_currency->format_currency($data['settle_amount']),
-			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
-			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => !((int) $data['settle_amount'] === 0 && empty($data['exchange_rate'])),
-		]);
-	}
-
-	/**
-	 * Assign user data to template variables
-	 *
-	 * @param array $data Transaction data
-	 */
-	private function assign_user_data(array $data): void
-	{
-		$this->template->assign_vars([
-			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
-			'NAME'           => $data['first_name'] . ' ' . $data['last_name'],
-			'PAYER_EMAIL'    => $data['payer_email'],
-			'PAYER_ID'       => $data['payer_id'],
-			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
-		]);
-	}
-
-	/**
-	 * Assign transaction details to template variables
-	 *
-	 * @param array $data Transaction data
-	 */
-	private function assign_transaction_details(array $data): void
-	{
-		$this->template->assign_vars([
-			'ITEM_NAME'      => $data['item_name'],
-			'ITEM_NUMBER'    => $data['item_number'],
-			'MEMO'           => $data['memo'],
-			'RECEIVER_EMAIL' => $data['receiver_email'],
-			'RECEIVER_ID'    => $data['receiver_id'],
-			'TXN_ID'         => $data['txn_id'],
-		]);
-	}
-
-	/**
-	 * Assign payment details to template variables
-	 *
-	 * @param array $data Transaction data
-	 */
-	private function assign_payment_details(array $data): void
-	{
-		$this->template->assign_vars([
-			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
-			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
-		]);
-	}
-
-	/**
-	 * Assign error data to template variables
-	 *
-	 * @param array $data Transaction data
-	 */
-	private function assign_error_data(array $data): void
-	{
-		$this->template->assign_vars([
-			'S_ERROR'          => !empty($data['txn_errors']),
-			'S_ERROR_APPROVED' => !empty($data['txn_errors_approved']),
-			'ERROR_MSG'        => (!empty($data['txn_errors'])) ? $data['txn_errors'] : '',
-		]);
+		$this->template_helper->assign_hidden_fields($data);
+		$this->template_helper->assign_currency_data($data);
+		$this->template_helper->assign_user_data($data);
+		$this->template_helper->assign_transaction_details($data);
+		$this->template_helper->assign_payment_details($data);
+		$this->template_helper->assign_error_data($data);
 	}
 }
