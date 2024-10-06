@@ -80,7 +80,7 @@ class currency
 	 * Formats the given value as currency based on the PHP intl extension, if available.
 	 * Otherwise, a basic currency formatter is used.
 	 *
-	 * @param float $amount             The amount to be formatted as currency.
+	 * @param float $amount The amount to be formatted as currency.
 	 * @return string The formatted currency string.
 	 */
 	public function format_currency(float $amount): string
@@ -126,6 +126,27 @@ class currency
 		{
 			$this->assign_currency_to_template($currency_item, $config_value);
 		}
+	}
+
+	/**
+	 * Build pull down menu options of available currency value
+	 *
+	 * @param string $dropbox_value Comma-separated list of currency values
+	 * @param int    $default_value Default selected value
+	 * @return string HTML options for select menu
+	 */
+	public function build_currency_value_select_menu(string $dropbox_value, int $default_value): string
+	{
+		$values = array_filter(array_map('intval', explode(',', $dropbox_value)));
+		$options = '';
+
+		foreach ($values as $value)
+		{
+			$selected = ($value == $default_value) ? ' selected' : '';
+			$options .= '<option value="' . $value . '"' . $selected . '>' . $value . '</option>';
+		}
+
+		return $options;
 	}
 
 	/**

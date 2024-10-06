@@ -51,7 +51,7 @@ class main_donor_list extends main_controller
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->ppde_actions_auth->can_view_ppde_donorlist())
+		else if (!$this->actions_auth->can_view_ppde_donorlist())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -120,20 +120,20 @@ class main_donor_list extends main_controller
 		$last_donation_table_schema = [
 			'item_payment_date' => ['name' => 'payment_date', 'type' => 'integer'],
 			'item_mc_gross'     => ['name' => 'mc_gross', 'type' => 'float'],
-			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
+			'item_mc_currency'  => ['name' => 'mc_currency', 'type' => 'string'],
 		];
 
 		foreach ($data_ary as $data)
 		{
 			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
-			$this->ppde_actions_currency->set_currency_data_from_iso_code($last_donation_data[0]['mc_currency']);
+			$this->actions_currency->set_currency_data_from_iso_code($last_donation_data[0]['mc_currency']);
 
 			$this->template->assign_block_vars('donorrow', [
 				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
-				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $last_donation_data[0]['mc_gross']),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->actions_currency->format_currency((float) $last_donation_data[0]['mc_gross']),
 				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency((float) $data['amount']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->actions_currency->format_currency((float) $data['amount']),
 			]);
 		}
 

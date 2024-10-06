@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -12,214 +12,167 @@ namespace skouat\ppde\controller;
 
 class main_donate extends main_controller
 {
+	private const RETURN_BODY = 'body';
+	private const RETURN_CANCEL = 'cancel';
+	private const RETURN_SUCCESS = 'success';
+	private const RETURN_DONORLIST = 'donorlist';
+
 	/** @var \skouat\ppde\actions\vars */
-	protected $ppde_actions_vars;
+	protected $actions_vars;
+
 	/** @var \skouat\ppde\controller\main_display_stats */
-	protected $ppde_controller_display_stats;
+	protected $controller_display_stats;
+
 	/** @var \skouat\ppde\entity\donation_pages */
-	protected $ppde_entity_donation_pages;
+	protected $donation_pages_entity;
+
 	/** @var \skouat\ppde\operators\donation_pages */
-	protected $ppde_operator_donation_pages;
-	/** @var string */
-	private $donation_body;
-	/** @var string */
-	private $return_args_url;
+	protected $donation_pages_operator;
 
-	public function set_actions_vars(\skouat\ppde\actions\vars $ppde_actions_vars): void
+	public function set_actions_vars(\skouat\ppde\actions\vars $actions_vars): void
 	{
-		$this->ppde_actions_vars = $ppde_actions_vars;
+		$this->actions_vars = $actions_vars;
 	}
 
-	public function set_display_stats(\skouat\ppde\controller\main_display_stats $ppde_controller_display_stats): void
+	public function set_display_stats(\skouat\ppde\controller\main_display_stats $controller_display_stats): void
 	{
-		$this->ppde_controller_display_stats = $ppde_controller_display_stats;
+		$this->controller_display_stats = $controller_display_stats;
 	}
 
-	public function set_entity_donation_pages(\skouat\ppde\entity\donation_pages $ppde_entity_donation_pages): void
+	public function set_entity_donation_pages(\skouat\ppde\entity\donation_pages $donation_pages_entity): void
 	{
-		$this->ppde_entity_donation_pages = $ppde_entity_donation_pages;
+		$this->donation_pages_entity = $donation_pages_entity;
 	}
 
-	public function set_operator_donation_pages(\skouat\ppde\operators\donation_pages $ppde_operator_donation_pages): void
+	public function set_operator_donation_pages(\skouat\ppde\operators\donation_pages $donation_pages_operator): void
 	{
-		$this->ppde_operator_donation_pages = $ppde_operator_donation_pages;
+		$this->donation_pages_operator = $donation_pages_operator;
 	}
 
 	public function handle()
 	{
-		// When this extension is disabled, redirect users back to the forum index
-		// Else if user is not allowed to use it, disallow access to the extension main page
+		$this->check_extension_enabled();
+		$this->check_user_permission();
+
+		$return_args = $this->request->variable('return', self::RETURN_BODY);
+		$this->set_return_args($return_args);
+
+		$this->prepare_donation_page_content($return_args);
+		$this->prepare_donation_form();
+		$this->controller_display_stats->display_stats();
+
+		// Send all data to the template file
+		return $this->helper->render('donate_body.html', $this->get_page_title($return_args));
+	}
+
+	/**
+	 * Check if PPDE is enabled
+	 *
+	 * @throws \phpbb\exception\http_exception
+	 */
+	private function check_extension_enabled(): void
+	{
 		if (empty($this->config['ppde_enable']))
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
 		}
-		else if (!$this->ppde_actions_auth->can_use_ppde())
-		{
-			trigger_error('NOT_AUTHORISED');
-		}
-
-		$this->set_return_args_url($this->request->variable('return', 'body'));
-
-		// Prepare message for display
-		if ($this->get_donation_content_data($this->return_args_url))
-		{
-			$this->ppde_actions_vars->get_vars();
-			$this->donation_body = $this->ppde_actions_vars->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
-		}
-
-		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
-
-		$this->template->assign_vars([
-			'DONATION_BODY'      => $this->donation_body,
-			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
-			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
-
-			'S_HIDDEN_FIELDS'    => $this->paypal_hidden_fields(),
-			'S_PPDE_FORM_ACTION' => $this->get_paypal_uri(),
-			'S_RETURN_ARGS'      => $this->return_args_url,
-			'S_SANDBOX'          => $this->use_sandbox(),
-		]);
-
-		$this->ppde_controller_display_stats->display_stats();
-
-		// Send all data to the template file
-		return $this->send_data_to_template();
 	}
 
 	/**
-	 * @param string $set_return_args_url
+	 * Check if the user has permission to use PPDE
 	 *
-	 * @return void
-	 * @access private
+	 * @throws \phpbb\exception\http_exception
 	 */
-	private function set_return_args_url($set_return_args_url): void
+	private function check_user_permission(): void
 	{
-		$this->return_args_url = $set_return_args_url;
-
-		switch ($set_return_args_url)
+		if (!$this->actions_auth->can_use_ppde())
 		{
-			case 'cancel':
-			case 'success':
-				$this->template->assign_vars([
-					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
-				]);
-			break;
-			case 'donorlist':
-				$this->template->assign_vars([
-					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
-				]);
-			break;
-			default:
-				$this->return_args_url = 'body';
+			trigger_error('NOT_AUTHORISED');
 		}
+	}
 
+	/**
+	 * Set return arguments for the template
+	 *
+	 * @param string $return_args Return arguments
+	 */
+	private function set_return_args(string $return_args): void
+	{
+		$this->template->assign_vars([
+			'S_RETURN_ARGS' => $return_args,
+		]);
+
+		if (in_array($return_args, [self::RETURN_CANCEL, self::RETURN_SUCCESS, self::RETURN_DONORLIST]))
+		{
+			$this->template->assign_var(
+				'L_PPDE_' . strtoupper($return_args) . '_TITLE',
+				$this->language->lang('PPDE_' . strtoupper($return_args) . '_TITLE')
+			);
+		}
+	}
+
+	/**
+	 * Prepare the donation page content
+	 *
+	 * @param string $return_args Return arguments
+	 */
+	private function prepare_donation_page_content(string $return_args): void
+	{
+		$content_data = $this->get_donation_content_data($return_args);
+		if (!empty($content_data))
+		{
+			$this->actions_vars->get_vars();
+			$content = $this->actions_vars->replace_template_vars($this->donation_pages_entity->get_message_for_display());
+			$this->template->assign_var('DONATION_BODY', $content);
+		}
 	}
 
 	/**
 	 * Get content of current donation pages
 	 *
-	 * @param string $return_args_url
-	 *
+	 * @param string $return_args Return arguments
 	 * @return array
-	 * @access private
 	 */
-	private function get_donation_content_data($return_args_url): array
+	private function get_donation_content_data(string $return_args): array
 	{
-		return $this->ppde_entity_donation_pages->get_data(
-				$this->ppde_operator_donation_pages->build_sql_data($this->user->get_iso_lang_id(), $return_args_url)
+		return $this->donation_pages_entity->get_data(
+			$this->donation_pages_operator->build_sql_data($this->user->get_iso_lang_id(), $return_args)
 		);
 	}
 
 	/**
-	 * Build pull down menu options of available currency value
-	 *
-	 * @param int $default_value
-	 *
-	 * @return string List of currency value set in ACP for dropdown menu
-	 * @access private
+	 * Prepare the donation form
 	 */
-	private function build_currency_value_select_menu($default_value = 0): string
+	private function prepare_donation_form(): void
 	{
-		$list_donation_value = '';
+		$this->actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 
-		if ($this->get_dropbox_status())
-		{
-			$donation_ary_value = explode(',', $this->config['ppde_dropbox_value']);
-
-			foreach ($donation_ary_value as $value)
-			{
-				$int_value = $this->settype_dropbox_int_value($value);
-				$list_donation_value .= !empty($int_value) ? '<option value="' . $int_value . '"' . $this->is_value_selected($int_value, $default_value) . '>' . $int_value . '</option>' : '';
-			}
-		}
-
-		return $list_donation_value;
+		$this->template->assign_vars([
+			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
+			'PPDE_LIST_VALUE'    => $this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value']
+				? $this->actions_currency->build_currency_value_select_menu($this->config['ppde_dropbox_value'], (int) $this->config['ppde_default_value'])
+				: '',
+			'S_HIDDEN_FIELDS'    => $this->get_paypal_hidden_fields(),
+			'S_PPDE_FORM_ACTION' => $this->get_paypal_uri(),
+			'S_SANDBOX'          => $this->use_sandbox(),
+		]);
 	}
 
 	/**
-	 * Get dropbox config value
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function get_dropbox_status(): bool
-	{
-		return $this->config['ppde_dropbox_enable'] && $this->config['ppde_dropbox_value'];
-	}
-
-	/**
-	 * Force dropbox value to integer
-	 *
-	 * @param int $value
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function settype_dropbox_int_value($value = 0): int
-	{
-		if (settype($value, 'integer') && $value != 0)
-		{
-			return $value;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Define if the status of the attribute "selected"
-	 *
-	 * @param mixed $value
-	 * @param mixed $default
+	 * Get PayPal hidden fields
 	 *
 	 * @return string
-	 * @access private
 	 */
-	private function is_value_selected($value, $default): string
-	{
-		if ($default == $value)
-		{
-			return ' selected';
-		}
-
-		return '';
-	}
-
-	/**
-	 * Build PayPal hidden fields
-	 *
-	 * @return string PayPal hidden field needed to fill PayPal forms
-	 * @access private
-	 */
-	private function paypal_hidden_fields(): string
+	private function get_paypal_hidden_fields(): string
 	{
 		return build_hidden_fields([
 			'cmd'           => '_donations',
 			'business'      => $this->get_account_id(),
 			'item_name'     => $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']),
 			'no_shipping'   => 1,
-			'return'        => $this->generate_paypal_return_url('success'),
-			'notify_url'    => $this->generate_paypal_notify_return_url(),
-			'cancel_return' => $this->generate_paypal_return_url('cancel'),
+			'return'        => generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => self::RETURN_SUCCESS]),
+			'notify_url'    => generate_board_url(true) . $this->helper->route('skouat_ppde_ipn_listener'),
+			'cancel_return' => generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => self::RETURN_CANCEL]),
 			'item_number'   => 'uid_' . $this->user->data['user_id'] . '_' . time(),
 			'custom'        => 'uid_' . $this->user->data['user_id'] . '_' . time(),
 			'tax'           => 0,
@@ -231,8 +184,7 @@ class main_donate extends main_controller
 	/**
 	 * Get PayPal account id
 	 *
-	 * @return string $this Paypal account Identifier
-	 * @access private
+	 * @return string PayPal account Identifier
 	 */
 	private function get_account_id(): string
 	{
@@ -240,44 +192,18 @@ class main_donate extends main_controller
 	}
 
 	/**
-	 * Generate PayPal return URL
+	 * Get the page title
 	 *
-	 * @param string $arg
-	 *
+	 * @param string $return_args Return arguments
 	 * @return string
-	 * @access private
 	 */
-	private function generate_paypal_return_url($arg): string
+	private function get_page_title($return_args)
 	{
-		return generate_board_url(true) . $this->helper->route('skouat_ppde_donate', ['return' => $arg]);
-	}
-
-	/**
-	 * Generate PayPal return notify URL
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function generate_paypal_notify_return_url(): string
-	{
-		return generate_board_url(true) . $this->helper->route('skouat_ppde_ipn_listener');
-	}
-
-	/**
-	 * Send data to the template file
-	 *
-	 * @return \Symfony\Component\HttpFoundation\Response
-	 * @access private
-	 */
-	private function send_data_to_template()
-	{
-		switch ($this->return_args_url)
+		$title_lang_var = 'PPDE_DONATION_TITLE';
+		if (in_array($return_args, [self::RETURN_CANCEL, self::RETURN_SUCCESS]))
 		{
-			case 'cancel':
-			case 'success':
-				return $this->helper->render('donate_body.html', $this->language->lang('PPDE_' . strtoupper($this->return_args_url) . '_TITLE'));
-			default:
-				return $this->helper->render('donate_body.html', $this->language->lang('PPDE_DONATION_TITLE'));
+			$title_lang_var = 'PPDE_' . strtoupper($return_args) . '_TITLE';
 		}
+		return $this->language->lang($title_lang_var);
 	}
 }

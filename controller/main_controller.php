@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -21,11 +21,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class main_controller
 {
+	public $actions_auth;
 	protected $config;
 	protected $container;
 	protected $helper;
 	protected $language;
-	protected $ppde_actions_currency;
+	protected $actions_currency;
 	protected $request;
 	protected $template;
 	protected $user;
@@ -33,23 +34,21 @@ class main_controller
 	protected $root_path;
 	protected $php_ext;
 
-	public $ppde_actions_auth;
-
 	/**
 	 * Constructor
 	 *
-	 * @param config                        $config                Config object
-	 * @param ContainerInterface            $container             Service container interface
-	 * @param helper                        $helper                Controller helper object
-	 * @param language                      $language              Language user object
-	 * @param \skouat\ppde\actions\auth     $ppde_actions_auth     PPDE auth actions object
-	 * @param \skouat\ppde\actions\currency $ppde_actions_currency PPDE currency actions object
-	 * @param request                       $request               Request object
-	 * @param template                      $template              Template object
-	 * @param user                          $user                  User object
-	 * @param user_loader                   $user_loader           User loader object
-	 * @param string                        $root_path             phpBB root path
-	 * @param string                        $php_ext               phpEx
+	 * @param config                        $config           Config object
+	 * @param ContainerInterface            $container        Service container interface
+	 * @param helper                        $helper           Controller helper object
+	 * @param language                      $language         Language user object
+	 * @param \skouat\ppde\actions\auth     $actions_auth     PPDE auth actions object
+	 * @param \skouat\ppde\actions\currency $actions_currency PPDE currency actions object
+	 * @param request                       $request          Request object
+	 * @param template                      $template         Template object
+	 * @param user                          $user             User object
+	 * @param user_loader                   $user_loader      User loader object
+	 * @param string                        $root_path        phpBB root path
+	 * @param string                        $php_ext          phpEx
 	 *
 	 * @access public
 	 */
@@ -58,8 +57,8 @@ class main_controller
 		ContainerInterface $container,
 		helper $helper,
 		language $language,
-		\skouat\ppde\actions\auth $ppde_actions_auth,
-		\skouat\ppde\actions\currency $ppde_actions_currency,
+		\skouat\ppde\actions\auth $actions_auth,
+		\skouat\ppde\actions\currency $actions_currency,
 		request $request,
 		template $template,
 		user $user,
@@ -72,8 +71,8 @@ class main_controller
 		$this->container = $container;
 		$this->helper = $helper;
 		$this->language = $language;
-		$this->ppde_actions_auth = $ppde_actions_auth;
-		$this->ppde_actions_currency = $ppde_actions_currency;
+		$this->actions_auth = $actions_auth;
+		$this->actions_currency = $actions_currency;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;

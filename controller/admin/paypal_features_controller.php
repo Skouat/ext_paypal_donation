@@ -153,6 +153,6 @@ class paypal_features_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));
-		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
+		$this->ppde_controller_main->actions_auth->set_guest_acl();
 	}
 }
