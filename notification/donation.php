@@ -3,27 +3,40 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
 namespace skouat\ppde\notification;
 
-/**
- * PayPal Donation notifications class
- * This class handles notifications for Admin received donation
- */
 abstract class donation extends \phpbb\notification\type\base
 {
-	/**
-	 * {@inheritdoc}
-	 */
-	public static $notification_option = [];
 	/** @var \phpbb\config\config */
 	protected $config;
+
 	/** @var \phpbb\user_loader */
 	protected $user_loader;
+
+	/**
+	 * Set config object
+	 *
+	 * @param \phpbb\config\config $config Config object
+	 */
+	public function set_config(\phpbb\config\config $config): void
+	{
+		$this->config = $config;
+	}
+
+	/**
+	 * Set user_loader object
+	 *
+	 * @param \phpbb\user_loader $user_loader User loader object
+	 */
+	public function set_user_loader(\phpbb\user_loader $user_loader): void
+	{
+		$this->user_loader = $user_loader;
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -50,19 +63,6 @@ abstract class donation extends \phpbb\notification\type\base
 		return '';
 	}
 
-	public function set_config(\phpbb\config\config $config)
-	{
-		$this->config = $config;
-	}
-
-	public function set_user_loader(\phpbb\user_loader $user_loader)
-	{
-		$this->user_loader = $user_loader;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function get_avatar()
 	{
 		return $this->user_loader->get_avatar($this->get_data('user_from'), false, true);

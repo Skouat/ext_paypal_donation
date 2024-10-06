@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -14,7 +14,7 @@ use skouat\ppde\notification\donation;
 
 /**
  * PayPal Donation notifications class
- * This class handles notifications for Admin received donation
+ * This class handles notifications for Admin received donation errors
  */
 class admin_donation_errors extends donation
 {
@@ -39,13 +39,12 @@ class admin_donation_errors extends donation
 	 */
 	public function is_available()
 	{
-		return ($this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable']);
+		return $this->auth->acl_get('a_ppde_manage') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable'];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-
 	public function get_title()
 	{
 		$username = $this->user_loader->get_username($this->get_data('user_from'), 'no_profile');
@@ -66,12 +65,9 @@ class admin_donation_errors extends donation
 	 */
 	public function get_email_template_variables()
 	{
-		return [
-			'PAYER_EMAIL'    => htmlspecialchars_decode($this->get_data('payer_email')),
-			'PAYER_USERNAME' => htmlspecialchars_decode($this->get_data('payer_username')),
-			'TXN_ERRORS'     => $this->get_data('txn_errors'),
-			'TXN_ID'         => $this->get_data('txn_id'),
-		];
+		$variables = parent::get_email_template_variables();
+		$variables['TXN_ERRORS'] = $this->get_data('txn_errors');
+		return $variables;
 	}
 
 	/**
@@ -79,12 +75,7 @@ class admin_donation_errors extends donation
 	 */
 	public function create_insert_array($data, $pre_create_data = [])
 	{
-		$this->set_data('payer_email', $data['payer_email']);
-		$this->set_data('payer_username', $data['payer_username']);
-		$this->set_data('transaction_id', $data['transaction_id']);
-		$this->set_data('txn_errors', $data['txn_errors']);
-		$this->set_data('txn_id', $data['txn_id']);
-
 		parent::create_insert_array($data, $pre_create_data);
+		$this->set_data('txn_errors', $data['txn_errors']);
 	}
 }

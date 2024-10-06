@@ -2,7 +2,6 @@ services:
     skouat.ppde.notification.core:
         class: skouat\ppde\notification\core
         arguments:
-            - '@service_container'
             - '@notification_manager'
             - '@skouat.ppde.actions.currency'
             - '@skouat.ppde.entity.transactions'

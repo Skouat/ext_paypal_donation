@@ -13,114 +13,114 @@ namespace skouat\ppde\notification;
 use phpbb\notification\manager;
 use skouat\ppde\actions\currency;
 use skouat\ppde\entity\transactions;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class core
 {
-	protected $notification;
-	protected $container;
-	protected $ppde_actions_currency;
-	protected $ppde_entity_transaction;
+	protected $notification_manager;
+	protected $actions_currency;
+	protected $entity_transaction;
 
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container               Service container interface
-	 * @param manager            $notification            Notification object
-	 * @param currency           $ppde_actions_currency   Currency actions object
-	 * @param transactions       $ppde_entity_transaction Transaction entity object
-	 * @access public
+	 * @param manager      $notification_manager Notification object
+	 * @param currency     $actions_currency     Currency actions object
+	 * @param transactions $entity_transaction   Transaction entity object
 	 */
 	public function __construct(
-		ContainerInterface $container,
-		manager $notification,
-		currency $ppde_actions_currency,
-		transactions $ppde_entity_transaction
+		manager $notification_manager,
+		currency $actions_currency,
+		transactions $entity_transaction
 	)
 	{
-		$this->container = $container;
-		$this->notification = $notification;
-		$this->ppde_actions_currency = $ppde_actions_currency;
-		$this->ppde_entity_transaction = $ppde_entity_transaction;
+		$this->notification_manager = $notification_manager;
+		$this->actions_currency = $actions_currency;
+		$this->entity_transaction = $entity_transaction;
 	}
 
 	/**
 	 * Notify admin when the donation contains errors
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function notify_donation_errors(): void
 	{
-		$notification_data = $this->notify_donation_core('donation_errors');
-		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_errors', $notification_data);
+		$this->send_notification('skouat.ppde.notification.type.admin_donation_errors', 'donation_errors');
 	}
 
 	/**
 	 * Notify admin when the donation is received
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function notify_admin_donation_received(): void
 	{
-		$notification_data = $this->notify_donation_core();
-		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_received', $notification_data);
+		$this->send_notification('skouat.ppde.notification.type.admin_donation_received');
 	}
 
 	/**
 	 * Notify donor when the donation is received
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function notify_donor_donation_received(): void
 	{
-		$notification_data = $this->notify_donation_core();
-		$this->notification->add_notifications('skouat.ppde.notification.type.donor_donation_received', $notification_data);
+		$this->send_notification('skouat.ppde.notification.type.donor_donation_received');
 	}
 
 	/**
-	 * Build Notification data
+	 * Send notification
+	 *
+	 * @param string $notification_type
+	 * @param string $donation_type
+	 */
+	private function send_notification(string $notification_type, string $donation_type = ''): void
+	{
+		$notification_data = $this->get_notification_data($donation_type);
+		$this->notification_manager->add_notifications($notification_type, $notification_data);
+	}
+
+	/**
+	 * Get notification data
 	 *
 	 * @param string $donation_type
-	 *
 	 * @return array
-	 * @access private
 	 */
-	private function notify_donation_core(string $donation_type = ''): array
+	private function get_notification_data(string $donation_type = ''): array
 	{
-		switch ($donation_type)
+		$notification_data = [
+			'transaction_id' => $this->entity_transaction->get_id(),
+			'txn_id'         => $this->entity_transaction->get_txn_id(),
+			'user_from'      => $this->entity_transaction->get_user_id(),
+			'payer_email'    => $this->entity_transaction->get_payer_email(),
+			'payer_username' => $this->entity_transaction->get_username(),
+		];
+
+		if ($donation_type === 'donation_errors')
 		{
-			case 'donation_errors':
-				$notification_data['txn_errors'] = $this->ppde_entity_transaction->get_txn_errors();
-			// No break
-			default:
-				// Set currency data properties
-				$this->ppde_actions_currency->set_currency_data_from_iso_code($this->ppde_entity_transaction->get_mc_currency());
-
-				// Format net amount data properties
-				if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
-				{
-					$this->ppde_actions_currency->set_currency_data_from_iso_code($this->ppde_entity_transaction->get_settle_currency());
-					$net_amount = $this->ppde_actions_currency->format_currency($settle_amount);
-				}
-				else
-				{
-					$net_amount = $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount());
-				}
-
-				$notification_data = [
-					'mc_gross'       => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_mc_gross()),
-					'net_amount'     => $net_amount,
-					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
-					'payer_username' => $this->ppde_entity_transaction->get_username(),
-					'transaction_id' => $this->ppde_entity_transaction->get_id(),
-					'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
-					'user_from'      => $this->ppde_entity_transaction->get_user_id(),
-				];
+			$notification_data['txn_errors'] = $this->entity_transaction->get_txn_errors();
+		}
+		else
+		{
+			$this->actions_currency->set_currency_data_from_iso_code($this->entity_transaction->get_mc_currency());
+			$notification_data['mc_gross'] = $this->actions_currency->format_currency($this->entity_transaction->get_mc_gross());
+			$notification_data['net_amount'] = $this->get_formatted_net_amount();
 		}
 
 		return $notification_data;
+	}
+
+	/**
+	 * Get formatted net amount
+	 *
+	 * @return string
+	 */
+	private function get_formatted_net_amount(): string
+	{
+		$settle_amount = $this->entity_transaction->get_settle_amount();
+		if ($settle_amount > 0)
+		{
+			$this->actions_currency->set_currency_data_from_iso_code($this->entity_transaction->get_settle_currency());
+		}
+		else
+		{
+			$settle_amount = $this->entity_transaction->get_net_amount();
+			$this->actions_currency->set_currency_data_from_iso_code($this->entity_transaction->get_mc_currency());
+		}
+		return $this->actions_currency->format_currency($settle_amount);
 	}
 }
