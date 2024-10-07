@@ -11,7 +11,9 @@
 namespace skouat\ppde\includes;
 
 use phpbb\language\language;
+use phpbb\request\request;
 use phpbb\user;
+use phpbb\user_loader;
 use skouat\ppde\exception\transaction_exception;
 
 class transaction_validator
@@ -22,19 +24,24 @@ class transaction_validator
 	/** @var user */
 	protected $user;
 
-	/** @var \phpbb\user_loader */
+	/** @var user_loader */
 	protected $user_loader;
+
+	/** @var request */
+	protected $request;
 
 	/**
 	 * Constructor
 	 *
-	 * @param language           $language
-	 * @param user               $user
-	 * @param \phpbb\user_loader $user_loader
+	 * @param language    $language
+	 * @param request     $request
+	 * @param user        $user
+	 * @param user_loader $user_loader
 	 */
-	public function __construct(language $language, user $user, \phpbb\user_loader $user_loader)
+	public function __construct(language $language, request $request, user $user, user_loader $user_loader)
 	{
 		$this->language = $language;
+		$this->request = $request;
 		$this->user = $user;
 		$this->user_loader = $user_loader;
 	}

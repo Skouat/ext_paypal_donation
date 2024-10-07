@@ -6,10 +6,14 @@ services:
             - '@language'
             - '@user'
             - '@skouat.ppde.actions.currency'
+            - '%core.adm_relative_path%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     skouat.ppde.includes.transaction_validator:
         class: skouat\ppde\includes\transaction_validator
         arguments:
             - '@language'
+            - '@request'
             - '@user'
             - '@user_loader'

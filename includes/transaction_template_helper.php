@@ -21,6 +21,8 @@ class transaction_template_helper
 	protected $language;
 	protected $template;
 	protected $user;
+	protected $phpbb_admin_path;
+	protected $php_ext;
 
 	/**
 	 * Constructor
@@ -29,13 +31,26 @@ class transaction_template_helper
 	 * @param language $language
 	 * @param user     $user
 	 * @param currency $actions_currency
+	 * @param string   $adm_relative_path
+	 * @param string   $phpbb_root_path
+	 * @param string   $php_ext
 	 */
-	public function __construct(template $template, language $language, user $user, currency $actions_currency)
+	public function __construct(
+		template $template,
+		language $language,
+		user $user,
+		currency $actions_currency,
+		string $adm_relative_path,
+		string $phpbb_root_path,
+		string $php_ext
+	)
 	{
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
 		$this->actions_currency = $actions_currency;
+		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
+		$this->php_ext = $php_ext;
 	}
 
 	/**

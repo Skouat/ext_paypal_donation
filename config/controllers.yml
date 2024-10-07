@@ -173,7 +173,6 @@ services:
             - '@request'
             - '@template'
             - '@user'
-            - '@user_loader'
             - '@skouat.ppde.includes.transaction_template_helper'
             - '@skouat.ppde.includes.transaction_validator'
             - '%core.adm_relative_path%'
