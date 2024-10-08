@@ -453,7 +453,7 @@ class transactions
 	 * @return array
 	 * @access public
 	 */
-	public function build_data_ary($data): array
+	public function build_transaction_data_ary($data): array
 	{
 		return [
 			'business'          => $data['business'],

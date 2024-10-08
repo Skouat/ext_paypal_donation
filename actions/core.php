@@ -18,41 +18,22 @@ use phpbb\user;
 
 class core
 {
-	/**
-	 * Services properties declaration
-	 */
 	public $notification;
+
 	protected $config;
 	protected $dispatcher;
 	protected $language;
 	protected $php_ext;
-	protected $ppde_entity_transaction;
-	protected $ppde_operator_transaction;
 	protected $transaction_data;
+	protected $transaction_entity;
+	protected $transaction_operator;
 	protected $user;
 
-	/**
-	 * @var boolean
-	 */
 	private $donor_is_member = false;
-	/**
-	 * @var boolean
-	 */
-	private $is_ipn_test = false;
-	/**
-	 * @var array
-	 */
-	private $payer_data = array();
-	/**
-	 * phpBB root path
-	 *
-	 * @var string
-	 */
-	private $root_path;
-	/**
-	 * @var string
-	 */
 	private $ipn_suffix;
+	private $is_ipn_test = false;
+	private $payer_data = array();
+	private $root_path;
 
 	/**
 	 * Constructor
@@ -78,14 +59,14 @@ class core
 		\skouat\ppde\operators\transactions $ppde_operator_transaction,
 		dispatcher_interface $dispatcher,
 		user $user,
-		$php_ext)
+		string $php_ext)
 	{
 		$this->config = $config;
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->notification = $notification;
-		$this->ppde_entity_transaction = $ppde_entity_transaction;
-		$this->ppde_operator_transaction = $ppde_operator_transaction;
+		$this->transaction_entity = $ppde_entity_transaction;
+		$this->transaction_operator = $ppde_operator_transaction;
 		$this->php_ext = $php_ext;
 		$this->root_path = $path_helper->get_phpbb_root_path();
 		$this->user = $user;
@@ -99,7 +80,7 @@ class core
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_test): void
+	public function set_ipn_test_properties(bool $ipn_test): void
 	{
 		$this->set_ipn_test($ipn_test);
 		$this->set_ipn_suffix();
@@ -199,7 +180,7 @@ class core
 	 */
 	private function check_donors_status($type, $args): bool
 	{
-		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
+		$this->payer_data = $this->transaction_operator->query_donor_user_data($type, $args);
 
 		return (bool) count((array) $this->payer_data);
 	}
@@ -240,7 +221,7 @@ class core
 	{
 		$this->set_transaction_data($data);
 		$this->validate_and_set_transaction_data();
-		$this->ppde_entity_transaction->add_edit_data();
+		$this->transaction_entity->add_edit_data();
 	}
 
 	/**
@@ -278,8 +259,8 @@ class core
 		$this->validate_user_id();
 
 		// Set username in extra_data property in $entity
-		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
-		$this->ppde_entity_transaction->set_username($user_ary['username']);
+		$user_ary = $this->transaction_operator->query_donor_user_data('user', $this->transaction_data['user_id']);
+		$this->transaction_entity->set_username($user_ary['username']);
 
 		// Set 'net_amount' in $this->transaction_data
 		$this->transaction_data['net_amount'] = $this->net_amount(
@@ -287,11 +268,11 @@ class core
 			$this->transaction_data['mc_fee']
 		);
 
-		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
+		$data = $this->transaction_operator->build_transaction_data_ary($this->transaction_data);
 
 		// Load data in the entity
-		$this->ppde_entity_transaction->set_entity_data($data);
-		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
+		$this->transaction_entity->set_entity_data($data);
+		$this->transaction_entity->set_id($this->transaction_entity->transaction_exists());
 	}
 
 	/**
@@ -392,7 +373,7 @@ class core
 			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
-		return $this->ppde_operator_transaction->sql_query_count_result($config_name, $this->is_ipn_test);
+		return $this->transaction_operator->sql_query_count_result($config_name, $this->is_ipn_test);
 	}
 
 	/**
@@ -438,7 +419,7 @@ class core
 			trigger_error($this->language->lang('EXCEPTION_INVALID_USER_ID', $user_id), E_USER_WARNING);
 		}
 
-		$this->ppde_operator_transaction->sql_update_user_stats($user_id, $amount);
+		$this->transaction_operator->sql_update_user_stats($user_id, $amount);
 	}
 
 	/**
