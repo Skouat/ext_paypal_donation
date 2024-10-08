@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -14,7 +14,6 @@ use phpbb\db\driver\driver_interface;
 
 class transactions
 {
-	protected $container;
 	protected $db;
 	protected $ppde_transactions_log_table;
 
@@ -23,26 +22,21 @@ class transactions
 	 *
 	 * @param driver_interface $db                          Database connection
 	 * @param string           $ppde_transactions_log_table Table name
-	 *
-	 * @access public
 	 */
-	public function __construct(driver_interface $db, $ppde_transactions_log_table)
+	public function __construct(driver_interface $db, string $ppde_transactions_log_table)
 	{
 		$this->db = $db;
 		$this->ppde_transactions_log_table = $ppde_transactions_log_table;
 	}
 
 	/**
-	 * SQL Query to return Transaction log data table
+	 * Builds SQL Query to return Transaction log data
 	 *
-	 * @param $transaction_id
-	 *
-	 * @return string
-	 * @access public
+	 * @param int $transaction_id ID of the transaction to fetch (0 for all transactions)
+	 * @return string SQL query string
 	 */
-	public function build_sql_data($transaction_id = 0): string
+	public function build_sql_data(int $transaction_id = 0): string
 	{
-		// Build main sql request
 		$sql_ary = [
 			'SELECT'    => 'txn.*, u.username, u.user_colour',
 			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
@@ -52,8 +46,8 @@ class transactions
 					'ON'   => 'u.user_id = txn.user_id',
 				],
 			],
+			'WHERE'     => $transaction_id ? 'txn.transaction_id = ' . $transaction_id : '',
 			'ORDER_BY'  => 'txn.transaction_id',
-			'WHERE'     => ($transaction_id ? 'txn.transaction_id = ' . (int) $transaction_id : ''),
 		];
 
 		// Return all transactions entities
@@ -61,15 +55,13 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to count how many donated
+	 * Builds SQL Query array for donor list
 	 *
-	 * @param bool   $detailed
-	 * @param string $order_by
-	 *
-	 * @return array
-	 * @access public
+	 * @param bool   $detailed Whether to include detailed information
+	 * @param string $order_by SQL ORDER BY clause
+	 * @return array SQL query array
 	 */
-	public function sql_donorlist_ary($detailed = false, $order_by = ''): array
+	public function sql_donorlist_ary(bool $detailed = false, string $order_by = ''): array
 	{
 		// Build sql request
 		$sql_donorslist_ary = [
@@ -96,47 +88,39 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to return information of the last donation of the donor
+	 * Builds SQL Query array for the last donation of a donor
 	 *
-	 * @param int $transaction_id
-	 *
-	 * @return array
-	 * @access public
+	 * @param int $transaction_id ID of the transaction
+	 * @return array SQL query array
 	 */
-	public function sql_last_donation_ary($transaction_id): array
+	public function sql_last_donation_ary(int $transaction_id): array
 	{
-		// Build sql request
 		return [
 			'SELECT' => 'txn.payment_date, txn.mc_gross, txn.mc_currency',
 			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
-			'WHERE'  => 'txn.transaction_id = ' . (int) $transaction_id,
+			'WHERE'  => 'txn.transaction_id = ' . $transaction_id,
 		];
 	}
 
 	/**
-	 * Build SQL Query to return the donors list
+	 * Builds SQL Query to return the donors list
 	 *
-	 * @param array $sql_donorlist_ary
-	 *
-	 * @return string
-	 * @access public
+	 * @param array $sql_donorlist_ary SQL query array
+	 * @return string SQL query string
 	 */
-	public function build_sql_donorlist_data($sql_donorlist_ary): string
+	public function build_sql_donorlist_data(array $sql_donorlist_ary): string
 	{
-		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_donorlist_ary);
 	}
 
 	/**
-	 * Returns total entries of selected field
+	 * Executes a COUNT query and returns the result
 	 *
-	 * @param array  $count_sql_ary
-	 * @param string $selected_field
-	 *
-	 * @return int
-	 * @access public
+	 * @param array  $count_sql_ary  SQL query array
+	 * @param string $selected_field Field to count
+	 * @return int Count result
 	 */
-	public function query_sql_count($count_sql_ary, $selected_field): int
+	public function query_sql_count(array $count_sql_ary, string $selected_field): int
 	{
 		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
 
@@ -146,33 +130,27 @@ class transactions
 		}
 		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
 
-		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $count_sql_ary));
-		$field = (int) $this->db->sql_fetchfield('total_entries');
+		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+		$result = $this->db->sql_query($sql);
+		$count = (int) $this->db->sql_fetchfield('total_entries');
 		$this->db->sql_freeresult($result);
 
-		return $field;
+		return $count;
 	}
 
 	/**
-	 * Returns the SQL Query for displaying simple transactions details
+	 * Builds SQL Query array for displaying simple transactions details
 	 *
-	 * @param string $keywords
-	 * @param string $sort_by
-	 * @param int    $log_time
-	 *
-	 * @return array
-	 * @access public
+	 * @param string $keywords Search keywords
+	 * @param string $sort_by  SQL ORDER BY clause
+	 * @param int    $log_time Timestamp to filter logs
+	 * @return array SQL query array
 	 */
-	public function get_logs_sql_ary($keywords, $sort_by, $log_time): array
+	public function get_logs_sql_ary(string $keywords, string $sort_by, int $log_time): array
 	{
-		$sql_keywords = '';
-		if (!empty($keywords))
-		{
-			// Get the SQL condition for our keywords
-			$sql_keywords = $this->generate_sql_keyword($keywords);
-		}
+		$sql_keywords = $this->generate_sql_keyword($keywords);
 
-		$get_logs_sql_ary = [
+		$sql_ary = [
 			'SELECT'   => 'txn.transaction_id, txn.txn_id, txn.test_ipn, txn.confirmed, txn.txn_errors, txn.payment_date, txn.payment_status, txn.user_id, u.username, u.user_colour',
 			'FROM'     => [
 				$this->ppde_transactions_log_table => 'txn',
@@ -184,84 +162,96 @@ class transactions
 
 		if ($log_time)
 		{
-			$get_logs_sql_ary['WHERE'] = 'txn.payment_date >= ' . (int) $log_time . '
-					AND ' . $get_logs_sql_ary['WHERE'];
+			$sql_ary['WHERE'] = 'txn.payment_date >= ' . (int) $log_time . ' AND ' . $sql_ary['WHERE'];
 		}
 
-		return $get_logs_sql_ary;
+		return $sql_ary;
 	}
 
 	/**
-	 * Generates a sql condition for the specified keywords
+	 * Generates SQL condition for the specified keywords
 	 *
 	 * @param string $keywords           The keywords the user specified to search for
-	 * @param string $statement_operator The operator used to prefix the statement ('AND' by default)
-	 *
-	 * @return string Returns the SQL condition searching for the keywords
-	 * @access private
+	 * @param string $statement_operator SQL operator to use ('AND' by default)
+	 * @return string SQL condition string
 	 */
-	private function generate_sql_keyword($keywords, $statement_operator = 'AND'): string
+	private function generate_sql_keyword(string $keywords, string $statement_operator = 'AND'): string
 	{
 		// Use no preg_quote for $keywords because this would lead to sole
 		// backslashes being added. We also use an OR connection here for
 		// spaces and the | string. Currently, regex is not supported for
 		// searching (but may come later).
 		$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
-		$sql_keywords = '';
-
-		if (!empty($keywords))
+		if (empty($keywords))
 		{
-			// Build pattern and keywords...
-			$keywords = array_map(function ($keyword) {
-				return $this->db->sql_like_expression($this->db->get_any_char() . $keyword . $this->db->get_any_char());
-			}, $keywords);
-
-			$sql_keywords = ' ' . $statement_operator . ' (';
-			$columns = ['txn.txn_id', 'u.username'];
-			$sql_lowers = array();
-
-			foreach ($columns as $column_name)
-			{
-				$sql_lower = $this->db->sql_lower_text($column_name);
-				$sql_lowers[] = $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords);
-			}
-			unset($columns);
-
-			$sql_keywords .= implode(' OR ', $sql_lowers) . ')';
+			return '';
 		}
+
+		// Build pattern and keywords...
+		$keywords = array_map(function ($keyword) {
+			return $this->db->sql_like_expression($this->db->get_any_char() . $keyword . $this->db->get_any_char());
+		}, $keywords);
+
+		$sql_keywords = ' ' . $statement_operator . ' (';
+		$columns = ['txn.txn_id', 'u.username'];
+
+		$sql_clauses = [];
+		foreach ($columns as $column_name)
+		{
+			$sql_lower = $this->db->sql_lower_text($column_name);
+			$sql_clauses[] = $sql_lower . ' ' . implode(' OR ' . $sql_lower . ' ', $keywords);
+		}
+
+		$sql_keywords .= implode(' OR ', $sql_clauses) . ')';
 
 		return $sql_keywords;
 	}
 
 	/**
-	 * Returns user information based on the donor ID or email
+	 * Retrieves user information based on the donor ID or email
 	 *
-	 * @param string     $type
-	 * @param int|string $arg
-	 *
-	 * @return array|bool
-	 * @access public
+	 * @param string     $type Type of identifier ('user', 'username', or 'email')
+	 * @param int|string $arg  Identifier value
+	 * @return array User data
 	 */
-	public function query_donor_user_data($type = 'user', $arg = 1)
+	public function query_donor_user_data(string $type = 'user', $arg = 1): array
 	{
-		$sql_where = '';
+		$sql_where = $this->build_donor_where_clause($type, $arg);
+		return $this->fetch_donor_data($sql_where);
+	}
 
+	/**
+	 * Builds SQL WHERE clause for donor query
+	 *
+	 * @param string $type Type of identifier
+	 * @param mixed  $arg  Identifier value
+	 * @return string SQL WHERE clause
+	 */
+	private function build_donor_where_clause(string $type, $arg): string
+	{
 		switch ($type)
 		{
 			case 'user':
-				$sql_where = ' WHERE user_id = ' . (int) $arg;
-			break;
+				return ' WHERE user_id = ' . (int) $arg;
 			case 'username':
-				$sql_where = " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
-			break;
+				return " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
 			case 'email':
-				$sql_where = " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
-			break;
+				return " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
+			default:
+				return '';
 		}
+	}
 
+	/**
+	 * Fetches donor data from the database
+	 *
+	 * @param string $sql_where SQL WHERE clause
+	 * @return array Donor data
+	 */
+	private function fetch_donor_data(string $sql_where): array
+	{
 		$sql = 'SELECT user_id, username, user_ppde_donated_amount
-			FROM ' . USERS_TABLE .
-			$sql_where;
+			FROM ' . USERS_TABLE . $sql_where;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -270,17 +260,15 @@ class transactions
 	}
 
 	/**
-	 * Returns simple details of all PayPal transactions logged in the database
+	 * Builds log entries for PayPal transactions
 	 *
-	 * @param array $get_logs_sql_ary
-	 * @param array $url_ary
-	 * @param int   $limit
-	 * @param int   $last_page_offset
-	 *
-	 * @return array $log
-	 * @access public
+	 * @param array $get_logs_sql_ary SQL query array
+	 * @param array $url_ary          Array of URLs for building links
+	 * @param int   $limit            Maximum number of entries to return
+	 * @param int   $last_page_offset Offset for pagination
+	 * @return array Log entries
 	 */
-	public function build_log_entries($get_logs_sql_ary, $url_ary, $limit = 0, $last_page_offset = 0): array
+	public function build_log_entries(array $get_logs_sql_ary, array $url_ary, int $limit = 0, int $last_page_offset = 0): array
 	{
 		$sql = $this->db->sql_build_query('SELECT', $get_logs_sql_ary);
 		$result = $this->db->sql_query_limit($sql, $limit, $last_page_offset);
@@ -289,77 +277,77 @@ class transactions
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$log_entries[] = [
-				'confirmed'      => $row['confirmed'],
-				'payment_date'   => $row['payment_date'],
-				'payment_status' => $row['payment_status'],
-				'test_ipn'       => $row['test_ipn'],
-				'transaction_id' => $row['transaction_id'],
-				'txn_errors'     => $row['txn_errors'],
-				'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
-				'username_full'  => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $url_ary['profile_url']),
-			];
+			$log_entries[] = $this->build_log_entry($row, $url_ary);
 		}
-
 		$this->db->sql_freeresult($result);
 
 		return $log_entries;
 	}
 
 	/**
-	 * Build transaction url for placing into templates.
+	 * Builds a single log entry
 	 *
-	 * @param int    $id         The user's transaction id
-	 * @param string $txn_id     The txn number id
-	 * @param string $custom_url optional parameter to specify a profile url. The transaction id get appended to this
-	 *                           url as &amp;id={id}
-	 * @param bool   $colour     If false, the color #FF0000 will be applied on the URL.
-	 *
-	 * @return string A string consisting of what is wanted.
-	 * @access private
+	 * @param array $row     Database row data
+	 * @param array $url_ary Array of URLs for building links
+	 * @return array Formatted log entry
 	 */
-	private function build_transaction_url($id, $txn_id, $custom_url = '', $colour = false): string
+	private function build_log_entry(array $row, array $url_ary): array
 	{
-		// We cache some common variables we need within this function
-		$transaction_templates = [
-			'tpl_nourl'      => '{{ TRANSACTION }}',
-			'tpl_url'        => '<a href="{{ TXN_URL }}">{{ TRANSACTION }}</a>',
-			'tpl_url_colour' => '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>',
+		return [
+			'confirmed'      => $row['confirmed'],
+			'payment_date'   => $row['payment_date'],
+			'payment_status' => $row['payment_status'],
+			'test_ipn'       => $row['test_ipn'],
+			'transaction_id' => $row['transaction_id'],
+			'txn_errors'     => $row['txn_errors'],
+			'txn_id'         => $this->build_transaction_url($row['transaction_id'], $row['txn_id'], $url_ary['txn_url'], $row['confirmed']),
+			'username_full'  => get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], false, $url_ary['profile_url']),
 		];
-
-		// Returns the correct transaction url
-
-		if (!$txn_id)
-		{
-			return str_replace('{{ TRANSACTION }}', $txn_id, $transaction_templates['tpl_nourl']);
-		}
-
-		$txn_url = ($custom_url !== '') ? $custom_url . '&amp;action=view&amp;id=' . $id : $txn_id;
-		if ($colour)
-		{
-			return str_replace(
-				['{{ TXN_URL }}', '{{ TRANSACTION }}'],
-				[$txn_url, $txn_id],
-				$transaction_templates['tpl_url']
-			);
-		}
-		return str_replace(
-			['{{ TXN_URL }}', '{{ TXN_COLOUR }}', '{{ TRANSACTION }}'],
-			[$txn_url, 'color: #ff0000;', $txn_id],
-			$transaction_templates['tpl_url_colour']
-		);
 	}
 
 	/**
-	 * Builds the SQL WHERE clause for marked transactions.
+	 * Builds transaction URL for templates
 	 *
-	 * @param array $marked The array of marked transaction IDs.
-	 *
-	 * @return string The SQL WHERE clause.
+	 * @param int    $id         Transaction ID
+	 * @param string $txn_id     PayPal transaction ID
+	 * @param string $custom_url Custom URL (optional)
+	 * @param bool   $colour     Whether to apply color to the URL
+	 * @return string Formatted transaction URL or plain transaction ID
 	 */
-	public function build_marked_where_sql($marked): string
+	private function build_transaction_url(int $id, string $txn_id, string $custom_url = '', bool $colour = false): string
 	{
-		if (!is_array($marked) || empty($marked))
+		if (empty($custom_url))
+		{
+			return $txn_id;
+		}
+
+		$txn_url = $custom_url . '&amp;action=view&amp;id=' . $id;
+		return $this->format_transaction_link($txn_url, $txn_id, $colour);
+	}
+
+	/**
+	 * Formats the transaction link
+	 *
+	 * @param string $txn_url Transaction URL
+	 * @param string $txn_id  PayPal transaction ID
+	 * @param bool   $colour  Whether to apply color to the URL
+	 * @return string Formatted transaction link
+	 */
+	private function format_transaction_link(string $txn_url, string $txn_id, bool $colour): string
+	{
+		$style = $colour ? '' : ' style="color: #ff0000;"';
+		return sprintf('<a href="%s"%s>%s</a>', $txn_url, $style, $txn_id);
+	}
+
+	/**
+	 * Builds SQL WHERE clause for marked transactions
+	 *
+	 * @param array $marked Array of marked transaction IDs
+	 * @return string SQL WHERE clause
+	 */
+	public function build_marked_where_sql(array $marked): string
+	{
+		if (empty($marked))
 		{
 			return '';
 		}
@@ -368,44 +356,22 @@ class transactions
 	}
 
 	/**
-	 * Returns the count result for updating stats
+	 * Executes a query to count results for updating stats
 	 *
-	 * @param string $type     The type of query to be executed.
-	 * @param bool   $test_ipn The value indicating whether to use test IPN.
-	 *
-	 * @return int
-	 * @access public
+	 * @param string $type     Type of count query
+	 * @param bool   $test_ipn Whether to include test IPNs
+	 * @return int Count result
 	 */
 	public function sql_query_count_result(string $type, bool $test_ipn): int
 	{
-		$is_transactions_count = strpos($type, 'transactions_count') !== false;
-		$is_known_donors_count = strpos($type, 'known_donors_count') !== false;
-		$is_anonymous_donors_count = strpos($type, 'anonymous_donors_count') !== false;
-
-		$field_name = $is_transactions_count ? 'txn_id' : 'payer_id';
+		$field_name = strpos($type, 'transactions_count') !== false ? 'txn_id' : 'payer_id';
 		$sql_ary = $this->sql_select_stats_main($field_name);
 		$test_ipn_str = (int) $test_ipn;
 
-		if ($is_transactions_count)
-		{
-			$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . $test_ipn_str;
-		}
-		else if ($is_known_donors_count)
-		{
-			$sql_ary['LEFT_JOIN'] = [
-				[
-					'FROM' => [USERS_TABLE => 'u'],
-					'ON'   => 'txn.user_id = u.user_id',
-				],
-			];
-			$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . $test_ipn_str;
-		}
-		else if ($is_anonymous_donors_count)
-		{
-			$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . $test_ipn_str;
-		}
+		$this->add_where_clause($sql_ary, $type, $test_ipn_str);
 
-		$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql_ary));
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
 		$count = (int) $this->db->sql_fetchfield('count_result');
 		$this->db->sql_freeresult($result);
 
@@ -413,12 +379,10 @@ class transactions
 	}
 
 	/**
-	 * Make body of SQL query for stats calculation.
+	 * Builds base SQL query array for stats calculation
 	 *
-	 * @param string $field_name Name of the field
-	 *
-	 * @return array
-	 * @access private
+	 * @param string $field_name Name of the field to count
+	 * @return array SQL query array
 	 */
 	private function sql_select_stats_main(string $field_name): array
 	{
@@ -429,31 +393,55 @@ class transactions
 	}
 
 	/**
-	 * Updates the user donated amount
+	 * Adds WHERE clause to the SQL query array for stats calculation
 	 *
-	 * @param int    $user_id
-	 * @param string $value
-	 *
-	 * @return void
-	 * @access public
+	 * @param array  &$sql_ary      SQL query array (passed by reference)
+	 * @param string  $type         Type of count query
+	 * @param int     $test_ipn_str Test IPN flag (as integer)
 	 */
-	public function sql_update_user_stats($user_id, $value): void
+	private function add_where_clause(array &$sql_ary, string $type, int $test_ipn_str): void
+	{
+		if (strpos($type, 'transactions_count') !== false)
+		{
+			$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . $test_ipn_str;
+		}
+		else if (strpos($type, 'known_donors_count') !== false)
+		{
+			$sql_ary['LEFT_JOIN'] = [
+				[
+					'FROM' => [USERS_TABLE => 'u'],
+					'ON'   => 'txn.user_id = u.user_id',
+				],
+			];
+			$sql_ary['WHERE'] = '(u.user_type = ' . USER_NORMAL . ' OR u.user_type = ' . USER_FOUNDER . ') AND txn.test_ipn = ' . $test_ipn_str;
+		}
+		else if (strpos($type, 'anonymous_donors_count') !== false)
+		{
+			$sql_ary['WHERE'] = 'txn.user_id = ' . ANONYMOUS . ' AND txn.test_ipn = ' . $test_ipn_str;
+		}
+	}
+
+	/**
+	 * Updates the user's donated amount
+	 *
+	 * @param int   $user_id User ID
+	 * @param float $value   New donated amount
+	 */
+	public function sql_update_user_stats(int $user_id, float $value): void
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . '
-			SET user_ppde_donated_amount = ' . (float) $value . '
-			WHERE user_id = ' . (int) $user_id;
+			SET user_ppde_donated_amount = ' . $value . '
+			WHERE user_id = ' . $user_id;
 		$this->db->sql_query($sql);
 	}
 
 	/**
-	 * Prepare data array before send it to $entity
+	 * Prepares transaction data array for entity
 	 *
-	 * @param array $data
-	 *
-	 * @return array
-	 * @access public
+	 * @param array $data Raw transaction data
+	 * @return array Formatted transaction data
 	 */
-	public function build_transaction_data_ary($data): array
+	public function build_transaction_data_ary(array $data): array
 	{
 		return [
 			'business'          => $data['business'],

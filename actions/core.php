@@ -182,7 +182,7 @@ class core
 	{
 		$this->payer_data = $this->transaction_operator->query_donor_user_data($type, $args);
 
-		return (bool) count((array) $this->payer_data);
+		return (bool) count($this->payer_data);
 	}
 
 	/**
