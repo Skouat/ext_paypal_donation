@@ -20,22 +20,22 @@ use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\locale_icu;
 use skouat\ppde\controller\extension_manager;
-use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\controller\esi_controller;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config     config              Config object
- * @property string     id_prefix_name      Prefix name for identifier in the URL
- * @property string     lang_key_prefix     Prefix for the messages thrown by exceptions
- * @property language   language            Language user object
- * @property log        log                 The phpBB log system
- * @property string     module_name         Name of the module currently used
- * @property locale_icu ppde_actions_locale PPDE Locale actions object
- * @property ipn_paypal ppde_ipn_paypal     IPN PayPal object
- * @property request    request             Request object
- * @property template   template            Template object
- * @property string     u_action            Action URL
- * @property user       user                User object
+ * @property config         config              Config object
+ * @property string         id_prefix_name      Prefix name for identifier in the URL
+ * @property string         lang_key_prefix     Prefix for the messages thrown by exceptions
+ * @property language       language            Language user object
+ * @property log            log                 The phpBB log system
+ * @property string         module_name         Name of the module currently used
+ * @property locale_icu     ppde_actions_locale PPDE Locale actions object
+ * @property esi_controller esi_controller      IPN PayPal object
+ * @property request        request             Request object
+ * @property template       template            Template object
+ * @property string         u_action            Action URL
+ * @property user           user                User object
  */
 class overview_controller extends admin_main
 {
@@ -61,7 +61,7 @@ class overview_controller extends admin_main
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
-	 * @param ipn_paypal              $ppde_ipn_paypal              IPN PayPal object
+	 * @param esi_controller          $esi_controller              IPN PayPal object
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
 	 * @param user                    $user                         User object
@@ -81,7 +81,7 @@ class overview_controller extends admin_main
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions,
 		extension_manager $ppde_ext_manager,
-		ipn_paypal $ppde_ipn_paypal,
+		esi_controller $esi_controller,
 		request $request,
 		template $template,
 		user $user,
@@ -99,7 +99,7 @@ class overview_controller extends admin_main
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->ppde_ext_manager = $ppde_ext_manager;
-		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
+		$this->esi_controller = $esi_controller;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -230,7 +230,7 @@ class overview_controller extends admin_main
 
 	private function prepare_template_vars($ext_meta): array
 	{
-		return array(
+		return [
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
@@ -252,7 +252,7 @@ class overview_controller extends admin_main
 			'STATS_TRANSACTIONS_PER_DAY'     => $this->per_day_stats('ppde_transactions_count'),
 			'U_PPDE_MORE_INFORMATION'        => append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=acp_extensions&amp;mode=main&amp;action=details&amp;ext_name=' . urlencode($ext_meta['name'])),
 			'U_ACTION'                       => $this->u_action,
-		);
+		];
 	}
 
 	/**

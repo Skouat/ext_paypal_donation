@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  * Special Thanks to the following individuals for their inspiration:
@@ -38,7 +38,6 @@ class ipn_paypal
 
 	protected $config;
 	protected $language;
-	protected $ppde_ext_manager;
 	protected $ppde_ipn_log;
 	protected $request;
 	/**
@@ -80,7 +79,6 @@ class ipn_paypal
 	 *
 	 * @param config            $config           Config object
 	 * @param language          $language         Language user object
-	 * @param extension_manager $ppde_ext_manager Extension manager object
 	 * @param ipn_log           $ppde_ipn_log     IPN log
 	 * @param request           $request          Request object
 	 *
@@ -89,14 +87,12 @@ class ipn_paypal
 	public function __construct(
 		config $config,
 		language $language,
-		extension_manager $ppde_ext_manager,
 		ipn_log $ppde_ipn_log,
 		request $request
 	)
 	{
 		$this->config = $config;
 		$this->language = $language;
-		$this->ppde_ext_manager = $ppde_ext_manager;
 		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
 	}
@@ -207,7 +203,7 @@ class ipn_paypal
 	 * @param resource $ch       The cURL handle used to make the API call.
 	 * @return void
 	 */
-	private function valuate_response($response, $ch)
+	private function valuate_response($response, $ch): void
 	{
 		$this->report_response = $response;
 		if (curl_errno($ch) != 0)
@@ -337,7 +333,7 @@ class ipn_paypal
 	}
 
 	/**
-	 * If cURL is available we use strcmp() to get the Pay
+	 * If cURL is available we use strcmp() to get the PayPal response
 	 *
 	 * @param string $arg
 	 *
@@ -347,132 +343,6 @@ class ipn_paypal
 	public function is_curl_strcmp($arg): bool
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
-	}
-
-	/**
-	 * Check TLS configuration.
-	 *
-	 * This method checks the TLS configuration using a CURL request to a specified TLS host.
-	 * If the TLS version matches one of the allowed versions, it sets the 'ppde_tls_detected' config value to true.
-	 * Otherwise, it sets it to false.
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function check_tls(): void
-	{
-		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-
-		// Reset settings to false
-		$this->config->set('ppde_tls_detected', false);
-		$this->response = '';
-
-		$this->check_curl($ext_meta['extra']['security-check']['tls']['tls-host']);
-
-		// Analyse response
-		$json = json_decode($this->response);
-
-		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version'], true))
-		{
-			$this->config->set('ppde_tls_detected', true);
-		}
-	}
-
-	/**
-	 * Set the remote detected value.
-	 *
-	 * This method retrieves the extension metadata using the PPDE Extension Manager
-	 * and checks if curl is detected on the remote server. It then sets the value
-	 * of 'ppde_curl_detected' in the configuration based on the check result.
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_remote_detected(): void
-	{
-		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-		$this->config->set('ppde_curl_detected', $this->check_curl($ext_meta['extra']['version-check']['host']));
-	}
-
-	/**
-	 * Check if cURL is available
-	 *
-	 * @param string $host
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function check_curl($host): bool
-	{
-		if ($this->is_curl_available())
-		{
-			return $this->execute_curl_request($host);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Check if cURL is available.
-	 *
-	 * @return bool Returns true if cURL is available, false otherwise.
-	 */
-	private function is_curl_available(): bool
-	{
-		return extension_loaded('curl') && function_exists('curl_init');
-	}
-
-	/**
-	 * Execute a cURL request.
-	 *
-	 * @param string $host The host to send the cURL request to.
-	 *
-	 * @return bool Returns true if the cURL request is successful or false otherwise.
-	 */
-	private function execute_curl_request(string $host): bool
-	{
-		$ch = curl_init($host);
-
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		$this->response = curl_exec($ch);
-		$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-		curl_close($ch);
-
-		return $this->response !== false || $this->response_status !== '0';
-	}
-
-	/**
-	 * Set config value for cURL version
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_curl_info(): void
-	{
-		// Get cURL version informations
-		if ($curl_info = $this->check_curl_info())
-		{
-			$this->config->set('ppde_curl_version', $curl_info['version']);
-			$this->config->set('ppde_curl_ssl_version', $curl_info['ssl_version']);
-		}
-	}
-
-	/**
-	 * Get cURL version if available
-	 *
-	 * @return array|bool
-	 * @access public
-	 */
-	public function check_curl_info()
-	{
-		if (function_exists('curl_version'))
-		{
-			return curl_version();
-		}
-
-		return false;
 	}
 
 	/**

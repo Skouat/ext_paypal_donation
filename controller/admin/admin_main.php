@@ -10,6 +10,7 @@
 
 namespace skouat\ppde\controller\admin;
 
+use skouat\ppde\controller\esi_controller;
 use skouat\ppde\controller\ipn_paypal;
 
 abstract class admin_main
@@ -34,8 +35,8 @@ abstract class admin_main
 	protected $module_name;
 	/** @var \skouat\ppde\actions\locale_icu */
 	protected $ppde_actions_locale;
-	/** @var ipn_paypal */
-	protected $ppde_ipn_paypal;
+	/** @var esi_controller */
+	protected $esi_controller;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -490,7 +491,7 @@ abstract class admin_main
 	 * @return mixed
 	 * @access protected
 	 */
-	protected function check_config($config, $type = 'boolean', $default = '')
+	protected function check_config($config, string $type = 'boolean', $default = '')
 	{
 		// We're using settype to enforce data types
 		settype($config, $type);
@@ -529,9 +530,9 @@ abstract class admin_main
 	{
 		if ($this->config['ppde_first_start'])
 		{
-			$this->ppde_ipn_paypal->set_curl_info();
-			$this->ppde_ipn_paypal->set_remote_detected();
-			$this->ppde_ipn_paypal->check_tls();
+			$this->esi_controller->set_curl_info();
+			$this->esi_controller->set_remote_detected();
+			$this->esi_controller->check_tls();
 			$this->ppde_actions_locale->set_intl_info();
 			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');

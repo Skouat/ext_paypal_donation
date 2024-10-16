@@ -1,4 +1,10 @@
 services:
+    skouat.ppde.esi:
+        class: skouat\ppde\controller\esi_controller
+        arguments:
+            - '@config'
+            - '@skouat.ppde.extension_manager'
+
     skouat.ppde.extension_manager:
         class: skouat\ppde\controller\extension_manager
         arguments:
@@ -38,7 +44,6 @@ services:
         arguments:
             - '@config'
             - '@language'
-            - '@skouat.ppde.extension_manager'
             - '@skouat.ppde.ipn_log'
             - '@request'
 
@@ -125,7 +130,7 @@ services:
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'
-            - '@skouat.ppde.ipn_paypal'
+            - '@skouat.ppde.esi'
             - '@request'
             - '@template'
             - '@user'
@@ -153,7 +158,7 @@ services:
             - '@language'
             - '@log'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.ipn_paypal'
+            - '@skouat.ppde.esi'
             - '@request'
             - '@template'
             - '@user'

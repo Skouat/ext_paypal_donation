@@ -16,22 +16,22 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\controller\ipn_paypal;
+use skouat\ppde\controller\esi_controller;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config     config          Config object
- * @property string     id_prefix_name  Prefix name for identifier in the URL
- * @property string     lang_key_prefix Prefix for the messages thrown by exceptions
- * @property language   language        Language object
- * @property log        log             The phpBB log system
- * @property string     module_name     Name of the module currently used
- * @property ipn_paypal ppde_ipn_paypal IPN PayPal object
- * @property request    request         Request object
- * @property bool       submit          State of submit $_POST variable
- * @property template   template        Template object
- * @property string     u_action        Action URL
- * @property user       user            User object
+ * @property config         config          Config object
+ * @property string         id_prefix_name  Prefix name for identifier in the URL
+ * @property string         lang_key_prefix Prefix for the messages thrown by exceptions
+ * @property language       language        Language object
+ * @property log            log             The phpBB log system
+ * @property string         module_name     Name of the module currently used
+ * @property esi_controller esi_controller  Extension System Information object
+ * @property request        request         Request object
+ * @property bool           submit          State of submit $_POST variable
+ * @property template       template        Template object
+ * @property string         u_action        Action URL
+ * @property user           user            User object
  */
 class paypal_features_controller extends admin_main
 {
@@ -44,7 +44,7 @@ class paypal_features_controller extends admin_main
 	 * @param language        $language             Language object
 	 * @param log             $log                  The phpBB log system
 	 * @param main_controller $ppde_controller_main Main controller object
-	 * @param ipn_paypal      $ppde_ipn_paypal      IPN PayPal object
+	 * @param esi_controller  $esi_controller       Extension System Information object
 	 * @param request         $request              Request object
 	 * @param template        $template             Template object
 	 * @param user            $user                 User object
@@ -56,7 +56,7 @@ class paypal_features_controller extends admin_main
 		language $language,
 		log $log,
 		main_controller $ppde_controller_main,
-		ipn_paypal $ppde_ipn_paypal,
+		esi_controller $esi_controller,
 		request $request,
 		template $template,
 		user $user
@@ -66,7 +66,7 @@ class paypal_features_controller extends admin_main
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
-		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
+		$this->esi_controller = $esi_controller;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -142,9 +142,9 @@ class paypal_features_controller extends admin_main
 		$this->config->set('ppde_sandbox_remote', $this->request->variable('ppde_sandbox_remote', 1));
 
 		// Set misc settings
-		$this->ppde_ipn_paypal->set_curl_info();
-		$this->ppde_ipn_paypal->set_remote_detected();
-		$this->ppde_ipn_paypal->check_tls();
+		$this->esi_controller->set_curl_info();
+		$this->esi_controller->set_remote_detected();
+		$this->esi_controller->check_tls();
 		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
 		{
 			$this->config->set('ppde_ipn_enable', '');
