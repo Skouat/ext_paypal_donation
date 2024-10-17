@@ -436,6 +436,23 @@ class transactions
 	}
 
 	/**
+	 * Get sort options for transactions
+	 *
+	 * @return array An associative array of sort keys and their corresponding SQL column names
+	 */
+	public function get_sort_options(): array
+	{
+		return [
+			'txn'      => 'txn.txn_id',
+			'u'        => 'u.username_clean',
+			'ipn'      => 'txn.confirmed',
+			'ipn_test' => 'txn.test_ipn',
+			'ps'       => 'txn.payment_status',
+			't'        => 'txn.payment_date',
+		];
+	}
+
+	/**
 	 * Prepares transaction data array for entity
 	 *
 	 * @param array $data Raw transaction data

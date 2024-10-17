@@ -40,7 +40,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class transactions_controller extends admin_main
 {
-	public $ppde_operator;
+	protected $transactions_operator;
 	protected $adm_relative_path;
 	protected $auth;
 	protected $entry_count;
@@ -50,7 +50,7 @@ class transactions_controller extends admin_main
 	protected $phpbb_root_path;
 	protected $ppde_actions;
 	protected $ppde_actions_currency;
-	protected $ppde_entity;
+	protected $transactions_entity;
 	protected $template_helper;
 	protected $transaction_validator;
 
@@ -100,10 +100,10 @@ class transactions_controller extends admin_main
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
 		$this->ppde_actions_currency = $ppde_actions_currency;
-		$this->ppde_entity = $ppde_entity_transactions;
-		$this->ppde_operator = $ppde_operator_transactions;
 		$this->request = $request;
 		$this->template = $template;
+		$this->transactions_entity = $ppde_entity_transactions;
+		$this->transactions_operator = $ppde_operator_transactions;
 		$this->user = $user;
 		$this->template_helper = $template_helper;
 		$this->transaction_validator = $transaction_validator;
@@ -124,7 +124,7 @@ class transactions_controller extends admin_main
 	{
 		// Sorting and pagination setup
 		$sort_by_text = $this->get_sort_by_text_options();
-		$sort_by_sql = $this->get_sort_options();
+		$sort_by_sql = $this->transactions_operator->get_sort_options();
 		$sort_key = $this->request->variable('sk', 't');
 		$sort_dir = $this->request->variable('sd', 'd');
 		$start = $this->request->variable('start', 0);
@@ -172,23 +172,6 @@ class transactions_controller extends admin_main
 			'ipn_test' => $this->language->lang('PPDE_DT_SORT_IPN_TYPE'),
 			'ps'       => $this->language->lang('PPDE_DT_SORT_PAYMENT_STATUS'),
 			't'        => $this->language->lang('SORT_DATE'),
-		];
-	}
-
-	/**
-	 * Get sort options for transactions
-	 *
-	 * @return array An associative array of sort keys and their corresponding SQL column names
-	 */
-	private function get_sort_options(): array
-	{
-		return [
-			'txn'      => 'txn.txn_id',
-			'u'        => 'u.username_clean',
-			'ipn'      => 'txn.confirmed',
-			'ipn_test' => 'txn.test_ipn',
-			'ps'       => 'txn.payment_status',
-			't'        => 'txn.payment_date',
 		];
 	}
 
@@ -271,11 +254,11 @@ class transactions_controller extends admin_main
 			$url_ary['txn_url'] = '';
 		}
 
-		$get_logs_sql_ary = $this->ppde_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
+		$get_logs_sql_ary = $this->transactions_operator->get_logs_sql_ary($keywords, $sort_by, $log_time);
 
 		if ($count_logs)
 		{
-			$this->entry_count = $this->ppde_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
+			$this->entry_count = $this->transactions_operator->query_sql_count($get_logs_sql_ary, 'txn.transaction_id');
 
 			if ($this->entry_count === 0)
 			{
@@ -292,7 +275,7 @@ class transactions_controller extends admin_main
 			}
 		}
 
-		return $this->ppde_operator->build_log_entries($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
+		return $this->transactions_operator->build_log_entries($get_logs_sql_ary, $url_ary, $limit, $this->last_page_offset);
 	}
 
 	/**
@@ -467,16 +450,16 @@ class transactions_controller extends admin_main
 	 * @param int $user_id
 	 * @throws transaction_exception
 	 */
-	private function update_transaction($transaction_id, $user_id): void
+	private function update_transaction(int $transaction_id, int $user_id): void
 	{
-		$this->ppde_entity->load($transaction_id);
+		$this->transactions_entity->load($transaction_id);
 
-		if (!$this->ppde_entity->data_exists($this->ppde_entity->build_sql_data_exists()))
+		if (!$this->transactions_entity->data_exists($this->transactions_entity->build_sql_data_exists()))
 		{
 			throw new transaction_exception([$this->language->lang('PPDE_DT_NO_TRANSACTION')]);
 		}
 
-		$this->ppde_entity->set_user_id($user_id)->add_edit_data();
+		$this->transactions_entity->set_user_id($user_id)->add_edit_data();
 	}
 
 	/**
@@ -685,7 +668,7 @@ class transactions_controller extends admin_main
 	 *
 	 * @param array $errors
 	 */
-	private function output_errors(array $errors)
+	private function output_errors(array $errors): void
 	{
 		trigger_error(implode('<br>', $errors) . adm_back_link($this->u_action), E_USER_WARNING);
 	}
@@ -699,14 +682,14 @@ class transactions_controller extends admin_main
 		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
 
 		// Update DB record
-		$this->ppde_entity->load($transaction_id);
-		$this->ppde_entity->set_txn_errors_approved($txn_approved);
-		$this->ppde_entity->save(false);
+		$this->transactions_entity->load($transaction_id);
+		$this->transactions_entity->set_txn_errors_approved($txn_approved);
+		$this->transactions_entity->save(false);
 
 		// Prepare transaction settings before doing actions
-		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
+		$transaction_data = $this->transactions_entity->get_data($this->transactions_operator->build_sql_data($transaction_id));
 		$this->ppde_actions->set_transaction_data($transaction_data[0]);
-		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
+		$this->ppde_actions->set_ipn_test_properties($this->transactions_entity->get_test_ipn());
 		$this->ppde_actions->is_donor_is_member();
 
 		if ($txn_approved)
@@ -732,7 +715,7 @@ class transactions_controller extends admin_main
 		];
 
 		// Grab transaction data
-		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
+		$data_ary = $this->transactions_entity->get_data($this->transactions_operator->build_sql_data($transaction_id), $additional_table_schema);
 
 		array_map([$this, 'action_assign_template_vars'], $data_ary);
 
@@ -753,12 +736,12 @@ class transactions_controller extends admin_main
 
 		if ($this->args['hidden_fields']['delmarked'] && count($this->args['hidden_fields']['mark']))
 		{
-			$where_sql = $this->ppde_operator->build_marked_where_sql($this->args['hidden_fields']['mark']);
+			$where_sql = $this->transactions_operator->build_marked_where_sql($this->args['hidden_fields']['mark']);
 		}
 
 		if ($where_sql || $this->args['hidden_fields']['delall'])
 		{
-			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
+			$this->transactions_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
 			$this->ppde_actions->set_ipn_test_properties(true);
 			$this->ppde_actions->update_overview_stats();
 			$this->ppde_actions->set_ipn_test_properties(false);
