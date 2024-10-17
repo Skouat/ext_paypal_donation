@@ -180,7 +180,7 @@ class main_display_stats
 		{
 			if ($details['condition'])
 			{
-				$percentage = $this->percentage_value(
+				$percentage = $this->calculate_percentage(
 					(float) $this->config[$details['numerator']],
 					(float) $this->config[$details['denominator']]
 				);
@@ -214,19 +214,17 @@ class main_display_stats
 	/**
 	 * Gives back the percentage value
 	 *
-	 * @param float $multiplicand
-	 * @param float $divisor
-	 *
+	 * @param float $numerator
+	 * @param float $denominator
 	 * @return float
-	 * @access private
 	 */
-	private function percentage_value(float $multiplicand, float $divisor): float
+	private function calculate_percentage(float $numerator, float $denominator): float
 	{
-		if ($divisor == 0)
+		if ($denominator == 0)
 		{
 			return 0.0;
 		}
-		return round(($multiplicand * 100) / $divisor, 2);
+		return round(($numerator * 100) / $denominator, 2);
 	}
 
 	/**
@@ -239,9 +237,6 @@ class main_display_stats
 	 */
 	private function assign_vars_stats_percentage(string $var_name, float $percentage): void
 	{
-		// Enforcing $var_name to uppercase
-		$var_name = strtoupper($var_name);
-
 		$this->template->assign_vars([
 			'PPDE_' . $var_name          => ($percentage < 100) ? $percentage : round($percentage),
 			'PPDE_' . $var_name . '_CSS' => max(0, min(100, $percentage)),

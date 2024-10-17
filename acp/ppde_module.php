@@ -36,7 +36,6 @@ class ppde_module
 	 *
 	 * @return void
 	 * @throws \Exception
-	 * @access public
 	 */
 	public function main($id, $mode)
 	{
@@ -82,7 +81,6 @@ class ppde_module
 	 *
 	 * @return void
 	 * @throws \Exception
-	 * @access private
 	 */
 	private function switch_mode($id, $mode, $admin_controller): void
 	{
@@ -136,7 +134,6 @@ class ppde_module
 	 *
 	 * @return void
 	 * @throws \Exception
-	 * @access private
 	 */
 	private function do_action($action, $controller): void
 	{

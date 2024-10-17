@@ -19,16 +19,7 @@ use phpbb\request\request;
 
 class ipn_paypal
 {
-	/**
-	 * Args from PayPal notify return URL
-	 *
-	 * @var string
-	 */
-	private $args_return_uri = [];
-	/** Production and Sandbox Postback URL
-	 *
-	 * @var array
-	 */
+	/** @var array Production and Sandbox Postback URL */
 	private static $remote_uri = [
 		['hostname' => 'www.paypal.com', 'uri' => 'https://www.paypal.com/cgi-bin/webscr', 'type' => 'live'],
 		['hostname' => 'www.sandbox.paypal.com', 'uri' => 'https://www.sandbox.paypal.com/cgi-bin/webscr', 'type' => 'sandbox'],
@@ -40,38 +31,24 @@ class ipn_paypal
 	protected $language;
 	protected $ppde_ipn_log;
 	protected $request;
-	/**
-	 * @var array
-	 */
+	/** @var string Args from PayPal notify return URL */
+	private $args_return_uri;
+	/** @var array */
 	private $curl_fsock = ['curl' => false, 'none' => true];
-	/**
-	 * @var array
-	 */
+
+	/** @var array */
 	private $postback_args = [];
-	/**
-	 * Full PayPal response for include in text report
-	 *
-	 * @var string
-	 */
+
+	/** @var string Full PayPal response for include in text report */
 	private $report_response = '';
-	/**
-	 * PayPal response (VERIFIED or INVALID)
-	 *
-	 * @var string
-	 */
+
+	/** @var string PayPal response (VERIFIED or INVALID) */
 	private $response = '';
-	/**
-	 * PayPal response status (code 200 or other)
-	 *
-	 * @var string
-	 */
+
+	/** @var string PayPal response status (code 200 or other) */
 	private $response_status = '';
-	/**
-	 * PayPal URL
-	 * Could be Sandbox URL ou normal PayPal URL.
-	 *
-	 * @var string
-	 */
+
+	/** @var string PayPal URL (Could be Sandbox URL or normal PayPal URL) */
 	private $u_paypal = '';
 
 	/**
@@ -114,7 +91,7 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function initiate_paypal_connection($data): void
+	public function initiate_paypal_connection(array $data): void
 	{
 		if ($this->curl_fsock['curl'])
 		{
@@ -125,7 +102,12 @@ class ipn_paypal
 		$this->log_paypal_connection_error($data);
 	}
 
-	private function log_paypal_connection_error($data): void
+	/**
+	 * Log PayPal connection error
+	 *
+	 * @param array $data
+	 */
+	private function log_paypal_connection_error(array $data): void
 	{
 		$this->ppde_ipn_log->log_error(
 			$this->language->lang('NO_CONNECTION_DETECTED'),
@@ -148,7 +130,7 @@ class ipn_paypal
 	 * @return void
 	 * @access private
 	 */
-	private function curl_post($encoded_data): void
+	private function curl_post(string $encoded_data): void
 	{
 		$ch = $this->init_curl_session($encoded_data);
 		$this->valuate_response(curl_exec($ch), $ch);
@@ -167,7 +149,7 @@ class ipn_paypal
 	 * @return resource Returns a cURL session handle on success, false on failure.
 	 * @access private
 	 */
-	private function init_curl_session($encoded_data)
+	private function init_curl_session(string $encoded_data)
 	{
 		$ch = curl_init($this->u_paypal);
 
@@ -271,9 +253,9 @@ class ipn_paypal
 	 * @return void
 	 * @access public
 	 */
-	public function set_u_paypal($u_paypal): void
+	public function set_u_paypal(string $u_paypal): void
 	{
-		$this->u_paypal = (string) $u_paypal;
+		$this->u_paypal = $u_paypal;
 	}
 
 	/**
@@ -340,7 +322,7 @@ class ipn_paypal
 	 * @return bool
 	 * @access public
 	 */
-	public function is_curl_strcmp($arg): bool
+	public function is_curl_strcmp(string $arg): bool
 	{
 		return $this->curl_fsock['curl'] && (strcmp($this->response, $arg) === 0);
 	}
