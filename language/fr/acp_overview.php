@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -47,11 +47,11 @@ $lang = array_merge($lang, [
 	'PPDE_ESI_MORE_INFORMATION'  => 'Plus d’informations…',
 	'PPDE_ESI_NOT_DETECTED'      => 'Non détecté',
 	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser or revérifier les informations de l’extension et du système',
-	'PPDE_ESI_TLS'               => 'TLS 1.2',
 	'PPDE_ESI_VERSION'           => 'Version de <strong>%s</strong>',
 	'PPDE_ESI_VERSION_CURL'      => 'Version de <code>cURL</code>',
 	'PPDE_ESI_VERSION_INTL'      => 'Version de PHP <code>intl</code>',
 	'PPDE_ESI_VERSION_SSL'       => 'Version de SSL',
+	'PPDE_ESI_VERSION_TLS'       => 'Version de TLS',
 
 	'PPDE_STATS'         => 'Statistiques des dons',
 	'PPDE_STATS_SANDBOX' => 'Statistiques Sandbox',
