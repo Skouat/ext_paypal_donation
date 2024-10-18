@@ -10,7 +10,7 @@
 
 namespace skouat\ppde\migrations\v33x;
 
-class v330_m1_update_data extends \phpbb\db\migration\migration
+class v330_m3_update_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
