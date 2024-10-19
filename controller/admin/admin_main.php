@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -68,12 +68,9 @@ abstract class admin_main
 	}
 
 	/**
-	 * Set page url
+	 * Set the form action URL.
 	 *
-	 * @param string $u_action Custom form action
-	 *
-	 * @return void
-	 * @access public
+	 * @param string $u_action Form action URL.
 	 */
 	public function set_page_url($u_action): void
 	{
@@ -81,14 +78,11 @@ abstract class admin_main
 	}
 
 	/**
-	 * Gets vars from POST then build a array of them
+	 * Set hidden fields for the form.
 	 *
-	 * @param string $id     Module id
-	 * @param string $mode   Module categorie
-	 * @param string $action Action name
-	 *
-	 * @return void
-	 * @access private
+	 * @param string $id     Module ID.
+	 * @param string $mode   Module category.
+	 * @param string $action Form action.
 	 */
 	public function set_hidden_fields($id, $mode, $action): void
 	{
@@ -100,6 +94,11 @@ abstract class admin_main
 		]);
 	}
 
+	/**
+	 * Get hidden fields arguments.
+	 *
+	 * @return array Hidden fields arguments.
+	 */
 	public function get_hidden_fields(): array
 	{
 		return count($this->args) ? array_merge(
@@ -110,16 +109,31 @@ abstract class admin_main
 			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];
 	}
 
+	/**
+	 * Set the form action.
+	 *
+	 * @param string $action Form action.
+	 */
 	public function set_action($action): void
 	{
 		$this->args['action'] = $action;
 	}
 
+	/**
+	 * Get the form action.
+	 *
+	 * @return string Form action.
+	 */
 	public function get_action(): string
 	{
 		return (string) ($this->args['action'] ?? '');
 	}
 
+	/**
+	 * Set the item ID.
+	 *
+	 * @param int $item_id Item ID.
+	 */
 	public function set_item_id($item_id): void
 	{
 		$this->args[$this->id_prefix_name . '_id'] = (int) $item_id;
@@ -127,9 +141,7 @@ abstract class admin_main
 
 	/**
 	 * Display items of the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function display(): void
 	{
@@ -137,9 +149,7 @@ abstract class admin_main
 
 	/**
 	 * Add item for the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function add(): void
 	{
@@ -147,11 +157,7 @@ abstract class admin_main
 
 	/**
 	 * Approve an item.
-	 *
-	 * This method should be implemented by child classes to handle
-	 * the approval process for specific items.
-	 *
-	 * @return void
+	 * This method is intended to be overridden by child classes
 	 */
 	public function approve(): void
 	{
@@ -159,9 +165,7 @@ abstract class admin_main
 
 	/**
 	 * Change item details for the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function change(): void
 	{
@@ -169,9 +173,7 @@ abstract class admin_main
 
 	/**
 	 * Delete item for the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function delete(): void
 	{
@@ -179,9 +181,7 @@ abstract class admin_main
 
 	/**
 	 * Edit item on the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function edit(): void
 	{
@@ -189,9 +189,7 @@ abstract class admin_main
 
 	/**
 	 * Enable/disable item on the called controller
-	 *
-	 * @return void
-	 * @access public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function enable(): void
 	{
@@ -199,9 +197,7 @@ abstract class admin_main
 
 	/**
 	 * Move up/down an item on the called controller
-	 *
-	 * @return void
-	 * @access   public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function move(): void
 	{
@@ -209,22 +205,17 @@ abstract class admin_main
 
 	/**
 	 * View a selected item on the called controller
-	 *
-	 * @return void
-	 * @access   public
+	 * This method is intended to be overridden by child classes
 	 */
 	public function view(): void
 	{
 	}
 
 	/**
-	 * Build pull down menu options of available remote URI
+	 * Build remote URI select menu options.
 	 *
-	 * @param int    $default ID of the selected value.
-	 * @param string $type    Can be 'live' or 'sandbox'
-	 *
-	 * @return void
-	 * @access public
+	 * @param int    $default ID of the default selected option.
+	 * @param string $type    Type of remote URI ('live' or 'sandbox').
 	 */
 	public function build_remote_uri_select_menu($default, $type): void
 	{
@@ -252,12 +243,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * Enforce the type of remote provided
+	 * Enforce the remote URI type.
 	 *
-	 * @param string $type
-	 *
-	 * @return string
-	 * @access private
+	 * @param string $type Remote URI type.
+	 * @return string Validated remote URI type.
 	 */
 	private function force_type($type): string
 	{
@@ -265,10 +254,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * The form submitting if 'submit' is true
-	 *
-	 * @return void
-	 * @access protected
+	 * Submit settings.
 	 */
 	protected function submit_settings(): void
 	{
@@ -292,13 +278,11 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if form is valid or not
+	 * Check for invalid form submission.
 	 *
-	 * @param string $form_name
-	 * @param bool   $submit_or_preview
-	 *
-	 * @return array
-	 * @access protected
+	 * @param string $form_name         Name of the form.
+	 * @param bool   $submit_or_preview Whether the form is submitted or previewed.
+	 * @return array Errors encountered during form validation.
 	 */
 	protected function is_invalid_form($form_name, $submit_or_preview = false): array
 	{
@@ -311,10 +295,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * @param array $errors
+	 * Check if data can be submitted.
 	 *
-	 * @return bool
-	 * @access protected
+	 * @param array $errors Errors encountered during form validation.
+	 * @return bool True if data can be submitted, false otherwise.
 	 */
 	protected function can_submit_data(array $errors): bool
 	{
@@ -323,9 +307,7 @@ abstract class admin_main
 
 	/**
 	 * Set the options for called controller
-	 *
-	 * @return void
-	 * @access protected
+	 * This method is intended to be overridden by child classes
 	 */
 	protected function set_settings(): void
 	{
@@ -334,10 +316,7 @@ abstract class admin_main
 	/**
 	 * Trigger error message if data already exists
 	 *
-	 * @param \skouat\ppde\entity\main $entity The entity object
-	 *
-	 * @return void
-	 * @access protected
+	 * @param \skouat\ppde\entity\main $entity Entity object to check for existing data.
 	 */
 	protected function trigger_error_data_already_exists(\skouat\ppde\entity\main $entity): void
 	{
@@ -352,10 +331,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * @param \skouat\ppde\entity\main $entity The entity object
+	 * Check if added data already exists.
 	 *
-	 * @return bool
-	 * @access protected
+	 * @param \skouat\ppde\entity\main $entity Entity object to check.
+	 * @return bool True if the data exists, false otherwise.
 	 */
 	protected function is_added_data_exists(\skouat\ppde\entity\main $entity): bool
 	{
@@ -365,13 +344,11 @@ abstract class admin_main
 	/**
 	 * Check some settings before submitting data
 	 *
-	 * @param \skouat\ppde\entity\main $entity            The entity object
-	 * @param string                   $field_name        Name of the entity function to call
-	 * @param string|int               $value_cmp         Default value to compare with the return value of the called function
-	 * @param bool                     $submit_or_preview Form submit or preview status
-	 *
-	 * @return array $errors
-	 * @access protected
+	 * @param \skouat\ppde\entity\main $entity            Entity object to check.
+	 * @param string                   $field_name        Name of the field to check.
+	 * @param string|int               $value_cmp         Value to compare against for emptiness.
+	 * @param bool                     $submit_or_preview Whether the form has been submitted or previewed (default: false).
+	 * @return array Errors encountered during empty data check.
 	 */
 	protected function is_empty_data(\skouat\ppde\entity\main $entity, $field_name, $value_cmp, $submit_or_preview = false): array
 	{
@@ -386,13 +363,11 @@ abstract class admin_main
 	}
 
 	/**
-	 * Get result of submit and preview expression
+	 * Check if the form has been submitted or previewed.
 	 *
-	 * @param bool $submit
-	 * @param bool $preview
-	 *
-	 * @return bool
-	 * @access protected
+	 * @param bool $submit  Submission status (default: false).
+	 * @param bool $preview Preview status (default: false).
+	 * @return bool True if submitted or previewed, false otherwise.
 	 */
 	protected function submit_or_preview(bool $submit = false, bool $preview = false): bool
 	{
@@ -400,9 +375,9 @@ abstract class admin_main
 	}
 
 	/**
-	 * Checks if the form has been submitted.
+	 * Check if form is submitted.
 	 *
-	 * @return bool Returns true if the form has been submitted, false otherwise.
+	 * @return bool True if form is submitted, false otherwise.
 	 */
 	protected function is_form_submitted(): bool
 	{
@@ -410,12 +385,9 @@ abstract class admin_main
 	}
 
 	/**
-	 * Show user a result message if AJAX was used
+	 * Send AJAX delete result message.
 	 *
-	 * @param string $message Text message to show to the user
-	 *
-	 * @return void
-	 * @access protected
+	 * @param string $message Message to send in the response.
 	 */
 	protected function ajax_delete_result_message($message = ''): void
 	{
@@ -433,10 +405,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Set u_action output vars for display in the template
-	 *
-	 * @return void
-	 * @access protected
+	 * Assign u_action output vars for display in the template
 	 */
 	protected function u_action_assign_template_vars(): void
 	{
@@ -446,13 +415,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * Set add/edit action output vars for display in the template
+	 * Assign add/edit action output vars for display in the template
 	 *
 	 * @param string  $type Action type: 'add' or 'edit'
 	 * @param integer $id   Identifier to Edit. If action = add, then let to '0'.
-	 *
-	 * @return void
-	 * @access protected
 	 */
 	protected function add_edit_action_assign_template_vars($type, $id = 0): void
 	{
@@ -466,12 +432,9 @@ abstract class admin_main
 	}
 
 	/**
-	 * Set error output vars for display in the template
+	 * Assign error output vars for display in the template
 	 *
-	 * @param array $errors
-	 *
-	 * @return void
-	 * @access protected
+	 * @param array $errors Array of error messages.
 	 */
 	protected function s_error_assign_template_vars($errors): void
 	{
@@ -482,14 +445,12 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if a config value is true
+	 * Check and return a config value with type enforcement.
 	 *
-	 * @param mixed  $config Config value
-	 * @param string $type   (see settype())
-	 * @param mixed  $default
-	 *
-	 * @return mixed
-	 * @access protected
+	 * @param mixed  $config  The config value to check.
+	 * @param string $type    The desired data type (e.g., 'boolean', 'integer', 'string').
+	 * @param mixed  $default The default value to return if the config value is not set.
+	 * @return mixed The config value or the default value if not set, with the enforced type.
 	 */
 	protected function check_config($config, string $type = 'boolean', $default = '')
 	{
@@ -501,13 +462,11 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if settings is required
+	 * Check required settings and trigger warning if missing.
 	 *
-	 * @param $settings
-	 * @param $depend_on
-	 *
-	 * @return mixed
-	 * @access protected
+	 * @param mixed $settings  The settings value to check.
+	 * @param bool  $depend_on The condition that determines if the settings are required.
+	 * @return mixed The settings value if the condition is met or settings are not empty; otherwise, triggers an error and terminates.
 	 */
 	protected function required_settings($settings, $depend_on)
 	{
@@ -520,11 +479,9 @@ abstract class admin_main
 	}
 
 	/**
-	 * Run system checks if config 'ppde_first_start' is true
+	 * Perform first-start checks and setup for the extension.
 	 *
-	 * @return void
 	 * @throws \ReflectionException
-	 * @access protected
 	 */
 	protected function ppde_first_start(): void
 	{
