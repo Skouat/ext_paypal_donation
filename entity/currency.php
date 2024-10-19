@@ -123,22 +123,6 @@ class currency extends main
 	/**
 	 * Set Currency status
 	 *
-	 * @param bool $on_left
-	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_currency_position($on_left): currency
-	{
-		// Set the item type on our data array
-		$this->data['currency_on_left'] = (bool) $on_left;
-
-		return $this;
-	}
-
-	/**
-	 * Set Currency status
-	 *
 	 * @param bool $enable
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
@@ -148,38 +132,6 @@ class currency extends main
 	{
 		// Set the item type on our data array
 		$this->data['currency_enable'] = (bool) $enable;
-
-		return $this;
-	}
-
-	/**
-	 * Set Currency ISO code name
-	 *
-	 * @param string $iso_code
-	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_iso_code($iso_code): currency
-	{
-		// Set the lang_id on our data array
-		$this->data['currency_iso_code'] = (string) $iso_code;
-
-		return $this;
-	}
-
-	/**
-	 * Set Currency symbol
-	 *
-	 * @param string $symbol
-	 *
-	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_symbol($symbol): currency
-	{
-		// Set the lang_id on our data array
-		$this->data['currency_symbol'] = htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 
 		return $this;
 	}

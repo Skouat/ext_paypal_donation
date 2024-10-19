@@ -93,22 +93,6 @@ class donation_pages extends main
 	}
 
 	/**
-	 * Set Lang identifier
-	 *
-	 * @param int $lang
-	 *
-	 * @return donation_pages $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_lang_id($lang)
-	{
-		// Set the lang_id on our data array
-		$this->data['page_lang_id'] = (int) $lang;
-
-		return $this;
-	}
-
-	/**
 	 * Get message for edit
 	 *
 	 * @return string
@@ -218,8 +202,6 @@ class donation_pages extends main
 		$this->data['page_content'] = $message;
 		$this->data['page_content_bbcode_uid'] = $uid;
 		$this->data['page_content_bbcode_bitfield'] = $bitfield;
-
-		// Flags are already set
 
 		return $this;
 	}

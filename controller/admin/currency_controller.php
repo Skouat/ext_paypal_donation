@@ -138,26 +138,10 @@ class currency_controller extends admin_main
 	{
 		$this->submit = $this->is_form_submitted();
 
-		$errors = $this->validate_currency_data();
-
 		$this->set_currency_entity_data($data);
-
-		// Insert or update currency
+		$errors = $this->validate_currency_data();
 		$this->submit_data($errors);
-
 		$this->assign_template_vars($errors);
-	}
-
-	private function validate_currency_data(): array
-	{
-		$errors = [];
-
-		return array_merge($errors,
-			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
-		);
 	}
 
 	private function set_currency_entity_data(array $data): void
@@ -176,6 +160,16 @@ class currency_controller extends admin_main
 		];
 
 		$this->ppde_entity->set_entity_data($item_fields);
+	}
+	private function validate_currency_data(): array
+	{
+		$errors = [];
+		return array_merge($errors,
+			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
+		);
 	}
 
 	private function assign_template_vars(array $errors): void

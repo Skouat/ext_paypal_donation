@@ -66,14 +66,21 @@ abstract class main
 	 * @return void
 	 * @access public
 	 */
-	public function set_entity_data($data_ary): void
+	public function set_entity_data(array $data_ary): void
 	{
-		foreach ($data_ary as $entity_function => $data)
+		foreach ($data_ary as $key => $value)
 		{
-			// Calling the set_$entity_function on the entity and passing it $currency_data
-			call_user_func_array([$this, 'set_' . $entity_function], [$data]);
+			$schema_key = 'item_' . $key;
+			if (isset($this->table_schema[$schema_key]))
+			{
+				settype($value, $this->table_schema[$schema_key]['type']);
+				$this->data[$this->table_schema[$schema_key]['name']] = $value;
+			}
+			else
+			{
+				call_user_func_array([$this, 'set_' . $key], [$value]);
+			}
 		}
-		unset($entity_function);
 	}
 
 	/**
@@ -133,7 +140,7 @@ abstract class main
 		$this->db->sql_query($sql);
 
 		// Set the item_id using the id created by the SQL insert
-		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
+		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_last_inserted_id();
 
 		return $this;
 	}
@@ -245,9 +252,9 @@ abstract class main
 	 * @return main $this object for chaining calls; load()->set()->save()
 	 * @access public
 	 */
-	public function set_id($id)
+	public function set_id(int $id)
 	{
-		$this->data[$this->table_schema['item_id']['name']] = (int) $id;
+		$this->data[$this->table_schema['item_id']['name']] = $id;
 
 		return $this;
 	}
@@ -300,22 +307,6 @@ abstract class main
 	public function get_name(): string
 	{
 		return (string) ($this->data[$this->table_schema['item_name']['name']] ?? '');
-	}
-
-	/**
-	 * Set Item name
-	 *
-	 * @param string $name
-	 *
-	 * @return main $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_name($name)
-	{
-		// Set the item type on our data array
-		$this->data[$this->table_schema['item_name']['name']] = (string) $name;
-
-		return $this;
 	}
 
 	/**

@@ -41,7 +41,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class transactions_controller extends admin_main
 {
 	protected $transactions_operator;
-	protected $adm_relative_path;
 	protected $auth;
 	protected $entry_count;
 	protected $last_page_offset;

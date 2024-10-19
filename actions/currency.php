@@ -48,7 +48,7 @@ class currency
 	 * Get currency data based on currency ISO code
 	 *
 	 * @param string $iso_code The ISO code of the currency
-	 * @return array Currency data
+	 * @return void
 	 */
 	public function set_currency_data_from_iso_code(string $iso_code): void
 	{

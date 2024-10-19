@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2021 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
