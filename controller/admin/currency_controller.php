@@ -16,8 +16,6 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\actions\locale_icu;
-use skouat\ppde\operators\currency;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,32 +34,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class currency_controller extends admin_main
 {
-	protected $ppde_entity;
-	protected $ppde_locale;
-	protected $ppde_operator;
+	protected $currency_entity;
+	protected $currency_operator;
+	protected $locale_icu;
 
 	/**
 	 * Constructor
 	 *
-	 * @param config                       $config
-	 * @param ContainerInterface           $container
-	 * @param language                     $language
-	 * @param log                          $log
-	 * @param locale_icu                   $ppde_action_locale     PPDE Locale object
-	 * @param \skouat\ppde\entity\currency $ppde_entity_currency   PPDE Entity object
-	 * @param currency                     $ppde_operator_currency PPDE Operator object
-	 * @param request                      $request
-	 * @param template                     $template
-	 * @param user                         $user
+	 * @param config                          $config             Config object.
+	 * @param ContainerInterface              $container          Dependency Injection container.
+	 * @param language                        $language           Language object.
+	 * @param log                             $log                Log object.
+	 * @param \skouat\ppde\actions\locale_icu $locale_icu Locale handler.
+	 * @param \skouat\ppde\entity\currency    $currency_entity    Currency entity.
+	 * @param \skouat\ppde\operators\currency $currency_operator  Currency operator.
+	 * @param request                         $request            Request object.
+	 * @param template                        $template           Template object.
+	 * @param user                            $user               User object.
 	 */
 	public function __construct(
 		config $config,
 		ContainerInterface $container,
 		language $language,
 		log $log,
-		locale_icu $ppde_action_locale,
-		\skouat\ppde\entity\currency $ppde_entity_currency,
-		currency $ppde_operator_currency,
+		\skouat\ppde\actions\locale_icu $locale_icu,
+		\skouat\ppde\entity\currency $currency_entity,
+		\skouat\ppde\operators\currency $currency_operator,
 		request $request,
 		template $template,
 		user $user
@@ -71,9 +69,9 @@ class currency_controller extends admin_main
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
-		$this->ppde_locale = $ppde_action_locale;
-		$this->ppde_entity = $ppde_entity_currency;
-		$this->ppde_operator = $ppde_operator_currency;
+		$this->locale_icu = $locale_icu;
+		$this->currency_entity = $currency_entity;
+		$this->currency_operator = $currency_operator;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -90,10 +88,10 @@ class currency_controller extends admin_main
 	public function display(): void
 	{
 		// Check if currency_order is valid and fix it if necessary
-		$this->ppde_operator->fix_currency_order();
+		$this->currency_operator->fix_currency_order();
 
 		// Grab all the currencies from the db
-		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data());
+		$data_ary = $this->currency_entity->get_data($this->currency_operator->build_sql_data());
 
 		array_map([$this, 'currency_assign_template_vars'], $data_ary);
 
@@ -146,9 +144,9 @@ class currency_controller extends admin_main
 	 */
 	private function set_currency_entity_data(array $data): void
 	{
-		if ($this->ppde_locale->is_locale_configured())
+		if ($this->locale_icu->is_locale_configured())
 		{
-			$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);
+			$data['currency_symbol'] = $this->locale_icu->get_currency_symbol($data['currency_iso_code']);
 		}
 
 		$item_fields = [
@@ -159,7 +157,7 @@ class currency_controller extends admin_main
 			'currency_enable'   => $data['currency_enable'],
 		];
 
-		$this->ppde_entity->set_entity_data($item_fields);
+		$this->currency_entity->set_entity_data($item_fields);
 	}
 	/**
 	 * Validate currency data.
@@ -171,9 +169,9 @@ class currency_controller extends admin_main
 		$errors = [];
 		return array_merge($errors,
 			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'name', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
-			$this->is_empty_data($this->ppde_entity, 'symbol', '', $this->submit_or_preview($this->submit))
+			$this->is_empty_data($this->currency_entity, 'name', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->currency_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
+			$this->is_empty_data($this->currency_entity, 'symbol', '', $this->submit_or_preview($this->submit))
 		);
 	}
 
@@ -186,15 +184,15 @@ class currency_controller extends admin_main
 	{
 		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars([
-			'CURRENCY_NAME'     => $this->ppde_entity->get_name(),
-			'CURRENCY_ISO_CODE' => $this->ppde_entity->get_iso_code(),
-			'CURRENCY_SYMBOL'   => $this->ppde_entity->get_symbol(),
-			'CURRENCY_POSITION' => $this->ppde_entity->get_currency_position(),
-			'CURRENCY_ENABLE'   => $this->ppde_entity->get_currency_enable(),
+			'CURRENCY_NAME'     => $this->currency_entity->get_name(),
+			'CURRENCY_ISO_CODE' => $this->currency_entity->get_iso_code(),
+			'CURRENCY_SYMBOL'   => $this->currency_entity->get_symbol(),
+			'CURRENCY_POSITION' => $this->currency_entity->get_currency_position(),
+			'CURRENCY_ENABLE'   => $this->currency_entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $this->ppde_entity->get_id() . '">',
-			'S_PPDE_LOCALE_AVAILABLE'  => $this->ppde_locale->icu_requirements(),
-			'S_PPDE_LOCALE_CONFIGURED' => $this->ppde_locale->is_locale_configured(),
+			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $this->currency_entity->get_id() . '">',
+			'S_PPDE_LOCALE_AVAILABLE'  => $this->locale_icu->icu_requirements(),
+			'S_PPDE_LOCALE_CONFIGURED' => $this->locale_icu->is_locale_configured(),
 		]);
 	}
 
@@ -205,9 +203,9 @@ class currency_controller extends admin_main
 	 */
 	private function submit_data(array $errors): void
 	{
-		if (!$this->ppde_entity->get_id())
+		if (!$this->currency_entity->get_id())
 		{
-			$this->trigger_error_data_already_exists($this->ppde_entity);
+			$this->trigger_error_data_already_exists($this->currency_entity);
 		}
 
 		if (!$this->can_submit_data($errors))
@@ -215,9 +213,9 @@ class currency_controller extends admin_main
 			return;
 		}
 
-		$log_action = $this->ppde_entity->add_edit_data('set_order');
+		$log_action = $this->currency_entity->add_edit_data('set_order');
 		// Log and show user confirmation of the saved item and provide link back to the previous page
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), [$this->ppde_entity->get_name()]);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($log_action), time(), [$this->currency_entity->get_name()]);
 		trigger_error($this->language->lang($this->lang_key_prefix . '_' . strtoupper($log_action)) . adm_back_link($this->u_action));
 	}
 
@@ -230,17 +228,17 @@ class currency_controller extends admin_main
 		// Add form key
 		add_form_key('add_edit_currency');
 
-		$this->ppde_entity->set_page_url($this->u_action);
-		$this->ppde_entity->load($currency_id);
+		$this->currency_entity->set_page_url($this->u_action);
+		$this->currency_entity->load($currency_id);
 
 		// Collect the form data
 		$data = [
-			'currency_id'       => $this->ppde_entity->get_id(),
-			'currency_name'     => $this->request->variable('currency_name', $this->ppde_entity->get_name(), true),
-			'currency_iso_code' => $this->request->variable('currency_iso_code', $this->ppde_entity->get_iso_code(), true),
-			'currency_symbol'   => $this->request->variable('currency_symbol', $this->ppde_entity->get_symbol(), true),
-			'currency_on_left'  => $this->request->variable('currency_on_left', $this->ppde_entity->get_currency_position()),
-			'currency_enable'   => $this->request->variable('currency_enable', $this->ppde_entity->get_currency_enable()),
+			'currency_id'       => $this->currency_entity->get_id(),
+			'currency_name'     => $this->request->variable('currency_name', $this->currency_entity->get_name(), true),
+			'currency_iso_code' => $this->request->variable('currency_iso_code', $this->currency_entity->get_iso_code(), true),
+			'currency_symbol'   => $this->request->variable('currency_symbol', $this->currency_entity->get_symbol(), true),
+			'currency_on_left'  => $this->request->variable('currency_on_left', $this->currency_entity->get_currency_position()),
+			'currency_enable'   => $this->request->variable('currency_enable', $this->currency_entity->get_currency_enable()),
 		];
 
 		// Process the new page
@@ -265,8 +263,8 @@ class currency_controller extends admin_main
 		}
 
 		// Load data
-		$this->ppde_entity->load($this->args[$this->id_prefix_name . '_id']);
-		$current_order = $this->ppde_entity->get_currency_order();
+		$this->currency_entity->load($this->args[$this->id_prefix_name . '_id']);
+		$current_order = $this->currency_entity->get_currency_order();
 
 		if (($current_order === 0) && ($direction === 'move_up'))
 		{
@@ -277,12 +275,12 @@ class currency_controller extends admin_main
 		// on move_up, switch position with previous order_id...
 		$switch_order_id = ($direction === 'move_down') ? $current_order + 1 : $current_order - 1;
 
-		$move_executed = $this->ppde_operator->move($switch_order_id, $current_order, $this->ppde_entity->get_id());
+		$move_executed = $this->currency_operator->move($switch_order_id, $current_order, $this->currency_entity->get_id());
 
 		// Log action if data was moved
 		if ($move_executed)
 		{
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($direction), time(), [$this->ppde_entity->get_name()]);
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($direction), time(), [$this->currency_entity->get_name()]);
 		}
 
 		if ($this->request->is_ajax())
@@ -313,15 +311,15 @@ class currency_controller extends admin_main
 		}
 
 		// Load data
-		$this->ppde_entity->load($currency_id);
+		$this->currency_entity->load($currency_id);
 
 		// Set the new status for this currency
-		$this->ppde_entity->set_currency_enable($action === 'activate');
+		$this->currency_entity->set_currency_enable($action === 'activate');
 
 		// Save data to the database
-		$this->ppde_entity->save($this->ppde_entity->check_required_field());
+		$this->currency_entity->save($this->currency_entity->check_required_field());
 		// Log action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), [$this->ppde_entity->get_name()]);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_' . strtoupper($action) . 'D', time(), [$this->currency_entity->get_name()]);
 
 		if ((($action === 'activate') || ($action === 'deactivate')) && $this->request->is_ajax())
 		{
@@ -339,11 +337,11 @@ class currency_controller extends admin_main
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
 		// Load data
-		$this->ppde_entity->load($currency_id);
-		$this->ppde_entity->delete($currency_id, 'check_currency_enable');
+		$this->currency_entity->load($currency_id);
+		$this->currency_entity->delete($currency_id, 'check_currency_enable');
 
 		// Log the action
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), [$this->ppde_entity->get_name()]);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_DELETED', time(), [$this->currency_entity->get_name()]);
 		trigger_error($this->language->lang($this->lang_key_prefix . '_DELETED') . adm_back_link($this->u_action));
 	}
 
