@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -53,8 +53,6 @@ class currency_controller extends admin_main
 	 * @param request                      $request
 	 * @param template                     $template
 	 * @param user                         $user
-	 *
-	 * @access public
 	 */
 	public function __construct(
 		config $config,
@@ -87,7 +85,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Display the currency management page.
 	 */
 	public function display(): void
 	{
@@ -103,7 +101,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Add a new currency.
 	 */
 	public function add(): void
 	{
@@ -127,12 +125,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Process currency data to be added or edited
+	 * Process currency data for adding or editing.
 	 *
-	 * @param array $data The form data to be processed
-	 *
-	 * @return void
-	 * @access private
+	 * @param array $data The currency data to process.
 	 */
 	private function add_edit_currency_data(array $data): void
 	{
@@ -144,6 +139,11 @@ class currency_controller extends admin_main
 		$this->assign_template_vars($errors);
 	}
 
+	/**
+	 * Set currency entity data.
+	 *
+	 * @param array $data The currency data to set.
+	 */
 	private function set_currency_entity_data(array $data): void
 	{
 		if ($this->ppde_locale->is_locale_configured())
@@ -161,6 +161,11 @@ class currency_controller extends admin_main
 
 		$this->ppde_entity->set_entity_data($item_fields);
 	}
+	/**
+	 * Validate currency data.
+	 *
+	 * @return array An array of error messages encountered during validation.
+	 */
 	private function validate_currency_data(): array
 	{
 		$errors = [];
@@ -172,6 +177,11 @@ class currency_controller extends admin_main
 		);
 	}
 
+	/**
+	 * Assign template variables.
+	 *
+	 * @param array $errors An array of error messages.
+	 */
 	private function assign_template_vars(array $errors): void
 	{
 		$this->s_error_assign_template_vars($errors);
@@ -189,12 +199,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Submit data to the database
+	 * Submit currency data.
 	 *
-	 * @param array $errors
-	 *
-	 * @return void
-	 * @access private
+	 * @param array $errors An array of error messages.
 	 */
 	private function submit_data(array $errors): void
 	{
@@ -215,7 +222,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Edit an existing currency.
 	 */
 	public function edit(): void
 	{
@@ -244,7 +251,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Move a currency's position in the list.
 	 */
 	public function move(): void
 	{
@@ -286,7 +293,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Enable or disable a currency.
 	 */
 	public function enable(): void
 	{
@@ -325,7 +332,7 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Delete a currency.
 	 */
 	public function delete(): void
 	{
@@ -341,12 +348,9 @@ class currency_controller extends admin_main
 	}
 
 	/**
-	 * Set output vars for display in the template
+	 * Assign template variables for currency data.
 	 *
-	 * @param array $data
-	 *
-	 * @return void
-	 * @access protected
+	 * @param array $data Currency data to assign.
 	 */
 	protected function currency_assign_template_vars(array $data): void
 	{
