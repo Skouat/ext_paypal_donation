@@ -26,7 +26,8 @@ class ppde_module
 			'overview'        => ['lang_key_prefix' => 'PPDE'],
 			'paypal_features' => ['lang_key_prefix' => 'PPDE_PAYPAL_FEATURES'],
 			'settings'        => ['lang_key_prefix' => 'PPDE_SETTINGS'],
-			'transactions'    => ['lang_key_prefix' => 'PPDE_DT', 'id_prefix_name' => 'transaction'],];
+			'transactions'    => ['lang_key_prefix' => 'PPDE_DT', 'id_prefix_name' => 'transaction'],
+		];
 	}
 
 	/**
@@ -64,7 +65,7 @@ class ppde_module
 		{
 			$this->handle_item_actions($controller, $request);
 		}
-		elseif ($mode === 'overview')
+		else if ($mode === 'overview')
 		{
 			$action = $request->variable('action', '');
 			/** @type \skouat\ppde\controller\admin\overview_controller $controller */
