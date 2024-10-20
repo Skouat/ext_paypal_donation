@@ -79,17 +79,12 @@ class donation_pages_controller extends admin_main
 		$this->user = $user;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		parent::__construct(
-			'donation_pages',
-			'PPDE_DP',
-			'page'
-		);
 	}
 
 	/**
 	 * Display donation pages.
 	 */
-	public function display(): void
+	protected function display(): void
 	{
 		// Get list of available language packs
 		$langs = $this->donation_pages_operator->get_languages();
@@ -166,7 +161,7 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Add a new donation page.
 	 */
-	public function add(): void
+	protected function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_donation_pages');
@@ -407,7 +402,7 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Edit an existing donation page.
 	 */
-	public function edit(): void
+	protected function edit(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
@@ -441,11 +436,13 @@ class donation_pages_controller extends admin_main
 	/**
 	 * Delete a donation page.
 	 */
-	public function delete(): void
+	protected function delete(): void
 	{
 		$page_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
-		// Load data
+		$this->donation_pages_entity->set_page_url($this->u_action);
+
+		// Load data in the entity
 		$this->donation_pages_entity->load($page_id);
 
 		// Before deletion, grab the local language name

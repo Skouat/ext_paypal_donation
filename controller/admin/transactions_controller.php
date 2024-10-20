@@ -109,17 +109,12 @@ class transactions_controller extends admin_main
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		parent::__construct(
-			'transactions',
-			'PPDE_DT',
-			'transaction'
-		);
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function display(): void
+	protected function display(): void
 	{
 		// Sorting and pagination setup
 		$sort_by_text = $this->get_sort_by_text_options();
@@ -411,7 +406,7 @@ class transactions_controller extends admin_main
 	 *
 	 * @return array
 	 */
-	public function get_hidden_fields(): array
+	protected function get_hidden_fields(): array
 	{
 		return array_merge(
 			['i'                           => $this->args['hidden_fields']['i'],
@@ -475,7 +470,7 @@ class transactions_controller extends admin_main
 	/**
 	 * {@inheritdoc}
 	 */
-	public function add(): void
+	protected function add(): void
 	{
 		$transaction_data = $this->request_transaction_vars();
 
@@ -675,7 +670,7 @@ class transactions_controller extends admin_main
 	/**
 	 * Approve a transaction
 	 */
-	public function approve(): void
+	protected function approve(): void
 	{
 		$transaction_id = (int) $this->args['hidden_fields']['id'];
 		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
@@ -702,7 +697,7 @@ class transactions_controller extends admin_main
 	/**
 	 * View transaction details
 	 */
-	public function view(): void
+	protected function view(): void
 	{
 		// Request Identifier of the transaction
 		$transaction_id = (int) $this->request->variable('id', 0);
@@ -729,7 +724,7 @@ class transactions_controller extends admin_main
 	/**
 	 * Delete transaction(s)
 	 */
-	public function delete(): void
+	protected function delete(): void
 	{
 		$where_sql = '';
 

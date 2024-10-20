@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -51,8 +51,6 @@ class settings_controller extends admin_main
 	 * @param request    $request               Request object
 	 * @param template   $template              Template object
 	 * @param user       $user                  User object
-	 *
-	 * @access public
 	 */
 	public function __construct(
 		config $config,
@@ -75,18 +73,10 @@ class settings_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		parent::__construct(
-			'settings',
-			'PPDE_SETTINGS',
-			''
-		);
 	}
 
 	/**
 	 * Display the general settings a user can configure for this extension
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function display_settings(): void
 	{
@@ -170,7 +160,6 @@ class settings_controller extends admin_main
 	 * @param int    $added_value  The optional value to be added to the items list. Default is 0.
 	 *
 	 * @return string The rebuilt items list.
-	 * @access private
 	 */
 	private function rebuild_items_list(string $config_value, int $added_value = 0): string
 	{
@@ -201,9 +190,6 @@ class settings_controller extends admin_main
 	 * Build pull down menu options of available positions
 	 *
 	 * @param string $default Value of the selected item.
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function build_stat_position_select_menu($default): void
 	{

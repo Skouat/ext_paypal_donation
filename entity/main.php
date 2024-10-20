@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -37,16 +37,14 @@ abstract class main
 	 * @param string           $lang_key_suffix Suffix for the messages thrown by exceptions
 	 * @param string           $table_name      Table name
 	 * @param array            $table_schema    Array with column names to overwrite and type of data
-	 *
-	 * @access public
 	 */
 	public function __construct(
 		driver_interface $db,
 		language $language,
-		$lang_key_prefix = '',
-		$lang_key_suffix = '',
-		$table_name = '',
-		$table_schema = []
+		string $lang_key_prefix = '',
+		string $lang_key_suffix = '',
+		string $table_name = '',
+		array $table_schema = []
 	)
 	{
 		$this->db = $db;
@@ -62,9 +60,6 @@ abstract class main
 	 * Use call_user_func_array() to call $entity function
 	 *
 	 * @param array $data_ary
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function set_entity_data(array $data_ary): void
 	{
@@ -89,7 +84,6 @@ abstract class main
 	 * @param string $run_before_insert Name of the function to call before SQL INSERT
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function add_edit_data($run_before_insert = ''): string
 	{
@@ -119,7 +113,6 @@ abstract class main
 	 * @param string $run_before_insert
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function insert($run_before_insert = '')
 	{
@@ -150,9 +143,6 @@ abstract class main
 	 *
 	 * @param string $lang_key
 	 * @param string $args
-	 *
-	 * @return void
-	 * @access protected
 	 */
 	protected function display_warning_message($lang_key, $args = ''): void
 	{
@@ -164,7 +154,6 @@ abstract class main
 	 * Checks if the adm_back_link function is loaded
 	 *
 	 * @return string
-	 * @access protected
 	 */
 	protected function adm_back_link_exists(): string
 	{
@@ -177,7 +166,6 @@ abstract class main
 	 * @param string $function_name
 	 *
 	 * @return bool
-	 * @access private
 	 */
 	private function run_function_before_action($function_name): bool
 	{
@@ -199,7 +187,6 @@ abstract class main
 	 * @param bool $required_fields
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function save($required_fields)
 	{
@@ -221,7 +208,6 @@ abstract class main
 	 * Get id
 	 *
 	 * @return int Item identifier
-	 * @access public
 	 */
 	public function get_id(): int
 	{
@@ -234,7 +220,6 @@ abstract class main
 	 * @param string $sql SQL Query
 	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function data_exists($sql): bool
 	{
@@ -250,7 +235,6 @@ abstract class main
 	 * @param int $id
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function set_id(int $id)
 	{
@@ -263,7 +247,6 @@ abstract class main
 	 * SQL Query to return the ID of selected item
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function build_sql_data_exists(): string
 	{
@@ -278,7 +261,6 @@ abstract class main
 	 * @param int $id
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function load($id)
 	{
@@ -302,7 +284,6 @@ abstract class main
 	 * Get Item name
 	 *
 	 * @return string Item name
-	 * @access public
 	 */
 	public function get_name(): string
 	{
@@ -313,9 +294,6 @@ abstract class main
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
-	 *
-	 * @return void
-	 * @access public
 	 */
 	public function set_page_url($u_action): void
 	{
@@ -326,7 +304,6 @@ abstract class main
 	 * Check if required field is set
 	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function check_required_field(): bool
 	{
@@ -342,7 +319,6 @@ abstract class main
 	 * @param bool   $all                  Set to true if you want delete all data from the table.
 	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function delete($id, $action_before_delete = '', $sql_where = '', $all = false): bool
 	{
@@ -390,7 +366,6 @@ abstract class main
 	 * @param bool   $override
 	 *
 	 * @return array
-	 * @access public
 	 */
 	public function get_data($sql, $additional_table_schema = [], $limit = 0, $limit_offset = 0, $override = false): array
 	{
@@ -416,7 +391,6 @@ abstract class main
 	 * @param int    $offset
 	 *
 	 * @return mixed
-	 * @access private
 	 */
 	private function limit_query($sql, $limit, $offset)
 	{
@@ -435,7 +409,6 @@ abstract class main
 	 * @param bool  $override
 	 *
 	 * @return array $this->data
-	 * @access public
 	 */
 	public function import($data, $additional_table_schema = [], $override = false): array
 	{

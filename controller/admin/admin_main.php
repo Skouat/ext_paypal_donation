@@ -17,6 +17,9 @@ abstract class admin_main
 {
 	protected const SECONDS_IN_A_DAY = 86400;
 
+	/** @var string */
+	public $u_action;
+
 	/** @var array */
 	protected $args = [];
 	/** @var \phpbb\config\config */
@@ -48,23 +51,69 @@ abstract class admin_main
 	/** @var \phpbb\user */
 	protected $user;
 
-	/** @var string */
-	public $u_action;
+	public function main(): void
+	{
+		$this->u_action_assign_template_vars();
+		$action = $this->args['action'];
+		switch ($action)
+		{
+			case 'add':
+			case 'change':
+			case 'edit':
+			case 'view':
+				$this->{$action}();
+			break;
+			case 'move_up':
+			case 'move_down':
+				$this->move();
+			break;
+			case 'activate':
+			case 'deactivate':
+				$this->enable();
+			break;
+			case 'approve':
+			case 'delete':
+				// Use a confirm box routine when approving/deleting an item
+				if (confirm_box(true))
+				{
+					$this->{$action}();
+					break;
+				}
+				confirm_box(false, $this->language->lang($this->lang_key_prefix . '_CONFIRM_OPERATION'), build_hidden_fields($this->get_hidden_fields()));
+
+				// Clear $action status
+				$this->args['action'] = $action;
+			break;
+			default:
+				$this->display();
+		}
+		if (!empty($this->args['action']))
+		{
+			$this->display();
+		}
+	}
 
 	/**
-	 * Constructor
-	 *
-	 * @param string $lang_key_prefix Prefix for the messages thrown by exceptions
-	 * @param string $id_prefix_name  Prefix name for identifier in the URL
-	 * @param string $module_name     Name of the module currently used
-	 *
-	 * @access public
+	 * Assign u_action output vars for display in the template
 	 */
-	public function __construct($module_name, $lang_key_prefix, $id_prefix_name)
+	protected function u_action_assign_template_vars(): void
 	{
-		$this->module_name = $module_name;
-		$this->lang_key_prefix = $lang_key_prefix;
-		$this->id_prefix_name = $id_prefix_name;
+		$this->template->assign_vars(['U_ACTION' => $this->u_action]);
+	}
+
+	/**
+	 * Get hidden fields arguments.
+	 *
+	 * @return array Hidden fields arguments.
+	 */
+	protected function get_hidden_fields(): array
+	{
+		return count($this->args) ? array_merge(
+			['i'                           => $this->args['i'],
+			 'mode'                        => $this->args['mode'],
+			 'action'                      => $this->args['action'],
+			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
+			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];
 	}
 
 	/**
@@ -94,39 +143,11 @@ abstract class admin_main
 		]);
 	}
 
-	/**
-	 * Get hidden fields arguments.
-	 *
-	 * @return array Hidden fields arguments.
-	 */
-	public function get_hidden_fields(): array
+	public function set_module_info(array $module_info, string $module_name): void
 	{
-		return count($this->args) ? array_merge(
-			['i'                           => $this->args['i'],
-			 'mode'                        => $this->args['mode'],
-			 'action'                      => $this->args['action'],
-			 $this->id_prefix_name . '_id' => $this->args[$this->id_prefix_name . '_id']],
-			$this->args['hidden_fields']) : ['id' => '', 'mode' => '', 'action' => ''];
-	}
-
-	/**
-	 * Set the form action.
-	 *
-	 * @param string $action Form action.
-	 */
-	public function set_action($action): void
-	{
-		$this->args['action'] = $action;
-	}
-
-	/**
-	 * Get the form action.
-	 *
-	 * @return string Form action.
-	 */
-	public function get_action(): string
-	{
-		return (string) ($this->args['action'] ?? '');
+		$this->id_prefix_name = $module_info['id_prefix_name'] ?? '';
+		$this->lang_key_prefix = $module_info['lang_key_prefix'] ?? '';
+		$this->module_name = $module_name;
 	}
 
 	/**
@@ -140,18 +161,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * Display items of the called controller
-	 * This method is intended to be overridden by child classes
-	 */
-	public function display(): void
-	{
-	}
-
-	/**
 	 * Add item for the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function add(): void
+	protected function add(): void
 	{
 	}
 
@@ -159,7 +172,7 @@ abstract class admin_main
 	 * Approve an item.
 	 * This method is intended to be overridden by child classes
 	 */
-	public function approve(): void
+	protected function approve(): void
 	{
 	}
 
@@ -167,7 +180,7 @@ abstract class admin_main
 	 * Change item details for the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function change(): void
+	protected function change(): void
 	{
 	}
 
@@ -175,7 +188,15 @@ abstract class admin_main
 	 * Delete item for the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function delete(): void
+	protected function delete(): void
+	{
+	}
+
+	/**
+	 * Display items of the called controller
+	 * This method is intended to be overridden by child classes
+	 */
+	protected function display(): void
 	{
 	}
 
@@ -183,7 +204,7 @@ abstract class admin_main
 	 * Edit item on the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function edit(): void
+	protected function edit(): void
 	{
 	}
 
@@ -191,7 +212,7 @@ abstract class admin_main
 	 * Enable/disable item on the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function enable(): void
+	protected function enable(): void
 	{
 	}
 
@@ -199,7 +220,7 @@ abstract class admin_main
 	 * Move up/down an item on the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function move(): void
+	protected function move(): void
 	{
 	}
 
@@ -207,7 +228,7 @@ abstract class admin_main
 	 * View a selected item on the called controller
 	 * This method is intended to be overridden by child classes
 	 */
-	public function view(): void
+	protected function view(): void
 	{
 	}
 
@@ -217,7 +238,7 @@ abstract class admin_main
 	 * @param int    $default ID of the default selected option.
 	 * @param string $type    Type of remote URI ('live' or 'sandbox').
 	 */
-	public function build_remote_uri_select_menu($default, $type): void
+	protected function build_remote_uri_select_menu($default, $type): void
 	{
 		$type = $this->force_type($type);
 
@@ -275,6 +296,16 @@ abstract class admin_main
 			// Confirm this to the user and provide link back to previous page
 			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
 		}
+	}
+
+	/**
+	 * Check if form is submitted.
+	 *
+	 * @return bool True if form is submitted, false otherwise.
+	 */
+	protected function is_form_submitted(): bool
+	{
+		return $this->request->is_set_post('submit');
 	}
 
 	/**
@@ -375,16 +406,6 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if form is submitted.
-	 *
-	 * @return bool True if form is submitted, false otherwise.
-	 */
-	protected function is_form_submitted(): bool
-	{
-		return $this->request->is_set_post('submit');
-	}
-
-	/**
 	 * Send AJAX delete result message.
 	 *
 	 * @param string $message Message to send in the response.
@@ -402,16 +423,6 @@ abstract class admin_main
 				],
 			]);
 		}
-	}
-
-	/**
-	 * Assign u_action output vars for display in the template
-	 */
-	protected function u_action_assign_template_vars(): void
-	{
-		$this->template->assign_vars([
-			'U_ACTION' => $this->u_action,
-		]);
 	}
 
 	/**

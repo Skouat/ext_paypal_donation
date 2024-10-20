@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -70,11 +70,6 @@ class paypal_features_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		parent::__construct(
-			'paypal_features',
-			'PPDE_PAYPAL_FEATURES',
-			''
-		);
 	}
 
 	/**

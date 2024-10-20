@@ -75,17 +75,12 @@ class currency_controller extends admin_main
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		parent::__construct(
-			'currency',
-			'PPDE_DC',
-			'currency'
-		);
 	}
 
 	/**
 	 * Display the currency management page.
 	 */
-	public function display(): void
+	protected function display(): void
 	{
 		// Check if currency_order is valid and fix it if necessary
 		$this->currency_operator->fix_currency_order();
@@ -101,7 +96,7 @@ class currency_controller extends admin_main
 	/**
 	 * Add a new currency.
 	 */
-	public function add(): void
+	protected function add(): void
 	{
 		// Add form key
 		add_form_key('add_edit_currency');
@@ -222,7 +217,7 @@ class currency_controller extends admin_main
 	/**
 	 * Edit an existing currency.
 	 */
-	public function edit(): void
+	protected function edit(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 		// Add form key
@@ -251,7 +246,7 @@ class currency_controller extends admin_main
 	/**
 	 * Move a currency's position in the list.
 	 */
-	public function move(): void
+	protected function move(): void
 	{
 		$direction = $this->args['action'];
 
@@ -293,7 +288,7 @@ class currency_controller extends admin_main
 	/**
 	 * Enable or disable a currency.
 	 */
-	public function enable(): void
+	protected function enable(): void
 	{
 		$action = $this->args['action'];
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
@@ -332,11 +327,11 @@ class currency_controller extends admin_main
 	/**
 	 * Delete a currency.
 	 */
-	public function delete(): void
+	protected function delete(): void
 	{
 		$currency_id = (int) $this->args[$this->id_prefix_name . '_id'];
 
-		// Load data
+		$this->currency_entity->set_page_url($this->u_action);
 		$this->currency_entity->load($currency_id);
 		$this->currency_entity->delete($currency_id, 'check_currency_enable');
 

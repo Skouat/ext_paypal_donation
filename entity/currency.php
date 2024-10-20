@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -31,7 +31,6 @@ class currency extends main
 	 *    currency_symbol
 	 *    currency_enable
 	 *    currency_order
-	 * @access protected
 	 */
 	protected $data;
 	protected $currency_table;
@@ -42,8 +41,6 @@ class currency extends main
 	 * @param driver_interface $db         Database object
 	 * @param language         $language   Language object
 	 * @param string           $table_name Name of the table used to store data
-	 *
-	 * @access public
 	 */
 	public function __construct(driver_interface $db, language $language, $table_name)
 	{
@@ -80,7 +77,6 @@ class currency extends main
 	 * Get the order number of the currency
 	 *
 	 * @return int Order identifier
-	 * @access public
 	 */
 	public function get_currency_order(): int
 	{
@@ -91,7 +87,6 @@ class currency extends main
 	 * Get Currency status
 	 *
 	 * @return bool
-	 * @access public
 	 */
 	public function get_currency_position(): bool
 	{
@@ -102,7 +97,6 @@ class currency extends main
 	 * Get Currency ISO code
 	 *
 	 * @return string ISO code name
-	 * @access public
 	 */
 	public function get_iso_code(): string
 	{
@@ -113,7 +107,6 @@ class currency extends main
 	 * Get Currency Symbol
 	 *
 	 * @return string Currency symbol
-	 * @access public
 	 */
 	public function get_symbol(): string
 	{
@@ -126,7 +119,6 @@ class currency extends main
 	 * @param bool $enable
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function set_currency_enable($enable): currency
 	{
@@ -148,7 +140,6 @@ class currency extends main
 	 * Set Currency order number
 	 *
 	 * @return currency $this object for chaining calls; load()->set()->save()
-	 * @access public
 	 */
 	public function set_order()
 	{
@@ -188,9 +179,6 @@ class currency extends main
 
 	/**
 	 * Returns error if the currency is enabled
-	 *
-	 * @return void
-	 * @access protected
 	 */
 	protected function check_currency_enable(): void
 	{
@@ -204,8 +192,7 @@ class currency extends main
 	/**
 	 * Get Currency status
 	 *
-	 * @return boolean
-	 * @access public
+	 * @return bool
 	 */
 	public function get_currency_enable(): bool
 	{

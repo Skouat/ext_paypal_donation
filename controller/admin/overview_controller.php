@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -107,11 +107,6 @@ class overview_controller extends admin_main
 		$this->adm_relative_path = $adm_relative_path;
 		$this->phpbb_admin_path = $phpbb_root_path . $adm_relative_path;
 		$this->phpbb_root_path = $phpbb_root_path;
-		parent::__construct(
-			'overview',
-			'PPDE_',
-			''
-		);
 	}
 
 	/**
