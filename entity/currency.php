@@ -59,7 +59,7 @@ class currency extends main
 				'item_name'     => ['name' => 'currency_name', 'type' => 'string'],
 				'item_iso_code' => ['name' => 'currency_iso_code', 'type' => 'string'],
 				'item_symbol'   => ['name' => 'currency_symbol', 'type' => 'string'],
-				'item_on_left'  => ['name' => 'currency_on_left', 'type' => 'boolean'],
+				'item_position' => ['name' => 'currency_on_left', 'type' => 'boolean'],
 				'item_enable'   => ['name' => 'currency_enable', 'type' => 'boolean'],
 				'item_order'    => ['name' => 'currency_order', 'type' => 'integer'],
 			]

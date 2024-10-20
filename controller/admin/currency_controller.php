@@ -150,11 +150,11 @@ class currency_controller extends admin_main
 		}
 
 		$item_fields = [
-			'name'              => $data['currency_name'],
-			'iso_code'          => $data['currency_iso_code'],
-			'symbol'            => $data['currency_symbol'],
-			'currency_position' => $data['currency_on_left'],
-			'currency_enable'   => $data['currency_enable'],
+			'name'            => $data['currency_name'],
+			'iso_code'        => $data['currency_iso_code'],
+			'symbol'          => $data['currency_symbol'],
+			'position'        => $data['currency_on_left'],
+			'currency_enable' => $data['currency_enable'],
 		];
 
 		$this->currency_entity->set_entity_data($item_fields);
