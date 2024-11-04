@@ -14,7 +14,7 @@ class v330_m3_update_data extends \phpbb\db\migration\migration
 {
 	public static function depends_on()
 	{
-		return ['\skouat\ppde\migrations\v32x\v330_m2_update_data'];
+		return ['\skouat\ppde\migrations\v33x\v330_m2_update_data'];
 	}
 
 	public function update_data()
