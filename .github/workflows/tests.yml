@@ -36,21 +36,6 @@ jobs:
                     - php: '7.4'
                       db: "none"
                       NOTESTS: 1
-                    - php: '8.0'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.1'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.2'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.3'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.4'
-                      db: "none"
-                      NOTESTS: 1
 
         name: PHP ${{ matrix.php }} - ${{ matrix.db }}
 
@@ -84,7 +69,7 @@ jobs:
 
             - name: Setup EPV
               if: ${{ env.EPV != 0 }}
-              run: composer config repositories.phpbbfr composer https://tools.phpbb-fr.com/composer && composer require phpbb/epv:dev-fix-112 --dev --no-interaction --ignore-platform-reqs
+              run: composer require phpbb/epv:dev-master --dev --no-interaction --ignore-platform-reqs
               working-directory: ./phpBB3/phpBB
 
             - name: Run code sniffer
