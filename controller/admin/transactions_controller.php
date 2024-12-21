@@ -20,8 +20,8 @@ use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
 use skouat\ppde\exception\transaction_exception;
-use skouat\ppde\includes\transaction_template_helper;
-use skouat\ppde\includes\transaction_validator;
+use skouat\ppde\helpers\transaction_template_helper;
+use skouat\ppde\helpers\transaction_validator_helper;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -86,7 +86,7 @@ class transactions_controller extends admin_main
 		template $template,
 		user $user,
 		transaction_template_helper $template_helper,
-		transaction_validator $transaction_validator,
+		transaction_validator_helper $transaction_validator,
 		string $adm_relative_path,
 		string $phpbb_root_path,
 		string $php_ext

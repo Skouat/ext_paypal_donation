@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\includes;
+namespace skouat\ppde\helpers;
 
 use phpbb\template\template;
 use phpbb\language\language;

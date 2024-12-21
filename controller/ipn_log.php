@@ -52,7 +52,7 @@ class ipn_log
 	 *
 	 * @param config               $config               Config object
 	 * @param filesystem_interface $filesystem           phpBB's filesystem service
-	 * @param path_helper          $path_helper          Path helper object
+	 * @param path_helper          $path_helper          Path helpers object
 	 * @param main_controller      $ppde_controller_main Main controller
 	 */
 	public function __construct(

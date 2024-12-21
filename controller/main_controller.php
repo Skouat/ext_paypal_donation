@@ -39,7 +39,7 @@ class main_controller
 	 *
 	 * @param config                        $config           Config object
 	 * @param ContainerInterface            $container        Service container interface
-	 * @param helper                        $helper           Controller helper object
+	 * @param helper                        $helper           Controller helpers object
 	 * @param language                      $language         Language user object
 	 * @param \skouat\ppde\actions\auth     $actions_auth     PPDE auth actions object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE currency actions object

@@ -39,7 +39,7 @@ services:
         class: skouat\ppde\actions\post_data
         arguments:
             - '@language'
-            - '@skouat.ppde.operator.compare'
+            - '@skouat.ppde.helpers.compare'
             - '@request'
 
     skouat.ppde.actions.vars:

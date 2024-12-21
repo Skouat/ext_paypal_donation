@@ -145,7 +145,7 @@ class donation_pages extends main
 	}
 
 	/**
-	 * Set option helper
+	 * Set option helpers
 	 *
 	 * @param int  $option_value    Value of the option
 	 * @param bool $negate          Negate (unset) option (Default: False)

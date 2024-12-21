@@ -41,7 +41,7 @@ class core
 	 * @param config                              $config                    Config object
 	 * @param language                            $language                  Language user object
 	 * @param \skouat\ppde\notification\core      $notification              PPDE Notification object
-	 * @param path_helper                         $path_helper               Path helper object
+	 * @param path_helper                         $path_helper               Path helpers object
 	 * @param \skouat\ppde\entity\transactions    $ppde_entity_transaction   Transaction entity object
 	 * @param \skouat\ppde\operators\transactions $ppde_operator_transaction Transaction operator object
 	 * @param dispatcher_interface                $dispatcher                Dispatcher object

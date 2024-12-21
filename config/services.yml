@@ -12,7 +12,7 @@ services:
         class: skouat\ppde\event\listener
         arguments:
             - '@config'
-            - '@controller.helper'
+            - '@controller.helpers'
             - '@language'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.main.displaystats'

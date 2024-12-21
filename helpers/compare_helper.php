@@ -3,14 +3,14 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2024 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
-namespace skouat\ppde\operators;
+namespace skouat\ppde\helpers;
 
-class compare
+class compare_helper
 {
 	/** @var array */
 	private static $operators_table = [

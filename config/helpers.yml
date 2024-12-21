@@ -1,5 +1,8 @@
 services:
-    skouat.ppde.includes.transaction_template_helper:
+    skouat.ppde.helpers.compare:
+        class: skouat\ppde\helpers\compare_helper
+
+    skouat.ppde.helpers.transaction_template_helper:
         class: skouat\ppde\includes\transaction_template_helper
         arguments:
             - '@template'
@@ -10,8 +13,8 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
 
-    skouat.ppde.includes.transaction_validator:
-        class: skouat\ppde\includes\transaction_validator
+    skouat.ppde.includes.transaction_validator_helper:
+        class: skouat\ppde\includes\transaction_validator_helper
         arguments:
             - '@language'
             - '@request'

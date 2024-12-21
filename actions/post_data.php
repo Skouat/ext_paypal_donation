@@ -12,27 +12,27 @@ namespace skouat\ppde\actions;
 
 use phpbb\language\language;
 use phpbb\request\request;
-use skouat\ppde\operators\compare;
+use skouat\ppde\helpers\compare_helper;
 
 class post_data
 {
 	private const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	protected $language;
-	protected $ppde_operator_compare;
+	protected $compare_helper;
 	protected $request;
 
 	/**
 	 * Constructor
 	 *
-	 * @param language $language              Language object
-	 * @param compare  $ppde_operator_compare Compare operator object
-	 * @param request  $request               Request object
+	 * @param language       $language       Language object
+	 * @param compare_helper $compare_helper Compare operator object
+	 * @param request        $request        Request object
 	 */
-	public function __construct(language $language, compare $ppde_operator_compare, request $request)
+	public function __construct(language $language, compare_helper $compare_helper, request $request)
 	{
 		$this->language = $language;
-		$this->ppde_operator_compare = $ppde_operator_compare;
+		$this->compare_helper = $compare_helper;
 		$this->request = $request;
 	}
 
@@ -136,7 +136,7 @@ class post_data
 	 */
 	public function check_post_data_length($value, $statement): bool
 	{
-		return $this->ppde_operator_compare->compare_value(strlen($value), $statement['value'], $statement['operator']);
+		return $this->compare_helper->compare_value(strlen($value), $statement['value'], $statement['operator']);
 	}
 
 	/**

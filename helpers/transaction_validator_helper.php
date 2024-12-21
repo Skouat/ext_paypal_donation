@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\includes;
+namespace skouat\ppde\helpers;
 
 use phpbb\language\language;
 use phpbb\request\request;
@@ -16,7 +16,7 @@ use phpbb\user;
 use phpbb\user_loader;
 use skouat\ppde\exception\transaction_exception;
 
-class transaction_validator
+class transaction_validator_helper
 {
 	/** @var language */
 	protected $language;

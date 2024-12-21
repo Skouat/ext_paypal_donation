@@ -35,7 +35,7 @@ class listener implements EventSubscriberInterface
 	 * Constructor
 	 *
 	 * @param config             $config                        Config object
-	 * @param helper             $controller_helper             Controller helper object
+	 * @param helper             $controller_helper             Controller helpers object
 	 * @param language           $language                      Language user object
 	 * @param main_controller    $ppde_controller_main          PPDE main controller object
 	 * @param main_display_stats $ppde_controller_display_stats Display stats controller object
