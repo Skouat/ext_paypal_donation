@@ -16,7 +16,7 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\actions\auth;
+use skouat\ppde\helpers\auth_helper;
 use skouat\ppde\actions\currency;
 use skouat\ppde\actions\locale_icu;
 
@@ -35,28 +35,28 @@ use skouat\ppde\actions\locale_icu;
  */
 class settings_controller extends admin_main
 {
-	protected $ppde_actions_auth;
+	protected $ppde_auth;
 	protected $ppde_actions_currency;
 	protected $ppde_actions_locale;
 
 	/**
 	 * Constructor
 	 *
-	 * @param config     $config                Config object
-	 * @param language   $language              Language user object
-	 * @param log        $log                   The phpBB log system
-	 * @param currency   $ppde_actions_currency PPDE currency actions object
-	 * @param locale_icu $ppde_actions_locale   PPDE locale actions object
-	 * @param auth       $ppde_actions_auth     PPDE auth actions object
-	 * @param request    $request               Request object
-	 * @param template   $template              Template object
-	 * @param user       $user                  User object
+	 * @param config      $config                Config object
+	 * @param language    $language              Language user object
+	 * @param log         $log                   The phpBB log system
+	 * @param currency    $ppde_actions_currency PPDE currency actions object
+	 * @param locale_icu  $ppde_actions_locale   PPDE locale actions object
+	 * @param auth_helper $ppde_auth             PPDE auth actions object
+	 * @param request     $request               Request object
+	 * @param template    $template              Template object
+	 * @param user        $user                  User object
 	 */
 	public function __construct(
 		config $config,
 		language $language,
 		log $log,
-		auth $ppde_actions_auth,
+		auth_helper $ppde_auth,
 		currency $ppde_actions_currency,
 		locale_icu $ppde_actions_locale,
 		request $request,
@@ -67,7 +67,7 @@ class settings_controller extends admin_main
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
-		$this->ppde_actions_auth = $ppde_actions_auth;
+		$this->ppde_auth = $ppde_auth;
 		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->request = $request;
@@ -150,7 +150,7 @@ class settings_controller extends admin_main
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), (bool) $this->config['ppde_enable']));
-		$this->ppde_actions_auth->set_guest_acl();
+		$this->ppde_auth->set_guest_acl();
 	}
 
 	/**

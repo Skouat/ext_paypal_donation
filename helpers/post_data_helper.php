@@ -8,13 +8,12 @@
  *
  */
 
-namespace skouat\ppde\actions;
+namespace skouat\ppde\helpers;
 
 use phpbb\language\language;
 use phpbb\request\request;
-use skouat\ppde\helpers\compare_helper;
 
-class post_data
+class post_data_helper
 {
 	private const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

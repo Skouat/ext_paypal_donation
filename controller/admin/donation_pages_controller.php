@@ -34,7 +34,7 @@ class donation_pages_controller extends admin_main
 {
 	protected $phpbb_root_path;
 	protected $php_ext;
-	protected $ppde_actions_vars;
+	protected $ppde_vars_helper;
 	protected $donation_pages_entity;
 	protected $donation_pages_operator;
 	protected $lang_local_name;
@@ -45,7 +45,7 @@ class donation_pages_controller extends admin_main
 	 * @param ContainerInterface                    $container               Service container interface
 	 * @param language                              $language                Language user object
 	 * @param log                                   $log                     The phpBB log system
-	 * @param \skouat\ppde\actions\vars             $ppde_actions_vars       PPDE actions vars object
+	 * @param \skouat\ppde\helpers\vars_helper      $ppde_vars_helper       PPDE actions vars object
 	 * @param \skouat\ppde\entity\donation_pages    $donation_pages_entity   PPDE entity object
 	 * @param \skouat\ppde\operators\donation_pages $donation_pages_operator PPDE operator object
 	 * @param request                               $request                 Request object
@@ -58,7 +58,7 @@ class donation_pages_controller extends admin_main
 		ContainerInterface $container,
 		language $language,
 		log $log,
-		\skouat\ppde\actions\vars $ppde_actions_vars,
+		\skouat\ppde\helpers\vars_helper $ppde_vars_helper,
 		\skouat\ppde\entity\donation_pages $donation_pages_entity,
 		\skouat\ppde\operators\donation_pages $donation_pages_operator,
 		request $request,
@@ -71,7 +71,7 @@ class donation_pages_controller extends admin_main
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
-		$this->ppde_actions_vars = $ppde_actions_vars;
+		$this->ppde_vars_helper = $ppde_vars_helper;
 		$this->donation_pages_entity = $donation_pages_entity;
 		$this->donation_pages_operator = $donation_pages_operator;
 		$this->request = $request;
@@ -250,7 +250,7 @@ class donation_pages_controller extends admin_main
 		);
 
 		// Grab predefined template vars
-		$vars = $this->ppde_actions_vars->get_vars();
+		$vars = $this->ppde_vars_helper->get_vars();
 
 		// Assign variables in a template block vars
 		$this->assign_preview_template_vars($errors);
@@ -293,7 +293,7 @@ class donation_pages_controller extends admin_main
 		{
 			// Set output vars for display in the template
 			$this->template->assign_vars([
-				'PPDE_DP_PREVIEW'   => $this->ppde_actions_vars->replace_template_vars($this->donation_pages_entity->get_message_for_display()),
+				'PPDE_DP_PREVIEW'   => $this->ppde_vars_helper->replace_template_vars($this->donation_pages_entity->get_message_for_display()),
 				'S_PPDE_DP_PREVIEW' => $this->preview,
 			]);
 		}

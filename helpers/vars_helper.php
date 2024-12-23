@@ -8,13 +8,15 @@
  *
  */
 
-namespace skouat\ppde\actions;
+namespace skouat\ppde\helpers;
 
 use phpbb\config\config;
 use phpbb\language\language;
 use phpbb\user;
+use skouat\ppde\actions\core;
+use skouat\ppde\actions\currency;
 
-class vars
+class vars_helper
 {
 	protected $actions_core;
 	protected $actions_currency;
@@ -26,11 +28,11 @@ class vars
 	/**
 	 * Constructor
 	 *
-	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
-	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object
-	 * @param config                        $config           Config object
-	 * @param language                      $language         Language object
-	 * @param user                          $user             User object
+	 * @param core     $actions_core     PPDE actions core object
+	 * @param currency $actions_currency PPDE actions currency object
+	 * @param config   $config           Config object
+	 * @param language $language         Language object
+	 * @param user     $user             User object
 	 */
 	public function __construct(
 		core $actions_core,

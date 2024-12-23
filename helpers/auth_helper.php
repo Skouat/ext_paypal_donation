@@ -8,9 +8,9 @@
  *
  */
 
-namespace skouat\ppde\actions;
+namespace skouat\ppde\helpers;
 
-class auth
+class auth_helper
 {
 	protected $auth;
 	protected $phpbb_root_path;

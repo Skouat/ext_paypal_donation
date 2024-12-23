@@ -23,7 +23,7 @@ services:
             - '@config'
             - '@language'
             - '@skouat.ppde.core_actions'
-            - '@skouat.ppde.actions.post_data'
+            - '@skouat.ppde.helpers.post_data_helper'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
@@ -54,7 +54,7 @@ services:
             - '@service_container'
             - '@controller.helpers'
             - '@language'
-            - '@skouat.ppde.actions.auth'
+            - '@skouat.ppde.helpers.auth_helper'
             - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
@@ -75,7 +75,7 @@ services:
         class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
-            - [set_actions_vars, ['@skouat.ppde.actions.vars']]
+            - [set_actions_vars, ['@skouat.ppde.helpers.vars_helper']]
             - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
             - [set_entity_donation_pages, ['@skouat.ppde.entity.donation_pages']]
             - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]

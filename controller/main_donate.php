@@ -17,8 +17,8 @@ class main_donate extends main_controller
 	private const RETURN_SUCCESS = 'success';
 	private const RETURN_DONORLIST = 'donorlist';
 
-	/** @var \skouat\ppde\actions\vars */
-	protected $actions_vars;
+	/** @var \skouat\ppde\actions\vars_helper */
+	protected $vars_helper;
 
 	/** @var \skouat\ppde\controller\main_display_stats */
 	protected $controller_display_stats;
@@ -29,9 +29,9 @@ class main_donate extends main_controller
 	/** @var \skouat\ppde\operators\donation_pages */
 	protected $donation_pages_operator;
 
-	public function set_actions_vars(\skouat\ppde\actions\vars $actions_vars): void
+	public function set_vars_helper(\skouat\ppde\actions\vars_helper $vars_helper): void
 	{
-		$this->actions_vars = $actions_vars;
+		$this->vars_helper = $vars_helper;
 	}
 
 	public function set_display_stats(\skouat\ppde\controller\main_display_stats $controller_display_stats): void
@@ -85,7 +85,7 @@ class main_donate extends main_controller
 	 */
 	private function check_user_permission(): void
 	{
-		if (!$this->actions_auth->can_use_ppde())
+		if (!$this->ppde_auth->can_use_ppde())
 		{
 			trigger_error('NOT_AUTHORISED');
 		}
@@ -121,8 +121,8 @@ class main_donate extends main_controller
 		$content_data = $this->get_donation_content_data($return_args);
 		if (!empty($content_data))
 		{
-			$this->actions_vars->get_vars();
-			$content = $this->actions_vars->replace_template_vars($this->donation_pages_entity->get_message_for_display());
+			$this->vars_helper->get_vars();
+			$content = $this->vars_helper->replace_template_vars($this->donation_pages_entity->get_message_for_display());
 			$this->template->assign_var('DONATION_BODY', $content);
 		}
 	}

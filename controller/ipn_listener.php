@@ -18,7 +18,7 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\request\request;
 use skouat\ppde\actions\core;
-use skouat\ppde\actions\post_data;
+use skouat\ppde\helpers\post_data_helper;
 use skouat\ppde\controller\admin\transactions_controller;
 
 class ipn_listener
@@ -160,7 +160,7 @@ class ipn_listener
 	protected $dispatcher;
 	protected $language;
 	protected $ppde_actions;
-	protected $ppde_actions_post_data;
+	protected $ppde_post_data;
 	protected $ppde_controller_main;
 	protected $ppde_controller_transactions_admin;
 	protected $ppde_ipn_log;
@@ -187,7 +187,7 @@ class ipn_listener
 	 * @param config                  $config                             Config object
 	 * @param language                $language                           Language user object
 	 * @param core                    $ppde_actions                       PPDE actions object
-	 * @param post_data               $ppde_actions_post_data
+	 * @param post_data_helper        $ppde_post_data
 	 * @param main_controller         $ppde_controller_main               Main controller object
 	 * @param transactions_controller $ppde_controller_transactions_admin Admin transactions controller object
 	 * @param ipn_log                 $ppde_ipn_log                       IPN log
@@ -201,7 +201,7 @@ class ipn_listener
 		config $config,
 		language $language,
 		core $ppde_actions,
-		post_data $ppde_actions_post_data,
+		post_data_helper $ppde_post_data,
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions_admin,
 		ipn_log $ppde_ipn_log,
@@ -213,7 +213,7 @@ class ipn_listener
 		$this->dispatcher = $dispatcher;
 		$this->language = $language;
 		$this->ppde_actions = $ppde_actions;
-		$this->ppde_actions_post_data = $ppde_actions_post_data;
+		$this->ppde_post_data = $ppde_post_data;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions_admin = $ppde_controller_transactions_admin;
 		$this->ppde_ipn_log = $ppde_ipn_log;
@@ -313,9 +313,9 @@ class ipn_listener
 	private function handle_post_data(): void
 	{
 		// Get PayPal data
-		$post_data = array_map([$this->ppde_actions_post_data, 'get_post_data'], self::$paypal_vars_table);
+		$post_data = array_map([$this->ppde_post_data, 'get_post_data'], self::$paypal_vars_table);
 		// Check PayPal data
-		$post_data = array_map([$this->ppde_actions_post_data, 'check_post_data'], $post_data);
+		$post_data = array_map([$this->ppde_post_data, 'check_post_data'], $post_data);
 		// Populate transaction_data
 		array_map([$this, 'set_transaction_data'], $post_data);
 
@@ -541,7 +541,7 @@ class ipn_listener
 		if (isset($post_data['force_settings']))
 		{
 			$this->transaction_data['txn_errors'] .= $post_data['txn_errors'];
-			$this->transaction_data[$post_data['name']] = $this->ppde_actions_post_data->set_func($post_data);
+			$this->transaction_data[$post_data['name']] = $this->ppde_post_data->set_func($post_data);
 		}
 	}
 }
