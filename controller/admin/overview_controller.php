@@ -19,7 +19,7 @@ use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\locale_icu;
-use skouat\ppde\controller\extension_manager;
+use skouat\ppde\controller\ext_manager;
 use skouat\ppde\controller\esi_controller;
 use skouat\ppde\controller\main_controller;
 
@@ -60,7 +60,7 @@ class overview_controller extends admin_main
 	 * @param locale_icu              $ppde_actions_locale          PPDE Locale actions object
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
-	 * @param extension_manager       $ppde_ext_manager             Extension manager object
+	 * @param ext_manager             $ppde_ext_manager             Extension manager object
 	 * @param esi_controller          $esi_controller              IPN PayPal object
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
@@ -68,8 +68,6 @@ class overview_controller extends admin_main
 	 * @param string                  $adm_relative_path            phpBB admin relative path
 	 * @param string                  $phpbb_root_path              phpBB root path
 	 * @param string                  $php_ext                      phpEx
-	 *
-	 * @access public
 	 */
 	public function __construct(
 		auth $auth,
@@ -80,7 +78,7 @@ class overview_controller extends admin_main
 		locale_icu $ppde_actions_locale,
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions,
-		extension_manager $ppde_ext_manager,
+		ext_manager $ppde_ext_manager,
 		esi_controller $esi_controller,
 		request $request,
 		template $template,
@@ -114,9 +112,7 @@ class overview_controller extends admin_main
 	 *
 	 * @param string $action Action name
 	 *
-	 * @return void
 	 * @throws \ReflectionException
-	 * @access public
 	 */
 	public function display_overview(string $action): void
 	{
@@ -143,9 +139,7 @@ class overview_controller extends admin_main
 	 *
 	 * @param string $action The action to be executed.
 	 *
-	 * @return void
 	 * @throws \ReflectionException
-	 * @access private
 	 */
 	private function do_action(string $action): void
 	{
@@ -167,9 +161,6 @@ class overview_controller extends admin_main
 	 * Display confirm box
 	 *
 	 * @param string $action Requested action
-	 *
-	 * @return void
-	 * @access private
 	 */
 	private function display_confirm(string $action): void
 	{
@@ -197,9 +188,7 @@ class overview_controller extends admin_main
 	/**
 	 * @param string $action Requested action
 	 *
-	 * @return void
 	 * @throws \ReflectionException
-	 * @access private
 	 */
 	private function exec_action(string $action): void
 	{
@@ -256,7 +245,6 @@ class overview_controller extends admin_main
 	 * @param string $config_name
 	 *
 	 * @return string
-	 * @access private
 	 */
 	private function per_day_stats(string $config_name): string
 	{
@@ -267,7 +255,6 @@ class overview_controller extends admin_main
 	 * Returns the number of days from the date of installation of the extension.
 	 *
 	 * @return float
-	 * @access private
 	 */
 	private function get_install_days(): float
 	{
@@ -295,8 +282,6 @@ class overview_controller extends admin_main
 	/**
 	 * Handles the 'date' action.
 	 * Resets the installation date to yesterday and logs the action.
-	 *
-	 * @return void
 	 */
 	private function handle_date_action(): void
 	{
@@ -307,8 +292,7 @@ class overview_controller extends admin_main
 	/**
 	 * Handles the 'esi' (Extension System Information) action.
 	 * Triggers a retest of the extension's system information and logs the action.
-	 *
-	 * @return void
+	 * @throws \ReflectionException
 	 */
 	private function handle_esi_action(): void
 	{
@@ -320,8 +304,6 @@ class overview_controller extends admin_main
 	/**
 	 * Handles the 'sandbox' action.
 	 * Updates the overview statistics for the sandbox environment and logs the action.
-	 *
-	 * @return void
 	 */
 	private function handle_sandbox_action(): void
 	{
@@ -333,8 +315,6 @@ class overview_controller extends admin_main
 	/**
 	 * Handles the 'stats' action.
 	 * Updates the overview statistics for the live environment and logs the action.
-	 *
-	 * @return void
 	 */
 	private function handle_stats_action(): void
 	{

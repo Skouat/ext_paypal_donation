@@ -23,11 +23,11 @@ class esi_controller
 	 * Constructor.
 	 *
 	 * @param config            $config           Configuration object
-	 * @param extension_manager $ppde_ext_manager Extension manager object
+	 * @param ext_manager $ppde_ext_manager Extension manager object
 	 */
 	public function __construct(
 		config $config,
-		extension_manager $ppde_ext_manager
+		ext_manager $ppde_ext_manager
 	)
 	{
 		$this->config = $config;

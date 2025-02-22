@@ -6,7 +6,7 @@ services:
             - '@skouat.ppde.extension_manager'
 
     skouat.ppde.extension_manager:
-        class: skouat\ppde\controller\extension_manager
+        class: skouat\ppde\controller\ext_manager
         arguments:
             - '@service_container'
             - '@dbal.conn'

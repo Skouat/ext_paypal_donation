@@ -10,7 +10,7 @@
 
 namespace skouat\ppde\controller;
 
-class extension_manager extends \phpbb\extension\manager
+class ext_manager extends \phpbb\extension\manager
 {
 	/** Extension name  */
 	protected const EXT_NAME = 'skouat/ppde';
