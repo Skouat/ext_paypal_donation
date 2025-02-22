@@ -1,9 +1,24 @@
 services:
+    skouat.ppde.helpers.auth:
+        class: skouat\ppde\helpers\auth_helper
+        arguments:
+            - '@auth'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
     skouat.ppde.helpers.compare:
         class: skouat\ppde\helpers\compare_helper
 
-    skouat.ppde.helpers.transaction_template_helper:
-        class: skouat\ppde\includes\transaction_template_helper
+    skouat.ppde.helpers.post_data:
+        class: skouat\ppde\helpers\post_data_helper
+        arguments:
+            - '@language'
+            - '@skouat.ppde.helpers.compare'
+            - '@request'
+
+    skouat.ppde.helpers.transaction_template:
+        class: skouat\ppde\helpers\transaction_template_helper
         arguments:
             - '@template'
             - '@language'
@@ -13,10 +28,19 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
 
-    skouat.ppde.includes.transaction_validator_helper:
-        class: skouat\ppde\includes\transaction_validator_helper
+    skouat.ppde.helpers.transaction_validator:
+        class: skouat\ppde\helpers\transaction_validator_helper
         arguments:
             - '@language'
             - '@request'
             - '@user'
             - '@user_loader'
+
+    skouat.ppde.helpers.vars:
+        class: skouat\ppde\helpers\vars_helper
+        arguments:
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.currency'
+            - '@config'
+            - '@language'
+            - '@user'

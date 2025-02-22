@@ -23,7 +23,7 @@ services:
             - '@config'
             - '@language'
             - '@skouat.ppde.core_actions'
-            - '@skouat.ppde.helpers.post_data_helper'
+            - '@skouat.ppde.helpers.post_data'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.ipn_log'
@@ -52,9 +52,9 @@ services:
         arguments:
             - '@config'
             - '@service_container'
-            - '@controller.helpers'
+            - '@controller.helper'
             - '@language'
-            - '@skouat.ppde.helpers.auth_helper'
+            - '@skouat.ppde.helpers.auth'
             - '@skouat.ppde.actions.currency'
             - '@request'
             - '@template'
@@ -75,7 +75,7 @@ services:
         class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
-            - [set_actions_vars, ['@skouat.ppde.helpers.vars_helper']]
+            - [set_actions_vars, ['@skouat.ppde.helpers.vars']]
             - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
             - [set_entity_donation_pages, ['@skouat.ppde.entity.donation_pages']]
             - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]
@@ -109,7 +109,7 @@ services:
             - '@service_container'
             - '@language'
             - '@log'
-            - '@skouat.ppde.actions.vars'
+            - '@skouat.ppde.helpers.vars'
             - '@skouat.ppde.entity.donation_pages'
             - '@skouat.ppde.operator.donation_pages'
             - '@request'
@@ -144,7 +144,7 @@ services:
             - '@config'
             - '@language'
             - '@log'
-            - '@skouat.ppde.actions.auth'
+            - '@skouat.ppde.helpers.auth'
             - '@skouat.ppde.actions.currency'
             - '@skouat.ppde.actions.locale_icu'
             - '@request'
@@ -178,8 +178,8 @@ services:
             - '@request'
             - '@template'
             - '@user'
-            - '@skouat.ppde.includes.transaction_template_helper'
-            - '@skouat.ppde.includes.transaction_validator'
+            - '@skouat.ppde.helpers.transaction_template'
+            - '@skouat.ppde.helpers.transaction_validator'
             - '%core.adm_relative_path%'
             - '%core.root_path%'
             - '%core.php_ext%'

@@ -12,14 +12,6 @@ services:
             - '@user'
             - '%core.php_ext%'
 
-    skouat.ppde.actions.auth:
-        class: skouat\ppde\actions\auth
-        arguments:
-            - '@auth'
-            - '@config'
-            - '%core.root_path%'
-            - '%core.php_ext%'
-
     skouat.ppde.actions.currency:
         class: skouat\ppde\actions\currency
         arguments:
@@ -33,20 +25,4 @@ services:
         arguments:
             - '@config'
             - '@template'
-            - '@user'
-
-    skouat.ppde.actions.post_data:
-        class: skouat\ppde\actions\post_data
-        arguments:
-            - '@language'
-            - '@skouat.ppde.helpers.compare'
-            - '@request'
-
-    skouat.ppde.actions.vars:
-        class: skouat\ppde\actions\vars
-        arguments:
-            - '@skouat.ppde.core_actions'
-            - '@skouat.ppde.actions.currency'
-            - '@config'
-            - '@language'
             - '@user'
