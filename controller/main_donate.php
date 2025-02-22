@@ -17,7 +17,7 @@ class main_donate extends main_controller
 	private const RETURN_SUCCESS = 'success';
 	private const RETURN_DONORLIST = 'donorlist';
 
-	/** @var \skouat\ppde\actions\vars_helper */
+	/** @var \skouat\ppde\helpers\vars_helper */
 	protected $vars_helper;
 
 	/** @var \skouat\ppde\controller\main_display_stats */
@@ -29,7 +29,7 @@ class main_donate extends main_controller
 	/** @var \skouat\ppde\operators\donation_pages */
 	protected $donation_pages_operator;
 
-	public function set_vars_helper(\skouat\ppde\actions\vars_helper $vars_helper): void
+	public function set_vars_helper(\skouat\ppde\helpers\vars_helper $vars_helper): void
 	{
 		$this->vars_helper = $vars_helper;
 	}
