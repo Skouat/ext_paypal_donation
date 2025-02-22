@@ -17,7 +17,6 @@ class esi_controller
 	protected $config;
 	protected $ppde_ext_manager;
 	private $response = '';
-	private $response_status = '';
 
 	/**
 	 * Constructor.
@@ -103,11 +102,11 @@ class esi_controller
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 		$this->response = curl_exec($ch);
-		$this->response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$response_status = (string) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 		curl_close($ch);
 
-		return $this->response !== false || $this->response_status !== '0';
+		return $this->response !== false || $response_status !== '0';
 	}
 
 	/**
