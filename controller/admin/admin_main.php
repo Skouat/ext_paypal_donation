@@ -87,10 +87,6 @@ abstract class admin_main
 			default:
 				$this->display();
 		}
-		if (!empty($this->args['action']))
-		{
-			$this->display();
-		}
 	}
 
 	/**
