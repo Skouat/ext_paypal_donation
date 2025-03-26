@@ -225,33 +225,38 @@ class transactions
 	 *
 	 * @param string $type Type of identifier
 	 * @param mixed  $arg  Identifier value
-	 * @return string SQL WHERE clause
+	 * @return array SQL WHERE clause
 	 */
-	private function build_donor_where_clause(string $type, $arg): string
+	private function build_donor_where_clause(string $type, $arg): array
 	{
 		switch ($type)
 		{
 			case 'user':
-				return ' WHERE user_id = ' . (int) $arg;
+				return ['WHERE' => 'u.user_id = ' . (int) $arg];
 			case 'username':
-				return " WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'";
+				return ['WHERE' => "u.username_clean = '" . $this->db->sql_escape(utf8_clean_string($arg)) . "'"];
 			case 'email':
-				return " WHERE user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'";
+				return ['WHERE' => "u.user_email = '" . $this->db->sql_escape(strtolower($arg)) . "'"];
 			default:
-				return '';
+				return [];
 		}
 	}
 
 	/**
 	 * Fetches donor data from the database
 	 *
-	 * @param string $sql_where SQL WHERE clause
+	 * @param array $sql_where SQL WHERE clause
 	 * @return array Donor data
 	 */
-	private function fetch_donor_data(string $sql_where): array
+	private function fetch_donor_data(array $sql_where): array
 	{
-		$sql = 'SELECT user_id, username, user_ppde_donated_amount
-			FROM ' . USERS_TABLE . $sql_where;
+		$sql_ary = [
+			'SELECT'   => 'u.user_id, u.username, u.user_ppde_donated_amount',
+			'FROM'     => [USERS_TABLE => 'u'],
+		];
+		$sql_ary = array_merge($sql_where, $sql_ary);
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);

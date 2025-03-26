@@ -104,10 +104,12 @@ class currency
 	 */
 	private function sql_currency_order(): string
 	{
-		// By default, check that image_order is valid and fix it if necessary
-		return 'SELECT currency_id, currency_order
-				FROM ' . $this->ppde_currency_table . '
-				ORDER BY currency_order';
+		$sql_ary = [
+			'SELECT'   => 'c.currency_id, c.currency_order',
+			'FROM'     => [$this->ppde_currency_table => 'c'],
+			'ORDER_BY' => 'c.currency_order',
+		];
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**

@@ -253,9 +253,13 @@ abstract class main
 	 */
 	public function build_sql_data_exists(): string
 	{
-		return 'SELECT ' . $this->table_schema['item_id']['name'] . '
- 			FROM ' . $this->table_name . '
-			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $this->data[$this->table_schema['item_id']['name']];
+		$sql_ary = [
+			'SELECT' => 't.' . $this->table_schema['item_id']['name'],
+			'FROM'   => [$this->table_name => 't'],
+			'WHERE'  => 't.' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $this->data[$this->table_schema['item_id']['name']],
+		];
+
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**
@@ -267,9 +271,13 @@ abstract class main
 	 */
 	public function load($id)
 	{
-		$sql = 'SELECT *
-			FROM ' . $this->table_name . '
-			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $id;
+		$sql_ary = [
+			'SELECT' => '*',
+			'FROM'   => [$this->table_name => 't'],
+			'WHERE'  => 't.' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . (int) $id,
+		];
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$this->data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);

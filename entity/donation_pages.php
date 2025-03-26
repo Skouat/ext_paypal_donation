@@ -309,10 +309,14 @@ class donation_pages extends main
 	 */
 	public function build_sql_data_exists(): string
 	{
-		return 'SELECT page_id
-			FROM ' . $this->donation_pages_table . "
-			WHERE page_title = '" . $this->db->sql_escape($this->data['page_title']) . "'
-			AND page_lang_id = " . (int) $this->data['page_lang_id'];
+		$sql_ary = [
+			'SELECT' => 'dp.page_id',
+			'FROM'   => [$this->donation_pages_table => 'dp'],
+			'WHERE'  => "dp.page_title = '" . $this->db->sql_escape($this->data['page_title']) . "'
+				AND dp.page_lang_id = " . (int) $this->data['page_lang_id'],
+		];
+
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**

@@ -121,9 +121,13 @@ class transactions extends main
 	 */
 	public function transaction_exists(): int
 	{
-		$sql = 'SELECT transaction_id
-			FROM ' . $this->transactions_log_table . "
-			WHERE txn_id = '" . $this->db->sql_escape($this->data['txn_id']) . "'";
+		$sql_ary = [
+			'SELECT' => 't.transaction_id',
+			'FROM'   => [$this->transactions_log_table => 't'],
+			'WHERE'  => "t.txn_id = '" . $this->db->sql_escape($this->data['txn_id']) . "'",
+		];
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$field = (int) $this->db->sql_fetchfield('transaction_id');
 		$this->db->sql_freeresult($result);

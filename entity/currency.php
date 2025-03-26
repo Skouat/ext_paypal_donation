@@ -68,9 +68,13 @@ class currency extends main
 	 */
 	public function build_sql_data_exists($iso_code = ''): string
 	{
-		return 'SELECT currency_id
-			FROM ' . $this->currency_table . "
-			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ?: $this->data['currency_iso_code']) . "'";
+		$sql_ary = [
+			'SELECT' => 'c.currency_id',
+			'FROM'   => [$this->currency_table => 'c'],
+			'WHERE'  => "c.currency_iso_code = '" . $this->db->sql_escape($iso_code ?: $this->data['currency_iso_code']) . "'",
+		];
+
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**
@@ -168,8 +172,12 @@ class currency extends main
 	 */
 	private function get_max_order(): int
 	{
-		$sql = 'SELECT MAX(currency_order) AS max_order
-			FROM ' . $this->currency_table;
+		$sql_ary = [
+			'SELECT' => 'MAX(c.currency_order) AS max_order',
+			'FROM'   => [$this->currency_table => 'c'],
+		];
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
 		$field = $this->db->sql_fetchfield('max_order');
 		$this->db->sql_freeresult($result);
