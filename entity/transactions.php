@@ -478,7 +478,7 @@ class transactions extends main
 	 */
 	public function set_user_id($user_id)
 	{
-		$this->data['user_id'] = (integer) $user_id;
+		$this->data['user_id'] = (int) $user_id;
 
 		return $this;
 	}

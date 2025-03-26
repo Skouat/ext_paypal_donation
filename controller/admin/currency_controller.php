@@ -41,16 +41,16 @@ class currency_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param config                          $config             Config object.
-	 * @param ContainerInterface              $container          Dependency Injection container.
-	 * @param language                        $language           Language object.
-	 * @param log                             $log                Log object.
-	 * @param \skouat\ppde\actions\locale_icu $locale_icu Locale handler.
-	 * @param \skouat\ppde\entity\currency    $currency_entity    Currency entity.
-	 * @param \skouat\ppde\operators\currency $currency_operator  Currency operator.
-	 * @param request                         $request            Request object.
-	 * @param template                        $template           Template object.
-	 * @param user                            $user               User object.
+	 * @param config                          $config            Config object.
+	 * @param ContainerInterface              $container         Dependency Injection container.
+	 * @param language                        $language          Language object.
+	 * @param log                             $log               Log object.
+	 * @param \skouat\ppde\actions\locale_icu $locale_icu        Locale handler.
+	 * @param \skouat\ppde\entity\currency    $currency_entity   Currency entity.
+	 * @param \skouat\ppde\operators\currency $currency_operator Currency operator.
+	 * @param request                         $request           Request object.
+	 * @param template                        $template          Template object.
+	 * @param user                            $user              User object.
 	 */
 	public function __construct(
 		config $config,

@@ -32,7 +32,7 @@ class core
 	private $donor_is_member = false;
 	private $ipn_suffix;
 	private $is_ipn_test = false;
-	private $payer_data = array();
+	private $payer_data = [];
 	private $root_path;
 
 	/**
@@ -283,7 +283,7 @@ class core
 	 */
 	private function extract_user_id(): void
 	{
-		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['custom'], 4), -1);
+		[$this->transaction_data['user_id']] = (int) explode('_', substr($this->transaction_data['custom'], 4), -1);
 	}
 
 	/**
@@ -354,8 +354,8 @@ class core
 	public function update_overview_stats(): void
 	{
 		$this->config->set('ppde_anonymous_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->ipn_suffix));
-		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix), true);
-		$this->config->set('ppde_transactions_count' . $this->ipn_suffix, $this->get_count_result('ppde_transactions_count' . $this->ipn_suffix), true);
+		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix));
+		$this->config->set('ppde_transactions_count' . $this->ipn_suffix, $this->get_count_result('ppde_transactions_count' . $this->ipn_suffix));
 	}
 
 	/**
@@ -412,7 +412,7 @@ class core
 	 * @param int   $user_id
 	 * @param float $amount
 	 */
-	public function update_user_stats($user_id, $amount): void
+	public function update_user_stats(int $user_id, float $amount): void
 	{
 		if (!$user_id)
 		{

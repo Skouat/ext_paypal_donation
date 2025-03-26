@@ -57,7 +57,6 @@ abstract class main
 
 	/**
 	 * Set data in the $entity object.
-	 * Use call_user_func_array() to call $entity function
 	 *
 	 * @param array $data_ary
 	 */
@@ -73,7 +72,11 @@ abstract class main
 			}
 			else
 			{
-				call_user_func_array([$this, 'set_' . $key], [$value]);
+				$method_name = 'set_' . $key;
+				if (method_exists($this, $method_name))
+				{
+					$this->{'set_' . $key}($value);
+				}
 			}
 		}
 	}
@@ -172,7 +175,7 @@ abstract class main
 		$func_result = true;
 		if ($function_name)
 		{
-			$func_result = (bool) call_user_func([$this, $function_name]);
+			$func_result = (bool) $this->$function_name();
 		}
 
 		return $func_result;
