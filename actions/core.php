@@ -283,7 +283,7 @@ class core
 	 */
 	private function extract_user_id(): void
 	{
-		[$this->transaction_data['user_id']] = (int) explode('_', substr($this->transaction_data['custom'], 4), -1);
+		$this->transaction_data['user_id'] = (int) explode('_', substr($this->transaction_data['custom'], 4), -1)[0];
 	}
 
 	/**
