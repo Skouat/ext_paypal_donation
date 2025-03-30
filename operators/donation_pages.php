@@ -22,8 +22,6 @@ class donation_pages
 	 *
 	 * @param driver_interface $db                        Database connection
 	 * @param string           $ppde_donation_pages_table Table name
-	 *
-	 * @access public
 	 */
 	public function __construct(driver_interface $db, $ppde_donation_pages_table)
 	{
@@ -38,18 +36,22 @@ class donation_pages
 	 * @param string $mode    Could be 'success', 'cancel and 'body'. (Default: 'all_pages')
 	 *
 	 * @return string
-	 * @access public
 	 */
 	public function build_sql_data($lang_id = 0, $mode = 'all_pages'): string
 	{
-		$query = 'SELECT * FROM ' . $this->ppde_donation_pages_table . ' WHERE page_lang_id = ' . (int) $lang_id;
+		$sql_ary = [
+			'SELECT' => '*',
+			'FROM'   => [$this->ppde_donation_pages_table => 'dp'],
+			'WHERE'  => 'dp.page_lang_id = ' . (int) $lang_id,
+			'ORDER_BY' => 'dp.page_title',
+		];
 
 		if (in_array($mode, ['body', 'cancel', 'success']))
 		{
-			$query .= " AND page_title = 'donation_{$mode}'";
+			$sql_ary['WHERE'] .= " AND page_title = 'donation_{$mode}'";
 		}
 
-		return $query . ' ORDER BY page_title';
+		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
 	/**
@@ -61,17 +63,24 @@ class donation_pages
 	 * @param int $lang_id
 	 *
 	 * @return array $langs
-	 * @access public
 	 */
 	public function get_languages($lang_id = 0): array
 	{
-		// Request by id if provided, otherwise request all
-		$sql_where = ($lang_id !== 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
+		$sql_ary = [
+			'SELECT' => '*',
+			'FROM'   => [LANG_TABLE => ''],
+		];
+
+		// Request by id if provided
+		if (($lang_id !== 0))
+		{
+			$sql_ary['WHERE'] = 'lang_id = ' . (int) $lang_id;
+		}
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
 
 		$langs = [];
-
-		$sql = 'SELECT * FROM ' . LANG_TABLE . ' ' . $sql_where;
-		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$langs[$row['lang_iso']] = [
@@ -81,7 +90,6 @@ class donation_pages
 		}
 		$this->db->sql_freeresult($result);
 
-		// Return all available languages
 		return $langs;
 	}
 }
