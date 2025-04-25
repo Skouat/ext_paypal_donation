@@ -193,12 +193,7 @@ class core
 	 */
 	private function check_donor_status_based_on_email($email): bool
 	{
-		if (empty($email))
-		{
-			return false;
-		}
-
-		return $this->check_donors_status('email', $email);
+		return !empty($email) && !empty($this->check_donors_status('email', $email));
 	}
 
 	/**
