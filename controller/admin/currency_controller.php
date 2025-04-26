@@ -154,6 +154,7 @@ class currency_controller extends admin_main
 
 		$this->currency_entity->set_entity_data($item_fields);
 	}
+
 	/**
 	 * Validate currency data.
 	 *
@@ -162,8 +163,17 @@ class currency_controller extends admin_main
 	private function validate_currency_data(): array
 	{
 		$errors = [];
-		return array_merge($errors,
-			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
+		return array_merge($errors, $this->validate_form(), $this->validate_required_fields());
+	}
+
+	private function validate_form(): array
+	{
+		return $this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit));
+	}
+
+	private function validate_required_fields(): array
+	{
+		return array_merge(
 			$this->is_empty_data($this->currency_entity, 'name', '', $this->submit_or_preview($this->submit)),
 			$this->is_empty_data($this->currency_entity, 'iso_code', '', $this->submit_or_preview($this->submit)),
 			$this->is_empty_data($this->currency_entity, 'symbol', '', $this->submit_or_preview($this->submit))

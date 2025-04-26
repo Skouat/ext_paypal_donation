@@ -45,7 +45,7 @@ class donation_pages_controller extends admin_main
 	 * @param ContainerInterface                    $container               Service container interface
 	 * @param language                              $language                Language user object
 	 * @param log                                   $log                     The phpBB log system
-	 * @param \skouat\ppde\helpers\vars_helper      $ppde_vars_helper       PPDE actions vars object
+	 * @param \skouat\ppde\helpers\vars_helper      $ppde_vars_helper        PPDE actions vars object
 	 * @param \skouat\ppde\entity\donation_pages    $donation_pages_entity   PPDE entity object
 	 * @param \skouat\ppde\operators\donation_pages $donation_pages_operator PPDE operator object
 	 * @param request                               $request                 Request object
@@ -180,7 +180,7 @@ class donation_pages_controller extends admin_main
 		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_donation_page_data($data);
+		$this->process_donation_page_form($data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('add');
@@ -208,58 +208,64 @@ class donation_pages_controller extends admin_main
 	 *
 	 * @param array $data The form data to be processed.
 	 */
-	private function add_edit_donation_page_data($data): void
+	private function process_donation_page_form($data): void
 	{
-		// Get form's POST actions (submit or preview)
+		$this->handle_form_submission_state();
+		$this->prepare_message_parse_options($data);
+		$this->set_entity_data_from_form($data);
+
+		$errors = $this->collect_validation_errors();
+
+		$vars = $this->ppde_vars_helper->get_vars();
+
+		$this->assign_preview_template_vars($errors);
+		$this->assign_predefined_block_vars($vars);
+
+		$this->submit_data($errors);
+
+		$this->assign_template_vars($errors);
+		$this->display_editor_features();
+	}
+
+	private function handle_form_submission_state(): void
+	{
 		$this->submit = $this->is_form_submitted();
 		$this->preview = $this->request->is_set_post('preview');
-
-		// Create an array to collect errors that will be output to the user
-		$errors = [];
-
-		// Load posting language file for the BBCode editor
 		$this->language->add_lang('posting');
+	}
 
-		$message_parse_options = [
-			'bbcode'    => $data['bbcode'],
-			'magic_url' => $data['magic_url'],
-			'smilies'   => $data['smilies'],
-		];
-
-		// Set the message parse options in the entity
-		foreach ($message_parse_options as $function => $enabled)
+	private function prepare_message_parse_options(array $data): void
+	{
+		foreach (['bbcode', 'magic_url', 'smilies'] as $option)
 		{
-			$this->donation_pages_entity->{($enabled ? 'message_enable_' : 'message_disable_') . $function}();
+			$enabled = $data[$option];
+			$method = ($enabled ? 'message_enable_' : 'message_disable_') . $option;
+			$this->donation_pages_entity->$method();
 		}
+	}
 
-		unset($message_parse_options);
-
-		// Set the donation page's data in the entity
+	private function set_entity_data_from_form(array $data): void
+	{
 		$item_fields = [
 			'lang_id' => $data['page_lang_id'],
 			'name'    => $data['page_title'],
 			'message' => $data['page_content'],
 		];
 		$this->donation_pages_entity->set_entity_data($item_fields);
+	}
 
-		// Check some settings before loading and submitting form
-		$errors = array_merge($errors,
+	private function collect_validation_errors(): array
+	{
+		return array_merge(
+			[],
 			$this->is_invalid_form('add_edit_' . $this->module_name, $this->submit_or_preview($this->submit)),
 			$this->is_empty_data($this->donation_pages_entity, 'name', '', $this->submit_or_preview($this->submit)),
 			$this->is_empty_data($this->donation_pages_entity, 'lang_id', 0, $this->submit_or_preview($this->submit))
 		);
+	}
 
-		// Grab predefined template vars
-		$vars = $this->ppde_vars_helper->get_vars();
-
-		// Assign variables in a template block vars
-		$this->assign_preview_template_vars($errors);
-		$this->assign_predefined_block_vars($vars);
-
-		// Submit form data
-		$this->submit_data($errors);
-
-		// Set output vars for display in the template
+	private function assign_template_vars(array $errors): void
+	{
 		$this->s_error_assign_template_vars($errors);
 		$this->template->assign_vars([
 			'DONATION_BODY'                  => $this->donation_pages_entity->get_message_for_edit(),
@@ -276,8 +282,9 @@ class donation_pages_controller extends admin_main
 			'S_SMILIES_ALLOWED' => true,
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $this->donation_pages_entity->get_name() . '">',
 		]);
-
-		// Display custom bbcodes and smilies
+	}
+	private function display_editor_features(): void
+	{
 		$this->include_custom_bbcodes($this->user->optionget('bbcode') || $this->donation_pages_entity->message_bbcode_enabled());
 		$this->include_smilies($this->user->optionget('smilies') || $this->donation_pages_entity->message_smilies_enabled());
 	}
@@ -427,7 +434,7 @@ class donation_pages_controller extends admin_main
 		$this->create_language_options($data['page_lang_id']);
 
 		// Process the new page
-		$this->add_edit_donation_page_data($data);
+		$this->process_donation_page_form($data);
 
 		// Set output vars for display in the template
 		$this->add_edit_action_assign_template_vars('edit', $page_id);
