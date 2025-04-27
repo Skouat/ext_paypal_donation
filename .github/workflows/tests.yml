@@ -21,8 +21,7 @@ on:
             - '*.md'
 
 jobs:
-    # START Basic Checks Job (EPV, code sniffer, images check, etc.)
-    basic-checks:
+    basics-checks-php7:
         runs-on: ubuntu-22.04
         strategy:
             matrix:
@@ -34,18 +33,6 @@ jobs:
                       db: "none"
                       NOTESTS: 1
                     - php: '7.4'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.0'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.1'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.2'
-                      db: "none"
-                      NOTESTS: 1
-                    - php: '8.3'
                       db: "none"
                       NOTESTS: 1
 
@@ -105,4 +92,77 @@ jobs:
               if: ${{ env.EPV != 0 }}
               run: phpBB/vendor/bin/EPV.php run --dir="phpBB/ext/$EXTNAME/"
               working-directory: ./phpBB3
-    # END Basic Checks Job
+    basics-checks-php8:
+        runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                include:
+                    - php: '8.0'
+                      db: "none"
+                      NOTESTS: 1
+                    - php: '8.1'
+                      db: "none"
+                      NOTESTS: 1
+                    - php: '8.2'
+                      db: "none"
+                      NOTESTS: 1
+                    - php: '8.3'
+                      db: "none"
+                      NOTESTS: 1
+
+        name: PHP ${{ matrix.php }} - ${{ matrix.db }}
+
+        steps:
+            - name: Checkout phpBB
+              uses: actions/checkout@v4
+              with:
+                  repository: phpbb/phpbb
+                  ref: ${{ env.PHPBB_BRANCH }}
+                  path: phpBB3
+
+            - name: Checkout extension
+              uses: actions/checkout@v4
+              with:
+                  path: phpBB3/phpBB/ext/${{ env.EXTNAME }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, mysqli, sqlite, pdo_sqlite, intl, gd, exif, iconv, sqlsrv, pdo_sqlsrv, ldap
+                  coverage: none
+
+            - name: Setup environment for phpBB
+              env:
+                  DB: ${{ matrix.db }}
+                  PHP_VERSION: ${{ matrix.php }}
+                  NOTESTS: '1'
+              run: .github/setup-phpbb.sh $DB $PHP_VERSION $NOTESTS
+              working-directory: ./phpBB3
+
+            - name: Setup EPV
+              if: ${{ env.EPV != 0 }}
+              run: composer require phpbb/epv:dev-master --dev --no-interaction --ignore-platform-reqs --with-all-dependencies
+              working-directory: ./phpBB3/phpBB
+
+            - name: Run code sniffer
+              if: ${{ env.SNIFF != 0 }}
+              env:
+                  NOTESTS: '1'
+              run: .github/ext-sniff.sh $EXTNAME $NOTESTS
+              working-directory: ./phpBB3
+
+            - name: Check image ICC profiles
+              if: ${{ env.IMAGE_ICC != 0 }}
+              run: .github/check-image-icc-profiles.sh
+              working-directory: ./phpBB3
+
+            - name: Check executable files
+              if: ${{ env.EXECUTABLE_FILES != 0 }}
+              run: .github/ext-check-executable-files.sh ./ $EXTNAME
+              working-directory: ./phpBB3
+
+            - name: Run EPV
+              if: ${{ env.EPV != 0 }}
+              run: phpBB/vendor/bin/EPV.php run --dir="phpBB/ext/$EXTNAME/"
+              working-directory: ./phpBB3
