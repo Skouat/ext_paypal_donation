@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2024 Skouat
+ * @copyright (c) 2015-2025 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -13,199 +13,202 @@ namespace skouat\ppde\helpers;
 use phpbb\language\language;
 use phpbb\request\request;
 
+/**
+ * Helper for handling post data
+ */
 class post_data_helper
 {
-	private const ASCII_RANGE = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
+	/** @var language */
 	protected $language;
-	protected $compare_helper;
+
+	/** @var request */
 	protected $request;
 
 	/**
 	 * Constructor
 	 *
-	 * @param language       $language       Language object
-	 * @param compare_helper $compare_helper Compare operator object
-	 * @param request        $request        Request object
+	 * @param language $language Language object
+	 * @param request  $request  Request object
 	 */
-	public function __construct(language $language, compare_helper $compare_helper, request $request)
+	public function __construct(
+		language $language,
+		request $request
+	)
 	{
 		$this->language = $language;
-		$this->compare_helper = $compare_helper;
 		$this->request = $request;
 	}
 
 	/**
-	 * Check requirements for data value.
+	 * Get post data from request
 	 *
-	 * @param array $data_ary
-	 * @return mixed
-	 */
-	public function set_func(array $data_ary)
-	{
-		$value = $data_ary['value'];
-
-		foreach ($data_ary['force_settings'] as $control_point => $params)
-		{
-			// Calling the set_post_data_function
-			$value = $this->{'set_post_data_' . $control_point}($data_ary['value'], $params);
-		}
-		unset($control_point);
-
-		return $value;
-	}
-
-	/**
-	 * Request predefined variable from super global
-	 *
-	 * @param array $data_ary List of data to request
-	 * @return array
+	 * @param array $data_ary Data array
+	 * @return array Post data
 	 */
 	public function get_post_data(array $data_ary): array
 	{
-		if (is_array($data_ary['default']))
+		$name = $data_ary['name'];
+		$default = $data_ary['default'];
+
+		// Handle default value
+		if (is_array($default))
 		{
-			$data_ary['value'] = $this->request->variable($data_ary['name'], (string) $data_ary['default'][0], (bool) $data_ary['default'][1]);
+			$default = $default[0];
+			$multibyte = $default[1] ?? false;
 		}
 		else
 		{
-			$data_ary['value'] = $this->request->variable($data_ary['name'], $data_ary['default']);
+			$multibyte = false;
 		}
 
-		return $data_ary;
+		// Get value from request
+		$value = $this->request->variable($name, $default, $multibyte);
+
+		return [
+			'name'            => $name,
+			'value'           => $value,
+			'condition_check' => $data_ary['condition_check'] ?? [],
+			'force_settings'  => $data_ary['force_settings'] ?? [],
+			'txn_errors'      => '',
+		];
 	}
 
 	/**
-	 * Check if some settings are valid.
+	 * Check post data against conditions
 	 *
-	 * @param array $data_ary
-	 * @return array
+	 * @param array $post_data Post data
+	 * @return array Checked post data
 	 */
-	public function check_post_data(array $data_ary): array
+	public function check_post_data(array $post_data): array
 	{
-		$data_ary['txn_errors'] = '';
-
-		// Check all conditions declared for this post_data
-		if (isset($data_ary['condition_check']))
+		if (empty($post_data['condition_check']))
 		{
-			$check = $this->call_func($data_ary);
-			$data_ary['txn_errors'] .= $check['txn_errors'];
-			unset($check['txn_errors']);
-			$data_ary['condition_checked'] = (bool) array_product($check);
+			return $post_data;
 		}
 
-		return $data_ary;
+		foreach ($post_data['condition_check'] as $check_type => $check_value)
+		{
+			$post_data = $this->apply_check($post_data, $check_type, $check_value);
+		}
+
+		return $post_data;
 	}
 
 	/**
-	 * Check requirements for data value.
-	 * If a check fails, error messages are stored in $this->error_message
+	 * Apply check to post data
 	 *
-	 * @param array $data_ary
-	 * @return array
+	 * @param array  $post_data   Post data
+	 * @param string $check_type  Check type
+	 * @param mixed  $check_value Check value
+	 * @return array Updated post data
 	 */
-	public function call_func(array $data_ary): array
+	private function apply_check(array $post_data, string $check_type, $check_value): array
 	{
-		$check = [];
-		$check['txn_errors'] = '';
-
-		foreach ($data_ary['condition_check'] as $control_point => $params)
+		switch ($check_type)
 		{
-			// Calling the check_post_data_function
-			if ($this->{'check_post_data_' . $control_point}($data_ary['value'], $params))
+			case 'ascii':
+				if ($check_value && !$this->is_ascii($post_data['value']))
+				{
+					$post_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_ASCII', $post_data['name']);
+				}
+			break;
+
+			case 'content':
+				if (!in_array($post_data['value'], $check_value, true))
+				{
+					$post_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_CONTENT', $post_data['name']);
+				}
+			break;
+
+			case 'empty':
+				if ($check_value === false && empty($post_data['value']))
+				{
+					$post_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_EMPTY', $post_data['name']);
+				}
+			break;
+
+			case 'length':
+				$post_data = $this->check_length($post_data, $check_value);
+			break;
+		}
+
+		return $post_data;
+	}
+
+	/**
+	 * Check if string contains only ASCII characters
+	 *
+	 * @param string $string String to check
+	 * @return bool Whether string contains only ASCII characters
+	 */
+	private function is_ascii(string $string): bool
+	{
+		return (bool) preg_match('/^[\x00-\x7F]*$/', $string);
+	}
+
+	/**
+	 * Check length of value
+	 *
+	 * @param array $post_data   Post data
+	 * @param array $check_value Check value
+	 * @return array Updated post data
+	 */
+	private function check_length(array $post_data, array $check_value): array
+	{
+		$value_length = utf8_strlen($post_data['value']);
+		$expected_length = $check_value['value'];
+		$operator = $check_value['operator'] ?? '==';
+
+		$valid = false;
+		switch ($operator)
+		{
+			case '==':
+				$valid = $value_length == $expected_length;
+			break;
+			case '<=':
+				$valid = $value_length <= $expected_length;
+			break;
+			case '>=':
+				$valid = $value_length >= $expected_length;
+			break;
+		}
+
+		if (!$valid)
+		{
+			$post_data['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_LENGTH', $post_data['name']);
+		}
+
+		return $post_data;
+	}
+
+	/**
+	 * Set function to apply to post data
+	 *
+	 * @param array $post_data Post data
+	 * @return mixed Modified value
+	 */
+	public function set_func(array $post_data)
+	{
+		$value = $post_data['value'];
+
+		foreach ($post_data['force_settings'] as $func => $func_value)
+		{
+			switch ($func)
 			{
-				$check[] = true;
-				continue;
+				case 'length':
+					$value = utf8_substr($value, 0, (int) $func_value);
+				break;
+
+				case 'lowercase':
+					$value = utf8_strtolower($value);
+				break;
+
+				case 'strtotime':
+					$value = strtotime($value);
+				break;
 			}
-
-			$check['txn_errors'] .= '<br>' . $this->language->lang('INVALID_TXN_' . strtoupper($control_point), $data_ary['name']);
-			$check[] = false;
 		}
-		unset($control_point);
 
-		return $check;
-	}
-
-	/**
-	 * Check Post data length.
-	 *
-	 * @param string $value
-	 * @param array  $statement
-	 * @return bool
-	 */
-	public function check_post_data_length($value, $statement): bool
-	{
-		return $this->compare_helper->compare_value(strlen($value), $statement['value'], $statement['operator']);
-	}
-
-	/**
-	 * Check if parsed value contains only ASCII chars.
-	 * Return false if it contains non ASCII chars.
-	 *
-	 * @param string $value
-	 * @return bool
-	 */
-	public function check_post_data_ascii($value): bool
-	{
-		return strlen($value) === strspn($value, self::ASCII_RANGE);
-	}
-
-	/**
-	 * Check Post data content based on an array list.
-	 *
-	 * @param string $value
-	 * @param array  $content_ary
-	 * @return bool
-	 */
-	public function check_post_data_content($value, $content_ary): bool
-	{
-		return in_array($value, $content_ary);
-	}
-
-	/**
-	 * Check if Post data is empty.
-	 *
-	 * @param string $value
-	 * @return bool
-	 */
-	public function check_post_data_empty($value): bool
-	{
-		return !empty($value);
-	}
-
-	/**
-	 * Set Post data length.
-	 *
-	 * @param string $value
-	 * @param int    $length
-	 * @return string
-	 */
-	public function set_post_data_length($value, $length): string
-	{
-		return substr($value, 0, (int) $length);
-	}
-
-	/**
-	 * Set Post data to lowercase.
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 * @return string
-	 */
-	public function set_post_data_lowercase($value, $force = false): string
-	{
-		return $force ? strtolower($value) : $value;
-	}
-
-	/**
-	 * Set Post data to date/time format.
-	 *
-	 * @param string $value
-	 * @param bool   $force
-	 * @return string
-	 */
-	public function set_post_data_strtotime($value, $force = false): string
-	{
-		return $force ? (string) strtotime($value) : $value;
+		return $value;
 	}
 }

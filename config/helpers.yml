@@ -7,14 +7,10 @@ services:
             - '%core.root_path%'
             - '%core.php_ext%'
 
-    skouat.ppde.helpers.compare:
-        class: skouat\ppde\helpers\compare_helper
-
     skouat.ppde.helpers.post_data:
         class: skouat\ppde\helpers\post_data_helper
         arguments:
             - '@language'
-            - '@skouat.ppde.helpers.compare'
             - '@request'
 
     skouat.ppde.helpers.transaction_template:
