@@ -1,0 +1,47 @@
+{% INCLUDE 'overall_header.html' %}
+<h2 class="solo fs-4">{{ lang('PPDE_DONORLIST_TITLE') }}</h2>
+
+<div class="action-bar top d-flex justify-content-end mb-1">
+	<div class="pagination align-items-center flex-wrap">
+		{% if loops.donorrow|length %}{{ TOTAL_DONORS }}{% endif %}
+		{% if loops.pagination|length %}
+		{% INCLUDE 'pagination.html' %}
+		{% else %}
+		{% if loops.donorrow|length %}&bull; {% endif %}{{ PAGE_NUMBER }}
+		{% endif %}
+	</div>
+</div>
+
+<div class="forabg forumbg-table bg-primary bg-gradient rounded-3 p-2">
+	<ul class="list-unstyled mb-0 row row-cols-4 gx-0 text-white d-none d-md-flex p-2">
+		<li class="name"><a class="text-decoration-none text-white" href="{{ U_SORT_USERNAME }}">{{ lang('USERNAME') }}</a></li>
+		<li class="joined"><a class="text-decoration-none text-white" href="{{ U_SORT_AMOUNT }}">{{ lang('PPDE_DONORLIST_TOTAL_DONATION') }}</a></li>
+		<li class="joined">{{ lang('PPDE_DONORLIST_LAST_DONATION') }}</li>
+		<li><a class="text-decoration-none text-white" href="{{ U_SORT_DONATED }}">{{ lang('PPDE_DONORLIST_LAST_DATE') }}</a></li>		
+	</ul>
+	<ul class="list-unstyled mb-0 bg-body">
+		{% for donorrow in loops.donorrow %}
+		<li class="p-2 {% if donorrow.S_ROW_COUNT is even %}bg1 bg-secondary bg-opacity-10{% else %}bg2 bg-secondary bg-opacity-25{% endif %}">
+			<ul class="list-unstyled mb-0 row gx-0">			
+				<li class="col-md-3 name"><span class="d-inline-block d-sm-none fst-italic pe-1">{{ lang('USERNAME') }}{L_COLON}</span>{{ donorrow.PPDE_DONOR_USERNAME }}</li>
+				<li class="col-md-3 joined"><span class="d-inline-block d-sm-none fst-italic pe-1">{{ lang('PPDE_DONORLIST_TOTAL_DONATION') }}{L_COLON}</span>{{ donorrow.PPDE_TOTAL_DONATED_AMOUNT }}</li>
+				<li class="col-md-3 joined"><span class="d-inline-block d-sm-none fst-italic pe-1">{{ lang('PPDE_DONORLIST_LAST_DONATION') }}{L_COLON}</span>{{ donorrow.PPDE_LAST_DONATED_AMOUNT }}</li>
+				<li class="col-md-3 date"><span class="d-inline-block d-sm-none fst-italic pe-1">{{ lang('PPDE_DONORLIST_LAST_DATE') }}{L_COLON}</span>{{ donorrow.PPDE_LAST_PAYMENT_DATE }}</li>
+			</ul>
+		</li>
+		{% else %}
+		<li class="alert alert-info">{{ lang('PPDE_NO_DONORS') }}</li>			
+		{% endfor %}
+	</ul>
+</div>
+<div class="action-bar bottom d-flex justify-content-end mt-1">
+	<div class="pagination align-items-center flex-wrap">
+		{% if loops.donorrow|length %}{{ TOTAL_DONORS }}{% endif %}
+		{% if loops.pagination|length %}
+		{% INCLUDE 'pagination.html' %}
+		{% else %}
+		{% if loops.donorrow|length %}&bull; {% endif %}{{ PAGE_NUMBER }}
+		{% endif %}
+	</div>
+</div>
+{% INCLUDE 'overall_footer.html' %}
