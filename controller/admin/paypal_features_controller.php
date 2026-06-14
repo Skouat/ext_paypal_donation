@@ -101,6 +101,16 @@ class paypal_features_controller extends admin_main
 		$this->u_action_assign_template_vars();
 		$this->build_remote_uri_select_menu((int) $this->config['ppde_sandbox_remote'], 'sandbox');
 		$this->template->assign_vars([
+			// REST API - Live
+			'PPDE_REST_CLIENT_ID'            => $this->check_config($this->config['ppde_rest_client_id'], 'string'),
+			'PPDE_WEBHOOK_ID'                => $this->check_config($this->config['ppde_webhook_id'], 'string'),
+			'S_PPDE_REST_SECRET_SET'         => !empty($this->config['ppde_rest_secret']),
+
+			// REST API - Sandbox
+			'PPDE_SANDBOX_REST_CLIENT_ID'    => $this->check_config($this->config['ppde_sandbox_rest_client_id'], 'string'),
+			'PPDE_SANDBOX_WEBHOOK_ID'        => $this->check_config($this->config['ppde_sandbox_webhook_id'], 'string'),
+			'S_PPDE_SANDBOX_REST_SECRET_SET' => !empty($this->config['ppde_sandbox_rest_secret']),
+
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
 			'S_PPDE_IPN_AG_ENABLE'           => $this->check_config($this->config['ppde_ipn_autogroup_enable']),
@@ -124,6 +134,16 @@ class paypal_features_controller extends admin_main
 	 */
 	protected function set_settings(): void
 	{
+		// REST API credentials (Live)
+		$this->config->set('ppde_rest_client_id', $this->request->variable('ppde_rest_client_id', '', true));
+		$this->config->set('ppde_webhook_id', $this->request->variable('ppde_webhook_id', '', true));
+		$this->set_secret('ppde_rest_secret', 'ppde_rest_secret');
+
+		// REST API credentials (Sandbox)
+		$this->config->set('ppde_sandbox_rest_client_id', $this->request->variable('ppde_sandbox_rest_client_id', '', true));
+		$this->config->set('ppde_sandbox_webhook_id', $this->request->variable('ppde_sandbox_webhook_id', '', true));
+		$this->set_secret('ppde_sandbox_rest_secret', 'ppde_sandbox_rest_secret');
+
 		// Set options for PayPal IPN
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
 		$this->config->set('ppde_ipn_dl_allow_guest', $this->request->variable('ppde_ipn_dl_allow_guest', false));
@@ -153,5 +173,27 @@ class paypal_features_controller extends admin_main
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));
 		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
+	}
+
+	/**
+	 * Sets a secret config value.
+	 *
+	 * The secret input is rendered as an empty password field. When the admin
+	 * leaves it blank, the previously stored secret is preserved (i.e. not overwritten with an empty string).
+	 *
+	 * @param string $config_name  Name of the config key to update
+	 * @param string $request_name Name of the POST field
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function set_secret($config_name, $request_name): void
+	{
+		$value = $this->request->variable($request_name, '', true);
+
+		if ($value !== '')
+		{
+			$this->config->set($config_name, $value);
+		}
 	}
 }

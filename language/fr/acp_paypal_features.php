@@ -41,6 +41,19 @@ $lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN',
 	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les fonctionnalités utilisant les notifications instantanées de paiement (IPN) de PayPal.',
 
+	// REST API settings
+	'PPDE_LEGEND_REST_API'                 => 'REST API settings',
+	'PPDE_REST_LIVE'                       => 'Live credentials',
+	'PPDE_REST_SANDBOX'                    => 'Sandbox credentials',
+	'PPDE_REST_CLIENT_ID'                  => 'Client ID',
+	'PPDE_REST_CLIENT_ID_EXPLAIN'          => 'The REST API app Client ID from your PayPal Developer Dashboard.',
+	'PPDE_REST_SECRET'                     => 'Secret',
+	'PPDE_REST_SECRET_EXPLAIN'             => 'The REST API app Secret. Leave blank to keep the current value.',
+	'PPDE_REST_SECRET_SET'                 => '•••••••• (a secret is already stored)',
+	'PPDE_REST_SECRET_EMPTY'               => 'No secret stored yet',
+	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
+	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'The Webhook ID created in your PayPal Developer Dashboard. Used to verify incoming webhook notifications.',
+
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
 	'PPDE_LEGEND_IPN_DEBUG'                => 'Paramètres de débogage',

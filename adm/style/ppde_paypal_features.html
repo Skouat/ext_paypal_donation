@@ -13,6 +13,41 @@
 {% endif %}
 
 <form id="ppde_settings" method="post" action="{{ U_ACTION }}">
+	<fieldset>
+		<legend>{{ lang('PPDE_LEGEND_REST_API') }}</legend>
+
+		<fieldset>
+			<legend>{{ lang('PPDE_REST_LIVE') }}</legend>
+			<dl>
+				<dt><label for="ppde_rest_client_id">{{ lang('PPDE_REST_CLIENT_ID') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_REST_CLIENT_ID_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_rest_client_id" name="ppde_rest_client_id" size="60" value="{{ PPDE_REST_CLIENT_ID }}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_rest_secret">{{ lang('PPDE_REST_SECRET') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_REST_SECRET_EXPLAIN') }}</span></dt>
+				<dd><input type="password" class="text" id="ppde_rest_secret" name="ppde_rest_secret" size="60" value="" autocomplete="new-password" placeholder="{% if S_PPDE_REST_SECRET_SET %}{{ lang('PPDE_REST_SECRET_SET') }}{% else %}{{ lang('PPDE_REST_SECRET_EMPTY') }}{% endif %}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_webhook_id">{{ lang('PPDE_WEBHOOK_ID') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_WEBHOOK_ID_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_webhook_id" name="ppde_webhook_id" size="40" value="{{ PPDE_WEBHOOK_ID }}"></dd>
+			</dl>
+		</fieldset>
+
+		<fieldset>
+			<legend>{{ lang('PPDE_REST_SANDBOX') }}</legend>
+			<dl>
+				<dt><label for="ppde_sandbox_rest_client_id">{{ lang('PPDE_REST_CLIENT_ID') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_REST_CLIENT_ID_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_sandbox_rest_client_id" name="ppde_sandbox_rest_client_id" size="60" value="{{ PPDE_SANDBOX_REST_CLIENT_ID }}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_rest_secret">{{ lang('PPDE_REST_SECRET') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_REST_SECRET_EXPLAIN') }}</span></dt>
+				<dd><input type="password" class="text" id="ppde_sandbox_rest_secret" name="ppde_sandbox_rest_secret" size="60" value="" autocomplete="new-password" placeholder="{% if S_PPDE_SANDBOX_REST_SECRET_SET %}{{ lang('PPDE_REST_SECRET_SET') }}{% else %}{{ lang('PPDE_REST_SECRET_EMPTY') }}{% endif %}"></dd>
+			</dl>
+			<dl>
+				<dt><label for="ppde_sandbox_webhook_id">{{ lang('PPDE_WEBHOOK_ID') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_WEBHOOK_ID_EXPLAIN') }}</span></dt>
+				<dd><input type="text" class="text" id="ppde_sandbox_webhook_id" name="ppde_sandbox_webhook_id" size="40" value="{{ PPDE_SANDBOX_WEBHOOK_ID }}"></dd>
+			</dl>
+		</fieldset>
+	</fieldset>
 
 	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_IPN_SETTINGS') }}</legend>
