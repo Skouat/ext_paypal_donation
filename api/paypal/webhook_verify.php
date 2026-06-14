@@ -22,9 +22,12 @@ use phpbb\config\config;
  */
 class webhook_verify
 {
+	/**
+	 * The PAYPAL-AUTH-ALGO header is always "SHA256withRSA".
+	 */
+	private const PAYPAL_AUTH_ALGO = 'SHA256withRSA';
 	/** @var cache_interface */
 	protected $cache;
-
 	/** @var config */
 	protected $config;
 
@@ -93,12 +96,23 @@ class webhook_verify
 			crc32($raw_body),
 		]);
 
+		// PayPal always signs webhooks with SHA256withRSA. Reject anything else.
+		if ($headers['auth_algo'] !== self::PAYPAL_AUTH_ALGO)
+		{
+			return false;
+		}
+
 		$verified = openssl_verify(
 			$expected_data,
 			base64_decode($headers['transmission_sig']),
 			$public_key,
-			$this->map_algo($headers['auth_algo'])
+			OPENSSL_ALGO_SHA256
 		);
+
+		if (PHP_VERSION_ID < 80000 && is_resource($public_key))
+		{
+			openssl_free_key($public_key);
+		}
 
 		return $verified === 1;
 	}
@@ -165,19 +179,5 @@ class webhook_verify
 		$this->cache->put($cache_key, $cert, 86400);
 
 		return $cert;
-	}
-
-	/**
-	 * Map the PayPal auth algorithm header to an OpenSSL algorithm constant.
-	 *
-	 * @param string $auth_algo e.g. "SHA256withRSA"
-	 *
-	 * @return int
-	 * @access private
-	 */
-	private function map_algo(string $auth_algo): int
-	{
-		// PayPal currently always signs with SHA256withRSA.
-		return OPENSSL_ALGO_SHA256;
 	}
 }
