@@ -186,3 +186,16 @@ services:
         parent: skouat.ppde.controller
         calls:
             - [ set_client_factory, [ '@skouat.ppde.api.paypal.client_factory' ] ]
+
+    skouat.ppde.webhook_listener:
+        class: skouat\ppde\controller\webhook_listener
+        arguments:
+            - '@config'
+            - '@language'
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.api.paypal.webhook_verify'
+            - '@skouat.ppde.api.paypal.client_factory'
+            - '@skouat.ppde.ipn_log'
+            - '@request'
+            - '@dispatcher'

@@ -13,3 +13,6 @@ skouat_ppde_create_order:
 skouat_ppde_capture_order:
     path: /donate/capture-order
     defaults: { _controller: skouat.ppde.controller.order:capture }
+skouat_ppde_webhook:
+    path: /donate/webhook
+    defaults: { _controller: skouat.ppde.webhook_listener:handle }

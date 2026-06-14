@@ -4,3 +4,9 @@ services:
         arguments:
             - '@config'
             - '@language'
+
+    skouat.ppde.api.paypal.webhook_verify:
+        class: skouat\ppde\api\paypal\webhook_verify
+        arguments:
+            - '@cache.driver'
+            - '@config'
