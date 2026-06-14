@@ -1,0 +1,6 @@
+services:
+    skouat.ppde.api.paypal.client_factory:
+        class: skouat\ppde\api\paypal\client_factory
+        arguments:
+            - '@config'
+            - '@language'

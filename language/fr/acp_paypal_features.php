@@ -91,4 +91,5 @@ $lang = array_merge($lang, [
 $lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Veuillez vérifier le paramètre « Adresse PayPal Sandbox ».',
 	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble ».',
+	'PPDE_REST_CREDENTIALS_MISSING'       => 'Les identifiants de l’API REST PayPal (Client ID / Secret) ne sont pas configurés. Veuillez les renseigner dans le module « Fonctionnalités PayPal IPN ».',
 ]);
