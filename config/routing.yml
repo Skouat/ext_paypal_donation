@@ -7,3 +7,9 @@ skouat_ppde_donorlist:
 skouat_ppde_ipn_listener:
     path: /ipn-listener
     defaults: { _controller: skouat.ppde.ipn_listener:handle }
+skouat_ppde_create_order:
+    path: /donate/create-order
+    defaults: { _controller: skouat.ppde.controller.order:create }
+skouat_ppde_capture_order:
+    path: /donate/capture-order
+    defaults: { _controller: skouat.ppde.controller.order:capture }

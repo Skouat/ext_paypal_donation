@@ -148,4 +148,20 @@ class client_factory
 
 		return !empty($client_id) && !empty($client_secret);
 	}
+
+	/**
+	 * Returns the public Client ID for the requested environment.
+	 * Safe to expose in templates (unlike the secret).
+	 *
+	 * @param bool $sandbox
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_client_id(bool $sandbox): string
+	{
+		[$client_id] = $this->get_credentials($sandbox);
+
+		return $client_id;
+	}
 }

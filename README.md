@@ -32,6 +32,7 @@ This extension adds a PayPal Donation page on your site.
   2. Navigate in the ACP to `Customise -> Manage extensions`.
   3. Look for `PayPal Donation` under the Disabled Extensions list, and click its `Enable` link.
   4. Set up and configure PayPal Donation by navigating in the ACP to `Extensions -> PayPal Donation`.
+  5. If your board enforces a Content Security Policy, see [docs/csp.md](docs/csp.md) to allow PayPal's domains.
 
 ## Uninstall
   1. Navigate in the ACP to `Customise -> Extension Management -> Extensions`.
