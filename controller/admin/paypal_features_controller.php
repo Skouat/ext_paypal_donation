@@ -26,7 +26,6 @@ use skouat\ppde\controller\main_controller;
  * @property language   language        Language object
  * @property log        log             The phpBB log system
  * @property string     module_name     Name of the module currently used
- * @property ipn_paypal ppde_ipn_paypal IPN PayPal object
  * @property request    request         Request object
  * @property bool       submit          State of submit $_POST variable
  * @property template   template        Template object
@@ -46,7 +45,6 @@ class paypal_features_controller extends admin_main
 	 * @param language        $language             Language object
 	 * @param log             $log                  The phpBB log system
 	 * @param main_controller $ppde_controller_main Main controller object
-	 * @param ipn_paypal      $ppde_ipn_paypal      IPN PayPal object
 	 * @param request         $request              Request object
 	 * @param template        $template             Template object
 	 * @param user            $user                 User object
@@ -58,7 +56,6 @@ class paypal_features_controller extends admin_main
 		language $language,
 		log $log,
 		main_controller $ppde_controller_main,
-		ipn_paypal $ppde_ipn_paypal,
 		\phpbb\controller\helper $controller_helper,
 		\skouat\ppde\api\paypal\client_factory $ppde_client_factory,
 		request $request,
@@ -70,7 +67,6 @@ class paypal_features_controller extends admin_main
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
-		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
 		$this->controller_helper = $controller_helper;
 		$this->ppde_client_factory = $ppde_client_factory;
 		$this->request = $request;
@@ -174,16 +170,6 @@ class paypal_features_controller extends admin_main
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
 		$this->config->set('ppde_sandbox_remote', $this->request->variable('ppde_sandbox_remote', 1));
-
-		// Set misc settings
-		$this->ppde_ipn_paypal->set_curl_info();
-		$this->ppde_ipn_paypal->set_remote_detected();
-		$this->ppde_ipn_paypal->check_tls();
-		if (!$this->ppde_controller_main->is_ipn_requirement_satisfied())
-		{
-			$this->config->set('ppde_ipn_enable', '');
-			trigger_error($this->language->lang($this->lang_key_prefix . '_NOT_ENABLEABLE') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));

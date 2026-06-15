@@ -133,7 +133,7 @@ class ipn_log
 		$error_timestamp = date('d-M-Y H:i:s Z');
 
 		$backtrace = '';
-		if (!empty($this->config['ppde_sandbox_enable']) && $this->ppde_controller_main->use_ipn())
+		if (!empty($this->config['ppde_sandbox_enable']) && $this->ppde_controller_main->is_donation_active())
 		{
 			$backtrace = get_backtrace();
 		}

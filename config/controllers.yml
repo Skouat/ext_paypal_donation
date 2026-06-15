@@ -11,20 +11,6 @@ services:
             - '%core.php_ext%'
             - '@cache'
 
-    skouat.ppde.ipn_listener:
-        class: skouat\ppde\controller\ipn_listener
-        arguments:
-            - '@config'
-            - '@language'
-            - '@skouat.ppde.core_actions'
-            - '@skouat.ppde.actions.post_data'
-            - '@skouat.ppde.controller'
-            - '@skouat.ppde.controller.admin.transactions'
-            - '@skouat.ppde.ipn_log'
-            - '@skouat.ppde.ipn_paypal'
-            - '@request'
-            - '@dispatcher'
-
     skouat.ppde.ipn_log:
         class: skouat\ppde\controller\ipn_log
         arguments:
@@ -154,7 +140,6 @@ services:
             - '@language'
             - '@log'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.ipn_paypal'
             - '@controller.helper'
             - '@skouat.ppde.api.paypal.client_factory'
             - '@request'
