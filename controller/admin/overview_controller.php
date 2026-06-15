@@ -19,7 +19,6 @@ use phpbb\template\template;
 use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\locale_icu;
-use skouat\ppde\api\paypal\system_check;
 use skouat\ppde\controller\extension_manager;
 use skouat\ppde\controller\main_controller;
 
@@ -31,7 +30,6 @@ use skouat\ppde\controller\main_controller;
  * @property log          log                 The phpBB log system
  * @property string       module_name         Name of the module currently used
  * @property locale_icu   ppde_actions_locale PPDE locale actions object
- * @property system_check ppde_system_check   PPDE system prerequisites checker
  * @property request      request             Request object
  * @property template     template            Template object
  * @property string       u_action            Action URL
@@ -61,7 +59,6 @@ class overview_controller extends admin_main
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
-	 * @param system_check            $ppde_system_check            PPDE system prerequisites checker
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
 	 * @param user                    $user                         User object
@@ -81,7 +78,6 @@ class overview_controller extends admin_main
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions,
 		extension_manager $ppde_ext_manager,
-		system_check $ppde_system_check,
 		request $request,
 		template $template,
 		user $user,
@@ -99,7 +95,6 @@ class overview_controller extends admin_main
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->ppde_ext_manager = $ppde_ext_manager;
-		$this->ppde_system_check = $ppde_system_check;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -139,10 +134,8 @@ class overview_controller extends admin_main
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_ESI_VERSION_OPENSSL'       => defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
-			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
 			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
-			'S_CURL'                         => $this->config['ppde_curl_detected'],
 			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
 			'S_OPENSSL'                      => extension_loaded('openssl'),
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],

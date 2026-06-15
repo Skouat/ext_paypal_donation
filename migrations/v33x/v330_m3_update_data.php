@@ -34,6 +34,9 @@ class v330_m3_update_data extends \phpbb\db\migration\migration
 			['config.remove', ['ppde_tls_detected']],
 			['config.remove', ['ppde_default_remote']],
 			['config.remove', ['ppde_sandbox_remote']],
+			['config.remove', ['ppde_curl_detected']],
+			['config.remove', ['ppde_curl_version']],
+			['config.remove', ['ppde_curl_ssl_version']],
 
 			['config.update', ['ppde_first_start', true]],
 		];

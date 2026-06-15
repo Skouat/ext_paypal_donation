@@ -95,7 +95,6 @@ services:
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'
-            - '@skouat.ppde.api.paypal.system_check'
             - '@request'
             - '@template'
             - '@user'

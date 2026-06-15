@@ -93,8 +93,6 @@ class paypal_features_controller extends admin_main
 			$this->handle_connection_test();
 		}
 
-		$this->ppde_first_start();
-
 		// Define the name of the form for use as a form key
 		add_form_key('ppde_paypal_features');
 

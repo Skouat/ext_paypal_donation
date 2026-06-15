@@ -30,8 +30,6 @@ abstract class admin_main
 	protected $module_name;
 	/** @var \skouat\ppde\actions\locale_icu */
 	protected $ppde_actions_locale;
-	/** @var \skouat\ppde\api\paypal\system_check */
-	protected $ppde_system_check;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -450,7 +448,10 @@ abstract class admin_main
 	}
 
 	/**
-	 * Run system checks if config 'ppde_first_start' is true
+	 * Run the Intl detection once after install/enable (ppde_first_start = true).
+	 *
+	 * Since v3.1.0, cURL/OpenSSL are hard composer requirements (ext-curl,ext-openssl) and PayPal connectivity is
+	 * verified by the "Test connection" button, so only the optional PHP Intl detection remains here.
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -460,8 +461,6 @@ abstract class admin_main
 	{
 		if ($this->config['ppde_first_start'])
 		{
-			$this->ppde_system_check->set_curl_info();
-			$this->ppde_system_check->set_remote_detected();
 			$this->ppde_actions_locale->set_intl_info();
 			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');
