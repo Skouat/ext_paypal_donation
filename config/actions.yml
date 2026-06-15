@@ -35,13 +35,6 @@ services:
             - '@template'
             - '@user'
 
-    skouat.ppde.actions.post_data:
-        class: skouat\ppde\actions\post_data
-        arguments:
-            - '@language'
-            - '@skouat.ppde.operator.compare'
-            - '@request'
-
     skouat.ppde.actions.vars:
         class: skouat\ppde\actions\vars
         arguments:
