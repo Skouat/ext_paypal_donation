@@ -34,6 +34,8 @@ class order_controller extends main_controller
 {
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
+	/** @var \phpbb\log\log */
+	protected $log;
 
 	/**
 	 * Inject the PayPal client factory.
@@ -46,6 +48,11 @@ class order_controller extends main_controller
 	public function set_client_factory(\skouat\ppde\api\paypal\client_factory $client_factory): void
 	{
 		$this->client_factory = $client_factory;
+	}
+
+	public function set_log(\phpbb\log\log $log): void
+	{
+		$this->log = $log;
 	}
 
 	/**
@@ -108,6 +115,7 @@ class order_controller extends main_controller
 		}
 		catch (ApiException $e)
 		{
+			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
 			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
 		}
 
@@ -191,6 +199,7 @@ class order_controller extends main_controller
 		}
 		catch (ApiException $e)
 		{
+			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
 			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
 		}
 

@@ -128,7 +128,6 @@ class paypal_features_controller extends admin_main
 			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
 			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
-			'S_PPDE_IPN_LOGGING'             => $this->check_config($this->config['ppde_ipn_logging']),
 			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
@@ -160,7 +159,6 @@ class paypal_features_controller extends admin_main
 		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
 		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
-		$this->config->set('ppde_ipn_logging', $this->request->variable('ppde_ipn_logging', false));
 		$this->config->set('ppde_ipn_min_before_group', $this->request->variable('ppde_ipn_min_before_group', 0));
 		$this->config->set('ppde_ipn_notification_enable', $this->request->variable('ppde_ipn_notification_enable', false));
 

@@ -11,14 +11,6 @@ services:
             - '%core.php_ext%'
             - '@cache'
 
-    skouat.ppde.ipn_log:
-        class: skouat\ppde\controller\ipn_log
-        arguments:
-            - '@config'
-            - '@filesystem'
-            - '@path_helper'
-            - '@skouat.ppde.controller'
-
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
@@ -164,16 +156,18 @@ services:
         parent: skouat.ppde.controller
         calls:
             - [ set_client_factory, [ '@skouat.ppde.api.paypal.client_factory' ] ]
+            - [ set_log, [ '@log' ] ]
 
     skouat.ppde.webhook_listener:
         class: skouat\ppde\controller\webhook_listener
         arguments:
             - '@config'
             - '@language'
+            - '@log'
             - '@skouat.ppde.core_actions'
             - '@skouat.ppde.entity.transactions'
             - '@skouat.ppde.api.paypal.webhook_verify'
             - '@skouat.ppde.api.paypal.client_factory'
-            - '@skouat.ppde.ipn_log'
             - '@request'
+            - '@user'
             - '@dispatcher'

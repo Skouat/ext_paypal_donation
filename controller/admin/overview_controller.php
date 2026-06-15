@@ -30,8 +30,8 @@ use skouat\ppde\controller\main_controller;
  * @property language     language            Language user object
  * @property log          log                 The phpBB log system
  * @property string       module_name         Name of the module currently used
- * @property locale_icu   ppde_actions_locale PPDE Locale actions object
- * @property system_check ppde_system_check   IPN PayPal object
+ * @property locale_icu   ppde_actions_locale PPDE locale actions object
+ * @property system_check ppde_system_check   PPDE system prerequisites checker
  * @property request      request             Request object
  * @property template     template            Template object
  * @property string       u_action            Action URL
@@ -57,11 +57,11 @@ class overview_controller extends admin_main
 	 * @param language                $language                     Language user object
 	 * @param log                     $log                          The phpBB log system
 	 * @param core                    $ppde_actions                 PPDE core actions object
-	 * @param locale_icu              $ppde_actions_locale          PPDE Locale actions object
+	 * @param locale_icu              $ppde_actions_locale          PPDE locale actions object
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
-	 * @param system_check            $ppde_system_check            IPN PayPal object
+	 * @param system_check            $ppde_system_check            PPDE system prerequisites checker
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
 	 * @param user                    $user                         User object

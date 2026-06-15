@@ -64,10 +64,13 @@ $lang = array_merge($lang, [
 	'LOG_PPDE_DT_PURGED'               => '<strong>PayPal Donation: Transactions log purged</strong>',
 	'LOG_PPDE_DT_UPDATED'              => '<strong>PayPal Donation: Transactions updated</strong>',
 	'LOG_PPDE_MT_ADDED'                => '<strong>PayPal Donation: Manual transaction added</strong><br>» Donor: %s',
+	'LOG_PPDE_PAYPAL_API_ERROR'        => '<strong>PayPal Donation: PayPal API error</strong><br>» %s',
 	'LOG_PPDE_PAYPAL_FEATURES_UPDATED' => '<strong>PayPal Donation: PayPal settings updated</strong>',
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation: Statistics resynchronised</strong>',
 	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation: Extension prerequisites checked</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation: PayPal Sandbox Statistics resynchronised</strong>',
+	'LOG_PPDE_WEBHOOK_PROCESS_ERROR'   => '<strong>PayPal Donation: Webhook processing error</strong><br>» Transaction %1$s: %2$s',
+	'LOG_PPDE_WEBHOOK_SIG_FAILED'      => '<strong>PayPal Donation: Webhook signature verification failed</strong><br>» Event: %s',
 ]);

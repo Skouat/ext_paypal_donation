@@ -30,7 +30,11 @@ class v330_m3_update_data extends \phpbb\db\migration\migration
 			['config.add', ['ppde_sandbox_rest_secret', '']],
 			['config.add', ['ppde_sandbox_webhook_id', '']],
 
-			// Re-run the prerequisite checks on next ACP visit
+			['config.remove', ['ppde_ipn_logging']],
+			['config.remove', ['ppde_tls_detected']],
+			['config.remove', ['ppde_default_remote']],
+			['config.remove', ['ppde_sandbox_remote']],
+
 			['config.update', ['ppde_first_start', true]],
 		];
 	}

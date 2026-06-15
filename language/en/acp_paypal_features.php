@@ -69,7 +69,6 @@ $lang = array_merge($lang, [
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto group',
-	'PPDE_LEGEND_IPN_DEBUG'                => 'Debug settings',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
 	'PPDE_LEGEND_IPN_SETTINGS'             => 'General settings',
@@ -87,8 +86,6 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
 	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
 	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want to use PayPal’s Instant Payment Notification service.<br>If enabled, more features will be available below.',
-	'PPDE_IPN_LOGGING'                     => 'Enable errors logs',
-	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Write errors and data from PayPal IPN to a file in <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify site admin and donors when a donation is received.',
 

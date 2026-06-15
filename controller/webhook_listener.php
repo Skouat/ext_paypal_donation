@@ -13,7 +13,9 @@ namespace skouat\ppde\controller;
 use phpbb\config\config;
 use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
+use phpbb\log\log;
 use phpbb\request\request;
+use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\api\paypal\webhook_verify;
@@ -33,6 +35,8 @@ class webhook_listener
 	protected $config;
 	/** @var language */
 	protected $language;
+	/** @var log */
+	protected $log;
 	/** @var core */
 	protected $ppde_actions;
 	/** @var transactions */
@@ -41,10 +45,10 @@ class webhook_listener
 	protected $webhook_verify;
 	/** @var client_factory */
 	protected $client_factory;
-	/** @var \skouat\ppde\controller\ipn_log */
-	protected $ppde_ipn_log;
 	/** @var request */
 	protected $request;
+	/** @var user */
+	protected $user;
 	/** @var dispatcher_interface */
 	protected $dispatcher;
 
@@ -66,23 +70,25 @@ class webhook_listener
 	public function __construct(
 		config $config,
 		language $language,
+		log $log,
 		core $ppde_actions,
 		transactions $ppde_entity_transaction,
 		webhook_verify $webhook_verify,
 		client_factory $client_factory,
-		ipn_log $ppde_ipn_log,
 		request $request,
+		user $user,
 		dispatcher_interface $dispatcher
 	)
 	{
 		$this->config = $config;
 		$this->language = $language;
+		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
 		$this->webhook_verify = $webhook_verify;
 		$this->client_factory = $client_factory;
-		$this->ppde_ipn_log = $ppde_ipn_log;
 		$this->request = $request;
+		$this->user = $user;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -95,21 +101,22 @@ class webhook_listener
 	public function handle(): Response
 	{
 		$this->language->add_lang('donate', 'skouat/ppde');
-		$this->ppde_ipn_log->set_use_log_error((bool) $this->config['ppde_ipn_logging']);
 
 		$raw_body = $this->get_raw_input();
 		$headers = $this->collect_headers();
+
+		$event = json_decode($raw_body, true);
+		$event_type = (is_array($event) && !empty($event['event_type'])) ? $event['event_type'] : '';
 
 		// Determine the environment by verifying against each configured webhook ID.
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
-			$this->ppde_ipn_log->log_error($this->language->lang('PPDE_WEBHOOK_INVALID_SIGNATURE'), $this->ppde_ipn_log->is_use_log_error());
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time(), [$event_type]);
 			return new Response('', 403);
 		}
 
-		$event = json_decode($raw_body, true);
-		if (!is_array($event) || empty($event['event_type']) || empty($event['resource']))
+		if (!is_array($event) || $event_type === '' || empty($event['resource']))
 		{
 			return new Response('', 400);
 		}
@@ -181,22 +188,27 @@ class webhook_listener
 	{
 		$txn_id = $resource['id'] ?? '';
 
-		// Idempotency: ignore re-delivered events to avoid double-counting stats.
 		if ($txn_id === '' || $this->already_processed($txn_id))
 		{
 			return;
 		}
 
-		$data = $this->map_capture($resource, $is_sandbox);
+		try
+		{
+			$data = $this->map_capture($resource, $is_sandbox);
 
-		// Preserve backward-compatible event for third-party extensions.
-		$transaction_data = $data;
-		$vars = ['transaction_data'];
-		extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
-		$data = $transaction_data;
+			$transaction_data = $data;
+			$vars = ['transaction_data'];
+			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+			$data = $transaction_data;
 
-		$this->ppde_actions->log_to_db($data);
-		$this->do_actions($is_sandbox);
+			$this->ppde_actions->log_to_db($data);
+			$this->do_actions($is_sandbox);
+		}
+		catch (\Throwable $e)
+		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$txn_id, $e->getMessage()]);
+		}
 	}
 
 	/**
