@@ -283,31 +283,6 @@ class ipn_paypal
 	}
 
 	/**
-	 * Check if website use TLS 1.2
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function check_tls(): void
-	{
-		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
-
-		// Reset settings to false
-		$this->config->set('ppde_tls_detected', false);
-		$this->response = '';
-
-		$this->check_curl($ext_meta['extra']['security-check']['tls']['tls-host']);
-
-		// Analyse response
-		$json = json_decode($this->response);
-
-		if ($json !== null && in_array($json->tls_version, $ext_meta['extra']['security-check']['tls']['tls-version']))
-		{
-			$this->config->set('ppde_tls_detected', true);
-		}
-	}
-
-	/**
 	 * Set config value for cURL
 	 *
 	 * @return void

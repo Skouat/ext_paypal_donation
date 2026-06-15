@@ -509,6 +509,10 @@ abstract class admin_main
 	{
 		if ($this->config['ppde_first_start'])
 		{
+			$this->ppde_ipn_paypal->set_curl_info();
+			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_actions_locale->set_intl_info();
+			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');
 		}
 	}
