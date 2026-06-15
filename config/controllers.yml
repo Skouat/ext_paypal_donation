@@ -155,6 +155,8 @@ services:
             - '@log'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.ipn_paypal'
+            - '@controller.helper'
+            - '@skouat.ppde.api.paypal.client_factory'
             - '@request'
             - '@template'
             - '@user'

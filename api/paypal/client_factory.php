@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2026 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -163,5 +163,69 @@ class client_factory
 		[$client_id] = $this->get_credentials($sandbox);
 
 		return $client_id;
+	}
+
+	/**
+	 * Test the REST API credentials by requesting an OAuth2 access token.
+	 *
+	 * This performs a direct, side-effect-free call to PayPal's token endpoint
+	 * using the stored credentials for the given environment.
+	 *
+	 * @param bool $sandbox True to test the Sandbox credentials, false for Live.
+	 *
+	 * @return array{success: bool, reason: string, http_code: int, detail: string}
+	 * @access public
+	 */
+	public function test_connection(bool $sandbox): array
+	{
+		[$client_id, $client_secret] = $this->get_credentials($sandbox);
+
+		if (empty($client_id) || empty($client_secret))
+		{
+			return ['success' => false, 'reason' => 'missing', 'http_code' => 0, 'detail' => ''];
+		}
+
+		if (!function_exists('curl_init'))
+		{
+			return ['success' => false, 'reason' => 'curl', 'http_code' => 0, 'detail' => 'cURL not available'];
+		}
+
+		$base = $sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+
+		$ch = curl_init($base . '/v1/oauth2/token');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_USERPWD, $client_id . ':' . $client_secret);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Accept: application/json',
+			'Content-Type: application/x-www-form-urlencoded',
+		]);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_exec($ch);
+
+		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$curl_errno = curl_errno($ch);
+		$curl_error = curl_error($ch);
+		curl_close($ch);
+
+		if ($curl_errno)
+		{
+			return ['success' => false, 'reason' => 'curl', 'http_code' => 0, 'detail' => $curl_error];
+		}
+
+		if ($http_code === 200)
+		{
+			return ['success' => true, 'reason' => '', 'http_code' => 200, 'detail' => ''];
+		}
+
+		if ($http_code === 401)
+		{
+			return ['success' => false, 'reason' => 'auth', 'http_code' => 401, 'detail' => ''];
+		}
+
+		return ['success' => false, 'reason' => 'http', 'http_code' => $http_code, 'detail' => ''];
 	}
 }

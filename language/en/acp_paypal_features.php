@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -53,6 +53,19 @@ $lang = array_merge($lang, [
 	'PPDE_REST_SECRET_EMPTY'               => 'No secret stored yet',
 	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
 	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'The Webhook ID created in your PayPal Developer Dashboard. Used to verify incoming webhook notifications.',
+
+	// REST tools (webhook URL + connection test)
+	'PPDE_LEGEND_REST_TOOLS'               => 'REST API tools',
+	'PPDE_WEBHOOK_URL'                     => 'Webhook URL',
+	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Add this URL as a webhook in your PayPal Developer Dashboard (for both your Live and Sandbox apps), subscribe to the “Payment capture completed” event, then paste the resulting Webhook ID above.',
+	'PPDE_REST_TEST_LIVE'                  => 'Test Live connection',
+	'PPDE_REST_TEST_SANDBOX'               => 'Test Sandbox connection',
+	'PPDE_REST_TEST_BUTTON'                => 'Test connection',
+	'PPDE_REST_TESTING'                    => 'Testing…',
+	'PPDE_REST_TEST_SUCCESS'               => 'Connection successful: credentials are valid.',
+	'PPDE_REST_TEST_INVALID'               => 'Connection failed: invalid Client ID or Secret.',
+	'PPDE_REST_TEST_CURL_ERROR'            => 'Connection error: %s',
+	'PPDE_REST_TEST_HTTP_ERROR'            => 'Connection failed (HTTP %s).',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto group',

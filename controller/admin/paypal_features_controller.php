@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -36,6 +36,8 @@ use skouat\ppde\controller\main_controller;
 class paypal_features_controller extends admin_main
 {
 	protected $ppde_controller_main;
+	protected $controller_helper;
+	protected $ppde_client_factory;
 
 	/**
 	 * Constructor
@@ -57,6 +59,8 @@ class paypal_features_controller extends admin_main
 		log $log,
 		main_controller $ppde_controller_main,
 		ipn_paypal $ppde_ipn_paypal,
+		\phpbb\controller\helper $controller_helper,
+		\skouat\ppde\api\paypal\client_factory $ppde_client_factory,
 		request $request,
 		template $template,
 		user $user
@@ -67,6 +71,8 @@ class paypal_features_controller extends admin_main
 		$this->log = $log;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
+		$this->controller_helper = $controller_helper;
+		$this->ppde_client_factory = $ppde_client_factory;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -86,6 +92,12 @@ class paypal_features_controller extends admin_main
 	 */
 	public function display_settings(): void
 	{
+		// Handle the AJAX connection test before rendering the page
+		if ($this->request->is_ajax() && $this->request->is_set_post('test_connection'))
+		{
+			$this->handle_connection_test();
+		}
+
 		$this->ppde_first_start();
 
 		// Define the name of the form for use as a form key
@@ -110,6 +122,9 @@ class paypal_features_controller extends admin_main
 			'PPDE_SANDBOX_REST_CLIENT_ID'    => $this->check_config($this->config['ppde_sandbox_rest_client_id'], 'string'),
 			'PPDE_SANDBOX_WEBHOOK_ID'        => $this->check_config($this->config['ppde_sandbox_webhook_id'], 'string'),
 			'S_PPDE_SANDBOX_REST_SECRET_SET' => !empty($this->config['ppde_sandbox_rest_secret']),
+
+			'PPDE_WEBHOOK_URL'               => generate_board_url(true) . $this->controller_helper->route('skouat_ppde_webhook'),
+			'PPDE_TEST_HASH'                 => generate_link_hash('ppde_test_connection'),
 
 			// PayPal IPN vars
 			'PPDE_IPN_AG_MIN_BEFORE_GROUP'   => $this->check_config($this->config['ppde_ipn_min_before_group'], 'integer', 0),
@@ -195,5 +210,62 @@ class paypal_features_controller extends admin_main
 		{
 			$this->config->set($config_name, $value);
 		}
+	}
+
+	/**
+	 * Handle the AJAX "test connection" request and send a JSON response.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function handle_connection_test(): void
+	{
+		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_test_connection'))
+		{
+			$this->send_test_result(false, $this->language->lang('FORM_INVALID'));
+		}
+
+		$sandbox = $this->request->variable('env', '') === 'sandbox';
+		$result = $this->ppde_client_factory->test_connection($sandbox);
+
+		if ($result['success'])
+		{
+			$this->send_test_result(true, $this->language->lang('PPDE_REST_TEST_SUCCESS'));
+		}
+
+		switch ($result['reason'])
+		{
+			case 'missing':
+				$message = $this->language->lang('PPDE_REST_CREDENTIALS_MISSING');
+			break;
+			case 'auth':
+				$message = $this->language->lang('PPDE_REST_TEST_INVALID');
+			break;
+			case 'curl':
+				$message = $this->language->lang('PPDE_REST_TEST_CURL_ERROR', $result['detail']);
+			break;
+			default:
+				$message = $this->language->lang('PPDE_REST_TEST_HTTP_ERROR', $result['http_code']);
+		}
+
+		$this->send_test_result(false, $message);
+	}
+
+	/**
+	 * Send a JSON response for the connection test (and stop execution).
+	 *
+	 * @param bool   $success
+	 * @param string $message
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function send_test_result($success, $message): void
+	{
+		$json_response = new \phpbb\json_response;
+		$json_response->send([
+			'success'      => (bool) $success,
+			'MESSAGE_TEXT' => $message,
+		]);
 	}
 }

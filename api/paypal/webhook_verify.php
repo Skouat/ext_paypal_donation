@@ -55,7 +55,7 @@ class webhook_verify
 	 * @return bool True if the signature is authentic.
 	 * @access public
 	 */
-	public function is_valid($raw_body, array $headers, $webhook_id): bool
+	public function is_valid(string $raw_body, array $headers, string $webhook_id): bool
 	{
 		if (empty($webhook_id))
 		{

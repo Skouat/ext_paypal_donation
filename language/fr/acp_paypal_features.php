@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -53,6 +53,19 @@ $lang = array_merge($lang, [
 	'PPDE_REST_SECRET_EMPTY'               => 'No secret stored yet',
 	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
 	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'The Webhook ID created in your PayPal Developer Dashboard. Used to verify incoming webhook notifications.',
+
+	// REST tools (webhook URL + connection test)
+	'PPDE_LEGEND_REST_TOOLS'               => 'Outils de l’API REST',
+	'PPDE_WEBHOOK_URL'                     => 'URL du webhook',
+	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Ajoutez cette URL comme webhook dans votre tableau de bord PayPal Developer (pour vos applications Live et Sandbox), abonnez-vous à l’événement « Paiement capturé / Payment capture completed », puis collez le Webhook ID obtenu ci-dessus.',
+	'PPDE_REST_TEST_LIVE'                  => 'Tester la connexion Live',
+	'PPDE_REST_TEST_SANDBOX'               => 'Tester la connexion Sandbox',
+	'PPDE_REST_TEST_BUTTON'                => 'Tester la connexion',
+	'PPDE_REST_TESTING'                    => 'Test en cours…',
+	'PPDE_REST_TEST_SUCCESS'               => 'Connexion réussie : les identifiants sont valides.',
+	'PPDE_REST_TEST_INVALID'               => 'Échec de la connexion : Client ID ou Secret invalide.',
+	'PPDE_REST_TEST_CURL_ERROR'            => 'Erreur de connexion : %s',
+	'PPDE_REST_TEST_HTTP_ERROR'            => 'Échec de la connexion (HTTP %s).',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',

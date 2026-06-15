@@ -49,6 +49,34 @@
 		</fieldset>
 	</fieldset>
 
+	<fieldset id="ppde_connection_test"
+			  data-action-url="{{ U_ACTION }}"
+			  data-hash="{{ PPDE_TEST_HASH }}"
+			  data-testing="{{ lang('PPDE_REST_TESTING') }}"
+			  data-error="{{ lang('PPDE_REST_TEST_HTTP_ERROR', '') }}">
+		<legend>{{ lang('PPDE_LEGEND_REST_TOOLS') }}</legend>
+
+		<dl>
+			<dt><label for="ppde_webhook_url">{{ lang('PPDE_WEBHOOK_URL') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_WEBHOOK_URL_EXPLAIN') }}</span></dt>
+			<dd><input type="text" id="ppde_webhook_url" class="text" size="60" value="{{ PPDE_WEBHOOK_URL }}" readonly></dd>
+		</dl>
+
+		<dl>
+			<dt><label>{{ lang('PPDE_REST_TEST_LIVE') ~ lang('COLON') }}</label></dt>
+			<dd>
+				<input type="button" class="button2 ppde-test-connection" data-env="live" value="{{ lang('PPDE_REST_TEST_BUTTON') }}">
+				<span id="ppde-test-result-live"></span>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('PPDE_REST_TEST_SANDBOX') ~ lang('COLON') }}</label></dt>
+			<dd>
+				<input type="button" class="button2 ppde-test-connection" data-env="sandbox" value="{{ lang('PPDE_REST_TEST_BUTTON') }}">
+				<span id="ppde-test-result-sandbox"></span>
+			</dd>
+		</dl>
+	</fieldset>
+
 	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_IPN_SETTINGS') }}</legend>
 		<dl>
@@ -141,4 +169,6 @@
 	</fieldset>
 </form>
 {% INCLUDEJS '@skouat_ppde/js/paypal_features.js' %}
+{% INCLUDEJS '@skouat_ppde/js/paypal_test.js' %}
+
 {% INCLUDE 'overall_footer.html' %}

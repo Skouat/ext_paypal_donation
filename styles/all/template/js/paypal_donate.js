@@ -1,3 +1,4 @@
+/* global paypal */
 (function($) { // Avoid conflicts with other libraries
 
 	'use strict';
@@ -24,13 +25,19 @@
 
 	var $error = $('#ppde-error');
 
+// Tracks whether a specific (already meaningful) error message has just been
+// shown. When true, the generic onError() handler must NOT overwrite it.
+	var errorHandled = false;
+
 	function showError(message) {
 		$error.find('p').text(message);
 		$error.show();
+		errorHandled = true;
 	}
 
-	function hideError() {
+	function resetError() {
 		$error.hide();
+		errorHandled = false;
 	}
 
 	function post(url, params) {
@@ -45,7 +52,6 @@
 		});
 	}
 
-// Render the PayPal buttons once the SDK is available
 	function renderButtons() {
 		if (typeof paypal === 'undefined') {
 			showError(cfg.errGeneric);
@@ -54,13 +60,14 @@
 
 		paypal.Buttons({
 			createOrder: function() {
-				hideError();
+				// Each new attempt starts with a clean error state.
+				resetError();
 
 				var amount = parseFloat($('#ppde-amount').val());
 
 				if (!amount || amount <= 0) {
 					showError(cfg.errAmount);
-					return Promise.reject(new Error('invalid_amount'));
+					return $.Deferred().reject(new Error('invalid_amount')).promise();
 				}
 
 				return post(cfg.createUrl, {
@@ -68,9 +75,15 @@
 					currency_id: cfg.currencyId
 				}).then(function(data) {
 					if (!data.id) {
+						// Show the server-provided message when available.
+						showError(data.error || cfg.errGeneric);
 						throw new Error(data.error || 'create_failed');
 					}
 					return data.id;
+				}, function() {
+					// AJAX/network failure on order creation.
+					showError(cfg.errGeneric);
+					return $.Deferred().reject(new Error('create_failed')).promise();
 				});
 			},
 			onApprove: function(data) {
@@ -78,26 +91,31 @@
 					order_id: data.orderID
 				}).then(function(data) {
 					window.location.href = (data.status === 'COMPLETED') ? cfg.successUrl : cfg.cancelUrl;
+				}, function() {
+					// Capture failed: show a message instead of a silent redirect.
+					showError(cfg.errGeneric);
+					return $.Deferred().reject(new Error('capture_failed')).promise();
 				});
 			},
 			onCancel: function() {
 				window.location.href = cfg.cancelUrl;
 			},
 			onError: function() {
-				showError(cfg.errGeneric);
+				// Only fall back to the generic message if no specific error
+				// has already been displayed by the handlers above.
+				if (!errorHandled) {
+					showError(cfg.errGeneric);
+				}
 			}
 		}).render('#ppde-paypal-button-container');
 	}
 
-// Dynamically load the PayPal JS SDK, then render the buttons.
-// Loading it here (instead of a <script> tag in the template)
-// keeps the template free of inline scripts.
 	function loadSdk() {
 		var script = document.createElement('script');
-		script.src = 'https://www.paypal.com/sdk/js'
-			+ '?client-id=' + encodeURIComponent(cfg.clientId)
-			+ '&currency=' + encodeURIComponent(cfg.currency)
-			+ '&intent=capture&components=buttons';
+		script.src = 'https://www.paypal.com/sdk/js' +
+			'?client-id=' + encodeURIComponent(cfg.clientId) +
+			'&currency=' + encodeURIComponent(cfg.currency) +
+			'&intent=capture&components=buttons';
 		script.onload = renderButtons;
 		script.onerror = function() {
 			showError(cfg.errGeneric);
