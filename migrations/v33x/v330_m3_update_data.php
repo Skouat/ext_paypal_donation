@@ -30,13 +30,14 @@ class v330_m3_update_data extends \phpbb\db\migration\migration
 			['config.add', ['ppde_sandbox_rest_secret', '']],
 			['config.add', ['ppde_sandbox_webhook_id', '']],
 
-			['config.remove', ['ppde_ipn_logging']],
-			['config.remove', ['ppde_tls_detected']],
-			['config.remove', ['ppde_default_remote']],
-			['config.remove', ['ppde_sandbox_remote']],
 			['config.remove', ['ppde_curl_detected']],
 			['config.remove', ['ppde_curl_version']],
 			['config.remove', ['ppde_curl_ssl_version']],
+			['config.remove', ['ppde_default_remote']],
+			['config.remove', ['ppde_ipn_enable']],
+			['config.remove', ['ppde_ipn_logging']],
+			['config.remove', ['ppde_sandbox_remote']],
+			['config.remove', ['ppde_tls_detected']],
 
 			['config.update', ['ppde_first_start', true]],
 		];

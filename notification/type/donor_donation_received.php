@@ -39,7 +39,7 @@ class donor_donation_received extends donation
 	 */
 	public function is_available()
 	{
-		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable']);
+		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable'] && $this->config['ppde_ipn_notification_enable']);
 	}
 
 	/**

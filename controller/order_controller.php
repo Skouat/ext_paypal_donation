@@ -133,7 +133,7 @@ class order_controller extends main_controller
 	{
 		if (!$this->request->is_ajax())
 		{
-			return new JsonResponse(['error' => 'BAD_REQUEST'], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], 400);
 		}
 
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_donate'))

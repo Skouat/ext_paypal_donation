@@ -385,7 +385,7 @@ class core
 	 */
 	private function autogroup_is_enabled(): bool
 	{
-		return $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_autogroup_enable'];
+		return $this->config['ppde_enable'] && $this->config['ppde_ipn_autogroup_enable'];
 	}
 
 	/**

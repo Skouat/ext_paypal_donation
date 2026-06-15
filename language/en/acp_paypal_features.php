@@ -71,7 +71,6 @@ $lang = array_merge($lang, [
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto group',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'General settings',
 	'PPDE_IPN_AG_ENABLE'                   => 'Enable auto group',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
@@ -84,8 +83,6 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_DL_ALLOW_GUEST_EXPLAIN'      => 'This will set the board permissions to allow guests to view the list of donors.',
 	'PPDE_IPN_DL_ENABLE'                   => 'Enable donors list',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
-	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want to use PayPal’s Instant Payment Notification service.<br>If enabled, more features will be available below.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify site admin and donors when a donation is received.',
 
@@ -111,6 +108,5 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Please check “Sandbox address”.',
-	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'IPN PayPal cannot be enabled. Check the system requirements from the “Overview” module.',
 	'PPDE_REST_CREDENTIALS_MISSING'       => 'PayPal REST API credentials (Client ID / Secret) are not configured. Please set them in the PayPal IPN Features module.',
 ]);

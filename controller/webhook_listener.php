@@ -57,12 +57,13 @@ class webhook_listener
 	 *
 	 * @param config               $config
 	 * @param language             $language
+	 * @param \phpbb\log\log       $log
 	 * @param core                 $ppde_actions
 	 * @param transactions         $ppde_entity_transaction
 	 * @param webhook_verify       $webhook_verify
 	 * @param client_factory       $client_factory
-	 * @param ipn_log              $ppde_ipn_log
 	 * @param request              $request
+	 * @param \phpbb\user          $user
 	 * @param dispatcher_interface $dispatcher
 	 *
 	 * @access public

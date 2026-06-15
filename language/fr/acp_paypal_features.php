@@ -71,7 +71,6 @@ $lang = array_merge($lang, [
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Liste des donateurs',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Système de notification',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres Généraux',
 	'PPDE_IPN_AG_ENABLE'                   => 'Activer le groupe automatique',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Permet d’ajouter automatiquement les donateurs dans un groupe pré-défini.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Groupe donateurs',
@@ -84,8 +83,6 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_DL_ALLOW_GUEST_EXPLAIN'      => 'Cette option va définir les permissions du forum pour autoriser les invités à consulter la liste des donateurs.',
 	'PPDE_IPN_DL_ENABLE'                   => 'Activer la liste des donateurs',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Permet d’activer la liste des donateurs.',
-	'PPDE_IPN_ENABLE'                      => 'Activer IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser IPN (Notification Instantanée de Paiement).<br>Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaîtront ci-dessous.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Activer les notifications',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Permet de notifier les administrateurs et les donateurs dès qu’un don est reçu.',
 
@@ -111,6 +108,5 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Veuillez vérifier le paramètre « Adresse PayPal Sandbox ».',
-	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble ».',
 	'PPDE_REST_CREDENTIALS_MISSING'       => 'Les identifiants de l’API REST PayPal (Client ID / Secret) ne sont pas configurés. Veuillez les renseigner dans le module « Fonctionnalités PayPal IPN ».',
 ]);

@@ -124,7 +124,6 @@ class paypal_features_controller extends admin_main
 			'S_PPDE_IPN_AG_GROUP_AS_DEFAULT' => $this->check_config($this->config['ppde_ipn_group_as_default']),
 			'S_PPDE_IPN_DL_ALLOW_GUEST'      => $this->check_config($this->config['ppde_ipn_dl_allow_guest'], 'boolean', false),
 			'S_PPDE_IPN_DL_ENABLE'           => $this->check_config($this->config['ppde_ipn_donorlist_enable']),
-			'S_PPDE_IPN_ENABLE'              => $this->check_config($this->config['ppde_ipn_enable']),
 			'S_PPDE_IPN_GROUP_OPTIONS'       => group_select_options($this->config['ppde_ipn_group_id']),
 			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
@@ -154,7 +153,6 @@ class paypal_features_controller extends admin_main
 		$this->config->set('ppde_ipn_autogroup_enable', $this->request->variable('ppde_ipn_autogroup_enable', false));
 		$this->config->set('ppde_ipn_dl_allow_guest', $this->request->variable('ppde_ipn_dl_allow_guest', false));
 		$this->config->set('ppde_ipn_donorlist_enable', $this->request->variable('ppde_ipn_donorlist_enable', false));
-		$this->config->set('ppde_ipn_enable', $this->request->variable('ppde_ipn_enable', false));
 		$this->config->set('ppde_ipn_group_as_default', $this->request->variable('ppde_ipn_group_as_default', false));
 		$this->config->set('ppde_ipn_group_id', $this->request->variable('ppde_ipn_group_id', 0));
 		$this->config->set('ppde_ipn_min_before_group', $this->request->variable('ppde_ipn_min_before_group', 0));
