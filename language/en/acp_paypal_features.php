@@ -100,8 +100,6 @@ $lang = array_merge($lang, [
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only by the board founders.',
 	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox account',
 	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter the PayPal Sandbox email address or Merchant ID.',
-	'PPDE_SANDBOX_REMOTE'                  => 'PayPal sandbox URL',
-	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Do not change this setting, unless this extension encounters errors to contact the sandbox remote host.',
 ]);
 
 /**

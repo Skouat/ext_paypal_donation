@@ -16,7 +16,6 @@ use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
-use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\controller\main_controller;
 
 /**
@@ -107,7 +106,6 @@ class paypal_features_controller extends admin_main
 		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
-		$this->build_remote_uri_select_menu((int) $this->config['ppde_sandbox_remote'], 'sandbox');
 		$this->template->assign_vars([
 			// REST API - Live
 			'PPDE_REST_CLIENT_ID'            => $this->check_config($this->config['ppde_rest_client_id'], 'string'),
@@ -169,7 +167,6 @@ class paypal_features_controller extends admin_main
 		// Set options for Sandbox Settings
 		$this->config->set('ppde_sandbox_enable', $this->request->variable('ppde_sandbox_enable', false));
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
-		$this->config->set('ppde_sandbox_remote', $this->request->variable('ppde_sandbox_remote', 1));
 
 		// Settings with dependencies are the last to be set.
 		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));

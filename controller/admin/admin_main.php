@@ -10,8 +10,6 @@
 
 namespace skouat\ppde\controller\admin;
 
-use skouat\ppde\controller\ipn_paypal;
-
 abstract class admin_main
 {
 	/** @var array */
@@ -32,8 +30,8 @@ abstract class admin_main
 	protected $module_name;
 	/** @var \skouat\ppde\actions\locale_icu */
 	protected $ppde_actions_locale;
-	/** @var ipn_paypal */
-	protected $ppde_ipn_paypal;
+	/** @var \skouat\ppde\api\paypal\system_check */
+	protected $ppde_system_check;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -204,53 +202,6 @@ abstract class admin_main
 	 */
 	public function view(): void
 	{
-	}
-
-	/**
-	 * Build pull down menu options of available remote URI
-	 *
-	 * @param int    $default ID of the selected value.
-	 * @param string $type    Can be 'live' or 'sandbox'
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function build_remote_uri_select_menu($default, $type): void
-	{
-		$type = $this->force_type($type);
-
-		// Grab the list of remote uri for selected type
-		$remote_list = ipn_paypal::get_remote_uri();
-
-		// Process each menu item for pull-down
-		foreach ($remote_list as $id => $remote)
-		{
-			if ($remote['type'] !== $type)
-			{
-				continue;
-			}
-
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('remote_options', [
-				'REMOTE_ID'   => (int) $id,
-				'REMOTE_NAME' => $remote['hostname'],
-				'S_DEFAULT'   => (int) $default === (int) $id,
-			]);
-		}
-		unset ($remote_list, $id);
-	}
-
-	/**
-	 * Enforce the type of remote provided
-	 *
-	 * @param string $type
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function force_type($type): string
-	{
-		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
 	}
 
 	/**
@@ -509,8 +460,8 @@ abstract class admin_main
 	{
 		if ($this->config['ppde_first_start'])
 		{
-			$this->ppde_ipn_paypal->set_curl_info();
-			$this->ppde_ipn_paypal->set_remote_detected();
+			$this->ppde_system_check->set_curl_info();
+			$this->ppde_system_check->set_remote_detected();
 			$this->ppde_actions_locale->set_intl_info();
 			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');

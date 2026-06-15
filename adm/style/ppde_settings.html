@@ -74,18 +74,6 @@
 		</dl>
 	</fieldset>
 	<fieldset>
-		<legend>{{ lang('PPDE_LEGEND_ADVANCED_SETTINGS') }}</legend>
-		<dl>
-			<dt><label for="ppde_default_remote">{{ lang('PPDE_DEFAULT_REMOTE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_REMOTE_EXPLAIN') }}</span></dt>
-			<dd><select name="ppde_default_remote" id="ppde_default_remote">
-				{% for remote_options in loops.remote_options %}
-				<option value="{{ remote_options.REMOTE_ID }}"{% if remote_options.S_DEFAULT %} selected{% endif %}>{{ remote_options.REMOTE_NAME }}</option>
-				{% endfor %}
-			</select>
-			</dd>
-		</dl>
-	</fieldset>
-	<fieldset>
 		<legend>{{ lang('PPDE_LEGEND_STATS_SETTINGS') }}</legend>
 		<fieldset>
 			<legend>{{ lang('PPDE_RAISED') }}</legend>

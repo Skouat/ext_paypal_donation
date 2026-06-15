@@ -5,6 +5,12 @@ services:
             - '@config'
             - '@language'
 
+    skouat.ppde.api.paypal.system_check:
+        class: skouat\ppde\api\paypal\system_check
+        arguments:
+            - '@config'
+            - '@skouat.ppde.extension_manager'
+
     skouat.ppde.api.paypal.webhook_verify:
         class: skouat\ppde\api\paypal\webhook_verify
         arguments:
