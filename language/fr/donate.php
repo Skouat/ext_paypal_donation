@@ -83,28 +83,14 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Error
-	'CURL_ERROR'                     => 'Erreur cURL : %s',
-	'INVALID_TXN'                    => 'Transaction non valide :',
-	'INVALID_TXN_ACCOUNT_ID'         => 'Les ID marchand ne correspondent pas.',
-	'INVALID_TXN_ASCII'              => 'Caractères non ASCII détectés dans « %s ».',
-	'INVALID_TXN_CONTENT'            => 'Contenu inattendu dans « %s ».',
-	'INVALID_TXN_EMPTY'              => 'La variable « %s » est vide.',
-	'INVALID_TXN_INVALID_CHECK'      => 'Variable POST inconnue.',
-	'INVALID_TXN_LENGTH'             => 'Le nombre de caractères attendu pour « %s » ne correspond pas.',
-	'INVALID_RESPONSE_STATUS'        => 'Statut de réponse non valide : ',
-	'NO_CONNECTION_DETECTED'         => 'cURL non détecté. Veuillez contacter l’administrateur du serveur.',
-	'PPDE_DONATION_UNAVAILABLE'      => 'Les dons sont temporairement indisponibles. Veuillez réessayer plus tard.',
 	'PPDE_AMOUNT_INVALID'            => 'Veuillez saisir un montant de don valide.',
+	'PPDE_DONATION_UNAVAILABLE'      => 'Les dons sont temporairement indisponibles. Veuillez réessayer plus tard.',
 	'PPDE_PAYMENT_ERROR'             => 'Une erreur est survenue lors du traitement de votre don. Veuillez réessayer.',
 	'PPDE_REST_BAD_REQUEST'          => 'Requête non valide.',
 	'PPDE_REST_CREDENTIALS_MISSING'  => 'PayPal n’est pas configuré. Veuillez contacter l’administrateur du forum.',
 	'PPDE_REST_INVALID_CURRENCY'     => 'La devise sélectionnée n’est pas disponible.',
 	'PPDE_REST_MISSING_ORDER_ID'     => 'Identifiant de commande PayPal manquant.',
 	'PPDE_REST_PAYPAL_ERROR'         => 'Une erreur est survenue lors de la communication avec PayPal. Veuillez réessayer plus tard.',
-	'PPDE_WEBHOOK_INVALID_SIGNATURE' => 'Échec de la vérification de la signature du webhook PayPal.',
-	'PPDE_WEBHOOK_INVALID_PAYLOAD'   => 'Charge utile du webhook PayPal non valide.',
-	'REQUIREMENT_NOT_SATISFIED'      => 'cURL, TLS 1.2 ou HTTP1/1 non détecté. Veuillez contacter l’administrateur du serveur.',
-	'UNEXPECTED_RESPONSE'            => 'Réponse inattendue de PayPal.',
 ]);
 
 $lang = array_merge($lang, [

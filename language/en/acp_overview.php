@@ -41,7 +41,6 @@ $lang = array_merge($lang, [
 	'PPDE_OVERVIEW' => 'Overview',
 
 	'PPDE_ESI'                   => 'Extension and System Information',
-	'PPDE_ESI_DETECTED'          => 'Detected',
 	'PPDE_ESI_INSTALL_DATE'      => 'Install date of <strong>%s</strong>',
 	'PPDE_ESI_INTL_NOT_DETECTED' => 'Consider to install the <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension',
 	'PPDE_ESI_MORE_INFORMATION'  => 'More information…',

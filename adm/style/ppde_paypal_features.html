@@ -89,10 +89,6 @@
 			<dd><label><input type="radio" class="radio" id="ppde_sandbox_founder_enable" name="ppde_sandbox_founder_enable" value="1"{% if S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="ppde_sandbox_founder_enable" value="0"{% if not S_PPDE_SANDBOX_FOUNDER_ENABLE %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
-		<dl>
-			<dt><label for="ppde_sandbox_address">{{ lang('PPDE_SANDBOX_ADDRESS') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_SANDBOX_ADDRESS_EXPLAIN') }}</span></dt>
-			<dd><input type="text" class="text" id="ppde_sandbox_address" name="ppde_sandbox_address" size="40" maxlength="127" value="{{ PPDE_SANDBOX_ADDRESS }}"></dd>
-		</dl>
 	</fieldset>
 
 	<fieldset>

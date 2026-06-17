@@ -1,56 +1,6 @@
 /* PayPal Donation
 ---------------------------------------- */
 
-/* PayPal Button */
-.paypalbutton {
-	font-size: 14px;
-	font-weight: bold;
-	font-style: italic;
-	background: #fffdf8;
-	background: -moz-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: -o-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: -webkit-linear-gradient(top, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	background: linear-gradient(to bottom, #fffdf8 0%, #fede9e 49%, #ffaf34 50%, #ffeed3 100%);
-	filter: progid:dximagetransform.microsoft.gradient(startColorstr="#fffdf8", endColorstr="#ffeed3", GradientType=0);
-	border: 1px solid #ff9933;
-	border-radius: 13px;
-	box-shadow: 0 2px 0 rgba(109, 109, 109, 0.3);
-	color: #294669;
-	height: 26px;
-	padding: 0 12px;
-}
-
-/* PayPal loader */
-.spinner.loading {
-	display: none;
-	padding: 7px 0 6px;
-}
-
-.spinner.loading:before {
-	border: 6px solid #cccccc;
-	border-top-color: #2180c0;
-	border-radius: 100%;
-	position: absolute;
-	width: 20px;
-	height: 20px;
-	margin: -10px 0 0 -35px;
-	content: "";
-	-webkit-animation: paypal_loader 0.7s infinite linear;
-	-moz-animation: paypal_loader 0.7s infinite linear;
-	-o-animation: paypal_loader 0.7s infinite linear;
-	animation: paypal_loader 0.7s infinite linear;
-}
-
-@keyframes paypal_loader {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(359deg);
-	}
-}
-
 /* Progress bar */
 .progress {
 	position: relative;
@@ -309,4 +259,29 @@
 	text-align: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+
+.donate_value strong {
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+#ppde-amount {
+	width: 120px;
+	text-align: right;
+	vertical-align: middle;
+}
+
+#ppde-donate {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+#ppde-paypal-button-container {
+	width: 100%;
+}
+
+#ppde-error {
+	max-width: 500px;
+	margin: 0 auto 15px;
 }

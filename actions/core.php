@@ -133,7 +133,7 @@ class core
 	 * Gets the property $this->ipn_suffix
 	 *
 	 * @return string
-	 * @access private
+	 * @access public
 	 */
 	public function get_ipn_suffix(): string
 	{
@@ -142,7 +142,7 @@ class core
 
 	/**
 	 * @return boolean
-	 * @access private
+	 * @access public
 	 */
 	public function get_ipn_test(): bool
 	{

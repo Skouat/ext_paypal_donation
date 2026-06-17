@@ -107,7 +107,6 @@ class settings_controller extends admin_main
 
 		$this->template->assign_vars([
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string'),
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 			'S_PPDE_DEFAULT_LOCALE'     => $this->ppde_actions_locale->icu_requirements(),
@@ -155,7 +154,6 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), (bool) $this->config['ppde_enable']));
 		$this->ppde_actions_auth->set_guest_acl();
 	}
 

@@ -316,28 +316,87 @@ class webhook_listener
 			$orders = $this->client_factory->build($is_sandbox)->getOrdersController();
 			$result = $orders->getOrder(['id' => $order_id])->getResult();
 
-			$payer = $result->getPayer();
-			if (!$payer)
+			// Collect the candidate sources, modern first, legacy as fallback.
+			$sources = [];
+
+			$payment_source = method_exists($result, 'getPaymentSource') ? $result->getPaymentSource() : null;
+			$paypal_source = ($payment_source && method_exists($payment_source, 'getPaypal')) ? $payment_source->getPaypal() : null;
+			if ($paypal_source)
 			{
-				return $empty;
+				$sources[] = $paypal_source;
 			}
 
-			$name = $payer->getName();
-			$address = $payer->getAddress();
+			$legacy_payer = method_exists($result, 'getPayer') ? $result->getPayer() : null;
+			if ($legacy_payer)
+			{
+				$sources[] = $legacy_payer;
+			}
 
-			return [
-				'first_name'   => $name ? (string) $name->getGivenName() : '',
-				'last_name'    => $name ? (string) $name->getSurname() : '',
-				'email'        => (string) $payer->getEmailAddress(),
-				'payer_id'     => (string) $payer->getPayerId(),
-				'payer_status' => '',
-				'country'      => $address ? (string) $address->getCountryCode() : '',
-			];
+			// Prefer the source that provides an email (needed for guest donor
+			// matching); otherwise keep the first non-empty result as fallback.
+			$best = $empty;
+			foreach ($sources as $source)
+			{
+				$data = $this->extract_payer($source);
+
+				if ($data['email'] !== '')
+				{
+					return $data;
+				}
+
+				if ($best === $empty)
+				{
+					$best = $data;
+				}
+			}
+
+			return $best;
 		}
 		catch (\Throwable $e)
 		{
 			return $empty;
 		}
+	}
+
+	/**
+	 * Extract payer fields from a PayPal source object.
+	 *
+	 * Works with both the modern "payment_source.paypal" object and the legacy
+	 * "payer" object, which share the same getters except for the account
+	 * identifier (getAccountId() vs getPayerId()).
+	 *
+	 * @param object $source A PaypalWalletResponse or a (deprecated) Payer object.
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function extract_payer($source): array
+	{
+		$name = method_exists($source, 'getName') ? $source->getName() : null;
+		$address = method_exists($source, 'getAddress') ? $source->getAddress() : null;
+
+		// payment_source.paypal exposes getAccountId(); the legacy payer uses getPayerId().
+		if (method_exists($source, 'getAccountId'))
+		{
+			$payer_id = (string) $source->getAccountId();
+		}
+		else if (method_exists($source, 'getPayerId'))
+		{
+			$payer_id = (string) $source->getPayerId();
+		}
+		else
+		{
+			$payer_id = '';
+		}
+
+		return [
+			'first_name'   => ($name && method_exists($name, 'getGivenName')) ? (string) $name->getGivenName() : '',
+			'last_name'    => ($name && method_exists($name, 'getSurname')) ? (string) $name->getSurname() : '',
+			'email'        => method_exists($source, 'getEmailAddress') ? (string) $source->getEmailAddress() : '',
+			'payer_id'     => $payer_id,
+			'payer_status' => '',
+			'country'      => ($address && method_exists($address, 'getCountryCode')) ? (string) $address->getCountryCode() : '',
+		];
 	}
 
 	/**

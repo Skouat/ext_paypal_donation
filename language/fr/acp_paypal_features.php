@@ -92,8 +92,6 @@ $lang = array_merge($lang, [
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br>Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
-	'PPDE_SANDBOX_ADDRESS'                 => 'Compte PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Inscrire l’adresse courriel ou l’ID de vendeur PayPal Sandbox.',
 ]);
 
 /**

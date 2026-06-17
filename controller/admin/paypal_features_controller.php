@@ -115,7 +115,7 @@ class paypal_features_controller extends admin_main
 			'PPDE_SANDBOX_WEBHOOK_ID'        => $this->check_config($this->config['ppde_sandbox_webhook_id'], 'string'),
 			'S_PPDE_SANDBOX_REST_SECRET_SET' => !empty($this->config['ppde_sandbox_rest_secret']),
 
-			'PPDE_WEBHOOK_URL'               => generate_board_url(true) . $this->controller_helper->route('skouat_ppde_webhook'),
+			'PPDE_WEBHOOK_URL'               => generate_board_url(true) . $this->controller_helper->route('skouat_ppde_webhook', [], false, ''),
 			'PPDE_TEST_HASH'                 => generate_link_hash('ppde_test_connection'),
 
 			// PayPal IPN vars
@@ -128,7 +128,6 @@ class paypal_features_controller extends admin_main
 			'S_PPDE_IPN_NOTIFICATION_ENABLE' => $this->check_config($this->config['ppde_ipn_notification_enable']),
 
 			// Sandbox Settings vars
-			'PPDE_SANDBOX_ADDRESS'           => $this->check_config($this->config['ppde_sandbox_address'], 'string'),
 			'S_PPDE_SANDBOX_ENABLE'          => $this->check_config($this->config['ppde_sandbox_enable']),
 			'S_PPDE_SANDBOX_FOUNDER_ENABLE'  => $this->check_config($this->config['ppde_sandbox_founder_enable']),
 		]);
@@ -163,7 +162,6 @@ class paypal_features_controller extends admin_main
 		$this->config->set('ppde_sandbox_founder_enable', $this->request->variable('ppde_sandbox_founder_enable', true));
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_sandbox_address', $this->required_settings($this->request->variable('ppde_sandbox_address', ''), (bool) $this->config['ppde_sandbox_enable']));
 		$this->ppde_controller_main->ppde_actions_auth->set_guest_acl();
 	}
 

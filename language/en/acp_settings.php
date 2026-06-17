@@ -42,8 +42,6 @@ $lang = array_merge($lang, [
 	'PPDE_SETTINGS_EXPLAIN'           => 'Here you can configure the main settings for PayPal Donation.',
 
 	// General settings
-	'PPDE_ACCOUNT_ID'                 => 'PayPal account ID',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Enter your merchant account ID or PayPal email address.',
 	'PPDE_ALLOW_GUEST'                => 'Allow guests to donate',
 	'PPDE_ALLOW_GUEST_EXPLAIN'        => 'This will set the board permissions to allow guests to donate',
 	'PPDE_DEFAULT_CURRENCY'           => 'Default currency',
@@ -86,11 +84,4 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_SETTINGS_SAVED' => 'Donation settings saved.',
-]);
-
-/**
- * Errors
- */
-$lang = array_merge($lang, [
-	'PPDE_SETTINGS_MISSING' => 'Please check “Account ID”.',
 ]);

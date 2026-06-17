@@ -579,7 +579,7 @@ class transactions_controller extends admin_main
 		}
 
 		return [
-			'business'          => $this->config['ppde_account_id'],
+			'business'          => '',
 			'confirmed'         => true,
 			'custom'            => implode('_', ['uid', $user_id, time()]),
 			'exchange_rate'     => '',

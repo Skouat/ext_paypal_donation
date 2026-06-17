@@ -429,25 +429,6 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if settings is required
-	 *
-	 * @param $settings
-	 * @param $depend_on
-	 *
-	 * @return mixed
-	 * @access protected
-	 */
-	protected function required_settings($settings, $depend_on)
-	{
-		if (empty($settings) && (bool) $depend_on === true)
-		{
-			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
-		return $settings;
-	}
-
-	/**
 	 * Run the Intl detection once after install/enable (ppde_first_start = true).
 	 *
 	 * Since v3.1.0, cURL/OpenSSL are hard composer requirements (ext-curl,ext-openssl) and PayPal connectivity is
