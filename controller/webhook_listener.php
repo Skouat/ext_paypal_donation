@@ -129,6 +129,35 @@ class webhook_listener
 	}
 
 	/**
+	 * Read the raw request body.
+	 * Extracted into its own method to ease unit testing.
+	 *
+	 * @return string
+	 * @access protected
+	 */
+	protected function get_raw_input(): string
+	{
+		return (string) file_get_contents('php://input');
+	}
+
+	/**
+	 * Collect and normalize the PayPal signature headers.
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function collect_headers(): array
+	{
+		return [
+			'transmission_id'   => (string) $this->request->header('Paypal-Transmission-Id'),
+			'transmission_time' => (string) $this->request->header('Paypal-Transmission-Time'),
+			'transmission_sig'  => (string) $this->request->header('Paypal-Transmission-Sig'),
+			'cert_url'          => (string) $this->request->header('Paypal-Cert-Url'),
+			'auth_algo'         => (string) $this->request->header('Paypal-Auth-Algo'),
+		];
+	}
+
+	/**
 	 * Resolve which environment a verified webhook belongs to.
 	 *
 	 * @param string $raw_body
@@ -169,8 +198,15 @@ class webhook_listener
 				$this->handle_capture_completed($event['resource'], $is_sandbox);
 			break;
 
-			// Other events (REFUNDED, REVERSED, DENIED…) are acknowledged for now.
-			// Their handling can be implemented in a later iteration.
+			case 'PAYMENT.CAPTURE.REFUNDED':
+				$this->handle_capture_refunded($event['resource'], 'Refunded', $is_sandbox);
+			break;
+
+			case 'PAYMENT.CAPTURE.REVERSED':
+				$this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
+			break;
+
+			// Other events (DENIED, PENDING…) are acknowledged for now.
 			default:
 			break;
 		}
@@ -213,32 +249,18 @@ class webhook_listener
 	}
 
 	/**
-	 * Run statistics, auto-group and notification actions after logging.
+	 * Check whether a transaction has already been logged (idempotency guard).
 	 *
-	 * @param bool $is_sandbox
+	 * @param string $txn_id
 	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function do_actions(bool $is_sandbox): void
+	private function already_processed(string $txn_id): bool
 	{
-		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
-		$this->ppde_actions->is_donor_is_member();
+		$this->ppde_entity_transaction->set_txn_id($txn_id);
 
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if (!$is_sandbox)
-		{
-			$this->ppde_actions->notification->notify_admin_donation_received();
-
-			if ($this->ppde_actions->get_donor_is_member())
-			{
-				$this->ppde_actions->update_donor_stats();
-				$this->ppde_actions->donors_group_user_add();
-				$this->ppde_actions->notification->notify_donor_donation_received();
-			}
-		}
+		return (bool) $this->ppde_entity_transaction->transaction_exists();
 	}
 
 	/**
@@ -259,7 +281,7 @@ class webhook_listener
 		$payer = $this->fetch_payer($order_id, $is_sandbox);
 
 		return [
-			'business'          => $is_sandbox ? (string) $this->config['ppde_sandbox_rest_client_id'] : (string) $this->config['ppde_rest_client_id'],
+			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
 			'confirmed'         => true,
 			'custom'            => $custom,
 			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
@@ -400,46 +422,215 @@ class webhook_listener
 	}
 
 	/**
-	 * Check whether a transaction has already been logged (idempotency guard).
+	 * Run statistics, auto-group and notification actions after logging.
 	 *
-	 * @param string $txn_id
+	 * @param bool $is_sandbox
 	 *
-	 * @return bool
+	 * @return void
 	 * @access private
 	 */
-	private function already_processed(string $txn_id): bool
+	private function do_actions(bool $is_sandbox): void
 	{
-		$this->ppde_entity_transaction->set_txn_id($txn_id);
+		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
+		$this->ppde_actions->is_donor_is_member();
 
-		return (bool) $this->ppde_entity_transaction->transaction_exists();
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+
+		if (!$is_sandbox)
+		{
+			$this->ppde_actions->notification->notify_admin_donation_received();
+
+			if ($this->ppde_actions->get_donor_is_member())
+			{
+				$this->ppde_actions->update_donor_stats();
+				$this->ppde_actions->donors_group_user_add();
+				$this->ppde_actions->notification->notify_donor_donation_received();
+			}
+		}
 	}
 
 	/**
-	 * Collect and normalize the PayPal signature headers.
+	 * Handle a refunded or reversed capture: record the negative transaction
+	 * and adjust the running totals accordingly.
+	 *
+	 * @param array  $resource       The webhook "resource" (a refund object)
+	 * @param string $payment_status 'Refunded' or 'Reversed'
+	 * @param bool   $is_sandbox
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function handle_capture_refunded(array $resource, string $payment_status, bool $is_sandbox): void
+	{
+		$refund_id = $resource['id'] ?? '';
+
+		// Idempotency guard: the refund is stored as its own transaction row.
+		if ($refund_id === '' || $this->already_processed($refund_id))
+		{
+			return;
+		}
+
+		try
+		{
+			// Resolve the parent capture and reuse its "custom" so the donor is
+			// matched by core::extract_user_id(). If the parent capture is unknown
+			// (e.g. donation made outside this board), the refund is still recorded.
+			$parent_txn_id = $this->extract_parent_capture_id($resource);
+			$custom = $this->resolve_refund_custom($resource, $parent_txn_id);
+
+			$data = $this->map_refund($resource, $parent_txn_id, $custom, $payment_status, $is_sandbox);
+
+			$this->ppde_actions->log_to_db($data);
+			$this->do_refund_actions($is_sandbox);
+
+			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_REFUND_PROCESSED', time(), [$refund_id, $parent_txn_id]);
+		}
+		catch (\Throwable $e)
+		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$refund_id, $e->getMessage()]);
+		}
+	}
+
+	/**
+	 * Extract the parent capture ID from a refund resource (link rel="up").
+	 *
+	 * @param array $resource
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function extract_parent_capture_id(array $resource): string
+	{
+		if (empty($resource['links']) || !is_array($resource['links']))
+		{
+			return '';
+		}
+
+		foreach ($resource['links'] as $link)
+		{
+			if (($link['rel'] ?? '') === 'up' && !empty($link['href']))
+			{
+				$path = parse_url($link['href'], PHP_URL_PATH) ?: $link['href'];
+				$segments = explode('/', rtrim($path, '/'));
+
+				return (string) end($segments);
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolve the "custom" value to attach to the refund transaction.
+	 * Prefers the parent capture's custom (most reliable for the board user_id),
+	 * then falls back to the custom_id copied onto the refund resource.
+	 *
+	 * @param array  $resource
+	 * @param string $parent_txn_id
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function resolve_refund_custom(array $resource, string $parent_txn_id): string
+	{
+		if ($parent_txn_id !== '')
+		{
+			$this->ppde_entity_transaction->set_txn_id($parent_txn_id);
+			$parent_id = $this->ppde_entity_transaction->transaction_exists();
+
+			if ($parent_id)
+			{
+				$this->ppde_entity_transaction->load($parent_id);
+				$custom = $this->ppde_entity_transaction->get_custom();
+
+				if ($custom !== '')
+				{
+					return $custom;
+				}
+			}
+		}
+
+		return (string) ($resource['custom_id'] ?? '');
+	}
+
+	/**
+	 * Map a refund/reversal resource to the PPDE transaction array.
+	 * Amounts are negated so the existing actions decrement the totals.
+	 *
+	 * @param array  $resource
+	 * @param string $parent_txn_id
+	 * @param string $custom
+	 * @param string $payment_status 'Refunded' or 'Reversed'
+	 * @param bool   $is_sandbox
 	 *
 	 * @return array
 	 * @access private
 	 */
-	private function collect_headers(): array
+	private function map_refund(array $resource, string $parent_txn_id, string $custom, string $payment_status, bool $is_sandbox): array
 	{
+		// NB: refunds use "seller_payable_breakdown" (not "receivable").
+		$breakdown = $resource['seller_payable_breakdown'] ?? [];
+
+		$gross = (float) ($resource['amount']['value'] ?? ($breakdown['gross_amount']['value'] ?? 0));
+		$fee = (float) ($breakdown['paypal_fee']['value'] ?? 0);
+		$net = (float) ($breakdown['net_amount']['value'] ?? ($gross - $fee));
+		$currency = $resource['amount']['currency_code'] ?? ($breakdown['gross_amount']['currency_code'] ?? '');
+
 		return [
-			'transmission_id'   => (string) $this->request->header('Paypal-Transmission-Id'),
-			'transmission_time' => (string) $this->request->header('Paypal-Transmission-Time'),
-			'transmission_sig'  => (string) $this->request->header('Paypal-Transmission-Sig'),
-			'cert_url'          => (string) $this->request->header('Paypal-Cert-Url'),
-			'auth_algo'         => (string) $this->request->header('Paypal-Auth-Algo'),
+			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
+			'confirmed'         => true,
+			'custom'            => $custom,
+			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
+			'first_name'        => '',
+			'item_name'         => '',
+			'item_number'       => $custom,
+			'last_name'         => '',
+			'mc_currency'       => $currency,
+			'mc_gross'          => -1 * $gross,
+			'mc_fee'            => -1 * $fee,
+			'net_amount'        => -1 * $net,
+			'parent_txn_id'     => $parent_txn_id,
+			'payer_email'       => '',
+			'payer_id'          => '',
+			'payer_status'      => '',
+			'payment_date'      => (int) strtotime($resource['create_time'] ?? 'now'),
+			'payment_status'    => $payment_status,
+			'payment_type'      => '',
+			'memo'              => '',
+			'receiver_id'       => '',
+			'receiver_email'    => '',
+			'residence_country' => '',
+			'settle_amount'     => 0.0,
+			'settle_currency'   => '',
+			'test_ipn'          => $is_sandbox,
+			'txn_errors'        => '',
+			'txn_id'            => $resource['id'] ?? '',
+			'txn_type'          => 'ppde_rest_refund',
+			'user_id'           => ANONYMOUS, // Overridden by core::extract_user_id() from custom
 		];
 	}
 
 	/**
-	 * Read the raw request body.
-	 * Extracted into its own method to ease unit testing.
+	 * Adjust running totals after a refund/reversal has been logged.
 	 *
-	 * @return string
-	 * @access protected
+	 * @param bool $is_sandbox
+	 *
+	 * @return void
+	 * @access private
 	 */
-	protected function get_raw_input(): string
+	private function do_refund_actions(bool $is_sandbox): void
 	{
-		return (string) file_get_contents('php://input');
+		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
+		$this->ppde_actions->is_donor_is_member();
+
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+
+		if (!$is_sandbox && $this->ppde_actions->get_donor_is_member())
+		{
+			$this->ppde_actions->update_donor_stats();
+			$this->ppde_actions->donors_group_user_remove();
+		}
 	}
 }

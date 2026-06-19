@@ -66,6 +66,7 @@ $lang = array_merge($lang, [
 	'LOG_PPDE_MT_ADDED'                => '<strong>PayPal Donation: Manual transaction added</strong><br>» Donor: %s',
 	'LOG_PPDE_PAYPAL_API_ERROR'        => '<strong>PayPal Donation: PayPal API error</strong><br>» %s',
 	'LOG_PPDE_PAYPAL_FEATURES_UPDATED' => '<strong>PayPal Donation: PayPal settings updated</strong>',
+	'LOG_PPDE_REFUND_PROCESSED'        => '<strong>PayPal Donation: Refund processed</strong><br>» Refund %1$s (capture %2$s)',
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation: Statistics resynchronised</strong>',

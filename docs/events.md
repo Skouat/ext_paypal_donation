@@ -11,3 +11,9 @@ skouat.ppde.donors_group_user_add_before
 * Since: 1.0.3
 * Changed: 2.1.2 Added var $payer_donated_amount
 * Purpose: Modify data before a user is added to the donors group
+
+skouat.ppde.donors_group_user_remove_before
+===
+* Location: ext/skouat/ppde/actions/core.php
+* Since: 3.1.0
+* Purpose: Modify data before a user is removed from the donors group following a refund/reversal that brought their cumulative donated amount below the configured minimum.

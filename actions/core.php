@@ -285,7 +285,10 @@ class core
 	{
 		if ($this->donor_is_member)
 		{
-			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross']);
+			$new_amount = (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross'];
+			$new_amount = max(0, $new_amount);
+
+			$this->update_user_stats((int) $this->payer_data['user_id'], $new_amount);
 		}
 	}
 
@@ -352,6 +355,68 @@ class core
 			// Adds the user to the donors group and set as default.
 			group_user_add($group_id, [$payer_id], [$payer_username], get_group_name($group_id), $default_group);
 		}
+	}
+
+	/**
+	 * Remove a donor from the donors group when their cumulative donated amount
+	 * has dropped below the configured minimum (e.g. after a refund/reversal).
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function donors_group_user_remove(): void
+	{
+		$can_remove = $this->can_remove_from_autogroup();
+		$group_id = (int) $this->config['ppde_ipn_group_id'];
+		$payer_id = (int) $this->payer_data['user_id'];
+		$payer_username = $this->payer_data['username'];
+		$payer_donated_amount = $this->payer_data['user_ppde_donated_amount'];
+
+		/**
+		 * Event to modify data before a user is removed from the donors group
+		 *
+		 * @event skouat.ppde.donors_group_user_remove_before
+		 * @var bool   can_remove           Whether or not to remove the user from the group
+		 * @var int    group_id             The ID of the group from which the user will be removed
+		 * @var int    payer_id             The ID of the user who will be removed from the group
+		 * @var string payer_username       The user name
+		 * @var float  payer_donated_amount The user donated amount
+		 * @since 3.1.0
+		 */
+		$vars = [
+			'can_remove',
+			'group_id',
+			'payer_id',
+			'payer_username',
+			'payer_donated_amount',
+		];
+		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_remove_before', compact($vars)));
+
+		if ($can_remove)
+		{
+			if (!function_exists('group_user_del'))
+			{
+				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			}
+
+			// Removes the user from the donors group. phpBB automatically
+			// resets the default group if this one was the user's default.
+			group_user_del($group_id, [$payer_id], [$payer_username], get_group_name($group_id));
+		}
+	}
+
+	/**
+	 * Checks if the donor must be removed from the donors group.
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function can_remove_from_autogroup(): bool
+	{
+		return
+			$this->autogroup_is_enabled() &&
+			$this->donor_is_member &&
+			!$this->minimum_donation_raised();
 	}
 
 	/**
