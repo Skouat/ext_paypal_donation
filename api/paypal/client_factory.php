@@ -20,8 +20,7 @@ use PaypalServerSdkLib\Authentication\ClientCredentialsAuthCredentialsBuilder;
 /**
  * Builds a fully configured and authenticated PayPal REST API client.
  *
- * This service replaces the low-level cURL/OAuth handling previously done in
- * the IPN PayPal controller. It centralizes:
+ * It centralizes:
  *  - OAuth2 Client Credentials authentication (token handling is automatic),
  *  - Sandbox/Live environment switching,
  *  - SDK configuration (timeout, retries).
@@ -135,7 +134,6 @@ class client_factory
 
 	/**
 	 * Check whether the REST credentials are configured for the given environment.
-	 * Use this instead of the old main_controller::is_ipn_requirement_satisfied().
 	 *
 	 * @param bool $sandbox True to check Sandbox credentials, false for Live.
 	 *

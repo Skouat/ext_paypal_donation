@@ -26,9 +26,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Receives and processes PayPal webhook notifications.
  *
- * This controller replaces the legacy IPN listener (ipn_listener.php).
- * The donation is recorded in the database here, asynchronously, after the
- * webhook signature has been cryptographically verified.
+ * The donation is recorded in the database asynchronously,
+ * once the webhook signature has been cryptographically verified.
  */
 class webhook_listener
 {
@@ -60,14 +59,14 @@ class webhook_listener
 	 *
 	 * @param config                $config
 	 * @param language              $language
-	 * @param \phpbb\log\log        $log
+	 * @param log                   $log
 	 * @param core                  $ppde_actions
 	 * @param transactions_entity   $ppde_entity_transaction
 	 * @param transactions_operator $ppde_operator_transaction
 	 * @param webhook_verify        $webhook_verify
 	 * @param client_factory        $client_factory
 	 * @param request               $request
-	 * @param \phpbb\user           $user
+	 * @param user                  $user
 	 * @param dispatcher_interface  $dispatcher
 	 *
 	 * @access public
@@ -215,20 +214,21 @@ class webhook_listener
 			case 'PAYMENT.CAPTURE.REVERSED':
 				$this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
 			break;
+
 			case 'PAYMENT.CAPTURE.DENIED':
 				$this->handle_capture_denied($event['resource'], $is_sandbox);
 			break;
+
+			// Any other event type is acknowledged (HTTP 200) but not processed.
 			default:
 			break;
 		}
 	}
 
 	/**
-	 * Handle a capture event (pending or completed): record the donation
-	 * (insert or update) and, when completed, run the post-actions.
-	 *
-	 * A capture may first arrive as "Pending" (e.g. card payments) and later
-	 * transition to "Completed", at which point the existing row is upgraded.
+	 * Handle a capture event: record the donation (insert or update) and,
+	 * when completed, run the post-actions. A capture first received as
+	 * "Pending" is later upgraded to "Completed".
 	 *
 	 * @param array  $resource
 	 * @param string $payment_status 'Pending' or 'Completed'
@@ -309,10 +309,10 @@ class webhook_listener
 	}
 
 	/**
-	 * Map a PAYMENT.CAPTURE.COMPLETED resource to the PPDE transaction array.
+	 * Map a capture resource (completed, pending or denied) to the PPDE transaction array.
 	 *
 	 * @param array  $resource
-	 * @param string $payment_status
+	 * @param string $payment_status 'Completed', 'Pending' or 'Denied'
 	 * @param bool   $is_sandbox
 	 *
 	 * @return array
@@ -497,8 +497,8 @@ class webhook_listener
 	}
 
 	/**
-	 * Handle a refunded or reversed capture: record the negative transaction
-	 * and adjust the running totals accordingly.
+	 * Handle a refunded or reversed capture: record it as a negative
+	 * transaction and adjust the running totals accordingly.
 	 *
 	 * @param array  $resource       The webhook "resource" (a refund object)
 	 * @param string $payment_status 'Refunded' or 'Reversed'
@@ -668,6 +668,8 @@ class webhook_listener
 
 		if (!$is_sandbox && $this->ppde_actions->get_donor_is_member())
 		{
+			// A refund can only decrease the total: never add to the group,
+			// only remove the donor if they dropped below the configured minimum.
 			$this->ppde_actions->update_donor_stats();
 			$this->ppde_actions->donors_group_user_remove();
 		}

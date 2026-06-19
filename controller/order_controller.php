@@ -20,9 +20,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Handles the synchronous donation payment flow using the PayPal Orders API v2.
  *
- * This controller replaces the old Website Payments Standard form
- * (cmd=_donations) previously built in main_donate::paypal_hidden_fields().
- *
  * Two endpoints are exposed and called by the PayPal JS SDK in the donor browser:
  *  - create()  : creates a PayPal order and returns its ID.
  *  - capture() : captures the funds once the donor approved the payment.
@@ -206,8 +203,6 @@ class order_controller extends main_controller
 		// The donation is recorded in DB by the webhook listener, not here.
 		// We only return the capture status so the JS can redirect the donor
 		// to the success or cancel page.
-		return new JsonResponse([
-			'status' => $response->getResult()->getStatus(),
-		]);
+		return new JsonResponse(['status' => $response->getResult()->getStatus()]);
 	}
 }
