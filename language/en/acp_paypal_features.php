@@ -57,7 +57,7 @@ $lang = array_merge($lang, [
 	// REST tools (webhook URL + connection test)
 	'PPDE_LEGEND_REST_TOOLS'               => 'REST API tools',
 	'PPDE_WEBHOOK_URL'                     => 'Webhook URL',
-	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Add this URL as a webhook in your PayPal Developer Dashboard (for both your Live and Sandbox apps), subscribe to the “Payment capture completed” event, then paste the resulting Webhook ID above.',
+	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Add this URL as a webhook in your PayPal Developer Dashboard (for both your Live and Sandbox apps), subscribe to the “Payment capture” events (completed, pending, denied, refunded, reversed), then paste the resulting Webhook ID above.',
 	'PPDE_REST_TEST_LIVE'                  => 'Test Live connection',
 	'PPDE_REST_TEST_SANDBOX'               => 'Test Sandbox connection',
 	'PPDE_REST_TEST_BUTTON'                => 'Test connection',

@@ -521,4 +521,27 @@ class transactions
 
 		return $custom;
 	}
+
+	/**
+	 * Returns the payment_status of a transaction identified by its PayPal txn_id.
+	 *
+	 * Used by the webhook listener to decide whether a capture has already been
+	 * fully processed (Completed) without loading the row into the shared entity.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return string The payment status, or an empty string if not found.
+	 * @access public
+	 */
+	public function get_payment_status_by_txn_id($txn_id): string
+	{
+		$sql = 'SELECT payment_status
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$status = (string) $this->db->sql_fetchfield('payment_status');
+		$this->db->sql_freeresult($result);
+
+		return $status;
+	}
 }

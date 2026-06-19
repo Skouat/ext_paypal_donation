@@ -51,6 +51,7 @@ $lang = array_merge($lang, [
  * logs
  */
 $lang = array_merge($lang, [
+	'LOG_PPDE_CAPTURE_DENIED'          => '<strong>PayPal Donation: Capture denied</strong><br>» Transaction %1$s',
 	'LOG_PPDE_DC_ACTIVATED'            => '<strong>PayPal Donation: Currency enabled</strong><br>» %s',
 	'LOG_PPDE_DC_ADDED'                => '<strong>PayPal Donation: New currency added</strong><br>» %s',
 	'LOG_PPDE_DC_DEACTIVATED'          => '<strong>PayPal Donation: Currency disabled</strong><br>» %s',

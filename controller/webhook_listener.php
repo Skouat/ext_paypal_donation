@@ -201,7 +201,11 @@ class webhook_listener
 		switch ($event['event_type'])
 		{
 			case 'PAYMENT.CAPTURE.COMPLETED':
-				$this->handle_capture_completed($event['resource'], $is_sandbox);
+				$this->handle_capture($event['resource'], 'Completed', $is_sandbox);
+			break;
+
+			case 'PAYMENT.CAPTURE.PENDING':
+				$this->handle_capture($event['resource'], 'Pending', $is_sandbox);
 			break;
 
 			case 'PAYMENT.CAPTURE.REFUNDED':
@@ -211,42 +215,63 @@ class webhook_listener
 			case 'PAYMENT.CAPTURE.REVERSED':
 				$this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
 			break;
-
-			// Other events (DENIED, PENDING…) are acknowledged for now.
+			case 'PAYMENT.CAPTURE.DENIED':
+				$this->handle_capture_denied($event['resource'], $is_sandbox);
+			break;
 			default:
 			break;
 		}
 	}
 
 	/**
-	 * Handle a completed capture: record the donation and run post-actions.
+	 * Handle a capture event (pending or completed): record the donation
+	 * (insert or update) and, when completed, run the post-actions.
 	 *
-	 * @param array $resource
-	 * @param bool  $is_sandbox
+	 * A capture may first arrive as "Pending" (e.g. card payments) and later
+	 * transition to "Completed", at which point the existing row is upgraded.
+	 *
+	 * @param array  $resource
+	 * @param string $payment_status 'Pending' or 'Completed'
+	 * @param bool   $is_sandbox
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function handle_capture_completed(array $resource, bool $is_sandbox): void
+	private function handle_capture(array $resource, string $payment_status, bool $is_sandbox): void
 	{
 		$txn_id = $resource['id'] ?? '';
 
-		if ($txn_id === '' || $this->already_processed($txn_id))
+		// Idempotency: a capture that is already completed must never be
+		// reprocessed (PayPal re-sends events until acknowledged with 200).
+		// A still-pending row, however, may be upgraded to completed.
+		if ($txn_id === '' || $this->already_completed($txn_id))
 		{
 			return;
 		}
 
 		try
 		{
-			$data = $this->map_capture($resource, $is_sandbox);
+			$data = $this->map_capture($resource, $payment_status, $is_sandbox);
 
-			$transaction_data = $data;
-			$vars = ['transaction_data'];
-			extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
-			$data = $transaction_data;
+			// The "completed" event keeps its historical semantics: it is the
+			// only one that fires the event and runs the post-actions.
+			if ($payment_status === 'Completed')
+			{
+				$transaction_data = $data;
+				$vars = ['transaction_data'];
+				extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+				$data = $transaction_data;
+			}
 
+			// Insert a new record, or update a previously pending one.
 			$this->ppde_actions->log_to_db($data);
-			$this->do_actions($is_sandbox);
+
+			// Only a completed payment updates statistics, raised amount,
+			// auto-group and triggers notifications.
+			if ($payment_status === 'Completed')
+			{
+				$this->do_actions($is_sandbox);
+			}
 		}
 		catch (\Throwable $e)
 		{
@@ -270,15 +295,30 @@ class webhook_listener
 	}
 
 	/**
+	 * Check whether a capture has already been fully processed (Completed).
+	 * Unlike already_processed(), this lets a pending row be upgraded later.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function already_completed(string $txn_id): bool
+	{
+		return $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id) === 'Completed';
+	}
+
+	/**
 	 * Map a PAYMENT.CAPTURE.COMPLETED resource to the PPDE transaction array.
 	 *
-	 * @param array $resource
-	 * @param bool  $is_sandbox
+	 * @param array  $resource
+	 * @param string $payment_status
+	 * @param bool   $is_sandbox
 	 *
 	 * @return array
 	 * @access private
 	 */
-	private function map_capture(array $resource, bool $is_sandbox): array
+	private function map_capture(array $resource, string $payment_status, bool $is_sandbox): array
 	{
 		$breakdown = $resource['seller_receivable_breakdown'] ?? [];
 		$custom    = $resource['custom_id'] ?? '';
@@ -288,7 +328,7 @@ class webhook_listener
 
 		return [
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
-			'confirmed'         => true,
+			'confirmed'         => $payment_status === 'Completed',
 			'custom'            => $custom,
 			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
 			'first_name'        => $payer['first_name'],
@@ -304,7 +344,7 @@ class webhook_listener
 			'payer_id'          => $payer['payer_id'],
 			'payer_status'      => $payer['payer_status'],
 			'payment_date'      => (int) strtotime($resource['create_time'] ?? 'now'),
-			'payment_status'    => 'Completed',
+			'payment_status'    => $payment_status,
 			'payment_type'      => '',
 			'memo'              => '',
 			'receiver_id'       => '',
@@ -630,6 +670,55 @@ class webhook_listener
 		{
 			$this->ppde_actions->update_donor_stats();
 			$this->ppde_actions->donors_group_user_remove();
+		}
+	}
+
+	/**
+	 * Handle a denied capture: record it for traceability without running any
+	 * post-action, since the funds were never received.
+	 *
+	 * A previously pending row is upgraded to "Denied"; a brand-new denial is
+	 * inserted. A capture that already completed is never downgraded here
+	 * (a settled capture is reverted through REVERSED instead).
+	 *
+	 * @param array $resource
+	 * @param bool  $is_sandbox
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function handle_capture_denied(array $resource, bool $is_sandbox): void
+	{
+		$txn_id = $resource['id'] ?? '';
+
+		if ($txn_id === '')
+		{
+			return;
+		}
+
+		$current_status = $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id);
+
+		// Idempotency / safety:
+		// - already Denied: nothing to do.
+		// - already Completed: a completed donation is never downgraded by a
+		//   denial (a settled capture would be reverted via REVERSED instead).
+		if ($current_status === 'Denied' || $current_status === 'Completed')
+		{
+			return;
+		}
+
+		try
+		{
+			// Insert a new Denied record, or update a previously pending one.
+			// No statistics, raised amount, auto-group or notification are run.
+			$data = $this->map_capture($resource, 'Denied', $is_sandbox);
+			$this->ppde_actions->log_to_db($data);
+
+			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_CAPTURE_DENIED', time(), [$txn_id]);
+		}
+		catch (\Throwable $e)
+		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$txn_id, $e->getMessage()]);
 		}
 	}
 }
