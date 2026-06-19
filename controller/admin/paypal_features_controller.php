@@ -4,32 +4,34 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license       GNU General Public License, version 2 (GPL-2.0)
+ * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
 namespace skouat\ppde\controller\admin;
 
 use phpbb\config\config;
+use phpbb\controller\helper;
 use phpbb\language\language;
 use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config     config          Config object
- * @property string     id_prefix_name  Prefix name for identifier in the URL
- * @property string     lang_key_prefix Prefix for the messages thrown by exceptions
- * @property language   language        Language object
- * @property log        log             The phpBB log system
- * @property string     module_name     Name of the module currently used
- * @property request    request         Request object
- * @property bool       submit          State of submit $_POST variable
- * @property template   template        Template object
- * @property string     u_action        Action URL
- * @property user       user            User object
+ * @property config   config          Config object
+ * @property string   id_prefix_name  Prefix name for identifier in the URL
+ * @property string   lang_key_prefix Prefix for the messages thrown by exceptions
+ * @property language language        Language object
+ * @property log      log             The phpBB log system
+ * @property string   module_name     Name of the module currently used
+ * @property request  request         Request object
+ * @property bool     submit          State of submit $_POST variable
+ * @property template template        Template object
+ * @property string   u_action        Action URL
+ * @property user     user            User object
  */
 class paypal_features_controller extends admin_main
 {
@@ -40,13 +42,15 @@ class paypal_features_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param config          $config               Config object
-	 * @param language        $language             Language object
-	 * @param log             $log                  The phpBB log system
-	 * @param main_controller $ppde_controller_main Main controller object
-	 * @param request         $request              Request object
-	 * @param template        $template             Template object
-	 * @param user            $user                 User object
+	 * @param config                   $config               Config object
+	 * @param language                 $language             Language object
+	 * @param log                      $log                  The phpBB log system
+	 * @param main_controller          $ppde_controller_main Main controller object
+	 * @param \phpbb\controller\helper $controller_helper    Controller helper object
+	 * @param client_factory           $ppde_client_factory  PayPal client factory object
+	 * @param request                  $request              Request object
+	 * @param template                 $template             Template object
+	 * @param user                     $user                 User object
 	 *
 	 * @access public
 	 */
@@ -55,8 +59,8 @@ class paypal_features_controller extends admin_main
 		language $language,
 		log $log,
 		main_controller $ppde_controller_main,
-		\phpbb\controller\helper $controller_helper,
-		\skouat\ppde\api\paypal\client_factory $ppde_client_factory,
+		helper $controller_helper,
+		client_factory $ppde_client_factory,
 		request $request,
 		template $template,
 		user $user
@@ -82,7 +86,6 @@ class paypal_features_controller extends admin_main
 	 * Display the settings a user can configure for this extension
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @access public
 	 */
 	public function display_settings(): void

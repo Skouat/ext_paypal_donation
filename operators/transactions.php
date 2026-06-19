@@ -14,7 +14,6 @@ use phpbb\db\driver\driver_interface;
 
 class transactions
 {
-	protected $container;
 	protected $db;
 	protected $ppde_transactions_log_table;
 
@@ -42,7 +41,7 @@ class transactions
 	 */
 	public function build_sql_data($transaction_id = 0): string
 	{
-		// Build main sql request
+		// Build main SQL request
 		$sql_ary = [
 			'SELECT'    => 'txn.*, u.username, u.user_colour',
 			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
@@ -202,7 +201,7 @@ class transactions
 	}
 
 	/**
-	 * Generates a sql condition for the specified keywords
+	 * Generates a SQL condition for the specified keywords
 	 *
 	 * @param string $keywords           The keywords the user specified to search for
 	 * @param string $statement_operator The operator used to prefix the statement ('AND' by default)

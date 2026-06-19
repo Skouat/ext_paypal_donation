@@ -259,7 +259,7 @@ class core
 	}
 
 	/**
-	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 * Gets donor information (user id, username, amount donated) and returns if exists
 	 *
 	 * @param string     $type Allowed value : 'user' or 'email'
 	 * @param string|int $args If $type is set to 'user', $args must be a user id.
@@ -273,14 +273,6 @@ class core
 		$this->payer_data = $this->ppde_operator_transaction->query_donor_user_data($type, $args);
 
 		return (bool) count((array) $this->payer_data);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_payer_data(): array
-	{
-		return (count($this->payer_data) != 0) ? $this->payer_data : [];
 	}
 
 	/**

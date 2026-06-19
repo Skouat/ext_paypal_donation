@@ -18,9 +18,9 @@ class auth
 	protected $config;
 
 	/**
-	 * currency constructor.
+	 * auth constructor.
 	 *
-	 * @param \phpbb\auth\auth     $auth            Auth Auth object
+	 * @param \phpbb\auth\auth     $auth            Auth object
 	 * @param \phpbb\config\config $config          Config object
 	 * @param string               $phpbb_root_path phpBB root path
 	 * @param string               $php_ext         phpEx

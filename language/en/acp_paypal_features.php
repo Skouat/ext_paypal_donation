@@ -105,6 +105,5 @@ $lang = array_merge($lang, [
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Please check “Sandbox address”.',
 	'PPDE_REST_CREDENTIALS_MISSING'       => 'PayPal REST API credentials (Client ID / Secret) are not configured. Please set them in the PayPal IPN Features module.',
 ]);

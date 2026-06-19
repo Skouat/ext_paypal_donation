@@ -24,7 +24,7 @@ class vars
 	protected $user;
 
 	/**
-	 * currency constructor.
+	 * vars constructor.
 	 *
 	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object

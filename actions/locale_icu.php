@@ -220,7 +220,7 @@ class locale_icu
 	}
 
 	/**
-	 * Sets config value for cURL and fsockopen
+	 * Sets config value for PHP Intl extension detection
 	 *
 	 * @return void
 	 * @access public
