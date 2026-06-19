@@ -19,7 +19,8 @@ use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\api\paypal\webhook_verify;
-use skouat\ppde\entity\transactions;
+use skouat\ppde\entity\transactions as transactions_entity;
+use skouat\ppde\operators\transactions as transactions_operator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -39,8 +40,10 @@ class webhook_listener
 	protected $log;
 	/** @var core */
 	protected $ppde_actions;
-	/** @var transactions */
+	/** @var transactions_entity */
 	protected $ppde_entity_transaction;
+	/** @var transactions_operator */
+	protected $ppde_operator_transaction;
 	/** @var webhook_verify */
 	protected $webhook_verify;
 	/** @var client_factory */
@@ -55,16 +58,17 @@ class webhook_listener
 	/**
 	 * Constructor
 	 *
-	 * @param config               $config
-	 * @param language             $language
-	 * @param \phpbb\log\log       $log
-	 * @param core                 $ppde_actions
-	 * @param transactions         $ppde_entity_transaction
-	 * @param webhook_verify       $webhook_verify
-	 * @param client_factory       $client_factory
-	 * @param request              $request
-	 * @param \phpbb\user          $user
-	 * @param dispatcher_interface $dispatcher
+	 * @param config                $config
+	 * @param language              $language
+	 * @param \phpbb\log\log        $log
+	 * @param core                  $ppde_actions
+	 * @param transactions_entity   $ppde_entity_transaction
+	 * @param transactions_operator $ppde_operator_transaction
+	 * @param webhook_verify        $webhook_verify
+	 * @param client_factory        $client_factory
+	 * @param request               $request
+	 * @param \phpbb\user           $user
+	 * @param dispatcher_interface  $dispatcher
 	 *
 	 * @access public
 	 */
@@ -73,7 +77,8 @@ class webhook_listener
 		language $language,
 		log $log,
 		core $ppde_actions,
-		transactions $ppde_entity_transaction,
+		transactions_entity $ppde_entity_transaction,
+		transactions_operator $ppde_operator_transaction,
 		webhook_verify $webhook_verify,
 		client_factory $client_factory,
 		request $request,
@@ -86,6 +91,7 @@ class webhook_listener
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
 		$this->ppde_entity_transaction = $ppde_entity_transaction;
+		$this->ppde_operator_transaction = $ppde_operator_transaction;
 		$this->webhook_verify = $webhook_verify;
 		$this->client_factory = $client_factory;
 		$this->request = $request;
@@ -536,18 +542,11 @@ class webhook_listener
 	{
 		if ($parent_txn_id !== '')
 		{
-			$this->ppde_entity_transaction->set_txn_id($parent_txn_id);
-			$parent_id = $this->ppde_entity_transaction->transaction_exists();
+			$custom = $this->ppde_operator_transaction->get_custom_by_txn_id($parent_txn_id);
 
-			if ($parent_id)
+			if ($custom !== '')
 			{
-				$this->ppde_entity_transaction->load($parent_id);
-				$custom = $this->ppde_entity_transaction->get_custom();
-
-				if ($custom !== '')
-				{
-					return $custom;
-				}
+				return $custom;
 			}
 		}
 

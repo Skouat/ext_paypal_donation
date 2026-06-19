@@ -498,4 +498,27 @@ class transactions
 			'user_id'           => (int) $data['user_id'],
 		];
 	}
+
+	/**
+	 * Returns the "custom" value of a transaction identified by its PayPal txn_id.
+	 *
+	 * Used by the webhook listener to retrieve the parent capture's custom_id
+	 * without loading the whole row into the shared transaction entity.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return string The custom value, or an empty string if not found.
+	 * @access public
+	 */
+	public function get_custom_by_txn_id(string $txn_id): string
+	{
+		$sql = 'SELECT custom
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$custom = (string) $this->db->sql_fetchfield('custom');
+		$this->db->sql_freeresult($result);
+
+		return $custom;
+	}
 }

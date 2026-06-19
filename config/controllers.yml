@@ -165,6 +165,7 @@ services:
             - '@log'
             - '@skouat.ppde.core_actions'
             - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.transactions'
             - '@skouat.ppde.api.paypal.webhook_verify'
             - '@skouat.ppde.api.paypal.client_factory'
             - '@request'
