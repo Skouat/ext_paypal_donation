@@ -1,6 +1,6 @@
 # Content Security Policy (CSP) Configuration
 
-Since version 3.1.0, PayPal Donation Extension (PPDE) uses the **PayPal REST API**
+Since version 4.0.0, PayPal Donation Extension (PPDE) uses the **PayPal REST API**
 and the **PayPal JavaScript SDK** to display the donation buttons and process
 payments. If your board enforces a [Content Security Policy](https://developer.mozilla.org/docs/Web/HTTP/CSP),
 you must allow PayPal's domains, otherwise the donation buttons will not appear

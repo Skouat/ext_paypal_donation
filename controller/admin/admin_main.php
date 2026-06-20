@@ -427,7 +427,7 @@ abstract class admin_main
 	/**
 	 * Run the Intl detection once after install/enable (ppde_first_start = true).
 	 *
-	 * Since v3.1.0, cURL/OpenSSL are hard composer requirements (ext-curl,ext-openssl) and PayPal connectivity is
+	 * Since v4.0.0, cURL/OpenSSL are hard composer requirements (ext-curl,ext-openssl) and PayPal connectivity is
 	 * verified by the "Test connection" button, so only the optional PHP Intl detection remains here.
 	 *
 	 * @return void

@@ -1,4 +1,20 @@
 # Changelog
+
+## 4.0.0 - 2026-xx-xx
+  - Add: Migration from PayPal IPN to the PayPal REST API (Orders API v2 + JS SDK)
+  - Add: Webhook listener with offline RSA-SHA256 signature verification (capture completed, pending, denied, refunded, reversed)
+  - Add: Refunds and reversals adjust the statistics, raised amount and donor totals; donors below the minimum are removed from the group
+  - Add: Synchronous capture fallback to record the donation if the webhook is unreachable (idempotent)
+  - Add: New `skouat.ppde.donors_group_user_remove_before` event
+  - Add: REST API settings, a "Test connection" button and the webhook URL in the PayPal Features module
+  - Add: docs/csp.md documenting the required Content Security Policy directives
+  - Change: Now requires phpBB 3.3.11+, PHP 7.2+ and the ext-openssl extension
+  - Change: Notifications and auto group each have their own toggle (no longer tied to "Enable IPN")
+  - Change: Errors logged in the phpBB admin log; the Overview reports the OpenSSL version
+  - Change: The `skouat.ppde.do_actions_completed_before` event now fires from the shared donation recorder
+  - Remove: PayPal IPN listener, postback validation, TLS/cURL detection, file logging and obsolete config values
+  - Remove: Obsolete "donation with errors" approval workflow and notification (historical transactions stay read-only)
+
 ## 3.0.4 - 2021-04-20
   - Fix: Merchant ID does not match
   - Fix: Undefined index on transactions module

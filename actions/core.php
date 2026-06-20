@@ -381,7 +381,7 @@ class core
 		 * @var int    payer_id             The ID of the user who will be removed from the group
 		 * @var string payer_username       The user name
 		 * @var float  payer_donated_amount The user donated amount
-		 * @since 3.1.0
+		 * @since 4.0.0
 		 */
 		$vars = [
 			'can_remove',
