@@ -33,6 +33,8 @@ class order_controller extends main_controller
 	protected $client_factory;
 	/** @var \phpbb\log\log */
 	protected $log;
+	/** @var \skouat\ppde\actions\donation_recorder */
+	protected $donation_recorder;
 
 	/**
 	 * Inject the PayPal client factory.
@@ -50,6 +52,11 @@ class order_controller extends main_controller
 	public function set_log(\phpbb\log\log $log): void
 	{
 		$this->log = $log;
+	}
+
+	public function set_donation_recorder(\skouat\ppde\actions\donation_recorder $donation_recorder): void
+	{
+		$this->donation_recorder = $donation_recorder;
 	}
 
 	/**
@@ -200,9 +207,127 @@ class order_controller extends main_controller
 			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
 		}
 
-		// The donation is recorded in DB by the webhook listener, not here.
-		// We only return the capture status so the JS can redirect the donor
-		// to the success or cancel page.
-		return new JsonResponse(['status' => $response->getResult()->getStatus()]);
+		$result = $response->getResult();
+		$status = (string) $result->getStatus();
+
+		// Safety net: record the donation now (idempotently) in case the PayPal
+		// webhook never reaches the board (misconfiguration, WAF, anti-bot…).
+		// The recorder's idempotency guard prevents any double processing when
+		// the webhook later arrives. Any failure here is swallowed so the donor's
+		// redirect is never broken — the webhook remains the authoritative path.
+		if ($status === 'COMPLETED')
+		{
+			try
+			{
+				$data = $this->build_donation_from_order($result, $this->use_sandbox());
+
+				if ($data !== null)
+				{
+					$this->donation_recorder->record_completed($data, $this->use_sandbox());
+				}
+			}
+			catch (\Throwable $e)
+			{
+				$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$order_id, $e->getMessage()]);
+			}
+		}
+
+		return new JsonResponse(['status' => $status]);
+	}
+
+	/**
+	 * Build the PPDE transaction array from a captured Order SDK object.
+	 * Returns null if the capture cannot be extracted (the webhook then remains
+	 * the only recorder — graceful degradation).
+	 *
+	 * @param object $order      The Order result from captureOrder()
+	 * @param bool   $is_sandbox
+	 *
+	 * @return array|null
+	 * @access private
+	 */
+	private function build_donation_from_order($order, bool $is_sandbox): ?array
+	{
+		$capture = $this->extract_capture($order);
+
+		if ($capture === null || !method_exists($capture, 'getId') || (string) $capture->getId() === '')
+		{
+			return null;
+		}
+
+		$custom    = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
+		$amount    = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
+		$breakdown = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
+
+		$currency = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
+		$gross    = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
+
+		$fee = $net = 0.0;
+		$exchange_rate = '';
+		if ($breakdown)
+		{
+			$fee_obj = method_exists($breakdown, 'getPaypalFee') ? $breakdown->getPaypalFee() : null;
+			$net_obj = method_exists($breakdown, 'getNetAmount') ? $breakdown->getNetAmount() : null;
+			$fx_obj  = method_exists($breakdown, 'getExchangeRate') ? $breakdown->getExchangeRate() : null;
+
+			$fee = ($fee_obj && method_exists($fee_obj, 'getValue')) ? (float) $fee_obj->getValue() : 0.0;
+			$net = ($net_obj && method_exists($net_obj, 'getValue')) ? (float) $net_obj->getValue() : 0.0;
+			$exchange_rate = ($fx_obj && method_exists($fx_obj, 'getValue')) ? (string) $fx_obj->getValue() : '';
+		}
+
+		return [
+			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
+			'confirmed'         => true,
+			'custom'            => $custom,
+			'exchange_rate'     => $exchange_rate,
+			'first_name'        => '',
+			'item_name'         => '',
+			'item_number'       => $custom,
+			'last_name'         => '',
+			'mc_currency'       => $currency,
+			'mc_gross'          => $gross,
+			'mc_fee'            => $fee,
+			'net_amount'        => $net,
+			'parent_txn_id'     => '',
+			'payer_email'       => '',
+			'payer_id'          => '',
+			'payer_status'      => '',
+			'payment_date'      => time(),
+			'payment_status'    => 'Completed',
+			'payment_type'      => '',
+			'memo'              => '',
+			'receiver_id'       => '',
+			'receiver_email'    => '',
+			'residence_country' => '',
+			'settle_amount'     => 0.0,
+			'settle_currency'   => '',
+			'test_ipn'          => $is_sandbox,
+			'txn_errors'        => '',
+			'txn_id'            => (string) $capture->getId(),
+			'txn_type'          => 'ppde_rest_donation',
+			'user_id'           => ANONYMOUS, // Overridden by core::extract_user_id() from custom
+		];
+	}
+
+	/**
+	 * Extract the first capture object from a captured Order, defensively.
+	 *
+	 * @param object $order
+	 *
+	 * @return object|null
+	 * @access private
+	 */
+	private function extract_capture($order)
+	{
+		$units = method_exists($order, 'getPurchaseUnits') ? $order->getPurchaseUnits() : null;
+		if (empty($units) || !is_array($units))
+		{
+			return null;
+		}
+
+		$payments = method_exists($units[0], 'getPayments') ? $units[0]->getPayments() : null;
+		$captures = ($payments && method_exists($payments, 'getCaptures')) ? $payments->getCaptures() : null;
+
+		return (!empty($captures) && is_array($captures)) ? $captures[0] : null;
 	}
 }

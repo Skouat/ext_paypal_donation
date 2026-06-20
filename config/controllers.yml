@@ -156,6 +156,7 @@ services:
         calls:
             - [ set_client_factory, [ '@skouat.ppde.api.paypal.client_factory' ] ]
             - [ set_log, [ '@log' ] ]
+            - [ set_donation_recorder, [ '@skouat.ppde.actions.donation_recorder' ] ]
 
     skouat.ppde.webhook_listener:
         class: skouat\ppde\controller\webhook_listener
@@ -170,4 +171,4 @@ services:
             - '@skouat.ppde.api.paypal.client_factory'
             - '@request'
             - '@user'
-            - '@dispatcher'
+            - '@skouat.ppde.actions.donation_recorder'

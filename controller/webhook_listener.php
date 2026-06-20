@@ -11,12 +11,12 @@
 namespace skouat\ppde\controller;
 
 use phpbb\config\config;
-use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\user;
 use skouat\ppde\actions\core;
+use skouat\ppde\actions\donation_recorder;
 use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
@@ -51,8 +51,8 @@ class webhook_listener
 	protected $request;
 	/** @var user */
 	protected $user;
-	/** @var dispatcher_interface */
-	protected $dispatcher;
+	/** @var donation_recorder */
+	protected $donation_recorder;
 
 	/**
 	 * Constructor
@@ -67,7 +67,7 @@ class webhook_listener
 	 * @param client_factory        $client_factory
 	 * @param request               $request
 	 * @param user                  $user
-	 * @param dispatcher_interface  $dispatcher
+	 * @param donation_recorder     $donation_recorder
 	 *
 	 * @access public
 	 */
@@ -82,7 +82,7 @@ class webhook_listener
 		client_factory $client_factory,
 		request $request,
 		user $user,
-		dispatcher_interface $dispatcher
+		donation_recorder $donation_recorder
 	)
 	{
 		$this->config = $config;
@@ -95,7 +95,7 @@ class webhook_listener
 		$this->client_factory = $client_factory;
 		$this->request = $request;
 		$this->user = $user;
-		$this->dispatcher = $dispatcher;
+		$this->donation_recorder = $donation_recorder;
 	}
 
 	/**
@@ -241,9 +241,8 @@ class webhook_listener
 	{
 		$txn_id = $resource['id'] ?? '';
 
-		// Idempotency: a capture that is already completed must never be
-		// reprocessed (PayPal re-sends events until acknowledged with 200).
-		// A still-pending row, however, may be upgraded to completed.
+		// A capture already completed must never be reprocessed; a still-pending
+		// row, however, may later be upgraded to 'completed'.
 		if ($txn_id === '' || $this->already_completed($txn_id))
 		{
 			return;
@@ -253,24 +252,15 @@ class webhook_listener
 		{
 			$data = $this->map_capture($resource, $payment_status, $is_sandbox);
 
-			// The "completed" event keeps its historical semantics: it is the
-			// only one that fires the event and runs the post-actions.
 			if ($payment_status === 'Completed')
 			{
-				$transaction_data = $data;
-				$vars = ['transaction_data'];
-				extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
-				$data = $transaction_data;
+				// Shared with the capture endpoint; runs stats, auto-group and notifications.
+				$this->donation_recorder->record_completed($data, $is_sandbox);
 			}
-
-			// Insert a new record, or update a previously pending one.
-			$this->ppde_actions->log_to_db($data);
-
-			// Only a completed payment updates statistics, raised amount,
-			// auto-group and triggers notifications.
-			if ($payment_status === 'Completed')
+			else
 			{
-				$this->do_actions($is_sandbox);
+				// Pending: record the row without running any post-action.
+				$this->ppde_actions->log_to_db($data);
 			}
 		}
 		catch (\Throwable $e)
@@ -465,35 +455,6 @@ class webhook_listener
 			'payer_status' => '',
 			'country'      => ($address && method_exists($address, 'getCountryCode')) ? (string) $address->getCountryCode() : '',
 		];
-	}
-
-	/**
-	 * Run statistics, auto-group and notification actions after logging.
-	 *
-	 * @param bool $is_sandbox
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function do_actions(bool $is_sandbox): void
-	{
-		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
-		$this->ppde_actions->is_donor_is_member();
-
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if (!$is_sandbox)
-		{
-			$this->ppde_actions->notification->notify_admin_donation_received();
-
-			if ($this->ppde_actions->get_donor_is_member())
-			{
-				$this->ppde_actions->update_donor_stats();
-				$this->ppde_actions->donors_group_user_add();
-				$this->ppde_actions->notification->notify_donor_donation_received();
-			}
-		}
 	}
 
 	/**

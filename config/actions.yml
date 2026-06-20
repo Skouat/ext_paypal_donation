@@ -28,6 +28,13 @@ services:
             - '@skouat.ppde.operator.currency'
             - '@template'
 
+    skouat.ppde.actions.donation_recorder:
+        class: skouat\ppde\actions\donation_recorder
+        arguments:
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.operator.transactions'
+            - '@dispatcher'
+
     skouat.ppde.actions.locale_icu:
         class: skouat\ppde\actions\locale_icu
         arguments:

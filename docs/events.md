@@ -1,8 +1,8 @@
 skouat.ppde.do_actions_completed_before
 ===
-* Location: ext/skouat/ppde/controller/webhook_listener.php
+* Location: ext/skouat/ppde/actions/donation_recorder.php
 * Since: 1.0.3
-* Changed: 3.1.0 Moved from controller/ipn_listener.php to controller/webhook_listener.php following the migration from PayPal IPN to the REST API. The `transaction_data` keys are now populated from the PayPal REST webhook (PAYMENT.CAPTURE.COMPLETED) instead of the IPN POST data.
+* Changed: 3.1.0 Moved to the shared donation_recorder service. It is now triggered both by the webhook listener (PAYMENT.CAPTURE.COMPLETED) and the synchronous capture endpoint; the idempotency guard ensures it fires only once per transaction.
 * Purpose: Event that is triggered when a transaction has been successfully completed
 
 skouat.ppde.donors_group_user_add_before
