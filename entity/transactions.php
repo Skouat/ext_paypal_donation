@@ -642,21 +642,6 @@ class transactions extends main
 	}
 
 	/**
-	 * Set PayPal transaction errors approval status
-	 *
-	 * @param bool $txn_errors_approved
-	 *
-	 * @return transactions $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_txn_errors_approved($txn_errors_approved)
-	{
-		$this->data['txn_errors_approved'] = (bool) $txn_errors_approved;
-
-		return $this;
-	}
-
-	/**
 	 * Set PayPal payer e-mail
 	 *
 	 * @param string $payer_email

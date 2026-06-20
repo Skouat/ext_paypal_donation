@@ -93,7 +93,6 @@ class ext extends \phpbb\extension\base
 	protected function notification_types(): array
 	{
 		return [
-			'skouat.ppde.notification.type.admin_donation_errors',
 			'skouat.ppde.notification.type.admin_donation_received',
 			'skouat.ppde.notification.type.donor_donation_received',
 		];

@@ -314,19 +314,10 @@ class transactions_controller extends admin_main
 			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
-		// Prepares args depending actions
+		// Prepares args depending on actions
 		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$this->args['action'] = 'delete';
-		}
-		else if ($this->request->is_set('approve'))
-		{
-			$this->args['action'] = 'approve';
-			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
-				'approve'             => true,
-				'id'                  => $this->request->variable('id', 0),
-				'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
-			]);
 		}
 		else if ($this->request->is_set('add'))
 		{
@@ -409,30 +400,6 @@ class transactions_controller extends admin_main
 		}
 
 		return $user_id;
-	}
-
-	public function approve(): void
-	{
-		$transaction_id = (int) $this->args['hidden_fields']['id'];
-		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
-
-		// Update DB record
-		$this->ppde_entity->load($transaction_id);
-		$this->ppde_entity->set_txn_errors_approved($txn_approved);
-		$this->ppde_entity->save(false);
-
-		// Prepare transaction settings before doing actions
-		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
-		$this->ppde_actions->set_transaction_data($transaction_data[0]);
-		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
-		$this->ppde_actions->is_donor_is_member();
-
-		if ($txn_approved)
-		{
-			$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
-		}
-
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
 	}
 
 	/**
@@ -828,9 +795,8 @@ class transactions_controller extends admin_main
 	protected function action_assign_template_vars($data)
 	{
 		$s_hidden_fields = build_hidden_fields([
-			'id'                  => $data['transaction_id'],
-			'donor_id'            => $data['user_id'],
-			'txn_errors_approved' => $data['txn_errors_approved'],
+			'id'       => $data['transaction_id'],
+			'donor_id' => $data['user_id'],
 		]);
 
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);

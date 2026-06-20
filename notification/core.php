@@ -45,18 +45,6 @@ class core
 	}
 
 	/**
-	 * Notify admin when the donation contains errors
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function notify_donation_errors(): void
-	{
-		$notification_data = $this->notify_donation_core('donation_errors');
-		$this->notification->add_notifications('skouat.ppde.notification.type.admin_donation_errors', $notification_data);
-	}
-
-	/**
 	 * Notify admin when the donation is received
 	 *
 	 * @return void
@@ -83,44 +71,33 @@ class core
 	/**
 	 * Build Notification data
 	 *
-	 * @param string $donation_type
-	 *
 	 * @return array
 	 * @access private
 	 */
-	private function notify_donation_core($donation_type = ''): array
+	private function notify_donation_core(): array
 	{
-		switch ($donation_type)
+		// Set currency data properties
+		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
+
+		// Format net amount data properties
+		if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
 		{
-			case 'donation_errors':
-				$notification_data['txn_errors'] = $this->ppde_entity_transaction->get_txn_errors();
-			// No break
-			default:
-				// Set currency data properties
-				$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
-
-				// Format net amount data properties
-				if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
-				{
-					$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
-					$net_amount = $this->ppde_actions_currency->format_currency($settle_amount, $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
-				}
-				else
-				{
-					$net_amount = $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']);
-				}
-
-				$notification_data = [
-					'mc_gross'       => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-					'net_amount'     => $net_amount,
-					'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
-					'payer_username' => $this->ppde_entity_transaction->get_username(),
-					'transaction_id' => $this->ppde_entity_transaction->get_id(),
-					'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
-					'user_from'      => $this->ppde_entity_transaction->get_user_id(),
-				];
+			$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
+			$net_amount = $this->ppde_actions_currency->format_currency($settle_amount, $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+		}
+		else
+		{
+			$net_amount = $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_net_amount(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']);
 		}
 
-		return $notification_data;
+		return [
+			'mc_gross'       => $this->ppde_actions_currency->format_currency($this->ppde_entity_transaction->get_mc_gross(), $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
+			'net_amount'     => $net_amount,
+			'payer_email'    => $this->ppde_entity_transaction->get_payer_email(),
+			'payer_username' => $this->ppde_entity_transaction->get_username(),
+			'transaction_id' => $this->ppde_entity_transaction->get_id(),
+			'txn_id'         => $this->ppde_entity_transaction->get_txn_id(),
+			'user_from'      => $this->ppde_entity_transaction->get_user_id(),
+		];
 	}
 }

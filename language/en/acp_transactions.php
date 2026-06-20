@@ -48,12 +48,10 @@ $lang = array_merge($lang, [
 	'PPDE_DT_USERNAME'       => 'Donor name',
 
 	// Display transactions
-	'PPDE_DT_APPROVE'                       => 'Approve',
 	'PPDE_DT_BOARD_USERNAME'                => 'Donor',
 	'PPDE_DT_CHANGE_BOARD_USERNAME'         => 'Change donor',
 	'PPDE_DT_CHANGE_BOARD_USERNAME_EXPLAIN' => 'This changes the user account this donation is associated with.',
 	'PPDE_DT_DETAILS'                       => 'Transaction details',
-	'PPDE_DT_DISAPPROVE'                    => 'Disapprove',
 	'PPDE_DT_EXCHANGE_RATE'                 => 'Exchange rate',
 	'PPDE_DT_EXCHANGE_RATE_EXPLAIN'         => 'Based on the exchange rate in effect at %s.',
 	'PPDE_DT_FEE_AMOUNT'                    => 'Fee amount',

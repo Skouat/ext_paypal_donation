@@ -212,9 +212,8 @@ class ppde_module
 			case 'deactivate':
 				$controller->enable();
 			break;
-			case 'approve':
 			case 'delete':
-				// Use a confirm box routine when approving/deleting an item
+				// Use a confirm box routine when deleting an item
 				if (confirm_box(true))
 				{
 					$controller->$action();

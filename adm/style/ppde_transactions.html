@@ -120,9 +120,6 @@
 	<fieldset>
 		<p class="submit-buttons">
 			{{ S_HIDDEN_FIELDS }}
-			{% if S_ERROR %}
-			<input class="button1" type="submit" name="approve" value="{% if S_ERROR_APPROVED %}{{ lang('PPDE_DT_DISAPPROVE') }}{% else %}{{ lang('PPDE_DT_APPROVE') }}{% endif %}">&nbsp;
-			{% endif %}
 			<input class="button1" type="submit" id="change" name="change" value="{{ lang('SUBMIT') }}">&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">&nbsp;
 			<input class="button2" type="submit" name="back" value="{{ lang('BACK') }}">

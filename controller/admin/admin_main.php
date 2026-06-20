@@ -138,10 +138,6 @@ abstract class admin_main
 	{
 	}
 
-	public function approve(): void
-	{
-	}
-
 	/**
 	 * Change item details for the called controller
 	 *
