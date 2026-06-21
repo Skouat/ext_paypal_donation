@@ -79,7 +79,7 @@ class order_controller extends main_controller
 
 		if ($amount <= 0)
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_MT_MC_GROSS_TOO_LOW')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], 400);
 		}
 
 		// Resolve the currency ISO code from the selected currency id.

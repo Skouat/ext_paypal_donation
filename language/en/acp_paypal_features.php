@@ -38,8 +38,8 @@ if (empty($lang) || !is_array($lang))
  * mode: PayPal features
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN Features',
-	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure all features that use the PayPal Instant Payment Notification (IPN).',
+	'PPDE_PAYPAL_FEATURES'                 => 'PayPal Features',
+	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure the PayPal REST API credentials and all the features that rely on PayPal webhooks.',
 
 	// REST API settings
 	'PPDE_LEGEND_REST_API'                 => 'REST API settings',
@@ -98,12 +98,12 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal IPN features saved.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal features saved.',
 ]);
 
 /**
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_REST_CREDENTIALS_MISSING'       => 'PayPal REST API credentials (Client ID / Secret) are not configured. Please set them in the PayPal IPN Features module.',
+	'PPDE_REST_CREDENTIALS_MISSING'       => 'PayPal REST API credentials (Client ID / Secret) are not configured. Please set them in the PayPal Features module.',
 ]);

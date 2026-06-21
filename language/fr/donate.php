@@ -47,7 +47,6 @@ $lang = array_merge($lang, [
 	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
 	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
 	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
-	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal. Veuillez patienter…',
 	'PPDE_SANDBOX_TITLE'               => 'Tester PayPal Donation avec PayPal Sandbox',
 
 	// Donors list
@@ -94,7 +93,6 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Notification
-	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => 'Le dernier don effectué par %1$s requiert votre attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ]);

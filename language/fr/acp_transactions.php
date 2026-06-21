@@ -41,8 +41,8 @@ $lang = array_merge($lang, [
 	// Transactions log
 	'PPDE_DT_CONFIG'         => 'Journal des transactions',
 	'PPDE_DT_CONFIG_EXPLAIN' => 'Depuis cette page vous pouvez consulter le détail des transactions PayPal.',
-	'PPDE_DT_IPN_STATUS'     => 'État de la transaction',
-	'PPDE_DT_IPN_TEST'       => 'Test IPN',
+	'PPDE_DT_IPN_STATUS'     => 'Vérification',
+	'PPDE_DT_IPN_TEST'       => 'Sandbox',
 	'PPDE_DT_PAYMENT_STATUS' => 'État du paiement',
 	'PPDE_DT_TXN_ID'         => 'Numéro de transaction',
 	'PPDE_DT_USERNAME'       => 'Nom du donateur',
@@ -70,8 +70,8 @@ $lang = array_merge($lang, [
 	'PPDE_DT_SETTLE_AMOUNT'                 => 'Conversion en « %s »',
 	'PPDE_DT_SORT_TXN_ID'                   => 'Numéro de transaction',
 	'PPDE_DT_SORT_DONORS'                   => 'Donateur',
-	'PPDE_DT_SORT_IPN_STATUS'               => 'État de la transaction',
-	'PPDE_DT_SORT_IPN_TYPE'                 => 'Type de transaction',
+	'PPDE_DT_SORT_IPN_STATUS'               => 'Vérification',
+	'PPDE_DT_SORT_IPN_TYPE'                 => 'Environnement',
 	'PPDE_DT_SORT_PAYMENT_STATUS'           => 'État du paiement',
 	'PPDE_DT_TOTAL_AMOUNT'                  => 'Montant total',
 	'PPDE_DT_UNVERIFIED'                    => 'Non vérifié',
@@ -119,15 +119,18 @@ $lang = array_merge($lang, [
 
 	## For translate:					Don't					Yes
 	'PPDE_DT_PAYMENT_STATUS_VALUES' => [
-										'canceled_reversal' => 'Annulation invalidée',
 										'completed'         => 'Effectué',
-										'created'           => 'Créé',
 										'denied'            => 'Rejeté',
-										'expired'           => 'Expiré',
-										'failed'            => 'Échoué',
 										'pending'           => 'En attente',
 										'refunded'          => 'Remboursé',
 										'reversed'          => 'Annulé',
+
+										// Legacy PayPal IPN statuses — never written anymore,
+										// kept for historical transactions (read-only)
+										'canceled_reversal' => 'Annulation invalidée',
+										'created'           => 'Créé',
+										'expired'           => 'Expiré',
+										'failed'            => 'Échoué',
 										'processed'         => 'Accepté',
 										'voided'            => 'Annulé',
 	],
@@ -144,9 +147,9 @@ $lang = array_merge($lang, [
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_DT_IPN_APPROVED'         => 'Transaction approuvée manuellement',
-	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'Cette donation a été approuvée manuellement avec les erreurs suivantes',
-	'PPDE_DT_IPN_ERRORS'           => 'Vous devriez reconsidérer ce don car les erreurs suivantes ont été détectées',
+	'PPDE_DT_IPN_APPROVED'         => 'Transaction approuvée manuellement (historique)',
+	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'Ce don historique a été approuvé manuellement malgré les erreurs suivantes',
+	'PPDE_DT_IPN_ERRORS'           => 'Ce don historique a été enregistré avec les erreurs suivantes',
 	'PPDE_DT_NO_TRANSACTION'       => 'Aucune transaction n’a été trouvée.',
 
 	'PPDE_MT_DONOR_NOT_FOUND'      => 'Le donateur demandé n’existe pas.',

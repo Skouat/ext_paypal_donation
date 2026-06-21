@@ -38,21 +38,21 @@ if (empty($lang) || !is_array($lang))
  * mode: PayPal features
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN',
-	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les fonctionnalités utilisant les notifications instantanées de paiement (IPN) de PayPal.',
+	'PPDE_PAYPAL_FEATURES'                 => 'Fonctionnalités PayPal',
+	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les identifiants de l’API REST PayPal ainsi que toutes les fonctionnalités reposant sur les webhooks PayPal.',
 
 	// REST API settings
-	'PPDE_LEGEND_REST_API'                 => 'REST API settings',
-	'PPDE_REST_LIVE'                       => 'Live credentials',
-	'PPDE_REST_SANDBOX'                    => 'Sandbox credentials',
+	'PPDE_LEGEND_REST_API'                 => 'Paramètres de l’API REST',
+	'PPDE_REST_LIVE'                       => 'Identifiants Live',
+	'PPDE_REST_SANDBOX'                    => 'Identifiants Sandbox',
 	'PPDE_REST_CLIENT_ID'                  => 'Client ID',
-	'PPDE_REST_CLIENT_ID_EXPLAIN'          => 'The REST API app Client ID from your PayPal Developer Dashboard.',
+	'PPDE_REST_CLIENT_ID_EXPLAIN'          => 'Le Client ID de l’application API REST, disponible depuis votre tableau de bord PayPal Developer.',
 	'PPDE_REST_SECRET'                     => 'Secret',
-	'PPDE_REST_SECRET_EXPLAIN'             => 'The REST API app Secret. Leave blank to keep the current value.',
-	'PPDE_REST_SECRET_SET'                 => '•••••••• (a secret is already stored)',
-	'PPDE_REST_SECRET_EMPTY'               => 'No secret stored yet',
+	'PPDE_REST_SECRET_EXPLAIN'             => 'Le Secret de l’application API REST. Laissez ce champ vide pour conserver la valeur actuelle.',
+	'PPDE_REST_SECRET_SET'                 => '•••••••• (un secret est déjà enregistré)',
+	'PPDE_REST_SECRET_EMPTY'               => 'Aucun secret enregistré pour le moment',
 	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
-	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'The Webhook ID created in your PayPal Developer Dashboard. Used to verify incoming webhook notifications.',
+	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'Le Webhook ID créé dans votre tableau de bord PayPal Developer. Utilisé pour vérifier l’authenticité des notifications webhook entrantes.',
 
 	// REST tools (webhook URL + connection test)
 	'PPDE_LEGEND_REST_TOOLS'               => 'Outils de l’API REST',
@@ -98,12 +98,12 @@ $lang = array_merge($lang, [
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres IPN PayPal ont été sauvegardés.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres PayPal ont été sauvegardés.',
 ]);
 
 /**
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_REST_CREDENTIALS_MISSING'       => 'Les identifiants de l’API REST PayPal (Client ID / Secret) ne sont pas configurés. Veuillez les renseigner dans le module « Fonctionnalités PayPal IPN ».',
+	'PPDE_REST_CREDENTIALS_MISSING'       => 'Les identifiants de l’API REST PayPal (Client ID / Secret) ne sont pas configurés. Veuillez les renseigner dans le module « Fonctionnalités PayPal ».',
 ]);
