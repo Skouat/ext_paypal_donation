@@ -255,12 +255,12 @@ class order_controller extends main_controller
 			return null;
 		}
 
-		$custom    = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
-		$amount    = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
-		$breakdown = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
-
-		$currency = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
-		$gross    = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
+		$custom         = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
+		$amount         = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
+		$breakdown      = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
+		$receivable_obj = method_exists($breakdown, 'getReceivableAmount') ? $breakdown->getReceivableAmount() : null;
+		$currency       = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
+		$gross          = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
 
 		$fee = $net = 0.0;
 		$exchange_rate = '';
@@ -299,8 +299,8 @@ class order_controller extends main_controller
 			'receiver_id'       => '',
 			'receiver_email'    => '',
 			'residence_country' => '',
-			'settle_amount'     => 0.0,
-			'settle_currency'   => '',
+			'settle_amount'     => ($receivable_obj && method_exists($receivable_obj, 'getValue')) ? (float) $receivable_obj->getValue() : 0.0,
+			'settle_currency'   => ($receivable_obj && method_exists($receivable_obj, 'getCurrencyCode')) ? (string) $receivable_obj->getCurrencyCode() : '',
 			'test_ipn'          => $is_sandbox,
 			'txn_errors'        => '',
 			'txn_id'            => (string) $capture->getId(),

@@ -310,9 +310,10 @@ class webhook_listener
 	 */
 	private function map_capture(array $resource, string $payment_status, bool $is_sandbox): array
 	{
-		$breakdown = $resource['seller_receivable_breakdown'] ?? [];
-		$custom    = $resource['custom_id'] ?? '';
-		$order_id  = $resource['supplementary_data']['related_ids']['order_id'] ?? '';
+		$breakdown  = $resource['seller_receivable_breakdown'] ?? [];
+		$custom     = $resource['custom_id'] ?? '';
+		$order_id   = $resource['supplementary_data']['related_ids']['order_id'] ?? '';
+		$receivable = $breakdown['receivable_amount'] ?? [];
 
 		$payer = $this->fetch_payer($order_id, $is_sandbox);
 
@@ -340,8 +341,8 @@ class webhook_listener
 			'receiver_id'       => '',
 			'receiver_email'    => '',
 			'residence_country' => $payer['country'],
-			'settle_amount'     => 0.0,
-			'settle_currency'   => '',
+			'settle_amount'     => (float) ($receivable['value'] ?? 0),
+			'settle_currency'   => (string) ($receivable['currency_code'] ?? ''),
 			'test_ipn'          => $is_sandbox,
 			'txn_errors'        => '',
 			'txn_id'            => $resource['id'] ?? '',
