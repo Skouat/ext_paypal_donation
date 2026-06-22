@@ -95,14 +95,15 @@ class order_controller extends main_controller
 
 		$currency_code = $currency_data[0]['currency_iso_code'];
 
-		// Build the order request body
+		$decimals      = $this->ppde_actions_currency->get_currency_fraction_digits($currency_code);
+
 		$order_request = OrderRequestBuilder::init(
 			CheckoutPaymentIntent::CAPTURE,
 			[
 				PurchaseUnitRequestBuilder::init(
 					AmountWithBreakdownBuilder::init(
 						$currency_code,
-						number_format($amount, 2, '.', '')
+						number_format($amount, $decimals, '.', '')
 					)->build()
 				)
 					// Keeps compatibility with core::extract_user_id():

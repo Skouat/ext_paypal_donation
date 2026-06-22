@@ -142,4 +142,17 @@ class currency
 		}
 		unset ($currency_items);
 	}
+
+	/**
+	 * Gets the number of fraction digits for a currency (ISO 4217).
+	 *
+	 * @param string $currency_iso_code
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function get_currency_fraction_digits(string $currency_iso_code): int
+	{
+		return $this->locale->get_currency_fraction_digits($currency_iso_code);
+	}
 }

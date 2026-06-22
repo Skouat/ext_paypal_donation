@@ -229,4 +229,28 @@ class locale_icu
 	{
 		$this->config->set('ppde_intl_detected', $this->icu_available_features());
 	}
+
+	/**
+	 * Gets the number of fraction digits for a currency (ISO 4217).
+	 *
+	 * Decimals are intrinsic to the currency (USD = 2, JPY = 0, KWD = 3),
+	 * independent of the locale; used to format amounts for the PayPal REST API.
+	 *
+	 * @param string $currency_iso_code
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function get_currency_fraction_digits(string $currency_iso_code): int
+	{
+		$fmt = new \NumberFormatter(
+			'en_US@currency=' . $currency_iso_code,
+			\NumberFormatter::CURRENCY
+		);
+
+		$digits = $fmt->getAttribute(\NumberFormatter::FRACTION_DIGITS);
+
+		// getAttribute() returns false on ICU error → safe fallback to 2
+		return ($digits === false) ? 2 : (int) $digits;
+	}
 }
