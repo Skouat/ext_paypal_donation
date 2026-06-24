@@ -815,6 +815,7 @@ class transactions_controller extends admin_main
 			'PAYER_EMAIL'    => $data['payer_email'],
 			'PAYER_ID'       => $data['payer_id'],
 			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+			'S_PAYER_STATUS' => $data['payer_status'] !== '',
 			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],

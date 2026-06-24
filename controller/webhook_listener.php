@@ -18,6 +18,7 @@ use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\donation_recorder;
 use skouat\ppde\api\paypal\client_factory;
+use skouat\ppde\api\paypal\order_party_extractor;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
 use skouat\ppde\operators\transactions as transactions_operator;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class webhook_listener
 {
+	use order_party_extractor;
 	/** @var config */
 	protected $config;
 	/** @var language */
@@ -315,7 +317,12 @@ class webhook_listener
 		$order_id   = $resource['supplementary_data']['related_ids']['order_id'] ?? '';
 		$receivable = $breakdown['receivable_amount'] ?? [];
 
-		$payer = $this->fetch_payer($order_id, $is_sandbox);
+		$parties = $this->fetch_parties($order_id, $is_sandbox);
+		$payer   = $parties['payer'];
+		$payee   = $parties['payee'];
+
+		// Localized donation title, kept for consistency with the legacy IPN flow
+		$item_name = $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']);
 
 		return [
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
@@ -323,7 +330,7 @@ class webhook_listener
 			'custom'            => $custom,
 			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
 			'first_name'        => $payer['first_name'],
-			'item_name'         => '',
+			'item_name'         => $item_name,
 			'item_number'       => $custom,
 			'last_name'         => $payer['last_name'],
 			'mc_currency'       => $resource['amount']['currency_code'] ?? '',
@@ -333,13 +340,13 @@ class webhook_listener
 			'parent_txn_id'     => '',
 			'payer_email'       => $payer['email'],
 			'payer_id'          => $payer['payer_id'],
-			'payer_status'      => $payer['payer_status'],
+			'payer_status'      => '',
 			'payment_date'      => (int) strtotime($resource['create_time'] ?? 'now'),
 			'payment_status'    => $payment_status,
 			'payment_type'      => '',
 			'memo'              => '',
-			'receiver_id'       => '',
-			'receiver_email'    => '',
+			'receiver_id'       => $payee['merchant_id'],
+			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
 			'settle_amount'     => (float) ($receivable['value'] ?? 0),
 			'settle_currency'   => (string) ($receivable['currency_code'] ?? ''),
@@ -352,7 +359,7 @@ class webhook_listener
 	}
 
 	/**
-	 * Fetch payer details by retrieving the related order.
+	 * Fetch payer and payee details by retrieving the related order.
 	 * Gracefully returns empty values on any failure.
 	 *
 	 * @param string $order_id
@@ -361,9 +368,12 @@ class webhook_listener
 	 * @return array
 	 * @access private
 	 */
-	private function fetch_payer(string $order_id, bool $is_sandbox): array
+	private function fetch_parties(string $order_id, bool $is_sandbox): array
 	{
-		$empty = ['first_name' => '', 'last_name' => '', 'email' => '', 'payer_id' => '', 'payer_status' => '', 'country' => ''];
+		$empty = [
+			'payer' => ['first_name' => '', 'last_name' => '', 'email' => '', 'payer_id' => '', 'country' => ''],
+			'payee' => ['email' => '', 'merchant_id' => ''],
+		];
 
 		if ($order_id === '')
 		{
@@ -375,7 +385,8 @@ class webhook_listener
 			$orders = $this->client_factory->build($is_sandbox)->getOrdersController();
 			$result = $orders->getOrder(['id' => $order_id])->getResult();
 
-			// Collect the candidate sources, modern first, legacy as fallback.
+			// Collect candidate payer sources, modern first, legacy as fallback,
+			// preferring whichever provides an email (needed for guest matching).
 			$sources = [];
 
 			$payment_source = method_exists($result, 'getPaymentSource') ? $result->getPaymentSource() : null;
@@ -391,71 +402,32 @@ class webhook_listener
 				$sources[] = $legacy_payer;
 			}
 
-			// Prefer the source that provides an email (needed for guest donor
-			// matching); otherwise keep the first non-empty result as fallback.
-			$best = $empty;
+			$payer = $empty['payer'];
 			foreach ($sources as $source)
 			{
-				$data = $this->extract_payer($source);
+				$data = $this->extract_payer_fields($source);
 
 				if ($data['email'] !== '')
 				{
-					return $data;
+					$payer = $data;
+					break;
 				}
 
-				if ($best === $empty)
+				if ($payer === $empty['payer'])
 				{
-					$best = $data;
+					$payer = $data;
 				}
 			}
 
-			return $best;
+			return [
+				'payer' => $payer,
+				'payee' => $this->extract_payee_fields($result),
+			];
 		}
 		catch (\Throwable $e)
 		{
 			return $empty;
 		}
-	}
-
-	/**
-	 * Extract payer fields from a PayPal source object.
-	 *
-	 * Works with both the modern "payment_source.paypal" object and the legacy
-	 * "payer" object, which share the same getters except for the account
-	 * identifier (getAccountId() vs getPayerId()).
-	 *
-	 * @param object $source A PaypalWalletResponse or a (deprecated) Payer object.
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function extract_payer($source): array
-	{
-		$name = method_exists($source, 'getName') ? $source->getName() : null;
-		$address = method_exists($source, 'getAddress') ? $source->getAddress() : null;
-
-		// payment_source.paypal exposes getAccountId(); the legacy payer uses getPayerId().
-		if (method_exists($source, 'getAccountId'))
-		{
-			$payer_id = (string) $source->getAccountId();
-		}
-		else if (method_exists($source, 'getPayerId'))
-		{
-			$payer_id = (string) $source->getPayerId();
-		}
-		else
-		{
-			$payer_id = '';
-		}
-
-		return [
-			'first_name'   => ($name && method_exists($name, 'getGivenName')) ? (string) $name->getGivenName() : '',
-			'last_name'    => ($name && method_exists($name, 'getSurname')) ? (string) $name->getSurname() : '',
-			'email'        => method_exists($source, 'getEmailAddress') ? (string) $source->getEmailAddress() : '',
-			'payer_id'     => $payer_id,
-			'payer_status' => '',
-			'country'      => ($address && method_exists($address, 'getCountryCode')) ? (string) $address->getCountryCode() : '',
-		];
 	}
 
 	/**

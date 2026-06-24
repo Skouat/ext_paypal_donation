@@ -13,8 +13,13 @@ namespace skouat\ppde\controller;
 use PaypalServerSdkLib\Models\Builders\AmountWithBreakdownBuilder;
 use PaypalServerSdkLib\Models\Builders\OrderRequestBuilder;
 use PaypalServerSdkLib\Models\Builders\PurchaseUnitRequestBuilder;
+use PaypalServerSdkLib\Models\Builders\PaymentSourceBuilder;
+use PaypalServerSdkLib\Models\Builders\PaypalWalletBuilder;
+use PaypalServerSdkLib\Models\Builders\PaypalWalletExperienceContextBuilder;
+use PaypalServerSdkLib\Models\PaypalWalletContextShippingPreference;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
 use PaypalServerSdkLib\Exceptions\ApiException;
+use skouat\ppde\api\paypal\order_party_extractor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -29,6 +34,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class order_controller extends main_controller
 {
+	use order_party_extractor;
+
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
 	/** @var \phpbb\log\log */
@@ -94,24 +101,67 @@ class order_controller extends main_controller
 		}
 
 		$currency_code = $currency_data[0]['currency_iso_code'];
-
 		$decimals      = $this->ppde_actions_currency->get_currency_fraction_digits($currency_code);
+
+		// Clear, human-readable label shown on the PayPal checkout page (max 127 chars)
+		$description = $this->truncate_description(
+			$this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename'])
+		);
+
+		// PayPal-compliant bank statement label (may be empty after sanitization)
+		$soft_descriptor = $this->build_soft_descriptor($this->config['sitename']);
+
+		$purchase_unit_builder = PurchaseUnitRequestBuilder::init(
+			AmountWithBreakdownBuilder::init(
+				$currency_code,
+				number_format($amount, $decimals, '.', '')
+			)->build()
+		)
+			->description($description)
+			// Keeps compatibility with core::extract_user_id():
+			// custom_id format = 'uid_<user_id>_<time>'
+			->customId($this->build_custom_id())
+		;
+
+		// Statement descriptor is optional: only set it when sanitization yields
+		// a non-empty, PayPal-compliant value.
+		if ($soft_descriptor !== '')
+		{
+			$purchase_unit_builder->softDescriptor($soft_descriptor);
+		}
+
+		$purchase_unit = $purchase_unit_builder->build();
+
+		// A donation has no shipping: redact the address block on the PayPal
+		// checkout page.
+		$experience_context = PaypalWalletExperienceContextBuilder::init()
+			->shippingPreference(PaypalWalletContextShippingPreference::NO_SHIPPING)
+		;
+
+		// In Live mode, override the brand shown on the PayPal checkout page with
+		// the board name. In Sandbox, keep the test account's default store name
+		// so testers can clearly identify the sandbox environment.
+		if (!$this->use_sandbox())
+		{
+			$experience_context->brandName($this->config['sitename']);
+		}
+
+		$payment_source = PaymentSourceBuilder::init()
+			->paypal(
+				PaypalWalletBuilder::init()
+					->experienceContext($experience_context->build())
+					->build()
+			)
+			->build()
+		;
 
 		$order_request = OrderRequestBuilder::init(
 			CheckoutPaymentIntent::CAPTURE,
-			[
-				PurchaseUnitRequestBuilder::init(
-					AmountWithBreakdownBuilder::init(
-						$currency_code,
-						number_format($amount, $decimals, '.', '')
-					)->build()
-				)
-					// Keeps compatibility with core::extract_user_id():
-					// custom_id format = 'uid_<user_id>_<time>'
-					->customId($this->build_custom_id())
-					->build(),
-			]
-		)->build();
+			[$purchase_unit]
+		)
+			->paymentSource($payment_source)
+			->build()
+		;
 
 		try
 		{
@@ -126,6 +176,58 @@ class order_controller extends main_controller
 
 		// Return the order ID to the PayPal JS SDK
 		return new JsonResponse(['id' => $response->getResult()->getId()]);
+	}
+
+	/**
+	 * Truncate a string to the 127-character limit allowed by PayPal for the
+	 * purchase unit description.
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function truncate_description(string $text): string
+	{
+		return (utf8_strlen($text) > 127) ? utf8_substr($text, 0, 124) . '...' : $text;
+	}
+
+	/**
+	 * Build a PayPal-compliant soft descriptor (bank statement label) from a
+	 * free-form string such as the board name.
+	 *
+	 * PayPal only allows the characters [A-Za-z0-9 .*-] and displays at most
+	 * 22 characters (it also prepends its own "PAYPAL *" prefix). Accented and
+	 * other non-ASCII characters are transliterated to ASCII when possible, then
+	 * any remaining unsupported character is dropped.
+	 *
+	 * @param string $text
+	 *
+	 * @return string Sanitized descriptor, possibly empty if nothing remains.
+	 * @access private
+	 */
+	private function build_soft_descriptor(string $text): string
+	{
+		// Transliterate accented/Unicode characters to their ASCII equivalent
+		// (e.g. "Forêt" -> "Foret"). Suppress warnings on unconvertible input.
+		if (function_exists('iconv'))
+		{
+			$converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+
+			if ($converted !== false)
+			{
+				$text = $converted;
+			}
+		}
+
+		// Keep only the characters allowed by PayPal: letters, digits, space, dot, asterisk and dash.
+		$text = preg_replace('/[^A-Za-z0-9 .*-]/', '', $text);
+
+		// Collapse repeated spaces and trim.
+		$text = trim(preg_replace('/\s+/', ' ', $text));
+
+		// PayPal truncates at 22 characters.
+		return substr($text, 0, 22);
 	}
 
 	/**
@@ -238,8 +340,11 @@ class order_controller extends main_controller
 
 	/**
 	 * Build the PPDE transaction array from a captured Order SDK object.
-	 * Returns null if the capture cannot be extracted (the webhook then remains
-	 * the only recorder — graceful degradation).
+	 *
+	 * Payer and payee details are read directly from the capture response
+	 * (requested with prefer=return=representation), so no extra API call is
+	 * needed. Returns null if the capture cannot be extracted, in which case
+	 * the webhook remains the only recorder (graceful degradation).
 	 *
 	 * @param object $order      The Order result from captureOrder()
 	 * @param bool   $is_sandbox
@@ -256,50 +361,66 @@ class order_controller extends main_controller
 			return null;
 		}
 
-		$custom         = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
-		$amount         = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
-		$breakdown      = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
-		$receivable_obj = method_exists($breakdown, 'getReceivableAmount') ? $breakdown->getReceivableAmount() : null;
-		$currency       = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
-		$gross          = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
+		$custom    = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
+		$amount    = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
+		$breakdown = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
+		$currency  = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
+		$gross     = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
 
+		// Use the real PayPal capture date; fall back to now if unavailable
+		$create_time  = method_exists($capture, 'getCreateTime') ? (string) $capture->getCreateTime() : '';
+		$payment_date = ($create_time !== '') ? (int) strtotime($create_time) : time();
+
+		// Seller receivable breakdown: fee, net, settled amount and exchange rate
 		$fee = $net = 0.0;
 		$exchange_rate = '';
+		$receivable_obj = null;
+
 		if ($breakdown)
 		{
-			$fee_obj = method_exists($breakdown, 'getPaypalFee') ? $breakdown->getPaypalFee() : null;
-			$net_obj = method_exists($breakdown, 'getNetAmount') ? $breakdown->getNetAmount() : null;
-			$fx_obj  = method_exists($breakdown, 'getExchangeRate') ? $breakdown->getExchangeRate() : null;
+			$fee_obj        = method_exists($breakdown, 'getPaypalFee') ? $breakdown->getPaypalFee() : null;
+			$net_obj        = method_exists($breakdown, 'getNetAmount') ? $breakdown->getNetAmount() : null;
+			$fx_obj         = method_exists($breakdown, 'getExchangeRate') ? $breakdown->getExchangeRate() : null;
+			$receivable_obj = method_exists($breakdown, 'getReceivableAmount') ? $breakdown->getReceivableAmount() : null;
 
-			$fee = ($fee_obj && method_exists($fee_obj, 'getValue')) ? (float) $fee_obj->getValue() : 0.0;
-			$net = ($net_obj && method_exists($net_obj, 'getValue')) ? (float) $net_obj->getValue() : 0.0;
+			$fee           = ($fee_obj && method_exists($fee_obj, 'getValue')) ? (float) $fee_obj->getValue() : 0.0;
+			$net           = ($net_obj && method_exists($net_obj, 'getValue')) ? (float) $net_obj->getValue() : 0.0;
 			$exchange_rate = ($fx_obj && method_exists($fx_obj, 'getValue')) ? (string) $fx_obj->getValue() : '';
 		}
+
+		// Payer details, from payment_source.paypal (modern) or payer (legacy)
+		$payer = $this->extract_payer_fields($this->resolve_payer_source($order));
+
+		// Payee details, from the first purchase unit
+		$payee = $this->extract_payee_fields($order);
+
+		// Localized donation title, kept for consistency with the legacy IPN flow
+		$item_name = $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']);
 
 		return [
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
 			'confirmed'         => true,
 			'custom'            => $custom,
 			'exchange_rate'     => $exchange_rate,
-			'first_name'        => '',
-			'item_name'         => '',
+			'first_name'        => $payer['first_name'],
+			'item_name'         => $item_name,
 			'item_number'       => $custom,
-			'last_name'         => '',
+			'last_name'         => $payer['last_name'],
 			'mc_currency'       => $currency,
 			'mc_gross'          => $gross,
 			'mc_fee'            => $fee,
 			'net_amount'        => $net,
 			'parent_txn_id'     => '',
-			'payer_email'       => '',
-			'payer_id'          => '',
+			'payer_email'       => $payer['email'],
+			'payer_id'          => $payer['payer_id'],
 			'payer_status'      => '',
-			'payment_date'      => time(),
+			'payment_date'      => $payment_date,
 			'payment_status'    => 'Completed',
 			'payment_type'      => '',
 			'memo'              => '',
-			'receiver_id'       => '',
-			'receiver_email'    => '',
-			'residence_country' => '',
+			'receiver_id'       => $payee['merchant_id'],
+			'receiver_email'    => $payee['email'],
+			'residence_country' => $payer['country'],
 			'settle_amount'     => ($receivable_obj && method_exists($receivable_obj, 'getValue')) ? (float) $receivable_obj->getValue() : 0.0,
 			'settle_currency'   => ($receivable_obj && method_exists($receivable_obj, 'getCurrencyCode')) ? (string) $receivable_obj->getCurrencyCode() : '',
 			'test_ipn'          => $is_sandbox,
