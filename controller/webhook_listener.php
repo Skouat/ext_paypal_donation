@@ -19,6 +19,7 @@ use skouat\ppde\actions\core;
 use skouat\ppde\actions\donation_recorder;
 use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\api\paypal\order_party_extractor;
+use skouat\ppde\api\paypal\transaction_data_builder;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
 use skouat\ppde\operators\transactions as transactions_operator;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 class webhook_listener
 {
 	use order_party_extractor;
+	use transaction_data_builder;
+
 	/** @var config */
 	protected $config;
 	/** @var language */
@@ -324,7 +327,7 @@ class webhook_listener
 		// Localized donation title, kept for consistency with the legacy IPN flow
 		$item_name = $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']);
 
-		return [
+		return $this->build_transaction_data([
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
 			'confirmed'         => $payment_status === 'Completed',
 			'custom'            => $custom,
@@ -337,25 +340,19 @@ class webhook_listener
 			'mc_gross'          => (float) ($resource['amount']['value'] ?? 0),
 			'mc_fee'            => (float) ($breakdown['paypal_fee']['value'] ?? 0),
 			'net_amount'        => (float) ($breakdown['net_amount']['value'] ?? 0),
-			'parent_txn_id'     => '',
 			'payer_email'       => $payer['email'],
 			'payer_id'          => $payer['payer_id'],
-			'payer_status'      => '',
 			'payment_date'      => (int) strtotime($resource['create_time'] ?? 'now'),
 			'payment_status'    => $payment_status,
-			'payment_type'      => '',
-			'memo'              => '',
 			'receiver_id'       => $payee['merchant_id'],
 			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
 			'settle_amount'     => (float) ($receivable['value'] ?? 0),
 			'settle_currency'   => (string) ($receivable['currency_code'] ?? ''),
 			'test_ipn'          => $is_sandbox,
-			'txn_errors'        => '',
 			'txn_id'            => $resource['id'] ?? '',
 			'txn_type'          => 'ppde_rest_donation',
-			'user_id'           => ANONYMOUS, // Overridden by core::extract_user_id() from custom
-		];
+		]);
 	}
 
 	/**
@@ -550,38 +547,23 @@ class webhook_listener
 		$net = (float) ($breakdown['net_amount']['value'] ?? ($gross - $fee));
 		$currency = $resource['amount']['currency_code'] ?? ($breakdown['gross_amount']['currency_code'] ?? '');
 
-		return [
-			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
-			'confirmed'         => true,
-			'custom'            => $custom,
-			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
-			'first_name'        => '',
-			'item_name'         => '',
-			'item_number'       => $custom,
-			'last_name'         => '',
-			'mc_currency'       => $currency,
-			'mc_gross'          => -1 * $gross,
-			'mc_fee'            => -1 * $fee,
-			'net_amount'        => -1 * $net,
-			'parent_txn_id'     => $parent_txn_id,
-			'payer_email'       => '',
-			'payer_id'          => '',
-			'payer_status'      => '',
-			'payment_date'      => (int) strtotime($resource['create_time'] ?? 'now'),
-			'payment_status'    => $payment_status,
-			'payment_type'      => '',
-			'memo'              => '',
-			'receiver_id'       => '',
-			'receiver_email'    => '',
-			'residence_country' => '',
-			'settle_amount'     => 0.0,
-			'settle_currency'   => '',
-			'test_ipn'          => $is_sandbox,
-			'txn_errors'        => '',
-			'txn_id'            => $resource['id'] ?? '',
-			'txn_type'          => 'ppde_rest_refund',
-			'user_id'           => ANONYMOUS, // Overridden by core::extract_user_id() from custom
-		];
+		return $this->build_transaction_data([
+			'business'       => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
+			'confirmed'      => true,
+			'custom'         => $custom,
+			'exchange_rate'  => $breakdown['exchange_rate']['value'] ?? '',
+			'item_number'    => $custom,
+			'mc_currency'    => $currency,
+			'mc_gross'       => -1 * $gross,
+			'mc_fee'         => -1 * $fee,
+			'net_amount'     => -1 * $net,
+			'parent_txn_id'  => $parent_txn_id,
+			'payment_date'   => (int) strtotime($resource['create_time'] ?? 'now'),
+			'payment_status' => $payment_status,
+			'test_ipn'       => $is_sandbox,
+			'txn_id'         => $resource['id'] ?? '',
+			'txn_type'       => 'ppde_rest_refund',
+		]);
 	}
 
 	/**

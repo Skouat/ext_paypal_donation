@@ -20,6 +20,7 @@ use phpbb\user;
 use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
+use skouat\ppde\api\paypal\transaction_data_builder;
 use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -42,6 +43,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class transactions_controller extends admin_main
 {
+	use transaction_data_builder;
 	public $ppde_operator;
 	protected $adm_relative_path;
 	protected $auth;
@@ -545,38 +547,27 @@ class transactions_controller extends admin_main
 			throw (new transaction_exception())->set_errors($errors);
 		}
 
-		return [
-			'business'          => '',
+		// Build the uid_<user_id>_<time> identifier once so custom and item_number stay perfectly consistent.
+		$custom_id = implode('_', ['uid', $user_id, time()]);
+
+		return $this->build_transaction_data([
 			'confirmed'         => true,
-			'custom'            => implode('_', ['uid', $user_id, time()]),
-			'exchange_rate'     => '',
+			'custom'            => $custom_id,
 			'first_name'        => $transaction_data['MT_FIRST_NAME'],
-			'item_name'         => '',
-			'item_number'       => implode('_', ['uid', $user_id, time()]),
+			'item_number'       => $custom_id,
 			'last_name'         => $transaction_data['MT_LAST_NAME'],
 			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
 			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
 			'mc_fee'            => $transaction_data['MT_MC_FEE'],
-			'net_amount'        => 0.0, // This value is calculated in core_actions:log_to_db()
-			'parent_txn_id'     => '',
+			'net_amount'        => 0.0, // Computed later in core_actions::log_to_db()
 			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
-			'payer_id'          => '',
-			'payer_status'      => '',
 			'payment_date'      => $payment_date_time,
 			'payment_status'    => 'Completed',
-			'payment_type'      => '',
-			'memo'              => $transaction_data['MT_MEMO'],
-			'receiver_id'       => '',
-			'receiver_email'    => '',
 			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
-			'settle_amount'     => 0.0,
-			'settle_currency'   => '',
-			'test_ipn'          => false,
-			'txn_errors'        => '',
 			'txn_id'            => 'PPDE' . gen_rand_string(13),
 			'txn_type'          => 'ppde_manual_donation',
 			'user_id'           => $user_id,
-		];
+		]);
 	}
 
 	/**

@@ -20,6 +20,7 @@ use PaypalServerSdkLib\Models\PaypalWalletContextShippingPreference;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
 use PaypalServerSdkLib\Exceptions\ApiException;
 use skouat\ppde\api\paypal\order_party_extractor;
+use skouat\ppde\api\paypal\transaction_data_builder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -35,6 +36,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class order_controller extends main_controller
 {
 	use order_party_extractor;
+	use transaction_data_builder;
 
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
@@ -397,7 +399,7 @@ class order_controller extends main_controller
 		// Localized donation title, kept for consistency with the legacy IPN flow
 		$item_name = $this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename']);
 
-		return [
+		return $this->build_transaction_data([
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
 			'confirmed'         => true,
 			'custom'            => $custom,
@@ -410,25 +412,19 @@ class order_controller extends main_controller
 			'mc_gross'          => $gross,
 			'mc_fee'            => $fee,
 			'net_amount'        => $net,
-			'parent_txn_id'     => '',
 			'payer_email'       => $payer['email'],
 			'payer_id'          => $payer['payer_id'],
-			'payer_status'      => '',
 			'payment_date'      => $payment_date,
 			'payment_status'    => 'Completed',
-			'payment_type'      => '',
-			'memo'              => '',
 			'receiver_id'       => $payee['merchant_id'],
 			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
 			'settle_amount'     => ($receivable_obj && method_exists($receivable_obj, 'getValue')) ? (float) $receivable_obj->getValue() : 0.0,
 			'settle_currency'   => ($receivable_obj && method_exists($receivable_obj, 'getCurrencyCode')) ? (string) $receivable_obj->getCurrencyCode() : '',
 			'test_ipn'          => $is_sandbox,
-			'txn_errors'        => '',
 			'txn_id'            => (string) $capture->getId(),
 			'txn_type'          => 'ppde_rest_donation',
-			'user_id'           => ANONYMOUS, // Overridden by core::extract_user_id() from custom
-		];
+		]);
 	}
 
 	/**
