@@ -8,8 +8,11 @@
   - Add: New `skouat.ppde.donors_group_user_remove_before` event
   - Add: REST API settings, a "Test connection" button and the webhook URL in the PayPal Features module
   - Add: docs/csp.md documenting the required Content Security Policy directives
+  - Fix: Missing payer/payee details and wrong date on REST donations recorded by the capture endpoint
   - Change: Now requires phpBB 3.3.11+, PHP 7.2+ and the ext-openssl extension
   - Change: Notifications and auto group each have their own toggle (no longer tied to "Enable IPN")
+  - Change: Use the localised donation title as item name; hide the empty payer status field
+  - Change: Improve the PayPal checkout page (donation label, board name as brand, no shipping address)
   - Change: Errors logged in the phpBB admin log; the Overview reports the OpenSSL version
   - Change: The `skouat.ppde.do_actions_completed_before` event now fires from the shared donation recorder
   - Remove: PayPal IPN listener, postback validation, TLS/cURL detection, file logging and obsolete config values
@@ -56,7 +59,7 @@
 ## 2.1.5 - 2020-12-16
   - Fix: Typo
   - Fix: Invalid lang keys in email templates
-  - Quick code cleanup
+  - Quick code clean-up
 
 ## 2.1.4 - 2020-05-03
   - Fix: SQL error on transactions log
@@ -86,7 +89,7 @@
   - Fix: Template system returns error when multiple styles are enabled
   - Fix: Use square brackets for array access (#62) (thanks kasimi)
   - Fix: Use singular form of Donor (#60) (thanks kasimi)
-  - Major code improvement/cleanup
+  - Major code improvement/clean-up
 
 ## 2.0.1 - 2018-10-22
   - Add: PayPal Postdata check and error tracking
@@ -106,7 +109,7 @@
   - Fix: Remove use of deprecated `$user->lang`
   - Fix: Services injection
   - Fix: Smilies are selectable on Donation Page Management only when preview mode is used
-  - Fix: The transaction ID was not colored in Red when transaction status was not "Completed"
+  - Fix: The transaction ID was not coloured in Red when transaction status was not "Completed"
   - Code improvement
 
 ## 2.0.0 - 2018-10-02
