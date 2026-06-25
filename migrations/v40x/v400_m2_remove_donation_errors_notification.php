@@ -8,7 +8,7 @@
  *
  */
 
-namespace skouat\ppde\migrations\v33x;
+namespace skouat\ppde\migrations\v40x;
 
 /**
  * Removes the obsolete "admin_donation_errors" notification type.
