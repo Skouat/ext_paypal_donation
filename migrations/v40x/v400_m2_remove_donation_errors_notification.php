@@ -17,11 +17,11 @@ namespace skouat\ppde\migrations\v33x;
  * cryptographically verified, so the legacy "donation with errors to approve"
  * workflow no longer exists and this notification type can never fire.
  */
-class v330_m4_remove_donation_errors_notification extends \phpbb\db\migration\container_aware_migration
+class v400_m2_remove_donation_errors_notification extends \phpbb\db\migration\container_aware_migration
 {
 	public static function depends_on()
 	{
-		return ['\skouat\ppde\migrations\v33x\v330_m3_update_data'];
+		return ['\skouat\ppde\migrations\v40x\v400_m1_update_data'];
 	}
 
 	public function update_data()
