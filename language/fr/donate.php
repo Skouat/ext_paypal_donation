@@ -45,7 +45,9 @@ $lang = array_merge($lang, [
 	// Pages
 	'PPDE_DONATION_TITLE'              => 'Faire un don',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
+	'PPDE_CANCEL_DEFAULT'              => 'Votre don a été annulé. Aucun paiement n’a été effectué.',
 	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
+	'PPDE_SUCCESS_DEFAULT'             => 'Merci pour votre don. Votre soutien est grandement apprécié.',
 	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
 	'PPDE_SANDBOX_TITLE'               => 'Tester PayPal Donation avec PayPal Sandbox',
 

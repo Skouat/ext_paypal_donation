@@ -74,6 +74,14 @@ class main_donate extends main_controller
 			$this->donation_body = $this->ppde_actions_vars->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
+		// Fall back to a default message on the success/cancel pages when no custom content has been configured (missing page or blank content),
+		// so the donor never lands on an empty page.
+		if (trim((string) $this->donation_body) === '' && in_array($this->return_args_url, ['success', 'cancel'], true))
+		{
+			$this->donation_body = $this->language->lang('PPDE_' . strtoupper($this->return_args_url) . '_DEFAULT');
+		}
+
+
 		$sandbox = $this->use_sandbox();
 
 		// Resolve the default currency used for both the JS SDK and the order.

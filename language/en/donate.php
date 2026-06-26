@@ -45,7 +45,9 @@ $lang = array_merge($lang, [
 	// Pages
 	'PPDE_DONATION_TITLE'              => 'Make a Donation',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to %s',
+	'PPDE_CANCEL_DEFAULT'              => 'Your donation has been canceled. No payment has been made.',
 	'PPDE_CANCEL_TITLE'                => 'Donation canceled',
+	'PPDE_SUCCESS_DEFAULT'             => 'Thank you for your donation. Your support is greatly appreciated.',
 	'PPDE_SUCCESS_TITLE'               => 'Donation successful',
 	'PPDE_SANDBOX_TITLE'               => 'Test PayPal Donation with PayPal Sandbox',
 
