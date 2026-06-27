@@ -476,6 +476,7 @@ class core
 	 * @param array $data Transaction data array
 	 *
 	 * @return void
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function log_to_db($data): void

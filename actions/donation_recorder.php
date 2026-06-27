@@ -11,6 +11,7 @@
 namespace skouat\ppde\actions;
 
 use phpbb\event\dispatcher_interface;
+use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions as transactions_operator;
 
 /**
@@ -58,7 +59,8 @@ class donation_recorder
 	 * @param array $data       PPDE transaction data array (payment_status = 'Completed')
 	 * @param bool  $is_sandbox
 	 *
-	 * @return bool True if the donation was recorded, false if it was already completed.
+	 * @return bool True if the donation was recorded; false if it was already completed or concurrently recorded by
+	 *              the other path.
 	 * @access public
 	 */
 	public function record_completed(array $data, bool $is_sandbox): bool
@@ -77,7 +79,16 @@ class donation_recorder
 		extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
 		$data = $transaction_data;
 
-		$this->ppde_actions->log_to_db($data);
+		try
+		{
+			$this->ppde_actions->log_to_db($data);
+		}
+		catch (transaction_exception $e)
+		{
+			// Concurrently recorded by the other path: let the winner run the post-actions.
+			return false;
+		}
+
 		$this->do_actions($is_sandbox);
 
 		return true;

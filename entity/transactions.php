@@ -12,6 +12,7 @@ namespace skouat\ppde\entity;
 
 use phpbb\db\driver\driver_interface;
 use phpbb\language\language;
+use skouat\ppde\exception\transaction_exception;
 
 /**
  * @property driver_interface db                 phpBB Database object
@@ -133,6 +134,29 @@ class transactions extends main
 		$this->db->sql_freeresult($result);
 
 		return $field;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * A failed INSERT means the UNIQUE txn_id was concurrently recorded by the
+	 * other path (webhook vs capture). Raise a transaction_exception so callers
+	 * skip the post-actions instead of double-counting or aborting fatally.
+	 *
+	 * @throws \skouat\ppde\exception\transaction_exception
+	 */
+	protected function execute_insert($sql): void
+	{
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query($sql);
+		$this->db->sql_return_on_error(false);
+
+		if ($result === false)
+		{
+			throw (new transaction_exception())->set_errors([
+				$this->language->lang('PPDE_DT_DUPLICATE_TXN'),
+			]);
+		}
 	}
 
 	/**

@@ -544,4 +544,21 @@ class transactions
 
 		return $status;
 	}
+
+	/**
+	 * Check whether a transaction has already been fully processed (Completed).
+	 *
+	 * Centralises the "Completed" idempotency rule shared by the webhook
+	 * listener and the synchronous capture endpoint, so both guards stay in
+	 * sync if the business rule ever changes.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_txn_completed(string $txn_id): bool
+	{
+		return $this->get_payment_status_by_txn_id($txn_id) === 'Completed';
+	}
 }

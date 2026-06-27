@@ -82,6 +82,7 @@ abstract class main
 	 * @param string $run_before_insert Name of the function to call before SQL INSERT
 	 *
 	 * @return string
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function add_edit_data($run_before_insert = ''): string
@@ -112,6 +113,7 @@ abstract class main
 	 * @param string $run_before_insert
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function insert($run_before_insert = '')
@@ -130,12 +132,28 @@ abstract class main
 
 		// Insert the item data to the database
 		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
-		$this->db->sql_query($sql);
+		$this->execute_insert($sql);
 
 		// Set the item_id using the id created by the SQL insert
 		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
 
 		return $this;
+	}
+
+	/**
+	 * Execute the INSERT query.
+	 *
+	 * Isolated so that subclasses (e.g. transactions) can make the insertion
+	 * resilient to a UNIQUE constraint violation.
+	 *
+	 * @param string $sql
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function execute_insert($sql): void
+	{
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -231,8 +249,9 @@ abstract class main
 	 */
 	public function data_exists($sql): bool
 	{
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
 		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
+		$this->db->sql_freeresult($result);
 
 		return (bool) $this->data[$this->table_schema['item_id']['name']];
 	}

@@ -12,6 +12,7 @@ and the releases are listed in reverse chronological order.
 - Add: Webhook listener with offline RSA-SHA256 signature verification (capture completed, pending, denied, refunded,
   reversed)
 - Add: Synchronous capture fallback to record the donation if the webhook is unreachable (idempotent)
+- Add: UNIQUE constraint on txn_id to prevent double-recorded donations
 - Add: Refunds and reversals adjust the statistics, raised amount and donor totals; donors below the minimum are removed
   from the group
 - Add: REST API settings, a "Test connection" button and the webhook URL in the PayPal Features module

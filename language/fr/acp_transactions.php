@@ -147,6 +147,7 @@ $lang = array_merge($lang, [
  * Errors
  */
 $lang = array_merge($lang, [
+	'PPDE_DT_DUPLICATE_TXN'        => 'Cette transaction a déjà été enregistrée.',
 	'PPDE_DT_IPN_APPROVED'         => 'Transaction approuvée manuellement (historique)',
 	'PPDE_DT_IPN_APPROVED_EXPLAIN' => 'Ce don historique a été approuvé manuellement malgré les erreurs suivantes',
 	'PPDE_DT_IPN_ERRORS'           => 'Ce don historique a été enregistré avec les erreurs suivantes',
