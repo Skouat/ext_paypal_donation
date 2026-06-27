@@ -17,6 +17,7 @@ and the releases are listed in reverse chronological order.
   from the group
 - Add: REST API settings, a "Test connection" button and the webhook URL in the PayPal Features module
 - Add: New `skouat.ppde.donors_group_user_remove_before` event
+- Add: New `{DONATION_USED}` predefined variable for the donation pages
 - Add: Default message shown on the success/cancel pages when no custom content is configured
 - Add: docs/csp.md documenting the required Content Security Policy directives
 - Change: Now requires phpBB 3.3.11+, PHP 7.2+ and the ext-openssl extension
@@ -33,6 +34,7 @@ and the releases are listed in reverse chronological order.
 - Change: Errors logged in the phpBB admin log; the Overview reports the OpenSSL version
 - Remove: PayPal IPN listener, postback validation, TLS/cURL detection, file logging and obsolete config values
 - Remove: Obsolete "donation with errors" approval workflow and notification (historical transactions stay read-only)
+- Fix: Null-safe currency formatting when the default currency is missing or disabled
 - Fix: Missing payer/payee details and wrong date on REST donations recorded by the capture endpoint
 - Fix: Donors list sorting failed under strict SQL mode (ONLY_FULL_GROUP_BY); aggregate columns are now wrapped in MAX()
 

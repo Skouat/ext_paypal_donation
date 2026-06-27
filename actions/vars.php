@@ -59,6 +59,7 @@ class vars
 	public function get_vars(): array
 	{
 		$default_currency_data = $this->actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
+		$currency = !empty($default_currency_data) ? $default_currency_data[0] : [];
 		$this->dp_vars = [
 			0 => ['var' => '{USER_ID}', 'value' => $this->user->data['user_id']],
 			1 => ['var' => '{USERNAME}', 'value' => $this->user->data['username']],
@@ -67,16 +68,9 @@ class vars
 			4 => ['var' => '{BOARD_CONTACT}', 'value' => $this->config['board_contact']],
 			5 => ['var' => '{BOARD_EMAIL}', 'value' => $this->config['board_email']],
 			6 => ['var' => '{BOARD_SIG}', 'value' => $this->config['board_email_sig']],
-			7 => ['var' => '{DONATION_GOAL}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_goal'],
-				$default_currency_data[0]['currency_iso_code'],
-				$default_currency_data[0]['currency_symbol'],
-				(bool) $default_currency_data[0]['currency_on_left'])],
-			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->actions_currency->format_currency(
-				(float) $this->config['ppde_raised'],
-				$default_currency_data[0]['currency_iso_code'],
-				$default_currency_data[0]['currency_symbol'],
-				(bool) $default_currency_data[0]['currency_on_left'])],
+			7 => ['var' => '{DONATION_GOAL}', 'value' => $this->format((float) $this->config['ppde_goal'], $currency)],
+			8 => ['var' => '{DONATION_RAISED}', 'value' => $this->format((float) $this->config['ppde_raised'], $currency)],
+			9 => ['var' => '{DONATION_USED}', 'value' => $this->format((float) $this->config['ppde_used'], $currency)],
 		];
 
 		if ($this->actions_core->is_in_admin())
@@ -119,5 +113,15 @@ class vars
 		}
 
 		return str_replace(array_keys($tpl_ary), array_values($tpl_ary), $message);
+	}
+
+	private function format(float $amount, array $currency): string
+	{
+		return $this->actions_currency->format_currency(
+			$amount,
+			$currency['currency_iso_code'] ?? '',
+			$currency['currency_symbol'] ?? '',
+			(bool) ($currency['currency_on_left'] ?? true)
+		);
 	}
 }
