@@ -371,7 +371,8 @@ class order_controller extends main_controller
 
 		// Use the real PayPal capture date; fall back to now if unavailable
 		$create_time  = method_exists($capture, 'getCreateTime') ? (string) $capture->getCreateTime() : '';
-		$payment_date = ($create_time !== '') ? (int) strtotime($create_time) : time();
+		$timestamp    = strtotime($create_time);
+		$payment_date = ($timestamp !== false) ? $timestamp : time();
 
 		// Seller receivable breakdown: fee, net, settled amount and exchange rate
 		$fee = $net = 0.0;
