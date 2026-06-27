@@ -27,6 +27,7 @@ and the releases are listed in reverse chronological order.
 - Change: Donor cumulative total is clamped to zero after a refund/reversal
 - Change: The `skouat.ppde.do_actions_completed_before` event now fires from the shared donation recorder
 - Change: Webhook returns HTTP 500 on transient errors so PayPal retries
+- Change: Hardened webhook verification (unsigned CRC32, request timeouts)
 - Change: Errors logged in the phpBB admin log; the Overview reports the OpenSSL version
 - Remove: PayPal IPN listener, postback validation, TLS/cURL detection, file logging and obsolete config values
 - Remove: Obsolete "donation with errors" approval workflow and notification (historical transactions stay read-only)

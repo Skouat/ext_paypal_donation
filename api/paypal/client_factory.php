@@ -202,6 +202,7 @@ class client_factory
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_exec($ch);
 
 		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);

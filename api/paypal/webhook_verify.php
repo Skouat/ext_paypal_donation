@@ -93,7 +93,7 @@ class webhook_verify
 			$headers['transmission_id'],
 			$headers['transmission_time'],
 			$webhook_id,
-			crc32($raw_body),
+			sprintf('%u', crc32($raw_body)),
 		]);
 
 		// PayPal always signs webhooks with SHA256withRSA. Reject anything else.
@@ -167,6 +167,7 @@ class webhook_verify
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		$cert = curl_exec($ch);
 		curl_close($ch);
 
