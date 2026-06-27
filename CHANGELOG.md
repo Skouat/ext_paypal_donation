@@ -9,36 +9,21 @@ and the releases are listed in reverse chronological order.
 ## 4.0.0 - 2026-xx-xx
 
 - Add: Migration from PayPal IPN to the PayPal REST API (Orders API v2 + JS SDK)
-- Add: Webhook listener with offline RSA-SHA256 signature verification (capture completed, pending, denied, refunded,
-  reversed)
-- Add: Synchronous capture fallback to record the donation if the webhook is unreachable (idempotent)
-- Add: UNIQUE constraint on txn_id to prevent double-recorded donations
-- Add: Refunds and reversals adjust the statistics, raised amount and donor totals; donors below the minimum are removed
-  from the group
-- Add: REST API settings, a "Test connection" button and the webhook URL in the PayPal Features module
+- Add: Webhook listener to record donations, with a synchronous capture fallback if the webhook is unreachable
+- Add: Refunds and reversals adjust stats, raised amount and donor totals
+- Add: REST API settings, "Test connection" button and webhook URL in PayPal Features
 - Add: New `skouat.ppde.donors_group_user_remove_before` event
 - Add: New `{DONATION_USED}` predefined variable for the donation pages
-- Add: Default message shown on the success/cancel pages when no custom content is configured
-- Add: docs/csp.md documenting the required Content Security Policy directives
-- Change: Now requires phpBB 3.3.11+, PHP 7.2+ and the ext-openssl extension
-- Change: Notifications and auto group each have their own toggle (no longer tied to "Enable IPN")
-- Change: Improve the PayPal checkout page (donation label, board name as brand, no shipping address)
-- Change: Sanitised bank statement descriptor (soft descriptor) sent to PayPal
-- Change: Use the localised donation title as item name; hide the empty payer status field
-- Change: Donor cumulative total is clamped to zero after a refund/reversal
-- Change: The `skouat.ppde.do_actions_completed_before` event now fires from the shared donation recorder
-- Change: Webhook returns HTTP 500 on transient errors so PayPal retries
-- Change: Hardened webhook verification (unsigned CRC32, request timeouts)
-- Change: Record the real PayPal date, falling back to now if missing
-- Change: Currency locale now follows the user's language automatically (optional admin override)
-- Change: Errors logged in the phpBB admin log; the Overview reports the OpenSSL version
-- Remove: PayPal IPN listener, postback validation, TLS/cURL detection, file logging and obsolete config values
-- Remove: Obsolete "donation with errors" approval workflow and notification (historical transactions stay read-only)
-- Fix: Null-safe currency formatting when the default currency is missing or disabled
-- Fix: Missing payer/payee details and wrong date on REST donations recorded by the capture endpoint
-- Fix: Donors list sorting failed under strict SQL mode (ONLY_FULL_GROUP_BY); aggregate columns are now wrapped in MAX()
-- Fix: Several donation pages and currency template glitches
-- Fix: Minor robustness improvements (user ID extraction, build packaging)
+- Add: Default message on the success/cancel pages when no content is configured
+- Add: docs/csp.md documenting the required CSP directives
+- Change: Now requires phpBB 3.3.11+, PHP 7.2+ and ext-openssl
+- Change: Notifications and auto group each have their own toggle
+- Change: Improved PayPal checkout page (label, brand name, no shipping)
+- Change: `skouat.ppde.do_actions_completed_before` now fires from the donation recorder
+- Change: Errors logged in the admin log; Overview reports the OpenSSL version
+- Remove: PayPal IPN listener, postback, TLS/cURL detection and obsolete configs
+- Remove: Obsolete "donation with errors" approval workflow and notification
+- Fix: Donors list sorting under strict SQL mode (ONLY_FULL_GROUP_BY)
 
 ## 3.0.4 - 2021-04-20
 
