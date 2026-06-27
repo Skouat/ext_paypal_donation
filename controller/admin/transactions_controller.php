@@ -817,6 +817,10 @@ class transactions_controller extends admin_main
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
+
+			// Legacy / read-only: 'txn_errors' and 'txn_errors_approved' belong to the obsolete
+			// PayPal IPN error-approval workflow (removed in 4.0.0).
+			// They are surfaced here only to display historical IPN transactions; the REST flow never writes them.
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

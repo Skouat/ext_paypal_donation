@@ -23,7 +23,7 @@ class main_donate extends main_controller
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
 	/** @var string */
-	private $donation_body;
+	private $donation_body = '';
 	/** @var string */
 	private $return_args_url;
 

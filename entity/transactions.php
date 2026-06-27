@@ -250,6 +250,11 @@ class transactions extends main
 	/**
 	 * Get PayPal transaction errors approval status
 	 *
+	 * Legacy / read-only: this flag belongs to the obsolete PayPal IPN "donation with errors to approve" workflow,
+	 * removed in 4.0.0. It is no longer written by the REST flow and is kept solely to display historical IPN
+	 * transactions. Existing values are preserved untouched on edit (load() → save() round-trips the column without
+	 * modifying it).
+	 *
 	 * @return bool
 	 * @access public
 	 */

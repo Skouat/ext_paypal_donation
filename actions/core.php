@@ -527,7 +527,12 @@ class core
 	 */
 	private function extract_user_id(): void
 	{
-		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['custom'], 4), -1);
+		$custom = (string) ($this->transaction_data['custom'] ?? '');
+
+		// Strip the "uid_" prefix, drop the trailing "_<time>" segment.
+		$parts = explode('_', substr($custom, 4), -1);
+
+		$this->transaction_data['user_id'] = $parts[0] ?? (string) ANONYMOUS;
 	}
 
 	/**
@@ -552,6 +557,6 @@ class core
 	 */
 	public function is_in_admin(): bool
 	{
-		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
+		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && (bool) $this->user->data['session_admin'];
 	}
 }

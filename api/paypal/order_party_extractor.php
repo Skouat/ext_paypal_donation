@@ -14,7 +14,7 @@ trait order_party_extractor
 {
 	/**
 	 * Extract payer fields from a PayPal source object
-	 * (payment_source.paypal moderne ou payer legacy).
+	 * (modern payment_source.paypal or legacy payer).
 	 */
 	protected function extract_payer_fields($source): array
 	{
