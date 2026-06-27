@@ -40,9 +40,9 @@
 			<dd>
 				{% if S_PPDE_DEFAULT_LOCALE %}
 				<select name="ppde_default_locale" id="ppde_default_locale">
-					<option value="">{{ lang('PPDE_DEFAULT_LOCALE_SELECT') }}</option>
+					<option value="">{{ lang('PPDE_DEFAULT_LOCALE_AUTO') }}</option>
 					{% for locale_options in loops.locale_options %}
-					<option value="{locale_options.LOCALE_ID}"{% if locale_options.S_LOCALE_DEFAULT %} selected{% endif %}>{{ locale_options.LOCALE_NAME }}</option>
+					<option value="{{ locale_options.LOCALE_ID }}"{% if locale_options.S_LOCALE_DEFAULT %} selected{% endif %}>{{ locale_options.LOCALE_NAME }}</option>
 					{% endfor %}
 				</select>
 				{% else %}

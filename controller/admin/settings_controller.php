@@ -135,7 +135,7 @@ class settings_controller extends admin_main
 		// Set options for Global settings
 		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
-		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
+		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', ''));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), (int) $this->config['ppde_default_value']));
