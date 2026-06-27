@@ -186,6 +186,14 @@ class donation_pages_controller extends admin_main
 		// Grab all available language packs
 		$langs = $this->ppde_operator->get_languages();
 
+		// When only one language is available and nothing is selected yet
+		// (i.e. when adding a page), preselect that single language.
+		if (empty($current) && count($langs) === 1)
+		{
+			$first = reset($langs);
+			$current = (int) $first['id'];
+		}
+
 		// Set the options list template vars
 		foreach ($langs as $lang)
 		{

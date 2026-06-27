@@ -122,7 +122,7 @@
 				<td class="row3" colspan="3">{{ ppde_langs.LANG_LOCAL_NAME }}</td>
 			</tr>
 			{% for dp_list in ppde_langs.dp_list %}
-			{% if langs.dp_list.S_ROW_COUNT is even %}<tr class="row1">{% else %}<tr class="row2">{% endif %}
+			{% if dp_list.S_ROW_COUNT is even %}<tr class="row1">{% else %}<tr class="row2">{% endif %}
 				<td><a href="{{ dp_list.U_EDIT }}">{{ dp_list.DONATION_PAGE_TITLE }}</a></td>
 				<td>{{ dp_list.DONATION_PAGE_LANG }}</td>
 				<td>

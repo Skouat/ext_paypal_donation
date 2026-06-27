@@ -37,6 +37,7 @@ and the releases are listed in reverse chronological order.
 - Fix: Null-safe currency formatting when the default currency is missing or disabled
 - Fix: Missing payer/payee details and wrong date on REST donations recorded by the capture endpoint
 - Fix: Donors list sorting failed under strict SQL mode (ONLY_FULL_GROUP_BY); aggregate columns are now wrapped in MAX()
+- Fix: Several donation pages and currency template glitches
 
 ## 3.0.4 - 2021-04-20
 
