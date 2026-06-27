@@ -22,6 +22,7 @@ use skouat\ppde\api\paypal\order_party_extractor;
 use skouat\ppde\api\paypal\transaction_data_builder;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
+use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions as transactions_operator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -119,7 +120,6 @@ class webhook_listener
 		$event = json_decode($raw_body, true);
 		$event_type = (is_array($event) && !empty($event['event_type'])) ? $event['event_type'] : '';
 
-		// Determine the environment by verifying against each configured webhook ID.
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
@@ -132,10 +132,9 @@ class webhook_listener
 			return new Response('', 400);
 		}
 
-		$this->process_event($event, $environment === 'sandbox');
+		$processed = $this->process_event($event, $environment === 'sandbox');
 
-		// Acknowledge receipt so PayPal stops re-sending the event.
-		return new Response('', 200);
+		return new Response('', $processed ? 200 : 500);
 	}
 
 	/**
@@ -197,36 +196,31 @@ class webhook_listener
 	 * @param array $event
 	 * @param bool  $is_sandbox
 	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function process_event(array $event, bool $is_sandbox): void
+	private function process_event(array $event, bool $is_sandbox): bool
 	{
 		switch ($event['event_type'])
 		{
 			case 'PAYMENT.CAPTURE.COMPLETED':
-				$this->handle_capture($event['resource'], 'Completed', $is_sandbox);
-			break;
+				return $this->handle_capture($event['resource'], 'Completed', $is_sandbox);
 
 			case 'PAYMENT.CAPTURE.PENDING':
-				$this->handle_capture($event['resource'], 'Pending', $is_sandbox);
-			break;
+				return $this->handle_capture($event['resource'], 'Pending', $is_sandbox);
 
 			case 'PAYMENT.CAPTURE.REFUNDED':
-				$this->handle_capture_refunded($event['resource'], 'Refunded', $is_sandbox);
-			break;
+				return $this->handle_capture_refunded($event['resource'], 'Refunded', $is_sandbox);
 
 			case 'PAYMENT.CAPTURE.REVERSED':
-				$this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
-			break;
+				return $this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
 
 			case 'PAYMENT.CAPTURE.DENIED':
-				$this->handle_capture_denied($event['resource'], $is_sandbox);
-			break;
+				return $this->handle_capture_denied($event['resource'], $is_sandbox);
 
 			// Any other event type is acknowledged (HTTP 200) but not processed.
 			default:
-			break;
+				return true;
 		}
 	}
 
@@ -239,18 +233,16 @@ class webhook_listener
 	 * @param string $payment_status 'Pending' or 'Completed'
 	 * @param bool   $is_sandbox
 	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function handle_capture(array $resource, string $payment_status, bool $is_sandbox): void
+	private function handle_capture(array $resource, string $payment_status, bool $is_sandbox): bool
 	{
 		$txn_id = $resource['id'] ?? '';
 
-		// A capture already completed must never be reprocessed; a still-pending
-		// row, however, may later be upgraded to 'completed'.
 		if ($txn_id === '' || $this->already_completed($txn_id))
 		{
-			return;
+			return true;
 		}
 
 		try
@@ -259,19 +251,24 @@ class webhook_listener
 
 			if ($payment_status === 'Completed')
 			{
-				// Shared with the capture endpoint; runs stats, auto-group and notifications.
 				$this->donation_recorder->record_completed($data, $is_sandbox);
 			}
 			else
 			{
-				// Pending: record the row without running any post-action.
 				$this->ppde_actions->log_to_db($data);
 			}
+		}
+		catch (transaction_exception $e)
+		{
+			return true;
 		}
 		catch (\Throwable $e)
 		{
 			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$txn_id, $e->getMessage()]);
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -300,7 +297,7 @@ class webhook_listener
 	 */
 	private function already_completed(string $txn_id): bool
 	{
-		return $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id) === 'Completed';
+		return $this->ppde_operator_transaction->is_txn_completed($txn_id);
 	}
 
 	/**
@@ -435,24 +432,20 @@ class webhook_listener
 	 * @param string $payment_status 'Refunded' or 'Reversed'
 	 * @param bool   $is_sandbox
 	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function handle_capture_refunded(array $resource, string $payment_status, bool $is_sandbox): void
+	private function handle_capture_refunded(array $resource, string $payment_status, bool $is_sandbox): bool
 	{
 		$refund_id = $resource['id'] ?? '';
 
-		// Idempotency guard: the refund is stored as its own transaction row.
 		if ($refund_id === '' || $this->already_processed($refund_id))
 		{
-			return;
+			return true;
 		}
 
 		try
 		{
-			// Resolve the parent capture and reuse its "custom" so the donor is
-			// matched by core::extract_user_id(). If the parent capture is unknown
-			// (e.g. donation made outside this board), the refund is still recorded.
 			$parent_txn_id = $this->extract_parent_capture_id($resource);
 			$custom = $this->resolve_refund_custom($resource, $parent_txn_id);
 
@@ -463,10 +456,17 @@ class webhook_listener
 
 			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_REFUND_PROCESSED', time(), [$refund_id, $parent_txn_id]);
 		}
+		catch (transaction_exception $e)
+		{
+			return true;
+		}
 		catch (\Throwable $e)
 		{
 			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$refund_id, $e->getMessage()]);
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -602,41 +602,42 @@ class webhook_listener
 	 * @param array $resource
 	 * @param bool  $is_sandbox
 	 *
-	 * @return void
+	 * @return bool
 	 * @access private
 	 */
-	private function handle_capture_denied(array $resource, bool $is_sandbox): void
+	private function handle_capture_denied(array $resource, bool $is_sandbox): bool
 	{
 		$txn_id = $resource['id'] ?? '';
 
 		if ($txn_id === '')
 		{
-			return;
+			return true;
 		}
 
 		$current_status = $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id);
 
-		// Idempotency / safety:
-		// - already Denied: nothing to do.
-		// - already Completed: a completed donation is never downgraded by a
-		//   denial (a settled capture would be reverted via REVERSED instead).
 		if ($current_status === 'Denied' || $current_status === 'Completed')
 		{
-			return;
+			return true;
 		}
 
 		try
 		{
-			// Insert a new Denied record, or update a previously pending one.
-			// No statistics, raised amount, auto-group or notification are run.
 			$data = $this->map_capture($resource, 'Denied', $is_sandbox);
 			$this->ppde_actions->log_to_db($data);
 
 			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_CAPTURE_DENIED', time(), [$txn_id]);
 		}
+		catch (transaction_exception $e)
+		{
+			return true;
+		}
 		catch (\Throwable $e)
 		{
 			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_PROCESS_ERROR', time(), [$txn_id, $e->getMessage()]);
+			return false;
 		}
+
+		return true;
 	}
 }
