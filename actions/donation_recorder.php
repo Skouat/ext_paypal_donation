@@ -75,8 +75,18 @@ class donation_recorder
 		}
 
 		$transaction_data = $data;
+
+		/**
+		 * Event that is triggered when a transaction has been successfully completed
+		 *
+		 * @event skouat.ppde.do_actions_completed_before
+		 * @var	array	transaction_data	Array containing transaction data
+		 * @since 1.0.3
+		 * @changed 4.0.0 Moved to the donation_recorder service
+		 */
 		$vars = ['transaction_data'];
 		extract($this->dispatcher->trigger_event('skouat.ppde.do_actions_completed_before', compact($vars)));
+
 		$data = $transaction_data;
 
 		try
