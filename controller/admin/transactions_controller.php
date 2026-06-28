@@ -339,7 +339,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 */
 	public function change(): void
 	{
