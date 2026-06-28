@@ -28,6 +28,7 @@
 		<dl>
 			<dt><label for="currency_symbol">{{ lang('PPDE_DC_SYMBOL') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DC_SYMBOL_EXPLAIN') }}</span></dt>
 			<dd>{% if S_PPDE_LOCALE_CONFIGURED %}
+				{% if CURRENCY_ISO_CODE %}<span id="currency_symbol">{{ CURRENCY_SYMBOL }}</span><br>{% endif %}
 				<span style="font-weight: bold">{{ lang('PPDE_DC_LOCALE_DEPRECATED') }}</span>
 				{% else %}
 				<input id="currency_symbol" name="currency_symbol" type="text" class="text medium" value="{{ CURRENCY_SYMBOL }}">
