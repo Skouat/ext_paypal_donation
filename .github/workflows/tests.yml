@@ -11,12 +11,12 @@ env:
 on:
     push:
         branches: # Run tests when commits are pushed to these branches in your repo
-            - '3.3.x'
-            - 'develop-3.3.x*'
+            - '4.0.x'
+            - 'develop-4.0.x*'
     pull_request: # Run tests when pull requests are made on these branches in your repo
         branches:
-            - '3.3.x'
-            - 'develop-3.3.x*'
+            - '4.0.x'
+            - 'develop-4.0.x*'
         paths-ignore:
             - '*.md'
 
