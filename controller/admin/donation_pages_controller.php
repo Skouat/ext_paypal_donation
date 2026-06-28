@@ -197,7 +197,7 @@ class donation_pages_controller extends admin_main
 	 *
 	 * @return void
 	 * @throws \skouat\ppde\exception\transaction_exception
- 	 * @access private
+	 * @access private
 	 */
 	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data): void
 	{
