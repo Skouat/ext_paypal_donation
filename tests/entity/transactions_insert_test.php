@@ -62,13 +62,11 @@ class transactions_insert_test extends \phpbb_database_test_case
 	{
 		$this->entity->set_txn_id('TXN_BRAND_NEW');
 		$this->entity->set_payment_status('Completed');
+		$this->entity->set_txn_errors('');
 
-		// add_edit_data() inserts because no id is set yet.
 		$log_action = $this->entity->add_edit_data();
 
 		$this->assertSame('ADDED', $log_action);
-
-		// Double-check the row really exists in the database.
 		$this->assertNotSame(0, $this->entity->transaction_exists());
 	}
 
@@ -80,10 +78,10 @@ class transactions_insert_test extends \phpbb_database_test_case
 	 */
 	public function test_insert_duplicate_txn_id_throws()
 	{
-		$this->entity->set_txn_id('TXN_EXISTING'); // already in the fixture
+		$this->entity->set_txn_id('TXN_EXISTING');
 		$this->entity->set_payment_status('Completed');
+		$this->entity->set_txn_errors('');
 
-		// We expect the entity to raise its custom exception.
 		$this->expectException(transaction_exception::class);
 
 		$this->entity->insert();
