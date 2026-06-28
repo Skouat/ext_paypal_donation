@@ -45,78 +45,53 @@ class ppde_module
 		/** @type \phpbb\language\language $language Language object */
 		$language = $phpbb_container->get('language');
 
-		if ($this->in_array_field($mode, 'module_name', $this::$available_mode))
-		{
-			$this->module_info = $this->array_value($mode, 'module_name', $this::$available_mode);
+		$module_info = $this->find_mode($mode);
 
-			// Load the module language file currently in use
-			$language->add_lang('acp_' . $mode, 'skouat/ppde');
-
-			// Get an instance of the admin controller
-			/** @type \skouat\ppde\controller\admin\admin_main $admin_controller */
-			$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
-
-			// Make the $u_action url available in the admin controller
-			$admin_controller->set_page_url($this->u_action);
-
-			// Set the page title for our ACP page
-			$this->page_title = 'PPDE_ACP_' . strtoupper($mode);
-
-			// Load a template from adm/style for our ACP page
-			$this->tpl_name = 'ppde_' . strtolower($mode);
-
-			$this->switch_mode($id, $mode, $admin_controller);
-		}
-		else
+		if ($module_info === null)
 		{
 			trigger_error('NO_MODE', E_USER_ERROR);
 		}
+
+		$this->module_info = $module_info;
+
+		// Load the module language file currently in use
+		$language->add_lang('acp_' . $mode, 'skouat/ppde');
+
+		// Get an instance of the admin controller
+		/** @type \skouat\ppde\controller\admin\admin_main $admin_controller */
+		$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
+
+		// Make the $u_action url available in the admin controller
+		$admin_controller->set_page_url($this->u_action);
+
+		// Set the page title for our ACP page
+		$this->page_title = 'PPDE_ACP_' . strtoupper($mode);
+
+		// Load a template from adm/style for our ACP page
+		$this->tpl_name = 'ppde_' . strtolower($mode);
+
+		$this->switch_mode($id, $mode, $admin_controller);
 	}
 
 	/**
-	 * Check if value is in array
+	 * Find the available-mode definition matching the given module name.
 	 *
-	 * @param mixed $needle
-	 * @param mixed $needle_field
-	 * @param array $haystack
+	 * @param string $mode
 	 *
-	 * @return bool
+	 * @return array|null The matching definition, or null if the mode is unknown.
 	 * @access private
 	 */
-	private function in_array_field($needle, $needle_field, $haystack)
+	private function find_mode($mode): ?array
 	{
-		foreach ($haystack as $item)
+		foreach (self::$available_mode as $item)
 		{
-			if (isset($item[$needle_field]) && $item[$needle_field] === $needle)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Return the selected array if value is in array
-	 *
-	 * @param mixed $needle
-	 * @param mixed $needle_field
-	 * @param array $haystack
-	 *
-	 * @return array
-	 * @access private
-	 */
-	private function array_value($needle, $needle_field, $haystack)
-	{
-		foreach ($haystack as $item)
-		{
-			if (isset($item[$needle_field]) && $item[$needle_field] === $needle)
+			if (($item['module_name'] ?? null) === $mode)
 			{
 				return $item;
 			}
 		}
 
-		return [];
+		return null;
 	}
 
 	/**
