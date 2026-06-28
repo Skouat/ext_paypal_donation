@@ -27,6 +27,7 @@ and the releases are listed in reverse chronological order.
 - Remove: PayPal IPN listener, postback, TLS/cURL detection and obsolete configs
 - Remove: Obsolete "donation with errors" approval workflow and notification
 - Fix: Donors list sorting under strict SQL mode (ONLY_FULL_GROUP_BY)
+- Fix: Undefined array key warning when formatting a transaction with no settlement currency
 
 ## 3.0.4 - 2021-04-20
 

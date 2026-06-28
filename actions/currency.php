@@ -53,9 +53,44 @@ class currency
 	 */
 	public function get_currency_data($iso_code): array
 	{
+		if ($iso_code === '')
+		{
+			return $this->build_fallback_currency_data($iso_code);
+		}
+
 		$this->entity->data_exists($this->entity->build_sql_data_exists($iso_code));
 
-		return $this->get_default_currency_data($this->entity->get_id());
+		$currency_id = $this->entity->get_id();
+
+		if ($currency_id)
+		{
+			$data = $this->entity->get_data($this->operator->build_sql_data($currency_id));
+
+			if (!empty($data))
+			{
+				return $data;
+			}
+		}
+
+		return $this->build_fallback_currency_data($iso_code);
+	}
+
+	/**
+	 * Build a minimal currency data structure from an ISO code, used when the
+	 * matching currency no longer exists in the database.
+	 *
+	 * @param string $iso_code
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function build_fallback_currency_data(string $iso_code): array
+	{
+		return [[
+					'currency_iso_code' => $iso_code,
+					'currency_symbol'   => $iso_code,
+					'currency_on_left'  => false,
+				]];
 	}
 
 	/**

@@ -73,7 +73,7 @@ class currency extends main
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
-			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ?: $this->data['currency_iso_code']) . "'";
+			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ?: ($this->data['currency_iso_code'] ?? '')) . "'";
 	}
 
 	/**

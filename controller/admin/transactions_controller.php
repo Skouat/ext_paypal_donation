@@ -783,8 +783,16 @@ class transactions_controller extends admin_main
 			'donor_id' => $data['user_id'],
 		]);
 
+		$s_convert = !($data['settle_amount'] == 0 && empty($data['exchange_rate']));
+
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
-		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+
+		$settle_amount = '';
+		if ($s_convert)
+		{
+			$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+			$settle_amount = $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+		}
 
 		$this->template->assign_vars([
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
@@ -804,12 +812,12 @@ class transactions_controller extends admin_main
 			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
+			'SETTLE_AMOUNT'  => $settle_amount,
 			'TXN_ID'         => $data['txn_id'],
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
+			'S_CONVERT'                       => $s_convert,
 
 			// Legacy / read-only: belongs to the obsolete IPN "errors to approve"
 			// workflow (removed in 4.0.0). Kept only to display historical transactions.
