@@ -114,14 +114,14 @@ class client_factory
 		if ($sandbox)
 		{
 			return [
-				(string) $this->config['ppde_sandbox_rest_client_id'],
-				(string) $this->config['ppde_sandbox_rest_secret'],
+				$this->config['ppde_sandbox_rest_client_id'],
+				$this->config['ppde_sandbox_rest_secret'],
 			];
 		}
 
 		return [
-			(string) $this->config['ppde_rest_client_id'],
-			(string) $this->config['ppde_rest_secret'],
+			$this->config['ppde_rest_client_id'],
+			$this->config['ppde_rest_secret'],
 		];
 	}
 

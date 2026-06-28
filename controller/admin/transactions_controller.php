@@ -198,8 +198,8 @@ class transactions_controller extends admin_main
 	 * View log
 	 *
 	 * @param array  &$log         The result array with the logs
-	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
-	 *                             database. Otherwise an integer with the number of total matching entries is returned.
+	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the database.
+	 *                             Otherwise, an integer with the number of total matching entries is returned.
 	 * @param int     $limit       Limit the number of entries that are returned
 	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
 	 * @param int     $limit_days
@@ -289,7 +289,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Gets vars from POST then build a array of them
+	 * Gets vars from POST then build an array of them
 	 *
 	 * @param string $id     Module id
 	 * @param string $mode   Module categorie
@@ -481,9 +481,9 @@ class transactions_controller extends admin_main
 			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
 			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
 			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
-			'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
+			'MT_MC_GROSS'           => $this->request->variable('mc_gross', 0.0),
 			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
-			'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
+			'MT_MC_FEE'             => $this->request->variable('mc_fee', 0.0),
 			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
 			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
 			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
@@ -524,7 +524,7 @@ class transactions_controller extends admin_main
 		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
 		$payment_time_timestamp = strtotime($payment_time);
 
-		// Normalize payment time from today's midnight.
+		// Normalise payment time from today's midnight.
 		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
 
 		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
@@ -566,7 +566,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Tests if mc_gross is to low
+	 * Tests if mc_gross is too low
 	 *
 	 * @param array $data
 	 *
@@ -602,7 +602,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Tests if mc_fee is to high
+	 * Tests if mc_fee is too high
 	 *
 	 * @param array $data
 	 *

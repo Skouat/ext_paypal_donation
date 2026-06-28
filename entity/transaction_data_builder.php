@@ -25,12 +25,10 @@ trait transaction_data_builder
 	 */
 	protected function build_transaction_data(array $overrides): array
 	{
-		$defaults = [];
 
-		foreach ($this->transaction_data_template() as $field => [$default])
-		{
-			$defaults[$field] = $default;
-		}
+		$defaults = array_map(static function ($default) {
+			return $default;
+		}, $this->transaction_data_template());
 
 		return array_merge($defaults, $overrides);
 	}

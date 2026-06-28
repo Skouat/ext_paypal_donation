@@ -227,8 +227,8 @@ class core
 	public function update_overview_stats(): void
 	{
 		$this->config->set('ppde_anonymous_donors_count' . $this->config_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->config_suffix));
-		$this->config->set('ppde_known_donors_count' . $this->config_suffix, $this->get_count_result('ppde_known_donors_count' . $this->config_suffix), true);
-		$this->config->set('ppde_transactions_count' . $this->config_suffix, $this->get_count_result('ppde_transactions_count' . $this->config_suffix), true);
+		$this->config->set('ppde_known_donors_count' . $this->config_suffix, $this->get_count_result('ppde_known_donors_count' . $this->config_suffix));
+		$this->config->set('ppde_transactions_count' . $this->config_suffix, $this->get_count_result('ppde_transactions_count' . $this->config_suffix));
 	}
 
 	/**
@@ -364,7 +364,7 @@ class core
 		 * @var bool    can_use_autogroup      Whether or not to add the user to the group
 		 * @var int     group_id               The ID of the group to which the user will be added
 		 * @var int     payer_id               The ID of the user who will we added to the group
-		 * @var string  payer_username         The user name
+		 * @var string  payer_username         The username
 		 * @var bool    default_group          Whether or not the group should be made default for the user
 		 * @var float   payer_donated_amount   The user donated amount
 		 * @since 1.0.3
@@ -414,7 +414,7 @@ class core
 		 * @var bool   can_remove           Whether or not to remove the user from the group
 		 * @var int    group_id             The ID of the group from which the user will be removed
 		 * @var int    payer_id             The ID of the user who will be removed from the group
-		 * @var string payer_username       The user name
+		 * @var string payer_username       The username
 		 * @var float  payer_donated_amount The user donated amount
 		 * @since 4.0.0
 		 */

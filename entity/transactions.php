@@ -148,7 +148,7 @@ class transactions extends main
 	{
 		$this->db->sql_return_on_error(true);
 		$result = $this->db->sql_query($sql);
-		$this->db->sql_return_on_error(false);
+		$this->db->sql_return_on_error();
 
 		if ($result === false)
 		{

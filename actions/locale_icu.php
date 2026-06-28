@@ -248,9 +248,8 @@ class locale_icu
 	/**
 	 * Resolve the effective ICU locale used to format currencies.
 	 *
-	 * Cascade: admin override (General Settings) → current user's forum
-	 * language → board default language → English. Each phpBB ISO code is
-	 * canonicalised to a valid ICU locale; any unresolved level is skipped.
+	 * Cascade: admin override (General Settings) → current user's forum language → board default language → English.
+	 * Each phpBB ISO code is canonicalised to a valid ICU locale; any unresolved level is skipped.
 	 *
 	 * @return string
 	 * @access public

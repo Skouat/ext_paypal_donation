@@ -106,7 +106,7 @@ class order_controller extends main_controller
 			$this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename'])
 		);
 
-		// Bank statement label (may be empty after sanitization).
+		// Bank statement label (maybe empty after sanitization).
 		$soft_descriptor = $this->build_soft_descriptor($this->config['sitename']);
 
 		$purchase_unit_builder = PurchaseUnitRequestBuilder::init(

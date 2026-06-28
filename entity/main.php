@@ -124,7 +124,7 @@ abstract class main
 		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
 		$this->execute_insert($sql);
 
-		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
+		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_last_inserted_id();
 
 		return $this;
 	}
@@ -350,7 +350,7 @@ abstract class main
 	 * @param int    $id
 	 * @param string $action_before_delete Function to start before deleting data.
 	 * @param string $sql_where
-	 * @param bool   $all                  Set to true if you want delete all data from the table.
+	 * @param bool   $all                  Set to true if you want to delete all data from the table.
 	 *
 	 * @return bool
 	 * @access public
@@ -363,7 +363,7 @@ abstract class main
 		{
 			if (empty($sql_where) && $this->disallow_deletion($id))
 			{
-				// The item selected does not exists
+				// The item selected does not exist
 				$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 			}
 
@@ -449,7 +449,7 @@ abstract class main
 
 		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
 
-		foreach ($this->table_schema as $generic_field => $field)
+		foreach ($this->table_schema as $field)
 		{
 			if (!isset($data[$field['name']]))
 			{

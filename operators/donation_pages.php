@@ -50,7 +50,7 @@ class donation_pages
 	}
 
 	/**
-	 * Set sql AND clause for the field 'page_title'
+	 * Set SQL AND clause for the field 'page_title'
 	 *
 	 * @param string $mode
 	 *
@@ -59,7 +59,7 @@ class donation_pages
 	 */
 	private function build_sql_and_page_title($mode): string
 	{
-		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
+		// If $mode is set to 'body', 'cancel' or 'success' we set a SQL AND clause, otherwise nothing is set.
 		switch ($mode)
 		{
 			case 'body':

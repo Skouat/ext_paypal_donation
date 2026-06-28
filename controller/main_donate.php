@@ -54,7 +54,7 @@ class main_donate extends main_controller
 
 	public function handle()
 	{
-		// Disabled: back to index. Otherwise enforce the use permission.
+		// Disabled: back to index. Otherwise, enforce the use permission.
 		if (empty($this->config['ppde_enable']))
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
@@ -74,7 +74,7 @@ class main_donate extends main_controller
 
 		// Default message on success/cancel when no content is configured,
 		// so the donor never lands on an empty page.
-		if (trim((string) $this->donation_body) === '' && in_array($this->return_args_url, ['success', 'cancel'], true))
+		if (trim($this->donation_body) === '' && in_array($this->return_args_url, ['success', 'cancel'], true))
 		{
 			$this->donation_body = $this->language->lang('PPDE_' . strtoupper($this->return_args_url) . '_DEFAULT');
 		}

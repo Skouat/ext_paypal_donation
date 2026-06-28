@@ -45,7 +45,7 @@ class main_donor_list extends main_controller
 
 	public function handle()
 	{
-		// Disabled: back to index. Otherwise enforce the view permission.
+		// Disabled: back to index. Otherwise, enforce the view permission.
 		if (!$this->donorlist_is_enabled())
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));

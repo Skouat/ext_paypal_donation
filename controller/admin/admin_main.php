@@ -74,7 +74,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Gets vars from POST then build a array of them
+	 * Gets vars from POST then build an array of them
 	 *
 	 * @param string $id     Module id
 	 * @param string $mode   Module categorie

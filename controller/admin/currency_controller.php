@@ -102,6 +102,7 @@ class currency_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	public function add(): void
 	{
@@ -127,6 +128,7 @@ class currency_controller extends admin_main
 	 * @param array                        $data   The form data to be processed
 	 *
 	 * @return void
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access private
 	 */
 	private function add_edit_currency_data($entity, $data): void
@@ -201,6 +203,7 @@ class currency_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	public function edit(): void
 	{

@@ -318,7 +318,7 @@ class transactions
 	 * @param string $txn_id     The txn number id
 	 * @param string $custom_url optional parameter to specify a profile url. The transaction id get appended to this
 	 *                           url as &amp;id={id}
-	 * @param bool   $colour     If false the color #FF0000 will be applied on the URL.
+	 * @param bool   $colour     If false the colour #FF0000 will be applied on the URL.
 	 *
 	 * @return string A string consisting of what is wanted.
 	 * @access private

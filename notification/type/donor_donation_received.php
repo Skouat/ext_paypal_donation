@@ -52,7 +52,7 @@ class donor_donation_received extends donation
 		], $options);
 
 		// Members allowed to use the extension.
-		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use', false);
+		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use');
 		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : [];
 
 		if (empty($users))

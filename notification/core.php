@@ -79,7 +79,7 @@ class core
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
 
 		// When the donation was converted, report the settled amount/currency.
-		if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
+		if ($settle_amount = $this->ppde_entity_transaction->get_settle_amount())
 		{
 			$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());
 			$net_amount = $this->ppde_actions_currency->format_currency($settle_amount, $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);

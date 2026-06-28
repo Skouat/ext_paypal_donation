@@ -144,6 +144,7 @@ class donation_pages_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	public function add(): void
 	{
@@ -195,7 +196,8 @@ class donation_pages_controller extends admin_main
 	 * @param array                              $data   The form data to be processed
 	 *
 	 * @return void
-	 * @access private
+	 * @throws \skouat\ppde\exception\transaction_exception
+ 	 * @access private
 	 */
 	private function add_edit_donation_page_data(\skouat\ppde\entity\donation_pages $entity, $data): void
 	{
@@ -390,6 +392,7 @@ class donation_pages_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	public function edit(): void
 	{
@@ -401,7 +404,7 @@ class donation_pages_controller extends admin_main
 
 		$data = [
 			'page_id'      => $page_id,
-			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name(), false),
+			'page_title'   => $this->request->variable('page_title', $this->ppde_entity->get_name()),
 			'page_lang_id' => $this->request->variable('page_lang_id', $this->ppde_entity->get_lang_id()),
 			'page_content' => $this->request->variable('page_content', $this->ppde_entity->get_message_for_edit(), true),
 			'bbcode'       => !$this->request->variable('disable_bbcode', false),
