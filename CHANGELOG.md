@@ -28,6 +28,7 @@ and the releases are listed in reverse chronological order.
 - Remove: Obsolete "donation with errors" approval workflow and notification
 - Fix: Donors list sorting under strict SQL mode (ONLY_FULL_GROUP_BY)
 - Fix: Undefined array key warning when formatting a transaction with no settlement currency
+- Fix: Preserve the exact net amount returned by PayPal instead of recomputing it (gross − fee)
 
 ## 3.0.4 - 2021-04-20
 

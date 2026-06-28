@@ -192,7 +192,7 @@ class core
 	 */
 	public function update_raised_amount(): void
 	{
-		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		$net_amount = (float) ($this->transaction_data['net_amount'] ?? 0);
 
 		if (!empty($this->transaction_data['settle_amount']))
 		{
@@ -516,28 +516,24 @@ class core
 	 */
 	public function log_to_db($data): void
 	{
-		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
 
-		// Handle user_id data
 		$this->extract_user_id();
 		$this->validate_user_id();
 
-		// Set username in extra_data property in $entity
 		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
 		$this->ppde_entity_transaction->set_username($user_ary['username']);
 
-		// Set 'net_amount' in $this->transaction_data
-		$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		if (empty($this->transaction_data['net_amount']))
+		{
+			$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		}
 
-		// List the data to be thrown into the database
 		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
 
-		// Load data in the entity
 		$this->ppde_entity_transaction->set_entity_data($data);
 		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
 
-		// Add or edit transaction data
 		$this->ppde_entity_transaction->add_edit_data();
 	}
 
