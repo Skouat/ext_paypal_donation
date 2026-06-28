@@ -54,5 +54,10 @@
             "directory": "/ext_paypal_donation/",
             "filename": "ppde_version_check.json"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
     }
 }
