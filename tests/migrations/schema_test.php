@@ -15,6 +15,8 @@ namespace skouat\ppde\tests\migrations;
  */
 class schema_test extends \phpbb_database_test_case
 {
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
 	/** @var \phpbb\db\tools\tools */
 	protected $db_tools;
 	protected $table_prefix;
@@ -26,7 +28,6 @@ class schema_test extends \phpbb_database_test_case
 
 	public function getDataSet()
 	{
-		// An empty dataset is enough: we only check the SCHEMA, not the data.
 		return $this->createXMLDataSet(__DIR__ . '/fixtures/empty.xml');
 	}
 
@@ -37,8 +38,8 @@ class schema_test extends \phpbb_database_test_case
 		global $table_prefix;
 		$this->table_prefix = $table_prefix;
 
-		$db = $this->new_dbal();
-		$this->db_tools = new \phpbb\db\tools\tools($db);
+		$this->db = $this->new_dbal();
+		$this->db_tools = new \phpbb\db\tools\tools($this->db);
 	}
 
 	public function test_txn_log_table_exists()
@@ -49,12 +50,27 @@ class schema_test extends \phpbb_database_test_case
 		);
 	}
 
-	public function test_txn_id_unique_index_exists()
+	/**
+	 * Idempotency guarantee: a PayPal txn_id can only be stored once.
+	 * Checked behaviourally (portable across all DBMS) rather than by index name.
+	 */
+	public function test_txn_id_is_unique()
 	{
-		// This is the heart of PPDE idempotency: txn_id MUST be unique.
-		$this->assertTrue(
-			$this->db_tools->sql_unique_index_exists($this->table_prefix . 'ppde_txn_log', 'txn_uniq'),
-			'The UNIQUE index "txn_uniq" on txn_id should exist.'
-		);
+		$table = $this->table_prefix . 'ppde_txn_log';
+
+		$row = [
+			'txn_id'         => 'TXN_UNIQUE_CHECK',
+			'payment_status' => 'Completed',
+		];
+
+		// First insertion succeeds.
+		$this->db->sql_query('INSERT INTO ' . $table . ' ' . $this->db->sql_build_array('INSERT', $row));
+
+		// Duplicate is rejected by the UNIQUE index.
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query('INSERT INTO ' . $table . ' ' . $this->db->sql_build_array('INSERT', $row));
+		$this->db->sql_return_on_error(false);
+
+		$this->assertFalse($result, 'A duplicate txn_id must be rejected by the UNIQUE constraint.');
 	}
 }

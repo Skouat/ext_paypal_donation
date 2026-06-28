@@ -3,5 +3,6 @@
     <table name="phpbb_ppde_txn_log">
         <column>transaction_id</column>
         <column>txn_id</column>
+        <column>payment_status</column>
     </table>
 </dataset>
