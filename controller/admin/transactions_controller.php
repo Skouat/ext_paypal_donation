@@ -736,9 +736,9 @@ class transactions_controller extends admin_main
 		if ($where_sql || $this->args['hidden_fields']['delall'])
 		{
 			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
-			$this->ppde_actions->set_ipn_test_properties(true);
+			$this->ppde_actions->set_sandbox_properties(true);
 			$this->ppde_actions->update_overview_stats();
-			$this->ppde_actions->set_ipn_test_properties(false);
+			$this->ppde_actions->set_sandbox_properties(false);
 			$this->ppde_actions->update_overview_stats();
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 		}

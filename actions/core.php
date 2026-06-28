@@ -36,9 +36,9 @@ class core
 	 */
 	private $donor_is_member = false;
 	/**
-	 * @var boolean
+	 * @var boolean Whether the current context targets the PayPal Sandbox.
 	 */
-	private $is_ipn_test = false;
+	private $is_sandbox = false;
 	/**
 	 * @var array
 	 */
@@ -50,9 +50,10 @@ class core
 	 */
 	private $root_path;
 	/**
-	 * @var string
+	 * @var string Suffix appended to Sandbox-specific config names.
+	 *             Always '_ipn': persisted config naming convention, do not change the value.
 	 */
-	private $ipn_suffix;
+	private $config_suffix;
 
 	/**
 	 * Constructor
@@ -92,61 +93,95 @@ class core
 	}
 
 	/**
-	 * Sets properties related to ipn tests
+	 * Sets the Sandbox-related properties (test flag + config suffix).
 	 *
-	 * @param bool $ipn_test
+	 * @param bool $sandbox True when targeting the PayPal Sandbox.
 	 *
 	 * @return void
 	 * @access public
 	 */
-	public function set_ipn_test_properties($ipn_test): void
+	public function set_sandbox_properties($sandbox): void
 	{
-		$this->set_ipn_test($ipn_test);
-		$this->set_ipn_suffix();
+		$this->set_sandbox($sandbox);
+		$this->set_config_suffix();
 	}
 
 	/**
-	 * Sets the property $this->is_ipn_test
+	 * Sets the property $this->is_sandbox
 	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_ipn_test($ipn_test): void
-	{
-		$this->is_ipn_test = (bool) $ipn_test;
-	}
-
-	/**
-	 * Sets the property $this->ipn_suffix
+	 * @param bool $sandbox
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function set_ipn_suffix(): void
+	private function set_sandbox($sandbox): void
 	{
-		$this->ipn_suffix = $this->is_ipn_test ? '_ipn' : '';
+		$this->is_sandbox = (bool) $sandbox;
 	}
 
 	/**
-	 * Gets the property $this->ipn_suffix
+	 * Sets the property $this->config_suffix
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function set_config_suffix(): void
+	{
+		$this->config_suffix = $this->is_sandbox ? '_ipn' : '';
+	}
+
+	/**
+	 * Gets the Sandbox config suffix.
 	 *
 	 * @return string
 	 * @access public
 	 */
-	public function get_ipn_suffix(): string
+	public function get_config_suffix(): string
 	{
-		return $this->get_ipn_test() ? $this->ipn_suffix : '';
+		return $this->get_sandbox() ? $this->config_suffix : '';
 	}
 
 	/**
 	 * @return boolean
 	 * @access public
 	 */
+	public function get_sandbox(): bool
+	{
+		return $this->is_sandbox;
+	}
+
+	/**
+	 * Sets properties related to the Sandbox context.
+	 *
+	 * @param bool $ipn_test
+	 *
+	 * @return void
+	 * @access public
+	 * @deprecated 4.0.0 Use set_sandbox_properties() instead. Kept for backward compatibility.
+	 */
+	public function set_ipn_test_properties($ipn_test): void
+	{
+		$this->set_sandbox_properties($ipn_test);
+	}
+
+	/**
+	 * @return string
+	 * @access public
+	 * @deprecated 4.0.0 Use get_config_suffix() instead. Kept for backward compatibility.
+	 */
+	public function get_ipn_suffix(): string
+	{
+		return $this->get_config_suffix();
+	}
+
+	/**
+	 * @return boolean
+	 * @access public
+	 * @deprecated 4.0.0 Use get_sandbox() instead. Kept for backward compatibility.
+	 */
 	public function get_ipn_test(): bool
 	{
-		return $this->is_ipn_test;
+		return $this->get_sandbox();
 	}
 
 	/**
@@ -164,7 +199,7 @@ class core
 			$net_amount = $this->transaction_data['settle_amount'];
 		}
 
-		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount);
+		$this->config->set('ppde_raised' . $this->config_suffix, (float) $this->config['ppde_raised' . $this->config_suffix] + $net_amount);
 	}
 
 	/**
@@ -191,9 +226,9 @@ class core
 	 */
 	public function update_overview_stats(): void
 	{
-		$this->config->set('ppde_anonymous_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->ipn_suffix));
-		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix), true);
-		$this->config->set('ppde_transactions_count' . $this->ipn_suffix, $this->get_count_result('ppde_transactions_count' . $this->ipn_suffix), true);
+		$this->config->set('ppde_anonymous_donors_count' . $this->config_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->config_suffix));
+		$this->config->set('ppde_known_donors_count' . $this->config_suffix, $this->get_count_result('ppde_known_donors_count' . $this->config_suffix), true);
+		$this->config->set('ppde_transactions_count' . $this->config_suffix, $this->get_count_result('ppde_transactions_count' . $this->config_suffix), true);
 	}
 
 	/**
@@ -211,7 +246,7 @@ class core
 			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
-		return $this->ppde_operator_transaction->sql_query_count_result($config_name, $this->is_ipn_test);
+		return $this->ppde_operator_transaction->sql_query_count_result($config_name, $this->is_sandbox);
 	}
 
 	/**

@@ -149,7 +149,7 @@ class donation_recorder
 	 */
 	private function recompute_totals(bool $is_sandbox): void
 	{
-		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
+		$this->ppde_actions->set_sandbox_properties($is_sandbox);
 		$this->ppde_actions->is_donor_is_member();
 
 		$this->ppde_actions->update_overview_stats();

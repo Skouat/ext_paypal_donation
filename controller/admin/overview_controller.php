@@ -240,12 +240,12 @@ class overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':
-				$this->ppde_actions->set_ipn_test_properties(true);
+				$this->ppde_actions->set_sandbox_properties(true);
 				$this->ppde_actions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
 			break;
 			case 'stats':
-				$this->ppde_actions->set_ipn_test_properties(false);
+				$this->ppde_actions->set_sandbox_properties(false);
 				$this->ppde_actions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
 			break;
