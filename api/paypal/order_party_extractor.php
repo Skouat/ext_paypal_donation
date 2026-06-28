@@ -25,28 +25,18 @@ trait order_party_extractor
 			return $empty;
 		}
 
-		$name    = method_exists($source, 'getName') ? $source->getName() : null;
-		$address = method_exists($source, 'getAddress') ? $source->getAddress() : null;
+		$name    = $this->safe_call($source, 'getName');
+		$address = $this->safe_call($source, 'getAddress');
 
-		if (method_exists($source, 'getAccountId'))
-		{
-			$payer_id = (string) $source->getAccountId();
-		}
-		else if (method_exists($source, 'getPayerId'))
-		{
-			$payer_id = (string) $source->getPayerId();
-		}
-		else
-		{
-			$payer_id = '';
-		}
+		// Modern accounts expose getAccountId(); legacy payer uses getPayerId().
+		$payer_id = $this->safe_call($source, 'getAccountId') ?? $this->safe_call($source, 'getPayerId') ?? '';
 
 		return [
-			'first_name' => ($name && method_exists($name, 'getGivenName')) ? (string) $name->getGivenName() : '',
-			'last_name'  => ($name && method_exists($name, 'getSurname')) ? (string) $name->getSurname() : '',
-			'email'      => method_exists($source, 'getEmailAddress') ? (string) $source->getEmailAddress() : '',
-			'payer_id'   => $payer_id,
-			'country'    => ($address && method_exists($address, 'getCountryCode')) ? (string) $address->getCountryCode() : '',
+			'first_name' => (string) ($this->safe_call($name, 'getGivenName') ?? ''),
+			'last_name'  => (string) ($this->safe_call($name, 'getSurname') ?? ''),
+			'email'      => (string) ($this->safe_call($source, 'getEmailAddress') ?? ''),
+			'payer_id'   => (string) $payer_id,
+			'country'    => (string) ($this->safe_call($address, 'getCountryCode') ?? ''),
 		];
 	}
 
@@ -55,15 +45,10 @@ trait order_party_extractor
 	 */
 	protected function resolve_payer_source($order)
 	{
-		$payment_source = method_exists($order, 'getPaymentSource') ? $order->getPaymentSource() : null;
-		$paypal_src     = ($payment_source && method_exists($payment_source, 'getPaypal')) ? $payment_source->getPaypal() : null;
+		$payment_source = $this->safe_call($order, 'getPaymentSource');
+		$paypal_src     = $this->safe_call($payment_source, 'getPaypal');
 
-		if ($paypal_src)
-		{
-			return $paypal_src;
-		}
-
-		return method_exists($order, 'getPayer') ? $order->getPayer() : null;
+		return $paypal_src ?: $this->safe_call($order, 'getPayer');
 	}
 
 	/**
@@ -76,18 +61,28 @@ trait order_party_extractor
 	 */
 	protected function extract_payee_fields($order): array
 	{
-		$units      = method_exists($order, 'getPurchaseUnits') ? $order->getPurchaseUnits() : null;
+		$units      = $this->safe_call($order, 'getPurchaseUnits');
 		$first_unit = (!empty($units) && is_array($units)) ? $units[0] : null;
-		$payee      = ($first_unit && method_exists($first_unit, 'getPayee')) ? $first_unit->getPayee() : null;
-
-		if (!$payee)
-		{
-			return ['email' => '', 'merchant_id' => ''];
-		}
+		$payee      = $this->safe_call($first_unit, 'getPayee');
 
 		return [
-			'email'       => method_exists($payee, 'getEmailAddress') ? (string) $payee->getEmailAddress() : '',
-			'merchant_id' => method_exists($payee, 'getMerchantId') ? (string) $payee->getMerchantId() : '',
+			'email'       => (string) ($this->safe_call($payee, 'getEmailAddress') ?? ''),
+			'merchant_id' => (string) ($this->safe_call($payee, 'getMerchantId') ?? ''),
 		];
+	}
+
+	/**
+	 * Safely call a getter on a possibly-null SDK object.
+	 *
+	 * @param object|null $object
+	 * @param string      $method
+	 * @param mixed       $default
+	 *
+	 * @return mixed
+	 * @access protected
+	 */
+	protected function safe_call($object, string $method, $default = null)
+	{
+		return ($object !== null && method_exists($object, $method)) ? $object->$method() : $default;
 	}
 }

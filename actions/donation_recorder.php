@@ -104,11 +104,11 @@ class donation_recorder
 	 */
 	private function already_completed(string $txn_id): bool
 	{
-		return $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id) === 'Completed';
+		return $this->ppde_operator_transaction->is_txn_completed($txn_id);
 	}
 
 	/**
-	 * Run statistics, auto-group and notification actions after logging.
+	 * Run statistics, auto-group and notification actions after logging a completed donation.
 	 *
 	 * @param bool $is_sandbox
 	 *
@@ -117,11 +117,7 @@ class donation_recorder
 	 */
 	private function do_actions(bool $is_sandbox): void
 	{
-		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
-		$this->ppde_actions->is_donor_is_member();
-
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
+		$this->recompute_totals($is_sandbox);
 
 		if (!$is_sandbox)
 		{
@@ -133,6 +129,49 @@ class donation_recorder
 				$this->ppde_actions->donors_group_user_add();
 				$this->ppde_actions->notification->notify_donor_donation_received();
 			}
+		}
+	}
+
+	/**
+	 * Shared post-logging recomputation used by both the donation and the
+	 * refund/reversal flows: refresh the sandbox context, resolve the donor,
+	 * then update the overview statistics and the raised amount.
+	 *
+	 * @param bool $is_sandbox
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function recompute_totals(bool $is_sandbox): void
+	{
+		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
+		$this->ppde_actions->is_donor_is_member();
+
+		$this->ppde_actions->update_overview_stats();
+		$this->ppde_actions->update_raised_amount();
+	}
+
+	/**
+	 * Adjust running totals after a refund/reversal has been logged.
+	 *
+	 * Shares the same recomputation as a completed donation, but a refund can
+	 * only decrease the totals: it never adds the donor to the group, and only
+	 * removes them if their cumulative amount dropped below the configured
+	 * minimum.
+	 *
+	 * @param bool $is_sandbox
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function run_refund_actions(bool $is_sandbox): void
+	{
+		$this->recompute_totals($is_sandbox);
+
+		if (!$is_sandbox && $this->ppde_actions->get_donor_is_member())
+		{
+			$this->ppde_actions->update_donor_stats();
+			$this->ppde_actions->donors_group_user_remove();
 		}
 	}
 }

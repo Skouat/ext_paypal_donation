@@ -20,7 +20,7 @@ use phpbb\user;
 use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
-use skouat\ppde\api\paypal\transaction_data_builder;
+use skouat\ppde\entity\transaction_data_builder;
 use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions;
 use Symfony\Component\DependencyInjection\ContainerInterface;

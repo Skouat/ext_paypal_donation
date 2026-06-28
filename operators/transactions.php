@@ -11,9 +11,11 @@
 namespace skouat\ppde\operators;
 
 use phpbb\db\driver\driver_interface;
+use skouat\ppde\entity\transaction_data_builder;
 
 class transactions
 {
+	use transaction_data_builder;
 	protected $db;
 	protected $ppde_transactions_log_table;
 
@@ -456,7 +458,7 @@ class transactions
 	}
 
 	/**
-	 * Prepare data array before send it to $entity
+	 * Prepare data array before sending it to $entity.
 	 *
 	 * @param array $data
 	 *
@@ -465,38 +467,16 @@ class transactions
 	 */
 	public function build_data_ary($data): array
 	{
-		return [
-			'business'          => $data['business'],
-			'confirmed'         => (bool) $data['confirmed'],
-			'custom'            => $data['custom'],
-			'exchange_rate'     => $data['exchange_rate'],
-			'first_name'        => $data['first_name'],
-			'item_name'         => $data['item_name'],
-			'item_number'       => $data['item_number'],
-			'last_name'         => $data['last_name'],
-			'mc_currency'       => $data['mc_currency'],
-			'mc_gross'          => (float) $data['mc_gross'],
-			'mc_fee'            => (float) $data['mc_fee'],
-			'net_amount'        => (float) $data['net_amount'],
-			'parent_txn_id'     => $data['parent_txn_id'],
-			'payer_email'       => $data['payer_email'],
-			'payer_id'          => $data['payer_id'],
-			'payer_status'      => $data['payer_status'],
-			'payment_date'      => $data['payment_date'],
-			'payment_status'    => $data['payment_status'],
-			'payment_type'      => $data['payment_type'],
-			'memo'              => $data['memo'],
-			'receiver_id'       => $data['receiver_id'],
-			'receiver_email'    => $data['receiver_email'],
-			'residence_country' => $data['residence_country'],
-			'settle_amount'     => (float) $data['settle_amount'],
-			'settle_currency'   => $data['settle_currency'],
-			'test_ipn'          => (bool) $data['test_ipn'],
-			'txn_errors'        => $data['txn_errors'],
-			'txn_id'            => $data['txn_id'],
-			'txn_type'          => $data['txn_type'],
-			'user_id'           => (int) $data['user_id'],
-		];
+		$result = [];
+
+		foreach ($this->transaction_data_template() as $field => [$default, $type])
+		{
+			$value = array_key_exists($field, $data) ? $data[$field] : $default;
+			settype($value, $type);
+			$result[$field] = $value;
+		}
+
+		return $result;
 	}
 
 	/**

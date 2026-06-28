@@ -19,7 +19,7 @@ use skouat\ppde\actions\core;
 use skouat\ppde\actions\donation_recorder;
 use skouat\ppde\api\paypal\client_factory;
 use skouat\ppde\api\paypal\order_party_extractor;
-use skouat\ppde\api\paypal\transaction_data_builder;
+use skouat\ppde\entity\transaction_data_builder;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
 use skouat\ppde\exception\transaction_exception;
@@ -383,14 +383,14 @@ class webhook_listener
 			// preferring whichever provides an email (needed for guest matching).
 			$sources = [];
 
-			$payment_source = method_exists($result, 'getPaymentSource') ? $result->getPaymentSource() : null;
-			$paypal_source = ($payment_source && method_exists($payment_source, 'getPaypal')) ? $payment_source->getPaypal() : null;
+			$payment_source = $this->safe_call($result, 'getPaymentSource');
+			$paypal_source  = $this->safe_call($payment_source, 'getPaypal');
 			if ($paypal_source)
 			{
 				$sources[] = $paypal_source;
 			}
 
-			$legacy_payer = method_exists($result, 'getPayer') ? $result->getPayer() : null;
+			$legacy_payer = $this->safe_call($result, 'getPayer');
 			if ($legacy_payer)
 			{
 				$sources[] = $legacy_payer;
@@ -452,7 +452,7 @@ class webhook_listener
 			$data = $this->map_refund($resource, $parent_txn_id, $custom, $payment_status, $is_sandbox);
 
 			$this->ppde_actions->log_to_db($data);
-			$this->do_refund_actions($is_sandbox);
+			$this->donation_recorder->run_refund_actions($is_sandbox);
 
 			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_REFUND_PROCESSED', time(), [$refund_id, $parent_txn_id]);
 		}
@@ -564,31 +564,6 @@ class webhook_listener
 			'txn_id'         => $resource['id'] ?? '',
 			'txn_type'       => 'ppde_rest_refund',
 		]);
-	}
-
-	/**
-	 * Adjust running totals after a refund/reversal has been logged.
-	 *
-	 * @param bool $is_sandbox
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function do_refund_actions(bool $is_sandbox): void
-	{
-		$this->ppde_actions->set_ipn_test_properties($is_sandbox);
-		$this->ppde_actions->is_donor_is_member();
-
-		$this->ppde_actions->update_overview_stats();
-		$this->ppde_actions->update_raised_amount();
-
-		if (!$is_sandbox && $this->ppde_actions->get_donor_is_member())
-		{
-			// A refund can only decrease the total: never add to the group,
-			// only remove the donor if they dropped below the configured minimum.
-			$this->ppde_actions->update_donor_stats();
-			$this->ppde_actions->donors_group_user_remove();
-		}
 	}
 
 	/**

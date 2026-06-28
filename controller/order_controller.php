@@ -20,7 +20,7 @@ use PaypalServerSdkLib\Models\PaypalWalletContextShippingPreference;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
 use PaypalServerSdkLib\Exceptions\ApiException;
 use skouat\ppde\api\paypal\order_party_extractor;
-use skouat\ppde\api\paypal\transaction_data_builder;
+use skouat\ppde\entity\transaction_data_builder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -358,19 +358,19 @@ class order_controller extends main_controller
 	{
 		$capture = $this->extract_capture($order);
 
-		if ($capture === null || !method_exists($capture, 'getId') || (string) $capture->getId() === '')
+		if ($capture === null || (string) ($this->safe_call($capture, 'getId') ?? '') === '')
 		{
 			return null;
 		}
 
-		$custom    = method_exists($capture, 'getCustomId') ? (string) $capture->getCustomId() : '';
-		$amount    = method_exists($capture, 'getAmount') ? $capture->getAmount() : null;
-		$breakdown = method_exists($capture, 'getSellerReceivableBreakdown') ? $capture->getSellerReceivableBreakdown() : null;
-		$currency  = ($amount && method_exists($amount, 'getCurrencyCode')) ? (string) $amount->getCurrencyCode() : '';
-		$gross     = ($amount && method_exists($amount, 'getValue')) ? (float) $amount->getValue() : 0.0;
+		$custom    = (string) ($this->safe_call($capture, 'getCustomId') ?? '');
+		$amount    = $this->safe_call($capture, 'getAmount');
+		$breakdown = $this->safe_call($capture, 'getSellerReceivableBreakdown');
+		$currency  = (string) ($this->safe_call($amount, 'getCurrencyCode') ?? '');
+		$gross     = (float) ($this->safe_call($amount, 'getValue') ?? 0.0);
 
 		// Use the real PayPal capture date; fall back to now if unavailable
-		$create_time  = method_exists($capture, 'getCreateTime') ? (string) $capture->getCreateTime() : '';
+		$create_time  = (string) ($this->safe_call($capture, 'getCreateTime') ?? '');
 		$timestamp    = strtotime($create_time);
 		$payment_date = ($timestamp !== false) ? $timestamp : time();
 
@@ -381,14 +381,14 @@ class order_controller extends main_controller
 
 		if ($breakdown)
 		{
-			$fee_obj        = method_exists($breakdown, 'getPaypalFee') ? $breakdown->getPaypalFee() : null;
-			$net_obj        = method_exists($breakdown, 'getNetAmount') ? $breakdown->getNetAmount() : null;
-			$fx_obj         = method_exists($breakdown, 'getExchangeRate') ? $breakdown->getExchangeRate() : null;
-			$receivable_obj = method_exists($breakdown, 'getReceivableAmount') ? $breakdown->getReceivableAmount() : null;
+			$fee_obj        = $this->safe_call($breakdown, 'getPaypalFee');
+			$net_obj        = $this->safe_call($breakdown, 'getNetAmount');
+			$fx_obj         = $this->safe_call($breakdown, 'getExchangeRate');
+			$receivable_obj = $this->safe_call($breakdown, 'getReceivableAmount');
 
-			$fee           = ($fee_obj && method_exists($fee_obj, 'getValue')) ? (float) $fee_obj->getValue() : 0.0;
-			$net           = ($net_obj && method_exists($net_obj, 'getValue')) ? (float) $net_obj->getValue() : 0.0;
-			$exchange_rate = ($fx_obj && method_exists($fx_obj, 'getValue')) ? (string) $fx_obj->getValue() : '';
+			$fee           = (float) ($this->safe_call($fee_obj, 'getValue') ?? 0.0);
+			$net           = (float) ($this->safe_call($net_obj, 'getValue') ?? 0.0);
+			$exchange_rate = (string) ($this->safe_call($fx_obj, 'getValue') ?? '');
 		}
 
 		// Payer details, from payment_source.paypal (modern) or payer (legacy)
@@ -420,10 +420,10 @@ class order_controller extends main_controller
 			'receiver_id'       => $payee['merchant_id'],
 			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
-			'settle_amount'     => ($receivable_obj && method_exists($receivable_obj, 'getValue')) ? (float) $receivable_obj->getValue() : 0.0,
-			'settle_currency'   => ($receivable_obj && method_exists($receivable_obj, 'getCurrencyCode')) ? (string) $receivable_obj->getCurrencyCode() : '',
+			'settle_amount'     => (float) ($this->safe_call($receivable_obj, 'getValue') ?? 0.0),
+			'settle_currency'   => (string) ($this->safe_call($receivable_obj, 'getCurrencyCode') ?? ''),
 			'test_ipn'          => $is_sandbox,
-			'txn_id'            => (string) $capture->getId(),
+			'txn_id'            => (string) ($this->safe_call($capture, 'getId') ?? ''),
 			'txn_type'          => 'ppde_rest_donation',
 		]);
 	}
@@ -438,14 +438,14 @@ class order_controller extends main_controller
 	 */
 	private function extract_capture($order)
 	{
-		$units = method_exists($order, 'getPurchaseUnits') ? $order->getPurchaseUnits() : null;
+		$units = $this->safe_call($order, 'getPurchaseUnits');
 		if (empty($units) || !is_array($units))
 		{
 			return null;
 		}
 
-		$payments = method_exists($units[0], 'getPayments') ? $units[0]->getPayments() : null;
-		$captures = ($payments && method_exists($payments, 'getCaptures')) ? $payments->getCaptures() : null;
+		$payments = $this->safe_call($units[0], 'getPayments');
+		$captures = $this->safe_call($payments, 'getCaptures');
 
 		return (!empty($captures) && is_array($captures)) ? $captures[0] : null;
 	}
