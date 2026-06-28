@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <table name="phpbb_ppde_txn_log">
+        <column>transaction_id</column>
+        <column>txn_id</column>
+        <column>payment_status</column>
+        <row>
+            <value>1</value>
+            <value>TXN_EXISTING</value>
+            <value>Completed</value>
+        </row>
+    </table>
+</dataset>

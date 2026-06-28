@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <table name="phpbb_ppde_txn_log">
+        <column>transaction_id</column>
+        <column>txn_id</column>
+        <column>payment_status</column>
+        <column>custom</column>
+        <row>
+            <value>1</value>
+            <value>TXN_COMPLETED</value>
+            <value>Completed</value>
+            <value>uid_42_1700000000</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>TXN_PENDING</value>
+            <value>Pending</value>
+            <value>uid_7_1700000001</value>
+        </row>
+    </table>
+</dataset>

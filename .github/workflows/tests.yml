@@ -19,7 +19,6 @@ jobs:
         with:
             EXTNAME: skouat/ppde
             CODECOV: 1
-            RUN_MSSQL_JOBS: 0
             RUN_WINDOWS_JOBS: 0
             RUN_FUNCTIONAL_TESTS: 0
             RUN_NPM_INSTALL: 0
