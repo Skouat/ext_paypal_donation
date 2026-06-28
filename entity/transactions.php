@@ -143,7 +143,7 @@ class transactions extends main
 	 * other path (webhook vs capture). Raise a transaction_exception so callers
 	 * skip the post-actions instead of double-counting or aborting fatally.
 	 *
-	 * @throws \skouat\ppde\exception\transaction_exception
+	 * @throws transaction_exception
 	 */
 	protected function execute_insert($sql): void
 	{

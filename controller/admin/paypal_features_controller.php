@@ -42,15 +42,15 @@ class paypal_features_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param config                   $config               Config object
-	 * @param language                 $language             Language object
-	 * @param log                      $log                  The phpBB log system
-	 * @param main_controller          $ppde_controller_main Main controller object
-	 * @param \phpbb\controller\helper $controller_helper    Controller helper object
-	 * @param client_factory           $ppde_client_factory  PayPal client factory object
-	 * @param request                  $request              Request object
-	 * @param template                 $template             Template object
-	 * @param user                     $user                 User object
+	 * @param config          $config               Config object
+	 * @param language        $language             Language object
+	 * @param log             $log                  The phpBB log system
+	 * @param main_controller $ppde_controller_main Main controller object
+	 * @param helper          $controller_helper    Controller helper object
+	 * @param client_factory  $ppde_client_factory  PayPal client factory object
+	 * @param request         $request              Request object
+	 * @param template        $template             Template object
+	 * @param user            $user                 User object
 	 *
 	 * @access public
 	 */

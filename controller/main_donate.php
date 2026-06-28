@@ -81,7 +81,6 @@ class main_donate extends main_controller
 			$this->donation_body = $this->language->lang('PPDE_' . strtoupper($this->return_args_url) . '_DEFAULT');
 		}
 
-
 		$sandbox = $this->use_sandbox();
 
 		// Resolve the default currency used for both the JS SDK and the order.
