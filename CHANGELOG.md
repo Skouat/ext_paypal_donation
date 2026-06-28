@@ -19,6 +19,7 @@ and the releases are listed in reverse chronological order.
 - Change: Now requires phpBB 3.3.11+, PHP 7.2+ and ext-openssl
 - Change: Notifications and auto group each have their own toggle
 - Change: Improved PayPal checkout page (label, brand name, no shipping)
+- Change: Modernise donation progress bars (smoother colours, accessibility, RTL)
 - Change: `skouat.ppde.do_actions_completed_before` now fires from the donation recorder
 - Change: Errors logged in the admin log; Overview reports the OpenSSL version
 - Remove: PayPal IPN listener, postback, TLS/cURL detection and obsolete configs
