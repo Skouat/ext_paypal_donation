@@ -18,12 +18,8 @@ use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
 use PaypalServerSdkLib\Authentication\ClientCredentialsAuthCredentialsBuilder;
 
 /**
- * Builds a fully configured and authenticated PayPal REST API client.
- *
- * It centralizes:
- *  - OAuth2 Client Credentials authentication (token handling is automatic),
- *  - Sandbox/Live environment switching,
- *  - SDK configuration (timeout, retries).
+ * Builds a configured, authenticated PayPal REST API client (OAuth2 client
+ * credentials, sandbox/live switching, timeout and retries).
  */
 class client_factory
 {
@@ -35,7 +31,6 @@ class client_factory
 
 	/**
 	 * Per-request cache of built clients, keyed by environment ('live'|'sandbox').
-	 * Avoids rebuilding the client (and re-reading config) on every call.
 	 *
 	 * @var PaypalServerSdkClient[]
 	 */
@@ -67,7 +62,6 @@ class client_factory
 	{
 		$key = $this->get_env_key($sandbox);
 
-		// Return the already built client for this environment if available
 		if (isset($this->clients[$key]))
 		{
 			return $this->clients[$key];
@@ -75,7 +69,6 @@ class client_factory
 
 		[$client_id, $client_secret] = $this->get_credentials($sandbox);
 
-		// Fail fast with a clear message if credentials are missing
 		if (empty($client_id) || empty($client_secret))
 		{
 			trigger_error($this->language->lang('PPDE_REST_CREDENTIALS_MISSING'), E_USER_WARNING);

@@ -24,14 +24,13 @@ use skouat\ppde\entity\transaction_data_builder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Handles the synchronous donation payment flow using the PayPal Orders API v2.
+ * Handles the synchronous donation flow (PayPal Orders API v2).
  *
- * Two endpoints are exposed and called by the PayPal JS SDK in the donor browser:
- *  - create()  : creates a PayPal order and returns its ID.
- *  - capture() : captures the funds once the donor approved the payment.
+ * create()  : creates a PayPal order and returns its ID.
+ * capture() : captures the funds once the donor approved the payment.
  *
- * The authoritative recording of the donation in the database is performed
- * asynchronously by the webhook listener, NOT here.
+ * The authoritative recording is done asynchronously by the webhook listener;
+ * the capture endpoint only records as a fallback.
  */
 class order_controller extends main_controller
 {
@@ -77,13 +76,11 @@ class order_controller extends main_controller
 	 */
 	public function create(): JsonResponse
 	{
-		// Access guards
 		if ($error = $this->guard())
 		{
 			return $error;
 		}
 
-		// Collect and validate the donation amount
 		$amount = (float) $this->request->variable('amount', 0.0);
 
 		if ($amount <= 0)
@@ -91,9 +88,8 @@ class order_controller extends main_controller
 			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], 400);
 		}
 
-		// Resolve the currency ISO code from the selected currency id.
-		// get_default_currency_data() only returns ENABLED currencies,
-		// so an invalid/disabled id yields an empty array.
+		// get_default_currency_data() only returns ENABLED currencies, so an
+		// invalid/disabled id yields an empty array.
 		$currency_id = $this->request->variable('currency_id', (int) $this->config['ppde_default_currency']);
 		$currency_data = $this->ppde_actions_currency->get_default_currency_data($currency_id);
 
@@ -105,12 +101,12 @@ class order_controller extends main_controller
 		$currency_code = $currency_data[0]['currency_iso_code'];
 		$decimals      = $this->ppde_actions_currency->get_currency_fraction_digits($currency_code);
 
-		// Clear, human-readable label shown on the PayPal checkout page (max 127 chars)
+		// Label shown on the PayPal checkout page (max 127 chars).
 		$description = $this->truncate_description(
 			$this->language->lang('PPDE_DONATION_TITLE_HEAD', $this->config['sitename'])
 		);
 
-		// PayPal-compliant bank statement label (may be empty after sanitization)
+		// Bank statement label (may be empty after sanitization).
 		$soft_descriptor = $this->build_soft_descriptor($this->config['sitename']);
 
 		$purchase_unit_builder = PurchaseUnitRequestBuilder::init(
@@ -120,13 +116,10 @@ class order_controller extends main_controller
 			)->build()
 		)
 			->description($description)
-			// Keeps compatibility with core::extract_user_id():
-			// custom_id format = 'uid_<user_id>_<time>'
+			// custom_id format kept for core::extract_user_id(): 'uid_<user_id>_<time>'
 			->customId($this->build_custom_id())
 		;
 
-		// Statement descriptor is optional: only set it when sanitization yields
-		// a non-empty, PayPal-compliant value.
 		if ($soft_descriptor !== '')
 		{
 			$purchase_unit_builder->softDescriptor($soft_descriptor);
@@ -134,15 +127,13 @@ class order_controller extends main_controller
 
 		$purchase_unit = $purchase_unit_builder->build();
 
-		// A donation has no shipping: redact the address block on the PayPal
-		// checkout page.
+		// A donation has no shipping: hide the address block.
 		$experience_context = PaypalWalletExperienceContextBuilder::init()
 			->shippingPreference(PaypalWalletContextShippingPreference::NO_SHIPPING)
 		;
 
-		// In Live mode, override the brand shown on the PayPal checkout page with
-		// the board name. In Sandbox, keep the test account's default store name
-		// so testers can clearly identify the sandbox environment.
+		// In Live, brand the checkout with the board name; in Sandbox keep the
+		// test account's default store name so testers spot the environment.
 		if (!$this->use_sandbox())
 		{
 			$experience_context->brandName($this->config['sitename']);
@@ -176,7 +167,6 @@ class order_controller extends main_controller
 			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
 		}
 
-		// Return the order ID to the PayPal JS SDK
 		return new JsonResponse(['id' => $response->getResult()->getId()]);
 	}
 
@@ -210,8 +200,7 @@ class order_controller extends main_controller
 	 */
 	private function build_soft_descriptor(string $text): string
 	{
-		// Transliterate accented/Unicode characters to their ASCII equivalent
-		// (e.g. "Forêt" -> "Foret"). Suppress warnings on unconvertible input.
+		// Transliterate accented/Unicode chars to ASCII ("Forêt" -> "Foret").
 		if (function_exists('iconv'))
 		{
 			$converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
@@ -222,10 +211,8 @@ class order_controller extends main_controller
 			}
 		}
 
-		// Keep only the characters allowed by PayPal: letters, digits, space, dot, asterisk and dash.
+		// Keep only the characters allowed by PayPal.
 		$text = preg_replace('/[^A-Za-z0-9 .*-]/', '', $text);
-
-		// Collapse repeated spaces and trim.
 		$text = trim(preg_replace('/\s+/', ' ', $text));
 
 		// PayPal truncates at 22 characters.
@@ -315,11 +302,8 @@ class order_controller extends main_controller
 		$result = $response->getResult();
 		$status = (string) $result->getStatus();
 
-		// Safety net: record the donation now (idempotently) in case the PayPal
-		// webhook never reaches the board (misconfiguration, WAF, anti-bot…).
-		// The recorder's idempotency guard prevents any double processing when
-		// the webhook later arrives. Any failure here is swallowed so the donor's
-		// redirect is never broken — the webhook remains the authoritative path.
+		// Fallback: record now (idempotently) in case the webhook never reaches the board (WAF, anti-bot…).
+		// Failures are swallowed so the donor's redirect is never broken — the webhook stays authoritative.
 		if ($status === 'COMPLETED')
 		{
 			try

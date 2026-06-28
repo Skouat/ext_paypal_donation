@@ -45,8 +45,7 @@ class main_donor_list extends main_controller
 
 	public function handle()
 	{
-		// If the donorlist is not enabled, redirect users back to the forum index.
-		// Else if user is not allowed to view the donors list, disallow access to the extension page.
+		// Disabled: back to index. Otherwise enforce the view permission.
 		if (!$this->donorlist_is_enabled())
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
@@ -72,8 +71,7 @@ class main_donor_list extends main_controller
 
 		$order_by = ($sort_key === 'a' ? $sort_key_sql[$sort_key] . ' ' : 'MAX(' . $sort_key_sql[$sort_key] . ') ') . (($sort_dir === 'a') ? 'ASC' : 'DESC');
 
-		// Build a relevant pagination_url and sort_url.
-		// We do not use request_var() here directly to save some calls (not all variables are set)
+		// Build pagination_url and sort_url (only the set variables are kept).
 		$check_params = [
 			'sk'    => ['sk', $default_key],
 			'sd'    => ['sd', 'a'],

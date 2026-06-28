@@ -36,12 +36,10 @@ trait transaction_data_builder
 	}
 
 	/**
-	 * Canonical definition of a PPDE transaction row: maps every persisted
-	 * field to its [default value, type] pair.
+	 * Maps every persisted transaction field to its [default, type] pair.
 	 *
 	 * Single source of truth shared by build_transaction_data() (defaults) and
-	 * the operator's build_data_ary() (whitelist + type casting), so the field
-	 * list never has to be maintained in two places.
+	 * the operator's build_data_ary() (whitelist + casting).
 	 *
 	 * @return array<string, array{0: mixed, 1: string}>
 	 * @access protected

@@ -138,7 +138,6 @@ class transactions_controller extends admin_main
 		/** @type \phpbb\pagination $pagination */
 		$pagination = $this->container->get('pagination');
 
-		// Sorting
 		$limit_days = [
 			0   => $this->language->lang('ALL_ENTRIES'),
 			1   => $this->language->lang('1_DAY'),
@@ -169,14 +168,12 @@ class transactions_controller extends admin_main
 		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 		gen_sort_selects($limit_days, $sort_by_text, $this->args['hidden_fields']['st'], $this->args['hidden_fields']['sk'], $this->args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
-		// Define where and sort sql for use in displaying transactions
 		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
 		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
 
 		$keywords = $this->request->variable('keywords', '', true);
 		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
 
-		// Grab log data
 		$log_data = [];
 		$log_count = 0;
 
@@ -316,7 +313,6 @@ class transactions_controller extends admin_main
 			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
-		// Prepares args depending on actions
 		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$this->args['action'] = 'delete';
@@ -343,6 +339,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 */
 	public function change(): void
 	{
@@ -358,7 +355,6 @@ class transactions_controller extends admin_main
 			trigger_error(implode('<br>', $e->get_errors()) . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
 
 		$this->ppde_entity->load($transaction_id);
@@ -440,7 +436,6 @@ class transactions_controller extends admin_main
 			{
 				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
 
-				// Prepare transaction settings before doing actions
 				$this->ppde_actions->set_transaction_data($transaction_data);
 				$this->ppde_actions->is_donor_is_member();
 
@@ -529,7 +524,7 @@ class transactions_controller extends admin_main
 		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
 		$payment_time_timestamp = strtotime($payment_time);
 
-		// Normalize payment time to start from today at midnight
+		// Normalize payment time from today's midnight.
 		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
 
 		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
@@ -547,7 +542,7 @@ class transactions_controller extends admin_main
 			throw (new transaction_exception())->set_errors($errors);
 		}
 
-		// Build the uid_<user_id>_<time> identifier once so custom and item_number stay perfectly consistent.
+		// Shared uid_<user_id>_<time> id, so custom and item_number stay consistent.
 		$custom_id = implode('_', ['uid', $user_id, time()]);
 
 		return $this->build_transaction_data([
@@ -706,16 +701,14 @@ class transactions_controller extends admin_main
 	 */
 	public function view(): void
 	{
-		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
 
-		// add additional fields to the table schema needed by entity->import()
+		// Extra columns needed by entity->import().
 		$additional_table_schema = [
 			'item_username'    => ['name' => 'username', 'type' => 'string'],
 			'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
 		];
 
-		// Grab transaction data
 		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
 		array_map([$this, 'action_assign_template_vars'], $data_ary);
@@ -818,9 +811,8 @@ class transactions_controller extends admin_main
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
 			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
 
-			// Legacy / read-only: 'txn_errors' and 'txn_errors_approved' belong to the obsolete
-			// PayPal IPN error-approval workflow (removed in 4.0.0).
-			// They are surfaced here only to display historical IPN transactions; the REST flow never writes them.
+			// Legacy / read-only: belongs to the obsolete IPN "errors to approve"
+			// workflow (removed in 4.0.0). Kept only to display historical transactions.
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

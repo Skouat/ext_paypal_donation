@@ -140,8 +140,7 @@ class transactions extends main
 	 * {@inheritdoc}
 	 *
 	 * A failed INSERT means the UNIQUE txn_id was concurrently recorded by the
-	 * other path (webhook vs capture). Raise a transaction_exception so callers
-	 * skip the post-actions instead of double-counting or aborting fatally.
+	 * other path; raise a transaction_exception so callers skip the post-actions.
 	 *
 	 * @throws transaction_exception
 	 */
@@ -248,12 +247,10 @@ class transactions extends main
 	}
 
 	/**
-	 * Get PayPal transaction errors approval status
+	 * Get PayPal transaction errors approval status.
 	 *
-	 * Legacy / read-only: this flag belongs to the obsolete PayPal IPN "donation with errors to approve" workflow,
-	 * removed in 4.0.0. It is no longer written by the REST flow and is kept solely to display historical IPN
-	 * transactions. Existing values are preserved untouched on edit (load() → save() round-trips the column without
-	 * modifying it).
+	 * Legacy / read-only: belongs to the obsolete IPN "errors to approve"
+	 * workflow (removed in 4.0.0). Kept only to display historical transactions.
 	 *
 	 * @return bool
 	 * @access public

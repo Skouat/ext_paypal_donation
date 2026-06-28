@@ -272,7 +272,7 @@ class webhook_listener
 	}
 
 	/**
-	 * Check whether a transaction has already been logged (idempotency guard).
+	 * Idempotency guard: whether a transaction has already been logged.
 	 *
 	 * @param string $txn_id
 	 *
@@ -287,8 +287,7 @@ class webhook_listener
 	}
 
 	/**
-	 * Check whether a capture has already been fully processed (Completed).
-	 * Unlike already_processed(), this lets a pending row be upgraded later.
+	 * Whether a capture is already Completed. Unlike already_processed(), this lets a pending row be upgraded later.
 	 *
 	 * @param string $txn_id
 	 *
@@ -567,12 +566,9 @@ class webhook_listener
 	}
 
 	/**
-	 * Handle a denied capture: record it for traceability without running any
-	 * post-action, since the funds were never received.
-	 *
-	 * A previously pending row is upgraded to "Denied"; a brand-new denial is
-	 * inserted. A capture that already completed is never downgraded here
-	 * (a settled capture is reverted through REVERSED instead).
+	 * Handle a denied capture: record it for traceability, no post-action (funds never received).
+	 * A pending row is upgraded to "Denied";
+	 * a settled capture is never downgraded here (reverted via REVERSED instead).
 	 *
 	 * @param array $resource
 	 * @param bool  $is_sandbox

@@ -88,15 +88,14 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 
 		foreach ($ppdm_config_names as $old_name => $new_name)
 		{
-			// Retrieve the current_value of the config
 			$current_value = $this->config->offsetGet($old_name);
-			// Rename the config
+
 			$sql = 'UPDATE ' . $this->table_prefix . "config
 					SET config_name = '" . $new_name . "'
 					WHERE config_name = '" . $old_name . "'";
 			$this->db->sql_query($sql);
-			// Set the new config name to the property $this->config.
-			// This is necessary to prevent duplicate entry during the data_update() process
+
+			// Mirror the rename in $this->config to avoid a duplicate entry during update_data().
 			$this->config->offsetSet($new_name, $current_value);
 		}
 	}
@@ -115,7 +114,6 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 			'paypal_sandbox_founder_enable',
 		];
 
-		// Delete all the unwanted configs
 		$sql = 'DELETE FROM ' . $this->table_prefix . 'config
 			WHERE ' . $this->db->sql_in_set('config_name', $ppdm_config_names);
 		$this->db->sql_query($sql);
@@ -131,7 +129,6 @@ class v300_m1_converter_data extends \phpbb\db\migration\migration
 			'u_pdm_use'    => 'u_ppde_use',
 		];
 
-		// Update all the configs kept in PPDE
 		foreach ($ppdm_permissions_names as $old_name => $new_name)
 		{
 			$sql = 'UPDATE ' . $this->table_prefix . "acl_options

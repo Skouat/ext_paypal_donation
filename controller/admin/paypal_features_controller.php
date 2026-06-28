@@ -90,21 +90,18 @@ class paypal_features_controller extends admin_main
 	 */
 	public function display_settings(): void
 	{
-		// Handle the AJAX connection test before rendering the page
+		// Handle the AJAX connection test before rendering the page.
 		if ($this->request->is_ajax() && $this->request->is_set_post('test_connection'))
 		{
 			$this->handle_connection_test();
 		}
 
-		// Define the name of the form for use as a form key
 		add_form_key('ppde_paypal_features');
 
-		// Create an array to collect errors that will be output to the user
 		$errors = [];
 
 		$this->submit_settings();
 
-		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->template->assign_vars([
@@ -169,10 +166,7 @@ class paypal_features_controller extends admin_main
 	}
 
 	/**
-	 * Sets a secret config value.
-	 *
-	 * The secret input is rendered as an empty password field. When the admin
-	 * leaves it blank, the previously stored secret is preserved (i.e. not overwritten with an empty string).
+	 * Set a secret config value, preserving the stored one when left blank.
 	 *
 	 * @param string $config_name  Name of the config key to update
 	 * @param string $request_name Name of the POST field

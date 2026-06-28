@@ -124,10 +124,8 @@ class overview_controller extends admin_main
 
 		$this->do_action($action);
 
-		//Load metadata for this extension
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
-		// Set output block vars for display in the template
 		$this->template->assign_vars([
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
@@ -150,7 +148,6 @@ class overview_controller extends admin_main
 
 		if ($this->ppde_controller_main->use_sandbox())
 		{
-			// Set output block vars for display in the template
 			$this->template->assign_vars([
 				'S_IPN_TEST'                       => true,
 				'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],

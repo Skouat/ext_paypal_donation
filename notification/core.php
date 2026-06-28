@@ -76,10 +76,9 @@ class core
 	 */
 	private function notify_donation_core(): array
 	{
-		// Set currency data properties
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_mc_currency());
 
-		// Format net amount data properties
+		// When the donation was converted, report the settled amount/currency.
 		if ($settle_amount = (float) $this->ppde_entity_transaction->get_settle_amount())
 		{
 			$currency_settle_data = $this->ppde_actions_currency->get_currency_data($this->ppde_entity_transaction->get_settle_currency());

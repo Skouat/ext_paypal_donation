@@ -43,7 +43,6 @@ class transactions
 	 */
 	public function build_sql_data($transaction_id = 0): string
 	{
-		// Build main SQL request
 		$sql_ary = [
 			'SELECT'    => 'txn.*, u.username, u.user_colour',
 			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
@@ -56,13 +55,11 @@ class transactions
 			'ORDER_BY'  => 'txn.transaction_id',
 		];
 
-		// Use WHERE clause when $currency_id is different from 0
 		if ((int) $transaction_id)
 		{
 			$sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $transaction_id;
 		}
 
-		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
@@ -179,7 +176,6 @@ class transactions
 		$sql_keywords = '';
 		if (!empty($keywords))
 		{
-			// Get the SQL condition for our keywords
 			$sql_keywords = $this->generate_sql_keyword($keywords);
 		}
 
@@ -203,7 +199,7 @@ class transactions
 	}
 
 	/**
-	 * Generates a SQL condition for the specified keywords
+	 * Generates a SQL condition for the specified keywords.
 	 *
 	 * @param string $keywords           The keywords the user specified to search for
 	 * @param string $statement_operator The operator used to prefix the statement ('AND' by default)
@@ -213,16 +209,12 @@ class transactions
 	 */
 	private function generate_sql_keyword($keywords, $statement_operator = 'AND'): string
 	{
-		// Use no preg_quote for $keywords because this would lead to sole
-		// backslashes being added. We also use an OR connection here for
-		// spaces and the | string. Currently, regex is not supported for
-		// searching (but may come later).
+		// No preg_quote() on $keywords: it would only add stray backslashes.
 		$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
 		$sql_keywords = '';
 
 		if (!empty($keywords))
 		{
-			// Build pattern and keywords...
 			foreach ($keywords as $index => $value)
 			{
 				$keywords[$index] = $this->db->sql_like_expression($this->db->get_any_char() . $value . $this->db->get_any_char());
@@ -335,7 +327,6 @@ class transactions
 	{
 		static $_profile_cache;
 
-		// We cache some common variables we need within this function
 		if (empty($_profile_cache))
 		{
 			$_profile_cache['tpl_nourl'] = '{{ TRANSACTION }}';
@@ -343,14 +334,11 @@ class transactions
 			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>';
 		}
 
-		// Build correct transaction url
 		$txn_url = '';
 		if ($txn_id)
 		{
 			$txn_url = ($custom_url !== '') ? $custom_url . '&amp;action=view&amp;id=' . $id : $txn_id;
 		}
-
-		// Return
 
 		if (!$txn_url)
 		{
@@ -480,10 +468,8 @@ class transactions
 	}
 
 	/**
-	 * Returns the "custom" value of a transaction identified by its PayPal txn_id.
-	 *
-	 * Used by the webhook listener to retrieve the parent capture's custom_id
-	 * without loading the whole row into the shared transaction entity.
+	 * Returns the "custom" value of a transaction by its PayPal txn_id.
+	 * Avoids loading the whole row into the shared transaction entity.
 	 *
 	 * @param string $txn_id
 	 *
@@ -503,10 +489,8 @@ class transactions
 	}
 
 	/**
-	 * Returns the payment_status of a transaction identified by its PayPal txn_id.
-	 *
-	 * Used by the webhook listener to decide whether a capture has already been
-	 * fully processed (Completed) without loading the row into the shared entity.
+	 * Returns the payment_status of a transaction by its PayPal txn_id.
+	 * Avoids loading the row into the shared entity.
 	 *
 	 * @param string $txn_id
 	 *
@@ -526,11 +510,10 @@ class transactions
 	}
 
 	/**
-	 * Check whether a transaction has already been fully processed (Completed).
+	 * Whether a transaction is already fully processed (Completed).
 	 *
 	 * Centralises the "Completed" idempotency rule shared by the webhook
-	 * listener and the synchronous capture endpoint, so both guards stay in
-	 * sync if the business rule ever changes.
+	 * listener and the capture endpoint.
 	 *
 	 * @param string $txn_id
 	 *

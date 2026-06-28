@@ -208,19 +208,14 @@ abstract class admin_main
 	{
 		$this->submit = $this->request->is_set_post('submit');
 
-		// Test if the submitted form is valid
 		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
 
 		if ($this->can_submit_data($errors))
 		{
-			// Set the options the user configured
 			$this->set_settings();
 
-			// Add option settings change action to the admin log
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
 
-			// Option settings have been updated and logged
-			// Confirm this to the user and provide link back to previous page
 			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
 		}
 	}
@@ -277,7 +272,6 @@ abstract class admin_main
 	{
 		if ($this->is_added_data_exists($entity))
 		{
-			// Show user warning for an already exist page and provide link back to the edit page
 			$message = $this->language->lang($this->lang_key_prefix . '_EXISTS');
 			$message .= '<br><br>';
 			$message .= $this->language->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
@@ -417,7 +411,6 @@ abstract class admin_main
 	 */
 	protected function check_config($config, $type = 'boolean', $default = '')
 	{
-		// We're using settype to enforce data types
 		settype($config, $type);
 		settype($default, $type);
 
@@ -426,9 +419,6 @@ abstract class admin_main
 
 	/**
 	 * Run the Intl detection once after install/enable (ppde_first_start = true).
-	 *
-	 * Since v4.0.0, cURL/OpenSSL are hard composer requirements (ext-curl,ext-openssl) and PayPal connectivity is
-	 * verified by the "Test connection" button, so only the optional PHP Intl detection remains here.
 	 *
 	 * @return void
 	 * @throws \ReflectionException

@@ -91,7 +91,6 @@ class main_controller
 
 	/**
 	 * Check if the donation feature is enabled.
-	 * Replaces the legacy use_ipn() master switch.
 	 *
 	 * @return bool
 	 * @access public

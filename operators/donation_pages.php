@@ -84,7 +84,7 @@ class donation_pages
 	 */
 	public function get_languages($lang_id = 0): array
 	{
-		// Request by id if provided, otherwise request all
+		// Request a single language if provided, otherwise all of them.
 		$sql_where = ($lang_id !== 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
 
 		$langs = [];
@@ -100,7 +100,6 @@ class donation_pages
 		}
 		$this->db->sql_freeresult($result);
 
-		// Return all available languages
 		return $langs;
 	}
 }

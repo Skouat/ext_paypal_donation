@@ -54,8 +54,7 @@ class main_donate extends main_controller
 
 	public function handle()
 	{
-		// When this extension is disabled, redirect users back to the forum index.
-		// Else if the user is not allowed to use it, disallow access.
+		// Disabled: back to index. Otherwise enforce the use permission.
 		if (empty($this->config['ppde_enable']))
 		{
 			redirect(append_sid($this->root_path . 'index.' . $this->php_ext));
@@ -67,14 +66,13 @@ class main_donate extends main_controller
 
 		$this->set_return_args_url($this->request->variable('return', 'body'));
 
-		// Prepare message for display
 		if ($this->get_donation_content_data($this->return_args_url))
 		{
 			$this->ppde_actions_vars->get_vars();
 			$this->donation_body = $this->ppde_actions_vars->replace_template_vars($this->ppde_entity_donation_pages->get_message_for_display());
 		}
 
-		// Fall back to a default message on the success/cancel pages when no custom content has been configured (missing page or blank content),
+		// Default message on success/cancel when no content is configured,
 		// so the donor never lands on an empty page.
 		if (trim((string) $this->donation_body) === '' && in_array($this->return_args_url, ['success', 'cancel'], true))
 		{
@@ -83,7 +81,7 @@ class main_donate extends main_controller
 
 		$sandbox = $this->use_sandbox();
 
-		// Resolve the default currency used for both the JS SDK and the order.
+		// Default currency used for both the JS SDK and the order.
 		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 		$currency_code = !empty($default_currency_data) ? $default_currency_data[0]['currency_iso_code'] : 'USD';
 
@@ -92,7 +90,6 @@ class main_donate extends main_controller
 			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
-			// REST / JS SDK data
 			'PPDE_CLIENT_ID'     => $this->client_factory->get_client_id($sandbox),
 			'PPDE_CURRENCY_CODE' => $currency_code,
 			'PPDE_CURRENCY_ID'   => (int) $this->config['ppde_default_currency'],
@@ -110,7 +107,6 @@ class main_donate extends main_controller
 
 		$this->ppde_controller_display_stats->display_stats();
 
-		// Send all data to the template file
 		return $this->send_data_to_template();
 	}
 

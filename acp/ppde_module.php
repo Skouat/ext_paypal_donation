@@ -54,20 +54,13 @@ class ppde_module
 
 		$this->module_info = $module_info;
 
-		// Load the module language file currently in use
 		$language->add_lang('acp_' . $mode, 'skouat/ppde');
 
-		// Get an instance of the admin controller
 		/** @type \skouat\ppde\controller\admin\admin_main $admin_controller */
 		$admin_controller = $phpbb_container->get('skouat.ppde.controller.admin.' . $mode);
-
-		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
 
-		// Set the page title for our ACP page
 		$this->page_title = 'PPDE_ACP_' . strtoupper($mode);
-
-		// Load a template from adm/style for our ACP page
 		$this->tpl_name = 'ppde_' . strtolower($mode);
 
 		$this->switch_mode($id, $mode, $admin_controller);
@@ -112,36 +105,27 @@ class ppde_module
 		/** @type \phpbb\request\request $request Request object */
 		$request = $phpbb_container->get('request');
 
-		// Requests vars
 		$action = $request->variable('action', '');
 
 		switch ($mode)
 		{
 			case 'currency':
 			case 'donation_pages':
-				// Get an instance of the entity
 				$entity = $phpbb_container->get('skouat.ppde.entity.' . $mode);
-
-				// Make the $u_action url available in entity
 				$entity->set_page_url($this->u_action);
 			// no break;
 			case 'transactions':
-				// Request the item ID
 				$admin_controller->set_item_id($request->variable($this->module_info['id_prefix_name'] . '_id', 0));
-
-				// Send module IDs to the controller
 				$admin_controller->set_hidden_fields($id, $mode, $action);
 
 				$this->do_action($admin_controller->get_action(), $admin_controller);
 			break;
 			case 'paypal_features':
 			case 'settings':
-				// Load the display handle in the admin controller
 				/** @type \skouat\ppde\controller\admin\settings_controller|\skouat\ppde\controller\admin\paypal_features_controller $admin_controller */
 				$admin_controller->display_settings();
 			break;
 			case 'overview':
-				// Load the display overview handle in the admin controller
 				/** @type \skouat\ppde\controller\admin\overview_controller $admin_controller */
 				$admin_controller->display_overview($action);
 			break;
@@ -171,13 +155,10 @@ class ppde_module
 			case 'change':
 			case 'edit':
 			case 'view':
-				// Set the page title for our ACP page
 				$this->page_title = $this->module_info['lang_key_prefix'] . 'CONFIG';
 
-				// Call the method in the admin controller based on the $action value
 				$controller->$action();
 
-				// Return to stop execution of this script
 				return;
 			case 'move_down':
 			case 'move_up':
@@ -188,22 +169,19 @@ class ppde_module
 				$controller->enable();
 			break;
 			case 'delete':
-				// Use a confirm box routine when deleting an item
+				// Confirm box before actually deleting an item.
 				if (confirm_box(true))
 				{
 					$controller->$action();
 					break;
 				}
 
-				// Request confirmation from the user to do the action for selected item
 				confirm_box(false, $language->lang($this->module_info['lang_key_prefix'] . 'CONFIRM_OPERATION'), build_hidden_fields($controller->get_hidden_fields()));
 
-				// Clear $action status
 				$controller->set_action($action);
 			break;
 		}
 
-		// Load the display handle in the admin controller
 		$controller->display();
 	}
 }

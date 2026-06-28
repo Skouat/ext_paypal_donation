@@ -51,7 +51,7 @@ class donor_donation_received extends donation
 			'ignore_users' => [],
 		], $options);
 
-		// Grab members that have permission to use extension.
+		// Members allowed to use the extension.
 		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use', false);
 		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : [];
 

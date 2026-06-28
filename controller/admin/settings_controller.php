@@ -90,15 +90,12 @@ class settings_controller extends admin_main
 	 */
 	public function display_settings(): void
 	{
-		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
 
-		// Create an array to collect errors that will be output to the user
 		$errors = [];
 
 		$this->submit_settings();
 
-		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
@@ -211,13 +208,10 @@ class settings_controller extends admin_main
 	 */
 	public function build_stat_position_select_menu($default): void
 	{
-		// List of positions allowed
 		$positions = ['top', 'bottom', 'both'];
 
-		// Process each menu item for pull-down
 		foreach ($positions as $position)
 		{
-			// Set output block vars for display in the template
 			$this->template->assign_block_vars('positions_options', [
 				'POSITION_NAME' => $position,
 				'S_DEFAULT'     => (string) $default === $position,

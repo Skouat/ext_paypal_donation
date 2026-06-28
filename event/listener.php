@@ -96,7 +96,6 @@ class listener implements EventSubscriberInterface
 				'PPDE_STATS_POSITION'     => $this->config['ppde_stats_position'],
 			]);
 
-			//Assign statistics vars to the template
 			$this->ppde_controller_display_stats->display_stats();
 		}
 	}

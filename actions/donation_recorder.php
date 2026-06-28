@@ -15,14 +15,12 @@ use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions as transactions_operator;
 
 /**
- * Records a completed PayPal donation and runs the related post-actions
- * (statistics, raised amount, auto-group and notifications).
+ * Records a completed PayPal donation and runs its post-actions (statistics,
+ * raised amount, auto-group and notifications).
  *
- * This logic is shared between the asynchronous webhook listener and the
- * synchronous capture endpoint, so a donation is recorded — and the donor
- * notified — as soon as either path succeeds, even if the PayPal webhook never
- * reaches the board. The idempotency guard prevents any double processing when
- * both paths run for the same transaction.
+ * Shared by the asynchronous webhook listener and the synchronous capture
+ * endpoint; the idempotency guard prevents double processing when both run for
+ * the same transaction.
  */
 class donation_recorder
 {
@@ -59,16 +57,14 @@ class donation_recorder
 	 * @param array $data       PPDE transaction data array (payment_status = 'Completed')
 	 * @param bool  $is_sandbox
 	 *
-	 * @return bool True if the donation was recorded; false if it was already completed or concurrently recorded by
-	 *              the other path.
+	 * @return bool True if recorded; false if already completed or concurrently recorded by the other path.
 	 * @access public
 	 */
 	public function record_completed(array $data, bool $is_sandbox): bool
 	{
 		$txn_id = $data['txn_id'] ?? '';
 
-		// Idempotency: a transaction already marked Completed is never reprocessed,
-		// whichever path (webhook or capture endpoint) recorded it first.
+		// A transaction already marked Completed is never reprocessed.
 		if ($txn_id === '' || $this->already_completed($txn_id))
 		{
 			return false;
@@ -143,9 +139,8 @@ class donation_recorder
 	}
 
 	/**
-	 * Shared post-logging recomputation used by both the donation and the
-	 * refund/reversal flows: refresh the sandbox context, resolve the donor,
-	 * then update the overview statistics and the raised amount.
+	 * Refresh sandbox context and donor, then update overview stats and raised
+	 * amount. Shared by the donation and refund/reversal flows.
 	 *
 	 * @param bool $is_sandbox
 	 *
@@ -164,10 +159,8 @@ class donation_recorder
 	/**
 	 * Adjust running totals after a refund/reversal has been logged.
 	 *
-	 * Shares the same recomputation as a completed donation, but a refund can
-	 * only decrease the totals: it never adds the donor to the group, and only
-	 * removes them if their cumulative amount dropped below the configured
-	 * minimum.
+	 * A refund only decreases the totals: it never adds the donor to the group,
+	 * and removes them only if their cumulative amount dropped below the minimum.
 	 *
 	 * @param bool $is_sandbox
 	 *

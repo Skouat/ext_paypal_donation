@@ -33,7 +33,6 @@ class v310_m3_currency_data extends \phpbb\db\migration\migration
 	 */
 	public function add_ppde_currency_data()
 	{
-		// Define data
 		$currency_data = [
 			[
 				'currency_name'     => 'U.S. Dollar',
@@ -93,7 +92,6 @@ class v310_m3_currency_data extends \phpbb\db\migration\migration
 			],
 		];
 
-		// Insert data
 		$this->db->sql_multi_insert($this->table_prefix . 'ppde_currency', $currency_data);
 	}
 }

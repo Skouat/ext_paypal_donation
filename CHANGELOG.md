@@ -22,6 +22,7 @@ and the releases are listed in reverse chronological order.
 - Change: Modernise donation progress bars (smoother colours, accessibility, RTL)
 - Change: `skouat.ppde.do_actions_completed_before` now fires from the donation recorder
 - Change: Errors logged in the admin log; Overview reports the OpenSSL version
+- Change: Global code review and clean-up (trim docblocks, remove redundant comments)
 - Remove: PayPal IPN listener, postback, TLS/cURL detection and obsolete configs
 - Remove: Obsolete "donation with errors" approval workflow and notification
 - Fix: Donors list sorting under strict SQL mode (ONLY_FULL_GROUP_BY)
