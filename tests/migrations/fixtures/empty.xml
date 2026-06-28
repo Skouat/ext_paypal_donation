@@ -4,5 +4,6 @@
         <column>transaction_id</column>
         <column>txn_id</column>
         <column>payment_status</column>
+        <column>txn_errors</column>
     </table>
 </dataset>

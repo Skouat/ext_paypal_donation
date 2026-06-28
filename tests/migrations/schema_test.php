@@ -61,6 +61,7 @@ class schema_test extends \phpbb_database_test_case
 		$row = [
 			'txn_id'         => 'TXN_UNIQUE_CHECK',
 			'payment_status' => 'Completed',
+			'txn_errors'     => '',
 		];
 
 		// First insertion succeeds.
