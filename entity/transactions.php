@@ -110,7 +110,7 @@ class transactions extends main
 				'item_settle_currency'     => ['name' => 'settle_currency', 'type' => 'string'],
 				'item_test_ipn'            => ['name' => 'test_ipn', 'type' => 'boolean'],
 				'item_txn_errors'          => ['name' => 'txn_errors', 'type' => 'string'],
-				'item_txn_errors_approved' => ['name' => 'txn_errors_approved', 'type' => 'string'],
+				'item_txn_errors_approved' => ['name' => 'txn_errors_approved', 'type' => 'boolean'],
 				'item_txn_id'              => ['name' => 'txn_id', 'type' => 'string'],
 				'item_txn_type'            => ['name' => 'txn_type', 'type' => 'string'],
 				'item_user_id'             => ['name' => 'user_id', 'type' => 'integer'],

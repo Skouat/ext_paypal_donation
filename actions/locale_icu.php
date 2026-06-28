@@ -87,6 +87,8 @@ class locale_icu
 	 */
 	private function get_locale_list()
 	{
+		$locale_ary = [];
+
 		$locale_items = \ResourceBundle::getLocales('');
 		foreach ($locale_items as $locale)
 		{
