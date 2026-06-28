@@ -10,13 +10,15 @@ and the releases are listed in reverse chronological order.
 
 - Add: Migration from PayPal IPN to the PayPal REST API (Orders API v2 + JS SDK)
 - Add: Webhook listener to record donations, with a synchronous capture fallback if the webhook is unreachable
-- Add: Refunds and reversals adjust stats, raised amount and donor totals
+- Add: Webhook handling for pending and denied captures (plus refunds/reversals)
+- Add: Unique `txn_id` index for idempotency
 - Add: REST API settings, "Test connection" button and webhook URL in PayPal Features
 - Add: New `skouat.ppde.donors_group_user_remove_before` event
 - Add: New `{DONATION_USED}` predefined variable for the donation pages
 - Add: Default message on the success/cancel pages when no content is configured
 - Add: docs/csp.md documenting the required CSP directives
 - Change: Now requires phpBB 3.3.11+, PHP 7.2+ and ext-openssl
+- Change: Currency formatting follows each user's language (new "Automatic" locale option)
 - Change: Notifications and auto group each have their own toggle
 - Change: Improved PayPal checkout page (label, brand name, no shipping)
 - Change: Modernise donation progress bars (smoother colours, accessibility, RTL)
