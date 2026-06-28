@@ -29,6 +29,7 @@ and the releases are listed in reverse chronological order.
 - Fix: Donors list sorting under strict SQL mode (ONLY_FULL_GROUP_BY)
 - Fix: Undefined array key warning when formatting a transaction with no settlement currency
 - Fix: Preserve the exact net amount returned by PayPal instead of recomputing it (gross − fee)
+- Fix: Donors list error when a donor's last transaction is concurrently removed
 
 ## 3.0.4 - 2021-04-20
 

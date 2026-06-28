@@ -125,6 +125,12 @@ class main_donor_list extends main_controller
 		{
 			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
 			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
+
+			if (empty($last_donation_data))
+			{
+				continue;
+			}
+
 			$currency_mc_data = $this->ppde_actions_currency->get_currency_data($last_donation_data[0]['mc_currency']);
 			$this->template->assign_block_vars('donorrow', [
 				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
