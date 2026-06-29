@@ -8,7 +8,6 @@
  *
  */
 
-
 namespace skouat\ppde\entity;
 
 trait transaction_data_builder
@@ -25,9 +24,8 @@ trait transaction_data_builder
 	 */
 	protected function build_transaction_data(array $overrides): array
 	{
-
-		$defaults = array_map(static function ($default) {
-			return $default;
+		$defaults = array_map(static function ($pair) {
+			return $pair[0];
 		}, $this->transaction_data_template());
 
 		return array_merge($defaults, $overrides);
