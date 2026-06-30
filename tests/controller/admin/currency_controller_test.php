@@ -32,16 +32,12 @@ class currency_controller_test extends \phpbb_test_case
 		$request = $this->createMock(\phpbb\request\request::class);
 		$this->template = $this->createMock(\phpbb\template\template::class);
 
-		// Setup a user mock with session data to prevent generate_link_hash() from failing
 		$user = $this->createMock(\phpbb\user::class);
 		$user->data = [
-			'user_id'    => 2,
-			'session_id' => 'mock_session_id_123',
+			'user_id'        => 2,
+			'session_id'     => 'mock_session_id_123',
+			'user_form_salt' => 'mock_form_salt_456',
 		];
-
-		// Assign the mock globally as phpBB functions (like generate_link_hash) read from the global $user
-		global $user_global;
-		$user_global = $user;
 		$GLOBALS['user'] = $user;
 
 		$this->controller = new \skouat\ppde\controller\admin\currency_controller(
@@ -62,7 +58,6 @@ class currency_controller_test extends \phpbb_test_case
 
 	protected function tearDown(): void
 	{
-		// Clean up global state
 		unset($GLOBALS['user']);
 		parent::tearDown();
 	}
@@ -70,9 +65,9 @@ class currency_controller_test extends \phpbb_test_case
 	public function test_currency_assign_template_vars_enabled_non_default()
 	{
 		$data = [
-			'currency_id'     => 2, // Default is 1, so this is NOT default
+			'currency_id'     => 2,
 			'currency_name'   => 'Euro',
-			'currency_enable' => 1, // Enabled, so the toggle button should display "DISABLE"
+			'currency_enable' => 1,
 		];
 
 		$method = new \ReflectionMethod($this->controller, 'currency_assign_template_vars');
@@ -93,9 +88,9 @@ class currency_controller_test extends \phpbb_test_case
 	public function test_currency_assign_template_vars_disabled_default()
 	{
 		$data = [
-			'currency_id'     => 1, // Default is 1, so this IS default
+			'currency_id'     => 1,
 			'currency_name'   => 'U.S. Dollar',
-			'currency_enable' => 0, // Disabled, so the toggle button should display "ENABLE"
+			'currency_enable' => 0,
 		];
 
 		$method = new \ReflectionMethod($this->controller, 'currency_assign_template_vars');
