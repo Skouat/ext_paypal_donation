@@ -31,7 +31,18 @@ class currency_controller_test extends \phpbb_test_case
 		$operator = $this->createMock(\skouat\ppde\operators\currency::class);
 		$request = $this->createMock(\phpbb\request\request::class);
 		$this->template = $this->createMock(\phpbb\template\template::class);
+
+		// Setup a user mock with session data to prevent generate_link_hash() from failing
 		$user = $this->createMock(\phpbb\user::class);
+		$user->data = [
+			'user_id'    => 2,
+			'session_id' => 'mock_session_id_123',
+		];
+
+		// Assign the mock globally as phpBB functions (like generate_link_hash) read from the global $user
+		global $user_global;
+		$user_global = $user;
+		$GLOBALS['user'] = $user;
 
 		$this->controller = new \skouat\ppde\controller\admin\currency_controller(
 			$config,
@@ -49,6 +60,13 @@ class currency_controller_test extends \phpbb_test_case
 		$this->controller->set_page_url('adm/style/index.php');
 	}
 
+	protected function tearDown(): void
+	{
+		// Clean up global state
+		unset($GLOBALS['user']);
+		parent::tearDown();
+	}
+
 	public function test_currency_assign_template_vars_enabled_non_default()
 	{
 		$data = [
@@ -62,13 +80,12 @@ class currency_controller_test extends \phpbb_test_case
 
 		$this->template->expects($this->once())
 			->method('assign_block_vars')
-			->with('currency', $this->callback(function ($vars) {
+			->with('currency', $this->callback(function($vars) {
 				return $vars['CURRENCY_NAME'] === 'Euro'
 					&& $vars['CURRENCY_ENABLED'] === true
 					&& $vars['L_ENABLE_DISABLE'] === 'DISABLE'
 					&& $vars['S_DEFAULT'] === false;
-			}))
-		;
+			}));
 
 		$method->invoke($this->controller, $data);
 	}
@@ -86,13 +103,12 @@ class currency_controller_test extends \phpbb_test_case
 
 		$this->template->expects($this->once())
 			->method('assign_block_vars')
-			->with('currency', $this->callback(function ($vars) {
+			->with('currency', $this->callback(function($vars) {
 				return $vars['CURRENCY_NAME'] === 'U.S. Dollar'
 					&& $vars['CURRENCY_ENABLED'] === false
 					&& $vars['L_ENABLE_DISABLE'] === 'ENABLE'
 					&& $vars['S_DEFAULT'] === true;
-			}))
-		;
+			}));
 
 		$method->invoke($this->controller, $data);
 	}
