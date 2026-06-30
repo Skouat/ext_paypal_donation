@@ -81,10 +81,10 @@ class webhook_listener_test extends \phpbb_test_case
 	{
 		// No supplementary_data => order_id '' => fetch_parties() short-circuits (no network).
 		$resource = [
-			'id'          => 'CAP123',
-			'amount'      => ['value' => '20.00', 'currency_code' => 'USD'],
-			'custom_id'   => 'uid_7_1700000000',
-			'create_time' => '2026-01-01T00:00:00Z',
+			'id'                          => 'CAP123',
+			'amount'                      => ['value' => '20.00', 'currency_code' => 'USD'],
+			'custom_id'                   => 'uid_7_1700000000',
+			'create_time'                 => '2026-01-01T00:00:00Z',
 			'seller_receivable_breakdown' => [
 				'paypal_fee'        => ['value' => '1.00'],
 				'net_amount'        => ['value' => '19.00'],
