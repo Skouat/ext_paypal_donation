@@ -59,4 +59,35 @@ class main_display_stats_test extends \phpbb_test_case
 		$stats = $this->get_stats(['ppde_goal' => 1000, 'ppde_raised' => 500]);
 		$this->assertSame('PPDE_DONATE_GOAL_RAISE', $stats->get_ppde_goal_langkey('USD', '$', true));
 	}
+
+	public function test_raised_langkey_none()
+	{
+		$stats = $this->get_stats(['ppde_raised' => 0]);
+		$this->assertSame('PPDE_DONATE_NOT_RECEIVED', $stats->get_ppde_raised_langkey('USD', '$', true));
+	}
+
+	public function test_raised_langkey_received()
+	{
+		$stats = $this->get_stats(['ppde_raised' => 250]);
+		$this->assertSame('PPDE_DONATE_RECEIVED', $stats->get_ppde_raised_langkey('USD', '$', true));
+	}
+
+	public function test_used_langkey_none()
+	{
+		$stats = $this->get_stats(['ppde_used' => 0, 'ppde_raised' => 100]);
+		$this->assertSame('PPDE_DONATE_NOT_USED', $stats->get_ppde_used_langkey('USD', '$', true));
+	}
+
+	public function test_used_langkey_partial()
+	{
+		$stats = $this->get_stats(['ppde_used' => 40, 'ppde_raised' => 100]);
+		$this->assertSame('PPDE_DONATE_USED', $stats->get_ppde_used_langkey('USD', '$', true));
+	}
+
+	public function test_used_langkey_exceeded()
+	{
+		// used >= raised => all donations consumed.
+		$stats = $this->get_stats(['ppde_used' => 100, 'ppde_raised' => 100]);
+		$this->assertSame('PPDE_DONATE_USED_EXCEEDED', $stats->get_ppde_used_langkey('USD', '$', true));
+	}
 }

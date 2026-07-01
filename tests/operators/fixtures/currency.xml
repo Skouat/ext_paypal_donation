@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <table name="phpbb_ppde_currency">
+        <column>currency_id</column>
+        <column>currency_name</column>
+        <column>currency_iso_code</column>
+        <column>currency_symbol</column>
+        <column>currency_on_left</column>
+        <column>currency_enable</column>
+        <column>currency_order</column>
+        <row>
+            <value>1</value>
+            <value>Dollar</value>
+            <value>USD</value>
+            <value>$</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>Euro</value>
+            <value>EUR</value>
+            <value>E</value>
+            <value>0</value>
+            <value>1</value>
+            <value>2</value>
+        </row>
+        <row>
+            <value>3</value>
+            <value>Pound</value>
+            <value>GBP</value>
+            <value>P</value>
+            <value>1</value>
+            <value>1</value>
+            <value>3</value>
+        </row>
+    </table>
+</dataset>
