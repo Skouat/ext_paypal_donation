@@ -19,8 +19,6 @@ class donation_pages_bbcode_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		// OPTION_FLAG_* constants are defined by phpBB's constants.php,
-		// which the bootstrap loads. Guard for isolated runs just in case.
 		if (!defined('OPTION_FLAG_BBCODE'))
 		{
 			define('OPTION_FLAG_BBCODE', 1);
@@ -37,12 +35,12 @@ class donation_pages_bbcode_test extends \phpbb_test_case
 		$this->entity = new \skouat\ppde\entity\donation_pages(
 			$config, $db, $language, $user, 'phpbb_ppde_donation_pages'
 		);
+
+		$data = new \ReflectionProperty($this->entity, 'data');
+		$data->setAccessible(true);
+		$data->setValue($this->entity, ['page_content_bbcode_options' => 0]);
 	}
 
-	/**
-	 * A fresh entity has no option set. Reparsing is skipped because
-	 * page_content is empty, so no phpBB text function is called.
-	 */
 	public function test_all_flags_off_by_default()
 	{
 		$this->assertFalse($this->entity->message_bbcode_enabled());
@@ -82,7 +80,6 @@ class donation_pages_bbcode_test extends \phpbb_test_case
 		$this->entity->message_enable_bbcode();
 		$this->entity->message_enable_bbcode();
 
-		// Enabling twice must not corrupt the bitfield.
 		$this->assertTrue($this->entity->message_bbcode_enabled());
 
 		$this->entity->message_disable_bbcode();
@@ -106,7 +103,6 @@ class donation_pages_bbcode_test extends \phpbb_test_case
 
 	public function test_check_required_field()
 	{
-		// No title, no lang_id => required fields missing.
 		$this->assertTrue($this->entity->check_required_field());
 
 		$this->entity->set_name('donation_body');
