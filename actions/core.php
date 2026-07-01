@@ -15,6 +15,7 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
 use phpbb\user;
+use skouat\ppde\ppde_constants;
 
 class core
 {
@@ -488,7 +489,7 @@ class core
 	 */
 	public function payment_status_is_completed(): bool
 	{
-		return $this->transaction_data['payment_status'] === 'Completed';
+		return $this->transaction_data['payment_status'] === ppde_constants::STATUS_COMPLETED;
 	}
 
 	/**

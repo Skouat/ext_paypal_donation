@@ -21,6 +21,7 @@ use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
 use PaypalServerSdkLib\Exceptions\ApiException;
 use skouat\ppde\api\paypal\order_party_extractor;
 use skouat\ppde\entity\transaction_data_builder;
+use skouat\ppde\ppde_constants;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -304,7 +305,7 @@ class order_controller extends main_controller
 
 		// Fallback: record now (idempotently) in case the webhook never reaches the board (WAF, anti-bot…).
 		// Failures are swallowed so the donor's redirect is never broken — the webhook stays authoritative.
-		if ($status === 'COMPLETED')
+		if ($status === ppde_constants::PAYPAL_ORDER_COMPLETED)
 		{
 			try
 			{
@@ -400,7 +401,7 @@ class order_controller extends main_controller
 			'payer_email'       => $payer['email'],
 			'payer_id'          => $payer['payer_id'],
 			'payment_date'      => $payment_date,
-			'payment_status'    => 'Completed',
+			'payment_status'    => ppde_constants::STATUS_COMPLETED,
 			'receiver_id'       => $payee['merchant_id'],
 			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
@@ -408,7 +409,7 @@ class order_controller extends main_controller
 			'settle_currency'   => (string) ($this->safe_call($receivable_obj, 'getCurrencyCode') ?? ''),
 			'test_ipn'          => $is_sandbox,
 			'txn_id'            => (string) ($this->safe_call($capture, 'getId') ?? ''),
-			'txn_type'          => 'ppde_rest_donation',
+			'txn_type'          => ppde_constants::TXN_TYPE_REST_DONATION,
 		]);
 	}
 

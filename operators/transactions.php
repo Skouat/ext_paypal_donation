@@ -12,6 +12,7 @@ namespace skouat\ppde\operators;
 
 use phpbb\db\driver\driver_interface;
 use skouat\ppde\entity\transaction_data_builder;
+use skouat\ppde\ppde_constants;
 
 class transactions
 {
@@ -79,7 +80,7 @@ class transactions
 			'SELECT'   => 'txn.user_id, txn.mc_currency',
 			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
 			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
-							AND txn.payment_status = 'Completed'
+							AND txn.payment_status = '" . ppde_constants::STATUS_COMPLETED . "'
 							AND txn.test_ipn = 0",
 			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
 		];
@@ -383,7 +384,7 @@ class transactions
 			case 'ppde_transactions_count':
 			case 'ppde_transactions_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('txn_id');
-				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
+				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = '" . ppde_constants::STATUS_COMPLETED . "' AND txn.test_ipn = " . (int) $test_ipn;
 			break;
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
@@ -522,6 +523,6 @@ class transactions
 	 */
 	public function is_txn_completed(string $txn_id): bool
 	{
-		return $this->get_payment_status_by_txn_id($txn_id) === 'Completed';
+		return $this->get_payment_status_by_txn_id($txn_id) === ppde_constants::STATUS_COMPLETED;
 	}
 }

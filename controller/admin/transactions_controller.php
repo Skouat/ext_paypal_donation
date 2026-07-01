@@ -23,6 +23,7 @@ use skouat\ppde\actions\currency;
 use skouat\ppde\entity\transaction_data_builder;
 use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions;
+use skouat\ppde\ppde_constants;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -557,10 +558,10 @@ class transactions_controller extends admin_main
 			'net_amount'        => 0.0, // Computed later in core_actions::log_to_db()
 			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
 			'payment_date'      => $payment_date_time,
-			'payment_status'    => 'Completed',
+			'payment_status'    => ppde_constants::STATUS_COMPLETED,
 			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
 			'txn_id'            => 'PPDE' . gen_rand_string(13),
-			'txn_type'          => 'ppde_manual_donation',
+			'txn_type'          => ppde_constants::TXN_TYPE_MANUAL_DONATION,
 			'user_id'           => $user_id,
 		]);
 	}

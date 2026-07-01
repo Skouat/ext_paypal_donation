@@ -24,6 +24,7 @@ use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
 use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions as transactions_operator;
+use skouat\ppde\ppde_constants;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -203,19 +204,19 @@ class webhook_listener
 	{
 		switch ($event['event_type'])
 		{
-			case 'PAYMENT.CAPTURE.COMPLETED':
-				return $this->handle_capture($event['resource'], 'Completed', $is_sandbox);
+			case ppde_constants::EVENT_CAPTURE_COMPLETED:
+				return $this->handle_capture($event['resource'], ppde_constants::STATUS_COMPLETED, $is_sandbox);
 
-			case 'PAYMENT.CAPTURE.PENDING':
-				return $this->handle_capture($event['resource'], 'Pending', $is_sandbox);
+			case ppde_constants::EVENT_CAPTURE_PENDING:
+				return $this->handle_capture($event['resource'], ppde_constants::STATUS_PENDING, $is_sandbox);
 
-			case 'PAYMENT.CAPTURE.REFUNDED':
-				return $this->handle_capture_refunded($event['resource'], 'Refunded', $is_sandbox);
+			case ppde_constants::EVENT_CAPTURE_REFUNDED:
+				return $this->handle_capture_refunded($event['resource'], ppde_constants::STATUS_REFUNDED, $is_sandbox);
 
-			case 'PAYMENT.CAPTURE.REVERSED':
-				return $this->handle_capture_refunded($event['resource'], 'Reversed', $is_sandbox);
+			case ppde_constants::EVENT_CAPTURE_REVERSED:
+				return $this->handle_capture_refunded($event['resource'], ppde_constants::STATUS_REVERSED, $is_sandbox);
 
-			case 'PAYMENT.CAPTURE.DENIED':
+			case ppde_constants::EVENT_CAPTURE_DENIED:
 				return $this->handle_capture_denied($event['resource'], $is_sandbox);
 
 			// Any other event type is acknowledged (HTTP 200) but not processed.
@@ -249,7 +250,7 @@ class webhook_listener
 		{
 			$data = $this->map_capture($resource, $payment_status, $is_sandbox);
 
-			if ($payment_status === 'Completed')
+			if ($payment_status === ppde_constants::STATUS_COMPLETED)
 			{
 				$this->donation_recorder->record_completed($data, $is_sandbox);
 			}
@@ -325,7 +326,7 @@ class webhook_listener
 
 		return $this->build_transaction_data([
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
-			'confirmed'         => $payment_status === 'Completed',
+			'confirmed'         => $payment_status === ppde_constants::STATUS_COMPLETED,
 			'custom'            => $custom,
 			'exchange_rate'     => $breakdown['exchange_rate']['value'] ?? '',
 			'first_name'        => $payer['first_name'],
@@ -347,7 +348,7 @@ class webhook_listener
 			'settle_currency'   => (string) ($receivable['currency_code'] ?? ''),
 			'test_ipn'          => $is_sandbox,
 			'txn_id'            => $resource['id'] ?? '',
-			'txn_type'          => 'ppde_rest_donation',
+			'txn_type'          => ppde_constants::TXN_TYPE_REST_DONATION,
 		]);
 	}
 
@@ -561,7 +562,7 @@ class webhook_listener
 			'payment_status' => $payment_status,
 			'test_ipn'       => $is_sandbox,
 			'txn_id'         => $resource['id'] ?? '',
-			'txn_type'       => 'ppde_rest_refund',
+			'txn_type'       => ppde_constants::TXN_TYPE_REST_REFUND,
 		]);
 	}
 
@@ -587,14 +588,14 @@ class webhook_listener
 
 		$current_status = $this->ppde_operator_transaction->get_payment_status_by_txn_id($txn_id);
 
-		if ($current_status === 'Denied' || $current_status === 'Completed')
+		if ($current_status === ppde_constants::STATUS_DENIED || $current_status === ppde_constants::STATUS_COMPLETED)
 		{
 			return true;
 		}
 
 		try
 		{
-			$data = $this->map_capture($resource, 'Denied', $is_sandbox);
+			$data = $this->map_capture($resource, ppde_constants::STATUS_DENIED, $is_sandbox);
 			$this->ppde_actions->log_to_db($data);
 
 			$this->log->add('admin', ANONYMOUS, $this->user->ip, 'LOG_PPDE_CAPTURE_DENIED', time(), [$txn_id]);
