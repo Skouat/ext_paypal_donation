@@ -69,4 +69,17 @@ class client_factory_test extends \phpbb_test_case
 		$this->assertSame('SANDBOX_CLIENT_ID_789', $sandbox[0]);
 		$this->assertSame('SANDBOX_SECRET_abc', $sandbox[1]);
 	}
+
+	public function test_test_connection_returns_missing_when_credentials_empty()
+	{
+		$this->config->set('ppde_rest_client_id', '');
+		$this->config->set('ppde_rest_secret', '');
+
+		$result = $this->factory->test_connection(false);
+
+		$this->assertFalse($result['success']);
+		$this->assertSame('missing', $result['reason']);
+		$this->assertSame(0, $result['http_code']);
+		$this->assertSame('', $result['detail']);
+	}
 }
