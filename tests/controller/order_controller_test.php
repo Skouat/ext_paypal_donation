@@ -37,7 +37,6 @@ class order_controller_test extends \phpbb_test_case
 
 	public function test_soft_descriptor_keeps_allowed_chars()
 	{
-		// '&' is removed, '*' is kept, extra spaces collapsed.
 		$this->assertSame('A B * C', $this->invoke('build_soft_descriptor', ['A & B * C']));
 	}
 
@@ -56,16 +55,13 @@ class order_controller_test extends \phpbb_test_case
 
 		$result = $this->invoke('build_soft_descriptor', ['Forêt']);
 
-		// Depending on the system locale, 'ê' is either transliterated to 'e'
-		// ("Foret") or dropped by //IGNORE ("Fort"). What is GUARANTEED is that
-		// no disallowed character remains: only [A-Za-z0-9 .*-] survive.
+		// Locale-dependent: 'ê' becomes 'e' or is dropped; only allowed chars survive.
 		$this->assertSame($result, preg_replace('/[^A-Za-z0-9 .*-]/', '', $result));
 		$this->assertContains($result, ['Foret', 'Fort']);
 	}
 
 	public function test_soft_descriptor_empty_when_all_stripped()
 	{
-		// Emojis have no ASCII transliteration and will be completely stripped.
 		$this->assertSame('', $this->invoke('build_soft_descriptor', ['😀🚀🎉']));
 	}
 

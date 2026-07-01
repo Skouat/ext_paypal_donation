@@ -59,7 +59,6 @@ class core_user_id_test extends \phpbb_test_case
 
 		$data = $this->read_transaction_data();
 
-		// Loose comparison: extract yields strings, validate may set the int ANONYMOUS.
 		$this->assertEquals($expected, $data['user_id']);
 	}
 

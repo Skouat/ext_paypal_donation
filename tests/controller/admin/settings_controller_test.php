@@ -64,7 +64,6 @@ class settings_controller_test extends \phpbb_test_case
 	{
 		$template = $this->createMock(\phpbb\template\template::class);
 
-		// We override the internal template property to assert block assignments
 		$property = new \ReflectionProperty($this->controller, 'template');
 		$property->setAccessible(true);
 		$property->setValue($this->controller, $template);
@@ -77,7 +76,6 @@ class settings_controller_test extends \phpbb_test_case
 			})
 		;
 
-		// Default position is "bottom"
 		$this->controller->build_stat_position_select_menu('bottom');
 
 		$this->assertSame('positions_options', $calls[0]['block']);

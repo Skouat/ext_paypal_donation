@@ -23,15 +23,15 @@ class overview_controller_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		// We assume the extension was installed exactly 10 days ago (10 * 86400 seconds)
+		// Installed exactly 10 days ago, so per-day averages are deterministic.
 		$install_date = time() - (10 * 86400);
 
 		$this->config = new \phpbb\config\config([
-			'ppde_install_date'              => $install_date,
-			'ppde_transactions_count'        => 50,
-			'ppde_known_donors_count'        => 30,
-			'ppde_anonymous_donors_count'    => 10,
-			'ppde_first_start'               => 1,
+			'ppde_install_date'           => $install_date,
+			'ppde_transactions_count'     => 50,
+			'ppde_known_donors_count'     => 30,
+			'ppde_anonymous_donors_count' => 10,
+			'ppde_first_start'            => 1,
 		]);
 
 		$auth = $this->createMock(\phpbb\auth\auth::class);
@@ -70,7 +70,6 @@ class overview_controller_test extends \phpbb_test_case
 		$method = new \ReflectionMethod($this->controller, 'get_install_days');
 		$method->setAccessible(true);
 
-		// Must return exactly 10.0 (float) based on our mocked install date
 		$this->assertEquals(10.0, $method->invoke($this->controller), '', 0.01);
 	}
 
@@ -89,13 +88,11 @@ class overview_controller_test extends \phpbb_test_case
 		$method = new \ReflectionMethod($this->controller, 'per_day_stats');
 		$method->setAccessible(true);
 
-		// Asserts that the daily activity average is computed and formatted with 2 decimals
 		$this->assertSame($expected_average, $method->invoke($this->controller, $config_key));
 	}
 
 	public function test_ppde_first_start_runs_diagnostics_on_enable()
 	{
-		// First start is 1, so the controller must check Intl requirements
 		$this->locale->expects($this->once())->method('set_intl_info');
 		$this->locale->expects($this->once())->method('set_intl_detected');
 
@@ -103,16 +100,13 @@ class overview_controller_test extends \phpbb_test_case
 		$method->setAccessible(true);
 		$method->invoke($this->controller);
 
-		// Asserts that first start flag is turned off after run
 		$this->assertSame('0', $this->config['ppde_first_start']);
 	}
 
 	public function test_ppde_first_start_does_nothing_if_already_initialized()
 	{
-		// Already initialized
 		$this->config->set('ppde_first_start', '0');
 
-		// Diagnostics must never be executed again
 		$this->locale->expects($this->never())->method('set_intl_info');
 		$this->locale->expects($this->never())->method('set_intl_detected');
 
@@ -123,7 +117,6 @@ class overview_controller_test extends \phpbb_test_case
 
 	public function test_prerequisites_detection_in_environment()
 	{
-		// We assert basic PHP execution environment conditions (always true in CI)
 		$this->assertTrue(extension_loaded('openssl'), 'OpenSSL extension must be loaded.');
 		$this->assertTrue(extension_loaded('curl'), 'cURL extension must be loaded.');
 	}

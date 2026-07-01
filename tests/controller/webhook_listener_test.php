@@ -79,7 +79,7 @@ class webhook_listener_test extends \phpbb_test_case
 
 	public function test_map_capture_completed()
 	{
-		// No supplementary_data => order_id '' => fetch_parties() short-circuits (no network).
+		// order_id absent => fetch_parties() short-circuits (no network).
 		$resource = [
 			'id'                          => 'CAP123',
 			'amount'                      => ['value' => '20.00', 'currency_code' => 'USD'],

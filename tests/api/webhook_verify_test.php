@@ -28,15 +28,15 @@ class webhook_verify_test extends \phpbb_test_case
 	public function cert_url_data()
 	{
 		return [
-			'apex paypal.com'      => ['https://api.paypal.com/cert.pem', true],
-			'www subdomain'        => ['https://www.paypal.com/cert.pem', true],
-			'sandbox subdomain'    => ['https://www.sandbox.paypal.com/cert.pem', true],
-			'http not https'       => ['http://www.paypal.com/cert.pem', false],
-			'lookalike domain'     => ['https://paypal.com.evil.com/cert.pem', false],
-			'prefixed domain'      => ['https://evilpaypal.com/cert.pem', false],
-			'not paypal'           => ['https://example.com/cert.pem', false],
-			'empty string'         => ['', false],
-			'no scheme'            => ['www.paypal.com/cert.pem', false],
+			'apex paypal.com'   => ['https://api.paypal.com/cert.pem', true],
+			'www subdomain'     => ['https://www.paypal.com/cert.pem', true],
+			'sandbox subdomain' => ['https://www.sandbox.paypal.com/cert.pem', true],
+			'http not https'    => ['http://www.paypal.com/cert.pem', false],
+			'lookalike domain'  => ['https://paypal.com.evil.com/cert.pem', false],
+			'prefixed domain'   => ['https://evilpaypal.com/cert.pem', false],
+			'not paypal'        => ['https://example.com/cert.pem', false],
+			'empty string'      => ['', false],
+			'no scheme'         => ['www.paypal.com/cert.pem', false],
 		];
 	}
 

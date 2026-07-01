@@ -30,13 +30,10 @@ class build_data_ary_test extends \phpbb_test_case
 	}
 
 	/**
-	 * Regression guard for the build_transaction_data() bug: feeding the
-	 * builder's defaults into build_data_ary() must never produce the literal
-	 * string "Array" for an un-overridden field.
+	 * Regression guard: no field must ever be cast from an array to "Array".
 	 */
 	public function test_build_data_ary_has_no_array_artifacts()
 	{
-		// Use the trait the same way the production code does.
 		$builder = new class {
 			use \skouat\ppde\entity\transaction_data_builder;
 
@@ -54,7 +51,6 @@ class build_data_ary_test extends \phpbb_test_case
 			$this->assertIsNotArray($value, "Field '$field' should be scalar.");
 		}
 
-		// Spot-check a few typed defaults.
 		$this->assertSame('', $data['memo']);
 		$this->assertSame('', $data['payer_status']);
 		$this->assertSame(0.0, $data['mc_gross']);

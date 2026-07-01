@@ -27,22 +27,18 @@ class currency_entity_test extends \phpbb_test_case
 
 	public function test_check_required_fields()
 	{
-		// Set complete valid data
 		$this->entity->set_name('Euro');
 		$this->entity->set_iso_code('EUR');
 		$this->entity->set_symbol('€');
 		$this->assertFalse($this->entity->check_required_field());
 
-		// Missing name
 		$this->entity->set_name('');
 		$this->assertTrue($this->entity->check_required_field());
 
-		// Restore name but miss ISO
 		$this->entity->set_name('Euro');
 		$this->entity->set_iso_code('');
 		$this->assertTrue($this->entity->check_required_field());
 
-		// Restore ISO but miss symbol
 		$this->entity->set_iso_code('EUR');
 		$this->entity->set_symbol('');
 		$this->assertTrue($this->entity->check_required_field());
@@ -50,17 +46,13 @@ class currency_entity_test extends \phpbb_test_case
 
 	public function test_symbol_html_entity_handling()
 	{
-		// Encodage HTML lors du set
 		$this->entity->set_symbol('€');
 
-		// L'entité stocke la version convertie en entités HTML
 		$property = new \ReflectionProperty($this->entity, 'data');
 		$property->setAccessible(true);
 		$data = $property->getValue($this->entity);
 
 		$this->assertSame('&euro;', $data['currency_symbol']);
-
-		// Le getter décode automatiquement pour l'affichage
 		$this->assertSame('€', $this->entity->get_symbol());
 	}
 

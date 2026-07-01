@@ -19,13 +19,11 @@ class transactions_test extends \phpbb_database_test_case
 	protected $operator;
 	protected $table_prefix;
 
-	// Tells the framework to run PPDE migrations => the tables exist.
 	static protected function setup_extensions()
 	{
 		return ['skouat/ppde'];
 	}
 
-	// Loads our sample rows into the database before the tests.
 	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/fixtures/transactions.xml');
@@ -38,7 +36,6 @@ class transactions_test extends \phpbb_database_test_case
 		global $table_prefix;
 		$this->table_prefix = $table_prefix;
 
-		// new_dbal() gives us a REAL database connection (not a mock).
 		$db = $this->new_dbal();
 		$this->operator = new \skouat\ppde\operators\transactions(
 			$db,
@@ -54,7 +51,6 @@ class transactions_test extends \phpbb_database_test_case
 
 	public function test_get_payment_status_unknown()
 	{
-		// Unknown txn => empty string.
 		$this->assertSame('', $this->operator->get_payment_status_by_txn_id('DOES_NOT_EXIST'));
 	}
 

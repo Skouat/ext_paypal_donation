@@ -44,7 +44,7 @@ class transaction_data_builder_test extends \phpbb_test_case
 	{
 		$data = $this->builder->build([]);
 
-		// Scalar defaults, NOT [default, type] pairs (regression guard).
+		// Regression guard: scalar defaults, not [default, type] pairs.
 		$this->assertSame('', $data['business']);
 		$this->assertSame(0.0, $data['mc_gross']);
 		$this->assertFalse($data['confirmed']);

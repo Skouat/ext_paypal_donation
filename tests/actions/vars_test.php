@@ -36,10 +36,7 @@ class vars_test extends \phpbb_test_case
 		$language = $this->createMock(\phpbb\language\language::class);
 
 		$user = $this->createMock(\phpbb\user::class);
-		$user->data = [
-			'user_id'  => 42,
-			'username' => 'TestDonor',
-		];
+		$user->data = ['user_id' => 42, 'username' => 'TestDonor'];
 
 		$core_action = $this->createMock(\skouat\ppde\actions\core::class);
 		$core_action->method('is_in_admin')->willReturn(false);
@@ -50,8 +47,6 @@ class vars_test extends \phpbb_test_case
 																					 'currency_symbol'   => '€',
 																					 'currency_on_left'  => false,
 																				 ]]);
-
-		// Simulate the currency formatting output
 		$this->currency_action->method('format_currency')->willReturnCallback(function($amount) {
 			return $amount . ' €';
 		});
@@ -82,7 +77,6 @@ class vars_test extends \phpbb_test_case
 			'{DONATION_USED}'   => '50 €',
 		];
 
-		// Transform resolved array to a flat key-value array for easier testing
 		$flat = [];
 		foreach ($resolved as $item)
 		{

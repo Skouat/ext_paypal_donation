@@ -24,9 +24,8 @@ class currency_operator_test extends \phpbb_test_case
 		$cache = $this->createMock(\phpbb\cache\driver\driver_interface::class);
 		$this->db = $this->createMock(\phpbb\db\driver\driver_interface::class);
 
-		// We mock sql_build_query to see what sql_ary is passed to it
+		// Capture the sql_ary as JSON so the test can inspect it.
 		$this->db->method('sql_build_query')->willReturnCallback(function($type, $sql_ary) {
-			// Simply return a serialized representation of the query array for assertion
 			return json_encode($sql_ary);
 		});
 

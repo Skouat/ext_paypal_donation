@@ -14,8 +14,6 @@ class currency_test extends \phpbb_test_case
 {
 	/** @var \skouat\ppde\actions\currency */
 	protected $currency;
-
-	// Mocks are now PROPERTIES so every test can configure them.
 	protected $entity;
 	protected $locale;
 	protected $operator;
@@ -27,13 +25,10 @@ class currency_test extends \phpbb_test_case
 
 		$this->entity = $this->getMockBuilder('\skouat\ppde\entity\currency')
 			->disableOriginalConstructor()->getMock();
-
 		$this->locale = $this->getMockBuilder('\skouat\ppde\actions\locale_icu')
 			->disableOriginalConstructor()->getMock();
-
 		$this->operator = $this->getMockBuilder('\skouat\ppde\operators\currency')
 			->disableOriginalConstructor()->getMock();
-
 		$this->template = $this->getMockBuilder('\phpbb\template\template')
 			->disableOriginalConstructor()->getMock();
 
@@ -44,10 +39,6 @@ class currency_test extends \phpbb_test_case
 			$this->template
 		);
 	}
-
-	// =====================================================================
-	// 1) currency_on_left()  — already covered
-	// =====================================================================
 
 	public function currency_on_left_data()
 	{
@@ -66,73 +57,44 @@ class currency_test extends \phpbb_test_case
 		$this->assertSame($expected, $this->currency->currency_on_left($value, $symbol, $on_left));
 	}
 
-	// =====================================================================
-	// 2) get_currency_data()  — 4 branches
-	// =====================================================================
-
 	public function test_get_currency_data_empty_iso()
 	{
-		// Branch 1: empty ISO => fallback built immediately (no DB lookup).
-		$expected = [[
-						 'currency_iso_code' => '',
-						 'currency_symbol'   => '',
-						 'currency_on_left'  => false,
-					 ]];
+		$expected = [['currency_iso_code' => '', 'currency_symbol' => '', 'currency_on_left' => false]];
 
 		$this->assertSame($expected, $this->currency->get_currency_data(''));
 	}
 
 	public function test_get_currency_data_found()
 	{
-		// Branch 3: currency exists AND has data => that data is returned.
-		$db_data = [[
-						'currency_iso_code' => 'USD',
-						'currency_symbol'   => '$',
-						'currency_on_left'  => true,
-					]];
+		$db_data = [['currency_iso_code' => 'USD', 'currency_symbol' => '$', 'currency_on_left' => true]];
 
-		$this->entity->method('get_id')->willReturn(1);          // found
-		$this->entity->method('get_data')->willReturn($db_data); // has data
+		$this->entity->method('get_id')->willReturn(1);
+		$this->entity->method('get_data')->willReturn($db_data);
 
 		$this->assertSame($db_data, $this->currency->get_currency_data('USD'));
 	}
 
 	public function test_get_currency_data_not_found()
 	{
-		// Branch 2: id = 0 (not found) => fallback using the ISO code.
 		$this->entity->method('get_id')->willReturn(0);
 
-		$expected = [[
-						 'currency_iso_code' => 'XYZ',
-						 'currency_symbol'   => 'XYZ',
-						 'currency_on_left'  => false,
-					 ]];
+		$expected = [['currency_iso_code' => 'XYZ', 'currency_symbol' => 'XYZ', 'currency_on_left' => false]];
 
 		$this->assertSame($expected, $this->currency->get_currency_data('XYZ'));
 	}
 
 	public function test_get_currency_data_found_but_empty()
 	{
-		// Branch 4: id found but get_data() returns nothing => fallback.
 		$this->entity->method('get_id')->willReturn(1);
 		$this->entity->method('get_data')->willReturn([]);
 
-		$expected = [[
-						 'currency_iso_code' => 'EUR',
-						 'currency_symbol'   => 'EUR',
-						 'currency_on_left'  => false,
-					 ]];
+		$expected = [['currency_iso_code' => 'EUR', 'currency_symbol' => 'EUR', 'currency_on_left' => false]];
 
 		$this->assertSame($expected, $this->currency->get_currency_data('EUR'));
 	}
 
-	// =====================================================================
-	// 3) format_currency()  — 2 branches
-	// =====================================================================
-
 	public function test_format_currency_without_locale()
 	{
-		// Locale NOT configured => basic formatting via currency_on_left().
 		$this->locale->method('is_locale_configured')->willReturn(false);
 
 		$this->assertSame('$20.00', $this->currency->format_currency(20, 'USD', '$', true));
@@ -140,17 +102,12 @@ class currency_test extends \phpbb_test_case
 
 	public function test_format_currency_with_locale()
 	{
-		// Locale configured => delegate to the ICU formatter (mocked).
 		$this->locale->method('is_locale_configured')->willReturn(true);
 		$this->locale->method('numfmt_create')->willReturn(null);
 		$this->locale->method('numfmt_format_currency')->willReturn('US$20.00');
 
 		$this->assertSame('US$20.00', $this->currency->format_currency(20, 'USD', '$', true));
 	}
-
-	// =====================================================================
-	// 4) build_currency_select_menu()  — side effect on the template (advanced)
-	// =====================================================================
 
 	public function test_build_currency_select_menu()
 	{
@@ -161,8 +118,6 @@ class currency_test extends \phpbb_test_case
 
 		$this->entity->method('get_data')->willReturn($items);
 
-		// Capture every call to assign_block_vars() into $calls,
-		// instead of using the deprecated withConsecutive().
 		$calls = [];
 		$this->template->expects($this->exactly(2))
 			->method('assign_block_vars')
@@ -170,10 +125,8 @@ class currency_test extends \phpbb_test_case
 				$calls[] = ['block' => $block, 'vars' => $vars];
 			});
 
-		// config_value = 1 => the first currency must be flagged as default.
 		$this->currency->build_currency_select_menu(1);
 
-		// Now we check the captured calls with plain assertions.
 		$this->assertSame('options', $calls[0]['block']);
 		$this->assertSame([
 			'CURRENCY_ID'        => 1,

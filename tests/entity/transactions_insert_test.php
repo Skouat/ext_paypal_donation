@@ -21,13 +21,11 @@ class transactions_insert_test extends \phpbb_database_test_case
 	protected $entity;
 	protected $table_prefix;
 
-	// Run PPDE migrations => the ppde_txn_log table and its UNIQUE index exist.
 	static protected function setup_extensions()
 	{
 		return ['skouat/ppde'];
 	}
 
-	// Start with ONE existing transaction whose txn_id is "TXN_EXISTING".
 	public function getDataSet()
 	{
 		return $this->createXMLDataSet(__DIR__ . '/fixtures/transactions_insert.xml');
@@ -42,10 +40,8 @@ class transactions_insert_test extends \phpbb_database_test_case
 
 		$db = $this->new_dbal();
 
-		// The entity needs a language object; lang() just echoes the key here.
 		$language = $this->getMockBuilder('\phpbb\language\language')
-			->disableOriginalConstructor()
-			->getMock();
+			->disableOriginalConstructor()->getMock();
 		$language->method('lang')->willReturnArgument(0);
 
 		$this->entity = new \skouat\ppde\entity\transactions(
@@ -55,9 +51,6 @@ class transactions_insert_test extends \phpbb_database_test_case
 		);
 	}
 
-	/**
-	 * Inserting a BRAND NEW txn_id must succeed.
-	 */
 	public function test_insert_new_transaction_succeeds()
 	{
 		$this->entity->set_txn_id('TXN_BRAND_NEW');
@@ -71,10 +64,8 @@ class transactions_insert_test extends \phpbb_database_test_case
 	}
 
 	/**
-	 * Inserting a txn_id that ALREADY exists must be rejected by the UNIQUE
-	 * index and converted into a transaction_exception by the entity.
-	 *
-	 * THIS is the core idempotency guarantee of PPDE.
+	 * Core idempotency guarantee: a duplicate txn_id is rejected by the UNIQUE
+	 * index and converted into a transaction_exception.
 	 */
 	public function test_insert_duplicate_txn_id_throws()
 	{

@@ -19,8 +19,6 @@ class core_test extends \phpbb_test_case
 	{
 		parent::setUp();
 
-		// The core constructor needs 8 dependencies + the php extension string.
-		// net_amount() uses NONE of them, so empty mocks are enough.
 		$config       = $this->getMockBuilder('\phpbb\config\config')->disableOriginalConstructor()->getMock();
 		$language     = $this->getMockBuilder('\phpbb\language\language')->disableOriginalConstructor()->getMock();
 		$notification = $this->getMockBuilder('\skouat\ppde\notification\core')->disableOriginalConstructor()->getMock();
@@ -31,21 +29,11 @@ class core_test extends \phpbb_test_case
 		$user         = $this->getMockBuilder('\phpbb\user')->disableOriginalConstructor()->getMock();
 
 		$this->core = new \skouat\ppde\actions\core(
-			$config,
-			$language,
-			$notification,
-			$path_helper,
-			$entity,
-			$operator,
-			$dispatcher,
-			$user,
-			'php'
+			$config, $language, $notification, $path_helper,
+			$entity, $operator, $dispatcher, $user, 'php'
 		);
 	}
 
-	/**
-	 * [amount, fee, expected net amount]
-	 */
 	public function net_amount_data()
 	{
 		return [
@@ -56,9 +44,7 @@ class core_test extends \phpbb_test_case
 		];
 	}
 
-	/**
-	 * @dataProvider net_amount_data
-	 */
+	/** @dataProvider net_amount_data */
 	public function test_net_amount($amount, $fee, $expected)
 	{
 		$this->assertSame($expected, $this->core->net_amount($amount, $fee));
