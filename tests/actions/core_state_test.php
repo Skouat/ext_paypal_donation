@@ -16,28 +16,30 @@ class core_state_test extends \phpbb_test_case
 	protected $core;
 	/** @var \phpbb\config\config */
 	protected $config;
+	/** @var \PHPUnit\Framework\MockObject\MockObject */
+	protected $operator;
 
 	protected function setUp(): void
 	{
 		parent::setUp();
 
-		// Real config so update_raised_amount() can read/write its keys.
 		$this->config = new \phpbb\config\config([
-			'ppde_raised'     => 100.0,
-			'ppde_raised_ipn' => 5.0,
+			'ppde_raised'               => 100.0,
+			'ppde_raised_ipn'           => 5.0,
+			'ppde_ipn_min_before_group' => 20.0,
 		]);
 
-		$language     = $this->createMock(\phpbb\language\language::class);
-		$notification = $this->createMock(\skouat\ppde\notification\core::class);
-		$path_helper  = $this->createMock(\phpbb\path_helper::class);
-		$entity       = $this->createMock(\skouat\ppde\entity\transactions::class);
-		$operator     = $this->createMock(\skouat\ppde\operators\transactions::class);
-		$dispatcher   = $this->createMock(\phpbb\event\dispatcher_interface::class);
-		$user         = $this->createMock(\phpbb\user::class);
+		$language       = $this->createMock(\phpbb\language\language::class);
+		$notification   = $this->createMock(\skouat\ppde\notification\core::class);
+		$path_helper    = $this->createMock(\phpbb\path_helper::class);
+		$entity         = $this->createMock(\skouat\ppde\entity\transactions::class);
+		$this->operator = $this->createMock(\skouat\ppde\operators\transactions::class);
+		$dispatcher     = $this->createMock(\phpbb\event\dispatcher_interface::class);
+		$user           = $this->createMock(\phpbb\user::class);
 
 		$this->core = new \skouat\ppde\actions\core(
 			$this->config, $language, $notification, $path_helper,
-			$entity, $operator, $dispatcher, $user, 'php'
+			$entity, $this->operator, $dispatcher, $user, 'php'
 		);
 	}
 
@@ -122,5 +124,24 @@ class core_state_test extends \phpbb_test_case
 		$this->assertSame(8.0, (float) $this->config['ppde_raised_ipn']);
 		// Live total untouched.
 		$this->assertSame(100.0, (float) $this->config['ppde_raised']);
+	}
+
+	private function set_payer_data(array $data): void
+	{
+		$p = new \ReflectionProperty($this->core, 'payer_data');
+		$p->setAccessible(true);
+		$p->setValue($this->core, $data);
+	}
+
+	public function test_minimum_donation_raised_is_a_pure_query()
+	{
+		// The amount check must never hit the database anymore.
+		$this->operator->expects($this->never())->method('query_donor_user_data');
+
+		$this->set_payer_data(['user_id' => 5, 'user_ppde_donated_amount' => 50.0]);
+		$this->assertTrue($this->core->minimum_donation_raised());
+
+		$this->set_payer_data(['user_id' => 5, 'user_ppde_donated_amount' => 10.0]);
+		$this->assertFalse($this->core->minimum_donation_raised());
 	}
 }

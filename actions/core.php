@@ -449,10 +449,14 @@ class core
 	 */
 	private function can_remove_from_autogroup(): bool
 	{
-		return
-			$this->autogroup_is_enabled() &&
-			$this->donor_is_member &&
-			!$this->minimum_donation_raised();
+		if (!$this->autogroup_is_enabled() || !$this->donor_is_member)
+		{
+			return false;
+		}
+
+		$this->refresh_payer_data();
+
+		return !$this->minimum_donation_raised();
 	}
 
 	/**
@@ -463,11 +467,14 @@ class core
 	 */
 	private function can_use_autogroup(): bool
 	{
-		return
-			$this->autogroup_is_enabled() &&
-			$this->donor_is_member &&
-			$this->payment_status_is_completed() &&
-			$this->minimum_donation_raised();
+		if (!$this->autogroup_is_enabled() || !$this->donor_is_member || !$this->payment_status_is_completed())
+		{
+			return false;
+		}
+
+		$this->refresh_payer_data();
+
+		return $this->minimum_donation_raised();
 	}
 
 	/**
@@ -493,6 +500,17 @@ class core
 	}
 
 	/**
+	 * Reload payer_data so the freshly updated donated amount is read.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function refresh_payer_data(): void
+	{
+		$this->check_donors_status('user', $this->payer_data['user_id']);
+	}
+
+	/**
 	 * Checks if member's donation is upper or equal to the minimum defined
 	 *
 	 * @return bool
@@ -500,9 +518,6 @@ class core
 	 */
 	public function minimum_donation_raised(): bool
 	{
-		// Reload payer_data so the freshly updated donated amount is read.
-		$this->check_donors_status('user', $this->payer_data['user_id']);
-
 		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'];
 	}
 
