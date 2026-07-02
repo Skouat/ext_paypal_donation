@@ -23,6 +23,8 @@ use PaypalServerSdkLib\Authentication\ClientCredentialsAuthCredentialsBuilder;
  */
 class client_factory
 {
+	use curl_transport;
+
 	/** @var config */
 	protected $config;
 
@@ -183,8 +185,7 @@ class client_factory
 
 		$base = $sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
 
-		$ch = curl_init($base . '/v1/oauth2/token');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$ch = $this->curl_init_secure($base . '/v1/oauth2/token');
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_USERPWD, $client_id . ':' . $client_secret);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, 'grant_type=client_credentials');
@@ -192,10 +193,6 @@ class client_factory
 			'Accept: application/json',
 			'Content-Type: application/x-www-form-urlencoded',
 		]);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_exec($ch);
 
 		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
