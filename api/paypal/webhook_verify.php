@@ -70,7 +70,13 @@ class webhook_verify
 			}
 		}
 
-		// Security: the certificate MUST come from a paypal.com domain over HTTPS.
+		// PayPal always signs webhooks with SHA256withRSA; reject anything else.
+		if ($headers['auth_algo'] !== self::PAYPAL_AUTH_ALGO)
+		{
+			return false;
+		}
+
+		// The certificate MUST come from a paypal.com domain over HTTPS.
 		if (!$this->is_paypal_cert_url($headers['cert_url']))
 		{
 			return false;
@@ -88,19 +94,12 @@ class webhook_verify
 			return false;
 		}
 
-		// Signed string = transmissionId|transmissionTime|webhookId|crc32(rawBody)
 		$expected_data = implode('|', [
 			$headers['transmission_id'],
 			$headers['transmission_time'],
 			$webhook_id,
 			sprintf('%u', crc32($raw_body)),
 		]);
-
-		// PayPal always signs webhooks with SHA256withRSA. Reject anything else.
-		if ($headers['auth_algo'] !== self::PAYPAL_AUTH_ALGO)
-		{
-			return false;
-		}
 
 		$verified = openssl_verify(
 			$expected_data,

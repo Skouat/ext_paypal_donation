@@ -93,12 +93,19 @@ class webhook_verify_test extends \phpbb_test_case
 		$this->assertFalse($this->verify->is_valid('body', $headers, 'WEBHOOK_ID'));
 	}
 
-	/**
-	 * Cover the deeper path: valid cert URL, cached certificate, public key
-	 * successfully loaded, then rejection on a wrong signature algorithm
-	 * (returns before any network call or real signature verification).
-	 */
-	public function test_is_valid_rejects_wrong_auth_algo_with_cached_cert()
+	public function test_is_valid_rejects_wrong_auth_algo_before_any_io()
+	{
+		$cache = $this->createMock(\phpbb\cache\driver\driver_interface::class);
+		$cache->expects($this->never())->method('get');
+		$verify = new \skouat\ppde\api\paypal\webhook_verify($cache, new \phpbb\config\config([]));
+
+		$headers = $this->valid_headers();
+		$headers['auth_algo'] = 'WRONG_ALGO';
+
+		$this->assertFalse($verify->is_valid('raw-body', $headers, 'WEBHOOK_ID'));
+	}
+
+	public function test_is_valid_rejects_bad_signature_with_valid_algo()
 	{
 		if (!extension_loaded('openssl'))
 		{
@@ -110,17 +117,12 @@ class webhook_verify_test extends \phpbb_test_case
 		{
 			$this->markTestSkipped('Unable to generate an RSA key pair.');
 		}
-		$details = openssl_pkey_get_details($res);
-		$public_pem = $details['key'];
+		$public_pem = openssl_pkey_get_details($res)['key'];
 
-		// Cache hit => fetch_cert() returns the cached certificate, no cURL.
 		$cache = $this->createMock(\phpbb\cache\driver\driver_interface::class);
 		$cache->method('get')->willReturn($public_pem);
 		$verify = new \skouat\ppde\api\paypal\webhook_verify($cache, new \phpbb\config\config([]));
 
-		$headers = $this->valid_headers();
-		$headers['auth_algo'] = 'WRONG_ALGO'; // fails AFTER the public key is loaded
-
-		$this->assertFalse($verify->is_valid('raw-body', $headers, 'WEBHOOK_ID'));
+		$this->assertFalse($verify->is_valid('raw-body', $this->valid_headers(), 'WEBHOOK_ID'));
 	}
 }
