@@ -32,7 +32,7 @@ and the releases are listed in reverse chronological order.
 - Fix: Undefined array key warning when formatting a transaction with no settlement currency
 - Fix: Preserve the exact net amount returned by PayPal instead of recomputing it (gross − fee)
 - Fix: Donors list error when a donor's last transaction is concurrently removed
-
+- Fix: prevent import() from permanently mutating the entity schema
 ## 3.0.4 - 2021-04-20
 
 - Change: Global code review

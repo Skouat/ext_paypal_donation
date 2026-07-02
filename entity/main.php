@@ -447,16 +447,15 @@ abstract class main
 	{
 		$this->data = [];
 
-		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
+		$schema = $override ? $additional_table_schema : array_merge($this->table_schema, $additional_table_schema);
 
-		foreach ($this->table_schema as $field)
+		foreach ($schema as $field)
 		{
 			if (!isset($data[$field['name']]))
 			{
 				$this->display_warning_message('EXCEPTION_INVALID_FIELD', $field['name']);
 			}
 
-			// settype enforces the declared type (passes by reference).
 			$value = $data[$field['name']];
 			settype($value, $field['type']);
 

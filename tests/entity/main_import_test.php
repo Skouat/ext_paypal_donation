@@ -47,11 +47,6 @@ class main_import_test extends \phpbb_test_case
 		$this->assertSame(3, $data['currency_order']);     // integer
 	}
 
-	/**
-	 * A missing declared column makes import() trigger an E_USER_WARNING.
-	 * A local error handler turns it into an ErrorException so the assertion
-	 * works identically on PHPUnit 7, 8 and 9 (no Error\Warning dependency).
-	 */
 	public function test_import_warns_on_missing_field()
 	{
 		set_error_handler(static function ($errno, $errstr) {
@@ -71,5 +66,30 @@ class main_import_test extends \phpbb_test_case
 		{
 			restore_error_handler();
 		}
+	}
+
+	public function test_import_does_not_mutate_schema_permanently()
+	{
+		$additional = ['item_extra' => ['name' => 'extra_col', 'type' => 'string']];
+
+		$first = [
+			'currency_id' => '1', 'currency_name' => 'Dollar', 'currency_iso_code' => 'USD',
+			'currency_symbol' => '$', 'currency_on_left' => '1', 'currency_enable' => '1',
+			'currency_order' => '1', 'extra_col' => 'hello',
+		];
+
+		$data = $this->entity->import($first, $additional);
+		$this->assertSame('hello', $data['extra_col']);
+
+		$second = [
+			'currency_id' => '2', 'currency_name' => 'Euro', 'currency_iso_code' => 'EUR',
+			'currency_symbol' => '&euro;', 'currency_on_left' => '0', 'currency_enable' => '1',
+			'currency_order' => '2',
+		];
+
+		$data = $this->entity->import($second);
+
+		$this->assertArrayNotHasKey('extra_col', $data);
+		$this->assertSame('Euro', $data['currency_name']);
 	}
 }
