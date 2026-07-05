@@ -595,4 +595,25 @@ class transactions
 			AND ' . $this->db->sql_in_set('dl.user_id', $user_ids ?: [0]),
 		];
 	}
+
+	/**
+	 * Fetch the payer/payee already stored for a transaction, so a
+	 * PENDING→COMPLETED upgrade can reuse them without another PayPal API call.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return array Empty array if the transaction is not found.
+	 * @access public
+	 */
+	public function get_parties_by_txn_id(string $txn_id): array
+	{
+		$sql = 'SELECT first_name, last_name, payer_email, payer_id, residence_country, receiver_email, receiver_id
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		return $row ?: [];
+	}
 }

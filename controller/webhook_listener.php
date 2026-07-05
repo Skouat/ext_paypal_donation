@@ -314,10 +314,9 @@ class webhook_listener
 	{
 		$breakdown  = $resource['seller_receivable_breakdown'] ?? [];
 		$custom     = $resource['custom_id'] ?? '';
-		$order_id   = $resource['supplementary_data']['related_ids']['order_id'] ?? '';
 		$receivable = $breakdown['receivable_amount'] ?? [];
 
-		$parties = $this->fetch_parties($order_id, $is_sandbox);
+		$parties = $this->resolve_parties($resource, $is_sandbox);
 		$payer   = $parties['payer'];
 		$payee   = $parties['payee'];
 
@@ -611,5 +610,45 @@ class webhook_listener
 		}
 
 		return true;
+	}
+
+	/**
+	 * Resolve payer/payee for a capture, reusing the stored values on a
+	 * PENDING→COMPLETED upgrade instead of calling getOrder again.
+	 *
+	 * @param array $resource
+	 * @param bool  $is_sandbox
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function resolve_parties(array $resource, bool $is_sandbox): array
+	{
+		$txn_id = $resource['id'] ?? '';
+
+		if ($txn_id !== '')
+		{
+			$stored = $this->ppde_operator_transaction->get_parties_by_txn_id($txn_id);
+
+			if (!empty($stored))
+			{
+				return [
+					'payer' => [
+						'first_name' => (string) $stored['first_name'],
+						'last_name'  => (string) $stored['last_name'],
+						'email'      => (string) $stored['payer_email'],
+						'payer_id'   => (string) $stored['payer_id'],
+						'country'    => (string) $stored['residence_country'],
+					],
+					'payee' => [
+						'email'       => (string) $stored['receiver_email'],
+						'merchant_id' => (string) $stored['receiver_id'],
+					],
+				];
+			}
+		}
+
+		$order_id = $resource['supplementary_data']['related_ids']['order_id'] ?? '';
+		return $this->fetch_parties($order_id, $is_sandbox);
 	}
 }

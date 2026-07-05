@@ -15,6 +15,8 @@ class webhook_listener_test extends \phpbb_test_case
 	/** @var \skouat\ppde\controller\webhook_listener */
 	protected $listener;
 	/** @var \PHPUnit\Framework\MockObject\MockObject */
+	protected $client_factory;
+	/** @var \PHPUnit\Framework\MockObject\MockObject */
 	protected $operator;
 
 	protected function setUp(): void
@@ -36,6 +38,7 @@ class webhook_listener_test extends \phpbb_test_case
 		$language->method('lang')->willReturnArgument(0);
 
 		$this->operator = $this->createMock(\skouat\ppde\operators\transactions::class);
+		$this->client_factory = $this->createMock(\skouat\ppde\api\paypal\client_factory::class);
 
 		$this->listener = new \skouat\ppde\controller\webhook_listener(
 			$config,
@@ -45,7 +48,7 @@ class webhook_listener_test extends \phpbb_test_case
 			$this->createMock(\skouat\ppde\entity\transactions::class),
 			$this->operator,
 			$this->createMock(\skouat\ppde\api\paypal\webhook_verify::class),
-			$this->createMock(\skouat\ppde\api\paypal\client_factory::class),
+			$this->client_factory,
 			$this->createMock(\phpbb\request\request::class),
 			$this->createMock(\phpbb\user::class),
 			$this->createMock(\skouat\ppde\actions\donation_recorder::class)
@@ -147,5 +150,32 @@ class webhook_listener_test extends \phpbb_test_case
 		$m = new \ReflectionMethod($this->listener, $method);
 		$m->setAccessible(true);
 		return $m->invokeArgs($this->listener, $args);
+	}
+
+	public function test_resolve_parties_reuses_stored_data_on_upgrade()
+	{
+		$this->operator->method('get_parties_by_txn_id')->willReturn([
+			'first_name'        => 'John',
+			'last_name'         => 'Doe',
+			'payer_email'       => 'john@example.com',
+			'payer_id'          => 'PID',
+			'residence_country' => 'FR',
+			'receiver_email'    => 'merchant@x.com',
+			'receiver_id'       => 'MID',
+		]);
+
+		$this->client_factory->expects($this->never())->method('build');
+
+		$resource = [
+			'id'                => 'CAP1',
+			'supplementary_data' => ['related_ids' => ['order_id' => 'ORDER1']],
+		];
+
+		$parties = $this->invoke('resolve_parties', [$resource, false]);
+
+		$this->assertSame('John', $parties['payer']['first_name']);
+		$this->assertSame('john@example.com', $parties['payer']['email']);
+		$this->assertSame('FR', $parties['payer']['country']);
+		$this->assertSame('MID', $parties['payee']['merchant_id']);
 	}
 }
