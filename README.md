@@ -1,7 +1,7 @@
-# PayPal Donation for phpBB - 4.0.x Develop Branch
+# PayPal Donation for phpBB - 4.0.x Branch
 This extension adds a PayPal Donation page on your site.
 
-[![Build Status](https://github.com/Skouat/ext_paypal_donation/workflows/Tests/badge.svg)](https://github.com/Skouat/ext_paypal_donation/actions) [![codecov](https://codecov.io/gh/Skouat/ext_paypal_donation/branch/develop-4.0.x/graph/badge.svg?token=YEdsDRUQWg)](https://codecov.io/gh/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-4.0.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-4.0.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
+[![Build Status](https://github.com/Skouat/ext_paypal_donation/workflows/Tests/badge.svg)](https://github.com/Skouat/ext_paypal_donation/actions) [![codecov](https://codecov.io/gh/Skouat/ext_paypal_donation/branch/4.0.x/graph/badge.svg?token=YEdsDRUQWg)](https://codecov.io/gh/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=4.0.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=4.0.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
 
 ## Features
   * PayPal REST API integration
