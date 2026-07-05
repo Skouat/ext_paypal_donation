@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
-## 4.0.0 - 2026-xx-xx
+## 4.0.0 - 2026-07-05
 
 - Add: Migration from PayPal IPN to the PayPal REST API (Orders API v2 + JS SDK)
 - Add: Webhook listener to record donations, with a synchronous capture fallback if the webhook is unreachable
