@@ -114,33 +114,8 @@ class main_donor_list extends main_controller
 		$sql_donorlist_ary = $this->ppde_operator_transactions->sql_donorlist_ary(true, $order_by);
 		$data_ary = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($sql_donorlist_ary), $donorlist_table_schema, (int) $this->config['topics_per_page'], $start, true);
 
-		// Adds fields to the table schema needed by entity->import()
-		$last_donation_table_schema = [
-			'item_payment_date' => ['name' => 'payment_date', 'type' => 'integer'],
-			'item_mc_gross'     => ['name' => 'mc_gross', 'type' => 'float'],
-			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
-		];
+		$this->assign_donor_rows($data_ary);
 
-		foreach ($data_ary as $data)
-		{
-			$get_last_transaction_sql_ary = $this->ppde_operator_transactions->sql_last_donation_ary($data['max_txn_id']);
-			$last_donation_data = $this->ppde_entity_transactions->get_data($this->ppde_operator_transactions->build_sql_donorlist_data($get_last_transaction_sql_ary), $last_donation_table_schema, 0, 0, true);
-
-			if (empty($last_donation_data))
-			{
-				continue;
-			}
-
-			$currency_mc_data = $this->ppde_actions_currency->get_currency_data($last_donation_data[0]['mc_currency']);
-			$this->template->assign_block_vars('donorrow', [
-				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
-				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $last_donation_data[0]['mc_gross'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last_donation_data[0]['payment_date']),
-				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency((float) $data['amount'], $currency_mc_data[0]['currency_iso_code'], $currency_mc_data[0]['currency_symbol'], (bool) $currency_mc_data[0]['currency_on_left']),
-			]);
-		}
-
-		// Send all data to the template file
 		return $this->send_data_to_template();
 	}
 
@@ -212,5 +187,98 @@ class main_donor_list extends main_controller
 	private function send_data_to_template()
 	{
 		return $this->helper->render('donorlist_body.html', $this->language->lang('PPDE_DONORLIST_TITLE'));
+	}
+
+	/**
+	 * Assign donor rows, batching usernames, last donations and currencies.
+	 *
+	 * @param array $data_ary The grouped donor rows
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function assign_donor_rows(array $data_ary): void
+	{
+		if (empty($data_ary))
+		{
+			return;
+		}
+
+		$this->user_loader->load_users(array_column($data_ary, 'user_id'));
+
+		$last_donations = $this->get_last_donations(array_column($data_ary, 'max_txn_id'));
+
+		$currency_cache = [];
+
+		foreach ($data_ary as $data)
+		{
+			$txn_id = (int) $data['max_txn_id'];
+
+			if (!isset($last_donations[$txn_id]))
+			{
+				continue;
+			}
+
+			$last = $last_donations[$txn_id];
+			$currency = $this->resolve_currency($data['mc_currency'], $currency_cache);
+
+			$this->template->assign_block_vars('donorrow', [
+				'PPDE_DONOR_USERNAME'       => $this->user_loader->get_username($data['user_id'], 'full', false, false, true),
+				'PPDE_LAST_DONATED_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $last['mc_gross'], $currency['currency_iso_code'], $currency['currency_symbol'], (bool) $currency['currency_on_left']),
+				'PPDE_LAST_PAYMENT_DATE'    => $this->user->format_date($last['payment_date']),
+				'PPDE_TOTAL_DONATED_AMOUNT' => $this->ppde_actions_currency->format_currency((float) $data['amount'], $currency['currency_iso_code'], $currency['currency_symbol'], (bool) $currency['currency_on_left']),
+			]);
+		}
+	}
+
+	/**
+	 * Fetch the last-donation rows for the given transaction ids, indexed by id.
+	 *
+	 * @param int[] $transaction_ids
+	 *
+	 * @return array<int, array>
+	 * @access private
+	 */
+	private function get_last_donations(array $transaction_ids): array
+	{
+		$schema = [
+			'item_transaction_id' => ['name' => 'transaction_id', 'type' => 'integer'],
+			'item_payment_date'   => ['name' => 'payment_date', 'type' => 'integer'],
+			'item_mc_gross'       => ['name' => 'mc_gross', 'type' => 'float'],
+		];
+
+		$sql_ary = $this->ppde_operator_transactions->sql_last_donations_ary($transaction_ids);
+		$rows = $this->ppde_entity_transactions->get_data(
+			$this->ppde_operator_transactions->build_sql_donorlist_data($sql_ary),
+			$schema, 0, 0, true
+		);
+
+		$indexed = [];
+		foreach ($rows as $row)
+		{
+			$indexed[(int) $row['transaction_id']] = $row;
+		}
+
+		return $indexed;
+	}
+
+	/**
+	 * Resolve currency data once per ISO code.
+	 *
+	 * @param string $iso_code
+	 * @param array  $cache
+	 *
+	 * @return array
+	 * @access private
+	 */
+	private function resolve_currency(string $iso_code, array &$cache): array
+	{
+		if (!isset($cache[$iso_code]))
+		{
+			$data = $this->ppde_actions_currency->get_currency_data($iso_code);
+			$cache[$iso_code] = $data[0];
+		}
+
+		return $cache[$iso_code];
 	}
 }

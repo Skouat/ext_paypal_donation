@@ -533,4 +533,24 @@ class transactions
 	{
 		return $this->get_payment_status_by_txn_id($txn_id) === ppde_constants::STATUS_COMPLETED;
 	}
+
+	/**
+	 * SQL Query to return the last donation of several donors at once.
+	 *
+	 * Batches what sql_last_donation_ary() did per row: given the MAX(transaction_id)
+	 * of each donor row, fetch all matching donations in a single query.
+	 *
+	 * @param int[] $transaction_ids
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_last_donations_ary(array $transaction_ids): array
+	{
+		return [
+			'SELECT' => 'txn.transaction_id, txn.payment_date, txn.mc_gross',
+			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
+			'WHERE'  => $this->db->sql_in_set('txn.transaction_id', array_map('intval', $transaction_ids)),
+		];
+	}
 }
