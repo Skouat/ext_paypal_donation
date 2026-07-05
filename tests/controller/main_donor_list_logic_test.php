@@ -70,4 +70,24 @@ class main_donor_list_logic_test extends \phpbb_test_case
 
 		$this->assertSame($expected, $method->invoke($this->controller, $sk, $sk_comp, $sd));
 	}
+
+	public function resolve_sorting_data()
+	{
+		return [
+			'amount asc'          => ['a', 'a', 'a', 'amount ASC'],
+			'amount desc'         => ['a', 'd', 'a', 'amount DESC'],
+			'date desc (default)' => ['d', 'd', 'd', 'MAX(txn.payment_date) DESC'],
+			'username asc'        => ['u', 'a', 'u', 'MAX(u.username_clean) ASC'],
+			'invalid key falls back to date' => ['zzz', 'd', 'd', 'MAX(txn.payment_date) DESC'],
+		];
+	}
+
+	/** @dataProvider resolve_sorting_data */
+	public function test_resolve_sorting($sk, $sd, $expected_key, $expected_order_by)
+	{
+		$result = $this->controller->resolve_sorting($sk, $sd);
+
+		$this->assertSame($expected_key, $result['key']);
+		$this->assertSame($expected_order_by, $result['order_by']);
+	}
 }

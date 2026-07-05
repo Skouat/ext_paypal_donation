@@ -55,25 +55,17 @@ class main_donor_list extends main_controller
 			trigger_error('NOT_AUTHORISED');
 		}
 
-		// Set up general vars
-		$default_key = 'd';
-		$sort_key = $this->request->variable('sk', $default_key);
+		$sort_key = $this->request->variable('sk', 'd');
 		$sort_dir = $this->request->variable('sd', 'd');
-		$start = $this->request->variable('start', 0);
+		$start    = $this->request->variable('start', 0);
 
-		// Sorting and order
-		$sort_key_sql = ['a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean'];
-
-		if (!isset($sort_key_sql[$sort_key]))
-		{
-			$sort_key = $default_key;
-		}
-
-		$order_by = ($sort_key === 'a' ? $sort_key_sql[$sort_key] . ' ' : 'MAX(' . $sort_key_sql[$sort_key] . ') ') . (($sort_dir === 'a') ? 'ASC' : 'DESC');
+		$sorting  = $this->resolve_sorting($sort_key, $sort_dir);
+		$sort_key = $sorting['key'];
+		$order_by = $sorting['order_by'];
 
 		// Build pagination_url and sort_url (only the set variables are kept).
 		$check_params = [
-			'sk'    => ['sk', $default_key],
+			'sk'    => ['sk', 'd'],
 			'sd'    => ['sd', 'a'],
 			'start' => ['start', 0],
 		];
@@ -94,7 +86,6 @@ class main_donor_list extends main_controller
 
 		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, (int) $this->config['topics_per_page'], $start);
 
-		// Assign vars to the template
 		$this->template->assign_vars([
 			'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
 			'TOTAL_DONORS'           => $this->language->lang('PPDE_DONORS', $total_donors),
@@ -103,7 +94,7 @@ class main_donor_list extends main_controller
 			'U_SORT_USERNAME'        => $sort_url . 'sk=u&amp;sd=' . $this->set_sort_key($sort_key, 'u', $sort_dir),
 		]);
 
-		// Adds fields to the table schema needed by entity->import()
+		// Fields added to the table schema for entity->import().
 		$donorlist_table_schema = [
 			'item_amount'      => ['name' => 'amount', 'type' => 'float'],
 			'item_user_id'     => ['name' => 'user_id', 'type' => 'integer'],
@@ -282,5 +273,33 @@ class main_donor_list extends main_controller
 		}
 
 		return $cache[$iso_code];
+	}
+
+	/**
+	 * Resolve the sort column and direction from user input.
+	 *
+	 * @param string $sort_key Requested sort key ('a', 'd' or 'u')
+	 * @param string $sort_dir Requested direction ('a' or 'd')
+	 *
+	 * @return array{key: string, order_by: string}
+	 * @access public
+	 */
+	public function resolve_sorting(string $sort_key, string $sort_dir): array
+	{
+		$default_key = 'd';
+		$sort_key_sql = ['a' => 'amount', 'd' => 'txn.payment_date', 'u' => 'u.username_clean'];
+
+		if (!isset($sort_key_sql[$sort_key]))
+		{
+			$sort_key = $default_key;
+		}
+
+		$column = $sort_key_sql[$sort_key];
+		$direction = ($sort_dir === 'a') ? 'ASC' : 'DESC';
+
+		// 'amount' is a bare aggregate alias; the others need MAX() under ONLY_FULL_GROUP_BY.
+		$order_by = ($sort_key === 'a' ? $column : 'MAX(' . $column . ')') . ' ' . $direction;
+
+		return ['key' => $sort_key, 'order_by' => $order_by];
 	}
 }
