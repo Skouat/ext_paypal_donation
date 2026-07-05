@@ -106,7 +106,6 @@ class main_donor_list extends main_controller
 		// Adds fields to the table schema needed by entity->import()
 		$donorlist_table_schema = [
 			'item_amount'      => ['name' => 'amount', 'type' => 'float'],
-			'item_max_txn_id'  => ['name' => 'max_txn_id', 'type' => 'integer'],
 			'item_user_id'     => ['name' => 'user_id', 'type' => 'integer'],
 			'item_mc_currency' => ['name' => 'mc_currency', 'type' => 'string'],
 		];
@@ -204,22 +203,23 @@ class main_donor_list extends main_controller
 			return;
 		}
 
-		$this->user_loader->load_users(array_column($data_ary, 'user_id'));
+		$user_ids = array_column($data_ary, 'user_id');
 
-		$last_donations = $this->get_last_donations(array_column($data_ary, 'max_txn_id'));
+		$this->user_loader->load_users($user_ids);
+		$last_donations = $this->get_last_donations($user_ids);
 
 		$currency_cache = [];
 
 		foreach ($data_ary as $data)
 		{
-			$txn_id = (int) $data['max_txn_id'];
+			$key = $data['user_id'] . '_' . $data['mc_currency'];
 
-			if (!isset($last_donations[$txn_id]))
+			if (!isset($last_donations[$key]))
 			{
 				continue;
 			}
 
-			$last = $last_donations[$txn_id];
+			$last     = $last_donations[$key];
 			$currency = $this->resolve_currency($data['mc_currency'], $currency_cache);
 
 			$this->template->assign_block_vars('donorrow', [
@@ -232,22 +232,24 @@ class main_donor_list extends main_controller
 	}
 
 	/**
-	 * Fetch the last-donation rows for the given transaction ids, indexed by id.
+	 * Fetch the last donations for the given donors, keyed by "user_id_currency".
 	 *
-	 * @param int[] $transaction_ids
+	 * @param int[] $user_ids
 	 *
-	 * @return array<int, array>
+	 * @return array
 	 * @access private
 	 */
-	private function get_last_donations(array $transaction_ids): array
+	private function get_last_donations(array $user_ids): array
 	{
 		$schema = [
 			'item_transaction_id' => ['name' => 'transaction_id', 'type' => 'integer'],
+			'item_user_id'        => ['name' => 'user_id', 'type' => 'integer'],
+			'item_mc_currency'    => ['name' => 'mc_currency', 'type' => 'string'],
 			'item_payment_date'   => ['name' => 'payment_date', 'type' => 'integer'],
 			'item_mc_gross'       => ['name' => 'mc_gross', 'type' => 'float'],
 		];
 
-		$sql_ary = $this->ppde_operator_transactions->sql_last_donations_ary($transaction_ids);
+		$sql_ary = $this->ppde_operator_transactions->sql_last_donations_ary($user_ids);
 		$rows = $this->ppde_entity_transactions->get_data(
 			$this->ppde_operator_transactions->build_sql_donorlist_data($sql_ary),
 			$schema, 0, 0, true
@@ -256,7 +258,7 @@ class main_donor_list extends main_controller
 		$indexed = [];
 		foreach ($rows as $row)
 		{
-			$indexed[(int) $row['transaction_id']] = $row;
+			$indexed[$row['user_id'] . '_' . $row['mc_currency']] = $row;
 		}
 
 		return $indexed;

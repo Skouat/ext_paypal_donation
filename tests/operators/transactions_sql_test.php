@@ -52,7 +52,7 @@ class transactions_sql_test extends \phpbb_test_case
 	{
 		$ary = $this->operator->sql_donorlist_ary(true, 'amount DESC');
 
-		$this->assertStringContainsString('MAX(txn.transaction_id) AS max_txn_id', $ary['SELECT']);
+		$this->assertStringNotContainsString('MAX(txn.transaction_id)', $ary['SELECT']);
 		$this->assertStringContainsString('SUM(txn.mc_gross) AS amount', $ary['SELECT']);
 		$this->assertArrayHasKey('LEFT_JOIN', $ary);
 		$this->assertSame('amount DESC', $ary['ORDER_BY']);

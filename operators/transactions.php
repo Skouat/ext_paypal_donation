@@ -92,7 +92,7 @@ class transactions
 
 		if ($detailed)
 		{
-			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
+			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, SUM(txn.mc_gross) AS amount';
 			$sql_donorslist_ary['LEFT_JOIN'] = [
 				[
 					'FROM' => [USERS_TABLE => 'u'],
@@ -535,22 +535,37 @@ class transactions
 	}
 
 	/**
-	 * SQL Query to return the last donation of several donors at once.
+	 * Most recent completed donation per (user, currency) for the given donors.
 	 *
-	 * Batches what sql_last_donation_ary() did per row: given the MAX(transaction_id)
-	 * of each donor row, fetch all matching donations in a single query.
-	 *
-	 * @param int[] $transaction_ids
+	 * @param int[] $user_ids The donor user ids on the current page
 	 *
 	 * @return array
 	 * @access public
 	 */
-	public function sql_last_donations_ary(array $transaction_ids): array
+	public function sql_last_donations_ary(array $user_ids): array
 	{
+		$user_ids  = array_map('intval', $user_ids);
+		$completed = "'" . $this->db->sql_escape(ppde_constants::STATUS_COMPLETED) . "'";
+
 		return [
-			'SELECT' => 'txn.transaction_id, txn.payment_date, txn.mc_gross',
-			'FROM'   => [$this->ppde_transactions_log_table => 'txn'],
-			'WHERE'  => $this->db->sql_in_set('txn.transaction_id', array_map('intval', $transaction_ids)),
+			'SELECT'    => 'dl.transaction_id, dl.user_id, dl.mc_currency, dl.payment_date, dl.mc_gross',
+			'FROM'      => [$this->ppde_transactions_log_table => 'dl'],
+			'LEFT_JOIN' => [
+				[
+					'FROM' => [$this->ppde_transactions_log_table => 'dn'],
+					'ON'   => 'dl.user_id = dn.user_id
+					AND dl.mc_currency = dn.mc_currency
+					AND dn.payment_status = ' . $completed . '
+					AND dn.test_ipn = 0
+					AND (dn.payment_date > dl.payment_date
+						OR (dn.payment_date = dl.payment_date AND dn.transaction_id > dl.transaction_id))',
+				],
+			],
+			'WHERE'     => 'dn.transaction_id IS NULL
+			AND dl.payment_status = ' . $completed . '
+			AND dl.test_ipn = 0
+			AND dl.user_id <> ' . ANONYMOUS . '
+			AND ' . $this->db->sql_in_set('dl.user_id', $user_ids ?: [0]),
 		];
 	}
 }

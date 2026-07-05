@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <table name="phpbb_ppde_txn_log">
+        <column>transaction_id</column>
+        <column>txn_id</column>
+        <column>user_id</column>
+        <column>mc_currency</column>
+        <column>mc_gross</column>
+        <column>payment_date</column>
+        <column>payment_status</column>
+        <column>test_ipn</column>
+        <column>txn_errors</column>
+        <!-- Real last donation: recent date, but SMALLER transaction_id -->
+        <row>
+            <value>1</value><value>TXN_RECENT</value><value>2</value><value>USD</value>
+            <value>10</value><value>1700000200</value><value>Completed</value><value>0</value><value></value>
+        </row>
+        <!-- Backdated manual donation: older date, but HIGHER transaction_id -->
+        <row>
+            <value>2</value><value>TXN_BACKDATED</value><value>2</value><value>USD</value>
+            <value>99</value><value>1700000000</value><value>Completed</value><value>0</value><value></value>
+        </row>
+    </table>
+</dataset>
