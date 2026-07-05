@@ -159,6 +159,29 @@ class transactions extends main
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
+	 * A failed UPDATE (e.g. an unexpected column overflow under strict mode) must not kill the webhook via the DBAL's
+	 * trigger_error(E_USER_ERROR).
+	 *
+	 * NB: a RuntimeException (not transaction_exception):
+	 * the latter is caught  as "already recorded" (HTTP 200) and PayPal never retries.
+	 * This bubbles up to handle_capture()'s catch (\Throwable) -> HTTP 500 -> PayPal retries.
+	 */
+	protected function execute_update($sql): void
+	{
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query($sql);
+		$error  = $this->db->get_sql_error_returned();
+		$this->db->sql_return_on_error();
+
+		if ($result === false)
+		{
+			throw new \RuntimeException('PPDE UPDATE failed: ' . ($error['message'] ?? 'unknown'));
+		}
+	}
+
+	/**
 	 * Get PayPal transaction id
 	 *
 	 * @return string

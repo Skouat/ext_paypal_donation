@@ -74,4 +74,29 @@ class schema_test extends \phpbb_database_test_case
 
 		$this->assertFalse($result, 'A duplicate txn_id must be rejected by the UNIQUE constraint.');
 	}
+
+	public function test_exchange_rate_stores_paypal_precision()
+	{
+		$table = $this->table_prefix . 'ppde_txn_log';
+		$rate  = '0.006018555670097';
+
+		$row = [
+			'txn_id'         => 'TXN_FX',
+			'payment_status' => 'Completed',
+			'exchange_rate'  => $rate,
+			'txn_errors'     => '',
+		];
+
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query('INSERT INTO ' . $table . ' ' . $this->db->sql_build_array('INSERT', $row));
+		$this->db->sql_return_on_error(false);
+
+		$this->assertNotFalse($result, 'A 17-char exchange_rate must be accepted after widening the column.');
+
+		$res = $this->db->sql_query('SELECT exchange_rate FROM ' . $table . " WHERE txn_id = 'TXN_FX'");
+		$stored = $this->db->sql_fetchfield('exchange_rate');
+		$this->db->sql_freeresult($res);
+
+		$this->assertSame($rate, $stored, 'The exchange_rate must be stored untruncated.');
+	}
 }

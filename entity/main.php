@@ -145,6 +145,22 @@ abstract class main
 	}
 
 	/**
+	 * Execute the UPDATE query.
+	 *
+	 * Isolated so subclasses (e.g. transactions) can make it resilient to a constraint violation instead of dying on a
+	 * fatal SQL error.
+	 *
+	 * @param string $sql
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function execute_update($sql): void
+	{
+		$this->db->sql_query($sql);
+	}
+
+	/**
 	 * Display a user warning message
 	 *
 	 * @param string $lang_key
@@ -207,7 +223,7 @@ abstract class main
 		$sql = 'UPDATE ' . $this->table_name . '
 			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
 			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . $this->get_id();
-		$this->db->sql_query($sql);
+		$this->execute_update($sql);
 
 		return $this;
 	}
