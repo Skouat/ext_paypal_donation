@@ -27,7 +27,7 @@
 			{% if PPDE_LIST_VALUE %}
 			<select name="amount" id="ppde-amount">{{ PPDE_LIST_VALUE }}</select>
 			{% else %}
-			<input type="number" name="amount" id="ppde-amount" class="inputbox autowidth" min="{{ PPDE_AMOUNT_MIN }}" step="{{ PPDE_AMOUNT_STEP }}" value="{{ PPDE_DEFAULT_VALUE ?: '' }}">
+			<input type="number" name="amount" id="ppde-amount" class="inputbox" min="{{ PPDE_AMOUNT_MIN }}" step="{{ PPDE_AMOUNT_STEP }}" value="{{ PPDE_DEFAULT_VALUE ?: '' }}">
 			{% endif %}
 			<strong>{{ PPDE_CURRENCY_CODE }}</strong>
 		</div>

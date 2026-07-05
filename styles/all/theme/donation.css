@@ -6,6 +6,7 @@
 	--ppde-progress-height: clamp(16px, 2vw, 26px);
 	--ppde-border-radius: 13px;
 	display: flex;
+	align-items: center;
 	gap: 6px;
 }
 
@@ -34,7 +35,8 @@
 	--ppde-bg-saturation: 100%;
 	--ppde-bg-lightness: 40%;
 	--ppde-calc-width: calc(var(--ppde-progress-val, 0) * 1%);
-	--ppde-bg-hsl: hsl(var(--ppde-bg-hue, var(--ppde-progress-val, 0)), var(--ppde-bg-saturation), var(--ppde-bg-lightness));
+	--ppde-bg-hue: min(calc(var(--ppde-progress-val, 0) * 1.2), 120);
+	--ppde-bg-hsl: hsl(var(--ppde-bg-hue), var(--ppde-bg-saturation), var(--ppde-bg-lightness));
 	border-radius: var(--ppde-border-radius, 13px);
 	box-shadow:
 			inset 0 10px 10px rgba(255, 255, 255, 0.3),
@@ -48,8 +50,8 @@
 }
 
 .progress-used {
-	--ppde-bg-hue: calc(100 - var(--ppde-progress-val, 0));
-	--ppde-animation-hue-from: 100;
+	--ppde-bg-hue: max(calc(120 - var(--ppde-progress-val, 0) * 1.2), 0);
+	--ppde-animation-hue-from: 120;
 }
 
 .rtl {
