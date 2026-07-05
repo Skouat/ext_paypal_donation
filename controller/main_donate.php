@@ -128,11 +128,6 @@ class main_donate extends main_controller
 					'L_PPDE_DONATION_TITLE' => $this->language->lang('PPDE_' . strtoupper($set_return_args_url) . '_TITLE'),
 				]);
 			break;
-			case 'donorlist':
-				$this->template->assign_vars([
-					'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),
-				]);
-			break;
 			default:
 				$this->return_args_url = 'body';
 		}

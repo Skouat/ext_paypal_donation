@@ -35,6 +35,7 @@ and the releases are listed in reverse chronological order.
 - Fix: prevent import() from permanently mutating the entity schema
 - Fix: Donors list SQL portability, last-donation date accuracy and N+1 queries
 - Fix: Donors list heading counting (donor, currency) pairs instead of distinct donors
+- Fix: Wrong heading displayed on the donation success/cancel pages
 
 ## 3.0.4 - 2021-04-20
 

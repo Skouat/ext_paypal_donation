@@ -1,7 +1,7 @@
 {% INCLUDE 'overall_header.html' %}
 
 {% if S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' %}
-	<h2>{{ SITENAME }} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
+	<h2>{{ SITENAME }} :: {{ L_PPDE_DONATION_TITLE }}</h2>
 	{% if DONATION_BODY %}
 	<div class="content post bg3">
 		{{ DONATION_BODY }}
