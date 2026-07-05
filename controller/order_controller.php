@@ -301,17 +301,15 @@ class order_controller extends main_controller
 		}
 
 		$result = $response->getResult();
-		$status = (string) $result->getStatus();
+		$order_status = (string) $result->getStatus();
 
-		// Fallback: record now (idempotently) in case the webhook never reaches the board (WAF, anti-bot…).
-		// Failures are swallowed so the donor's redirect is never broken — the webhook stays authoritative.
-		if ($status === ppde_constants::PAYPAL_ORDER_COMPLETED)
+		if ($order_status === ppde_constants::PAYPAL_ORDER_COMPLETED)
 		{
 			try
 			{
 				$data = $this->build_donation_from_order($result, $this->use_sandbox());
 
-				if ($data !== null)
+				if ($data !== null && $data['payment_status'] === ppde_constants::STATUS_COMPLETED)
 				{
 					$this->donation_recorder->record_completed($data, $this->use_sandbox());
 				}
@@ -322,7 +320,7 @@ class order_controller extends main_controller
 			}
 		}
 
-		return new JsonResponse(['status' => $status]);
+		return new JsonResponse(['status' => $order_status]);
 	}
 
 	/**
@@ -342,6 +340,7 @@ class order_controller extends main_controller
 	private function build_donation_from_order($order, bool $is_sandbox): ?array
 	{
 		$capture = $this->extract_capture($order);
+		$capture_status = $this->map_capture_status((string) ($this->safe_call($capture, 'getStatus') ?? ''));
 
 		if ($capture === null || (string) ($this->safe_call($capture, 'getId') ?? '') === '')
 		{
@@ -387,7 +386,7 @@ class order_controller extends main_controller
 
 		return $this->build_transaction_data([
 			'business'          => $is_sandbox ? $this->config['ppde_sandbox_rest_client_id'] : $this->config['ppde_rest_client_id'],
-			'confirmed'         => true,
+			'confirmed'         => $capture_status === ppde_constants::STATUS_COMPLETED,
 			'custom'            => $custom,
 			'exchange_rate'     => $exchange_rate,
 			'first_name'        => $payer['first_name'],
@@ -401,7 +400,7 @@ class order_controller extends main_controller
 			'payer_email'       => $payer['email'],
 			'payer_id'          => $payer['payer_id'],
 			'payment_date'      => $payment_date,
-			'payment_status'    => ppde_constants::STATUS_COMPLETED,
+			'payment_status'    => $capture_status,
 			'receiver_id'       => $payee['merchant_id'],
 			'receiver_email'    => $payee['email'],
 			'residence_country' => $payer['country'],
@@ -433,5 +432,28 @@ class order_controller extends main_controller
 		$captures = $this->safe_call($payments, 'getCaptures');
 
 		return (!empty($captures) && is_array($captures)) ? $captures[0] : null;
+	}
+
+	/**
+	 * Map a PayPal capture status to the PPDE payment status.
+	 * Unknown statuses fall back to pending (never credited).
+	 *
+	 * @param string $status
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function map_capture_status(string $status): string
+	{
+		switch (strtoupper($status))
+		{
+			case 'COMPLETED':
+				return ppde_constants::STATUS_COMPLETED;
+			case 'DECLINED':
+			case 'FAILED':
+				return ppde_constants::STATUS_DENIED;
+			default:
+				return ppde_constants::STATUS_PENDING;
+		}
 	}
 }
