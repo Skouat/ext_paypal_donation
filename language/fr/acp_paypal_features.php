@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -38,15 +38,39 @@ if (empty($lang) || !is_array($lang))
  * mode: PayPal features
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN',
-	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les fonctionnalités utilisant les notifications instantanées de paiement (IPN) de PayPal.',
+	'PPDE_PAYPAL_FEATURES'                 => 'Fonctionnalités PayPal',
+	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Depuis cette page vous pouvez configurer les identifiants de l’API REST PayPal ainsi que toutes les fonctionnalités reposant sur les webhooks PayPal.',
+
+	// REST API settings
+	'PPDE_LEGEND_REST_API'                 => 'Paramètres de l’API REST',
+	'PPDE_REST_LIVE'                       => 'Identifiants Live',
+	'PPDE_REST_SANDBOX'                    => 'Identifiants Sandbox',
+	'PPDE_REST_CLIENT_ID'                  => 'Client ID',
+	'PPDE_REST_CLIENT_ID_EXPLAIN'          => 'Le Client ID de l’application API REST, disponible depuis votre tableau de bord PayPal Developer.',
+	'PPDE_REST_SECRET'                     => 'Secret',
+	'PPDE_REST_SECRET_EXPLAIN'             => 'Le Secret de l’application API REST. Laissez ce champ vide pour conserver la valeur actuelle.',
+	'PPDE_REST_SECRET_SET'                 => '•••••••• (un secret est déjà enregistré)',
+	'PPDE_REST_SECRET_EMPTY'               => 'Aucun secret enregistré pour le moment',
+	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
+	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'Le Webhook ID créé dans votre tableau de bord PayPal Developer. Utilisé pour vérifier l’authenticité des notifications webhook entrantes.',
+
+	// REST tools (webhook URL + connection test)
+	'PPDE_LEGEND_REST_TOOLS'               => 'Outils de l’API REST',
+	'PPDE_WEBHOOK_URL'                     => 'URL du webhook',
+	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Ajoutez cette URL comme webhook dans votre tableau de bord PayPal Developer (pour vos applications Live et Sandbox), abonnez-vous aux événements « Payment capture » (completed, pending, denied, refunded, reversed), puis collez le Webhook ID obtenu ci-dessus.',
+	'PPDE_REST_TEST_LIVE'                  => 'Tester la connexion Live',
+	'PPDE_REST_TEST_SANDBOX'               => 'Tester la connexion Sandbox',
+	'PPDE_REST_TEST_BUTTON'                => 'Tester la connexion',
+	'PPDE_REST_TESTING'                    => 'Test en cours…',
+	'PPDE_REST_TEST_SUCCESS'               => 'Connexion réussie : les identifiants sont valides.',
+	'PPDE_REST_TEST_INVALID'               => 'Échec de la connexion : Client ID ou Secret invalide.',
+	'PPDE_REST_TEST_CURL_ERROR'            => 'Erreur de connexion : %s',
+	'PPDE_REST_TEST_HTTP_ERROR'            => 'Échec de la connexion (HTTP %s).',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Groupe automatique',
-	'PPDE_LEGEND_IPN_DEBUG'                => 'Paramètres de débogage',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Liste des donateurs',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Système de notification',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'Paramètres Généraux',
 	'PPDE_IPN_AG_ENABLE'                   => 'Activer le groupe automatique',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Permet d’ajouter automatiquement les donateurs dans un groupe pré-défini.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Groupe donateurs',
@@ -59,10 +83,6 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_DL_ALLOW_GUEST_EXPLAIN'      => 'Cette option va définir les permissions du forum pour autoriser les invités à consulter la liste des donateurs.',
 	'PPDE_IPN_DL_ENABLE'                   => 'Activer la liste des donateurs',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Permet d’activer la liste des donateurs.',
-	'PPDE_IPN_ENABLE'                      => 'Activer IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Activez cette option pour utiliser IPN (Notification Instantanée de Paiement).<br>Si activé, toutes les fonctionnalités dépendant de PayPal IPN apparaîtront ci-dessous.',
-	'PPDE_IPN_LOGGING'                     => 'Activer le journal des erreurs',
-	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Cette option permet d’enregistrer les erreurs et les données liées à PayPal IPN dans le répertoire <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Activer les notifications',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Permet de notifier les administrateurs et les donateurs dès qu’un don est reçu.',
 
@@ -72,23 +92,18 @@ $lang = array_merge($lang, [
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Activez cette option si vous voulez utiliser PayPal Sandbox au lieu des services PayPal.<br>Pratique pour les développeurs/testeurs. Toutes les transactions sont fictives.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox pour les fondateurs',
 	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'Si activé, PayPal Sandbox ne sera visible que par les fondateurs du forum.',
-	'PPDE_SANDBOX_ADDRESS'                 => 'Compte PayPal Sandbox',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Inscrire l’adresse courriel ou l’ID de vendeur PayPal Sandbox.',
-	'PPDE_SANDBOX_REMOTE'                  => 'URL PayPal Sandbox',
-	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Ne changez pas ce paramètre, sauf si cette extension a des difficultés pour contacter les serveurs Sandbox de PayPal.',
 ]);
 
 /**
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres IPN PayPal ont été sauvegardés.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'Les paramètres PayPal ont été sauvegardés.',
 ]);
 
 /**
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Veuillez vérifier le paramètre « Adresse PayPal Sandbox ».',
-	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'PayPal IPN ne peut pas être activé. Vérifiez les prérequis systèmes depuis le module « Vue d’ensemble ».',
+	'PPDE_REST_CREDENTIALS_MISSING'       => 'Les identifiants de l’API REST PayPal (Client ID / Secret) ne sont pas configurés. Veuillez les renseigner dans le module « Fonctionnalités PayPal ».',
 ]);

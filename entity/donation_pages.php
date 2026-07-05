@@ -102,7 +102,6 @@ class donation_pages extends main
 	 */
 	public function set_lang_id($lang)
 	{
-		// Set the lang_id on our data array
 		$this->data['page_lang_id'] = (int) $lang;
 
 		return $this;
@@ -116,12 +115,10 @@ class donation_pages extends main
 	 */
 	public function get_message_for_edit(): string
 	{
-		// Use defaults if these haven't been set yet
 		$message = $this->data['page_content'] ?? '';
 		$uid = $this->data['page_content_bbcode_uid'] ?? '';
 		$options = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
-		// Generate for edit
 		$message_data = generate_text_for_edit($message, $uid, $options);
 
 		return $message_data['text'];
@@ -137,13 +134,11 @@ class donation_pages extends main
 	 */
 	public function get_message_for_display($censor_text = true): string
 	{
-		// If these haven't been set yet; use defaults
 		$message = $this->data['page_content'] ?? '';
 		$uid = $this->data['page_content_bbcode_uid'] ?? '';
 		$bitfield = $this->data['page_content_bbcode_bitfield'] ?? '';
 		$options = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
-		// Generate for display
 		return generate_text_for_display($message, $uid, $bitfield, $options, $censor_text);
 	}
 
@@ -172,30 +167,22 @@ class donation_pages extends main
 	 */
 	protected function set_message_option($option_value, $negate = false, $reparse_message = true): void
 	{
-		// Set item_text_bbcode_options to 0 if it does not yet exist
 		$this->data['page_content_bbcode_options'] = (int) ($this->data['page_content_bbcode_options'] ?? 0);
 
-		// If we're setting the option and the option is not already set
 		if (!$negate && !($this->data['page_content_bbcode_options'] & $option_value))
 		{
-			// Add the option to the options
 			$this->data['page_content_bbcode_options'] += $option_value;
 		}
 
-		// If we're unsetting the option and the option is already set
 		if ($negate && $this->data['page_content_bbcode_options'] & $option_value)
 		{
-			// Subtract the option from the options
 			$this->data['page_content_bbcode_options'] -= $option_value;
 		}
 
-		// Reparse the message
 		if ($reparse_message && !empty($this->data['page_content']))
 		{
 			$message = $this->data['page_content'];
-
 			decode_message($message, $this->data['page_content_bbcode_uid']);
-
 			$this->set_message($message);
 		}
 	}
@@ -210,16 +197,12 @@ class donation_pages extends main
 	 */
 	public function set_message($message)
 	{
-		// Prepare the text for storage
 		$uid = $bitfield = $flags = '';
 		generate_text_for_storage($message, $uid, $bitfield, $flags, $this->message_bbcode_enabled(), $this->message_magic_url_enabled(), $this->message_smilies_enabled());
 
-		// Set the message to our data array
 		$this->data['page_content'] = $message;
 		$this->data['page_content_bbcode_uid'] = $uid;
 		$this->data['page_content_bbcode_bitfield'] = $bitfield;
-
-		// Flags are already set
 
 		return $this;
 	}

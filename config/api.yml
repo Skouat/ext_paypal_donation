@@ -1,0 +1,12 @@
+services:
+    skouat.ppde.api.paypal.client_factory:
+        class: skouat\ppde\api\paypal\client_factory
+        arguments:
+            - '@config'
+            - '@language'
+
+    skouat.ppde.api.paypal.webhook_verify:
+        class: skouat\ppde\api\paypal\webhook_verify
+        arguments:
+            - '@cache.driver'
+            - '@config'

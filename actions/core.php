@@ -15,6 +15,7 @@ use phpbb\event\dispatcher_interface;
 use phpbb\language\language;
 use phpbb\path_helper;
 use phpbb\user;
+use skouat\ppde\ppde_constants;
 
 class core
 {
@@ -36,9 +37,9 @@ class core
 	 */
 	private $donor_is_member = false;
 	/**
-	 * @var boolean
+	 * @var boolean Whether the current context targets the PayPal Sandbox.
 	 */
-	private $is_ipn_test = false;
+	private $is_sandbox = false;
 	/**
 	 * @var array
 	 */
@@ -50,9 +51,10 @@ class core
 	 */
 	private $root_path;
 	/**
-	 * @var string
+	 * @var string Suffix appended to Sandbox-specific config names.
+	 *             Always '_ipn': persisted config naming convention, do not change the value.
 	 */
-	private $ipn_suffix;
+	private $config_suffix;
 
 	/**
 	 * Constructor
@@ -92,61 +94,95 @@ class core
 	}
 
 	/**
-	 * Sets properties related to ipn tests
+	 * Sets the Sandbox-related properties (test flag + config suffix).
+	 *
+	 * @param bool $sandbox True when targeting the PayPal Sandbox.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function set_sandbox_properties($sandbox): void
+	{
+		$this->set_sandbox($sandbox);
+		$this->set_config_suffix();
+	}
+
+	/**
+	 * Sets the property $this->is_sandbox
+	 *
+	 * @param bool $sandbox
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function set_sandbox($sandbox): void
+	{
+		$this->is_sandbox = (bool) $sandbox;
+	}
+
+	/**
+	 * Sets the property $this->config_suffix
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function set_config_suffix(): void
+	{
+		$this->config_suffix = $this->is_sandbox ? '_ipn' : '';
+	}
+
+	/**
+	 * Gets the Sandbox config suffix.
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_config_suffix(): string
+	{
+		return $this->get_sandbox() ? $this->config_suffix : '';
+	}
+
+	/**
+	 * @return boolean
+	 * @access public
+	 */
+	public function get_sandbox(): bool
+	{
+		return $this->is_sandbox;
+	}
+
+	/**
+	 * Sets properties related to the Sandbox context.
 	 *
 	 * @param bool $ipn_test
 	 *
 	 * @return void
 	 * @access public
+	 * @deprecated 4.0.0 Use set_sandbox_properties() instead. Kept for backward compatibility.
 	 */
 	public function set_ipn_test_properties($ipn_test): void
 	{
-		$this->set_ipn_test($ipn_test);
-		$this->set_ipn_suffix();
+		$this->set_sandbox_properties($ipn_test);
 	}
 
 	/**
-	 * Sets the property $this->is_ipn_test
-	 *
-	 * @param bool $ipn_test
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_ipn_test($ipn_test): void
-	{
-		$this->is_ipn_test = (bool) $ipn_test;
-	}
-
-	/**
-	 * Sets the property $this->ipn_suffix
-	 *
-	 * @return void
-	 * @access private
-	 */
-	private function set_ipn_suffix(): void
-	{
-		$this->ipn_suffix = $this->is_ipn_test ? '_ipn' : '';
-	}
-
-	/**
-	 * Gets the property $this->ipn_suffix
-	 *
 	 * @return string
-	 * @access private
+	 * @access public
+	 * @deprecated 4.0.0 Use get_config_suffix() instead. Kept for backward compatibility.
 	 */
 	public function get_ipn_suffix(): string
 	{
-		return $this->get_ipn_test() ? $this->ipn_suffix : '';
+		return $this->get_config_suffix();
 	}
 
 	/**
 	 * @return boolean
-	 * @access private
+	 * @access public
+	 * @deprecated 4.0.0 Use get_sandbox() instead. Kept for backward compatibility.
 	 */
 	public function get_ipn_test(): bool
 	{
-		return $this->is_ipn_test;
+		return $this->get_sandbox();
 	}
 
 	/**
@@ -157,14 +193,14 @@ class core
 	 */
 	public function update_raised_amount(): void
 	{
-		$net_amount = (float) $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		$net_amount = (float) ($this->transaction_data['net_amount'] ?? 0);
 
 		if (!empty($this->transaction_data['settle_amount']))
 		{
 			$net_amount = $this->transaction_data['settle_amount'];
 		}
 
-		$this->config->set('ppde_raised' . $this->ipn_suffix, (float) $this->config['ppde_raised' . $this->ipn_suffix] + $net_amount, true);
+		$this->config->set('ppde_raised' . $this->config_suffix, (float) $this->config['ppde_raised' . $this->config_suffix] + $net_amount);
 	}
 
 	/**
@@ -191,9 +227,9 @@ class core
 	 */
 	public function update_overview_stats(): void
 	{
-		$this->config->set('ppde_anonymous_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->ipn_suffix));
-		$this->config->set('ppde_known_donors_count' . $this->ipn_suffix, $this->get_count_result('ppde_known_donors_count' . $this->ipn_suffix), true);
-		$this->config->set('ppde_transactions_count' . $this->ipn_suffix, $this->get_count_result('ppde_transactions_count' . $this->ipn_suffix), true);
+		$this->config->set('ppde_anonymous_donors_count' . $this->config_suffix, $this->get_count_result('ppde_anonymous_donors_count' . $this->config_suffix));
+		$this->config->set('ppde_known_donors_count' . $this->config_suffix, $this->get_count_result('ppde_known_donors_count' . $this->config_suffix));
+		$this->config->set('ppde_transactions_count' . $this->config_suffix, $this->get_count_result('ppde_transactions_count' . $this->config_suffix));
 	}
 
 	/**
@@ -211,7 +247,7 @@ class core
 			trigger_error($this->language->lang('EXCEPTION_INVALID_CONFIG_NAME', $config_name), E_USER_WARNING);
 		}
 
-		return $this->ppde_operator_transaction->sql_query_count_result($config_name, $this->is_ipn_test);
+		return $this->ppde_operator_transaction->sql_query_count_result($config_name, $this->is_sandbox);
 	}
 
 	/**
@@ -259,7 +295,7 @@ class core
 	}
 
 	/**
-	 * Gets donor informations (user id, username, amount donated) and returns if exists
+	 * Gets donor information (user id, username, amount donated) and returns if exists
 	 *
 	 * @param string     $type Allowed value : 'user' or 'email'
 	 * @param string|int $args If $type is set to 'user', $args must be a user id.
@@ -276,14 +312,6 @@ class core
 	}
 
 	/**
-	 * @return array
-	 */
-	public function get_payer_data(): array
-	{
-		return (count($this->payer_data) != 0) ? $this->payer_data : [];
-	}
-
-	/**
 	 * Updates donor member stats
 	 *
 	 * @return void
@@ -293,7 +321,10 @@ class core
 	{
 		if ($this->donor_is_member)
 		{
-			$this->update_user_stats((int) $this->payer_data['user_id'], (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross']);
+			$new_amount = (float) $this->payer_data['user_ppde_donated_amount'] + (float) $this->transaction_data['mc_gross'];
+			$new_amount = max(0, $new_amount);
+
+			$this->update_user_stats((int) $this->payer_data['user_id'], $new_amount);
 		}
 	}
 
@@ -334,7 +365,7 @@ class core
 		 * @var bool    can_use_autogroup      Whether or not to add the user to the group
 		 * @var int     group_id               The ID of the group to which the user will be added
 		 * @var int     payer_id               The ID of the user who will we added to the group
-		 * @var string  payer_username         The user name
+		 * @var string  payer_username         The username
 		 * @var bool    default_group          Whether or not the group should be made default for the user
 		 * @var float   payer_donated_amount   The user donated amount
 		 * @since 1.0.3
@@ -363,6 +394,72 @@ class core
 	}
 
 	/**
+	 * Remove a donor from the donors group when their cumulative donated amount
+	 * has dropped below the configured minimum (e.g. after a refund/reversal).
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function donors_group_user_remove(): void
+	{
+		$can_remove = $this->can_remove_from_autogroup();
+		$group_id = (int) $this->config['ppde_ipn_group_id'];
+		$payer_id = (int) $this->payer_data['user_id'];
+		$payer_username = $this->payer_data['username'];
+		$payer_donated_amount = $this->payer_data['user_ppde_donated_amount'];
+
+		/**
+		 * Event to modify data before a user is removed from the donors group
+		 *
+		 * @event skouat.ppde.donors_group_user_remove_before
+		 * @var bool   can_remove           Whether or not to remove the user from the group
+		 * @var int    group_id             The ID of the group from which the user will be removed
+		 * @var int    payer_id             The ID of the user who will be removed from the group
+		 * @var string payer_username       The username
+		 * @var float  payer_donated_amount The user donated amount
+		 * @since 4.0.0
+		 */
+		$vars = [
+			'can_remove',
+			'group_id',
+			'payer_id',
+			'payer_username',
+			'payer_donated_amount',
+		];
+		extract($this->dispatcher->trigger_event('skouat.ppde.donors_group_user_remove_before', compact($vars)));
+
+		if ($can_remove)
+		{
+			if (!function_exists('group_user_del'))
+			{
+				include($this->root_path . 'includes/functions_user.' . $this->php_ext);
+			}
+
+			// Removes the user from the donors group. phpBB automatically
+			// resets the default group if this one was the user's default.
+			group_user_del($group_id, [$payer_id], [$payer_username], get_group_name($group_id));
+		}
+	}
+
+	/**
+	 * Checks if the donor must be removed from the donors group.
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function can_remove_from_autogroup(): bool
+	{
+		if (!$this->autogroup_is_enabled() || !$this->donor_is_member)
+		{
+			return false;
+		}
+
+		$this->refresh_payer_data();
+
+		return !$this->minimum_donation_raised();
+	}
+
+	/**
 	 * Checks if all required settings are meet for adding the donor to the group of donors
 	 *
 	 * @return bool
@@ -370,11 +467,14 @@ class core
 	 */
 	private function can_use_autogroup(): bool
 	{
-		return
-			$this->autogroup_is_enabled() &&
-			$this->donor_is_member &&
-			$this->payment_status_is_completed() &&
-			$this->minimum_donation_raised();
+		if (!$this->autogroup_is_enabled() || !$this->donor_is_member || !$this->payment_status_is_completed())
+		{
+			return false;
+		}
+
+		$this->refresh_payer_data();
+
+		return $this->minimum_donation_raised();
 	}
 
 	/**
@@ -385,7 +485,7 @@ class core
 	 */
 	private function autogroup_is_enabled(): bool
 	{
-		return $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_autogroup_enable'];
+		return $this->config['ppde_enable'] && $this->config['ppde_ipn_autogroup_enable'];
 	}
 
 	/**
@@ -396,7 +496,18 @@ class core
 	 */
 	public function payment_status_is_completed(): bool
 	{
-		return $this->transaction_data['payment_status'] === 'Completed';
+		return $this->transaction_data['payment_status'] === ppde_constants::STATUS_COMPLETED;
+	}
+
+	/**
+	 * Reload payer_data so the freshly updated donated amount is read.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function refresh_payer_data(): void
+	{
+		$this->check_donors_status('user', $this->payer_data['user_id']);
 	}
 
 	/**
@@ -407,9 +518,6 @@ class core
 	 */
 	public function minimum_donation_raised(): bool
 	{
-		// Updates payer_data info before checking values
-		$this->check_donors_status('user', $this->payer_data['user_id']);
-
 		return (float) $this->payer_data['user_ppde_donated_amount'] >= (float) $this->config['ppde_ipn_min_before_group'];
 	}
 
@@ -419,32 +527,29 @@ class core
 	 * @param array $data Transaction data array
 	 *
 	 * @return void
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function log_to_db($data): void
 	{
-		// Set the property $this->transaction_data
 		$this->set_transaction_data($data);
 
-		// The item number contains the user_id
-		$this->extract_item_number_data();
+		$this->extract_user_id();
 		$this->validate_user_id();
 
-		// Set username in extra_data property in $entity
 		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
 		$this->ppde_entity_transaction->set_username($user_ary['username']);
 
-		// Set 'net_amount' in $this->transaction_data
-		$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		if (empty($this->transaction_data['net_amount']))
+		{
+			$this->transaction_data['net_amount'] = $this->net_amount($this->transaction_data['mc_gross'], $this->transaction_data['mc_fee']);
+		}
 
-		// List the data to be thrown into the database
 		$data = $this->ppde_operator_transaction->build_data_ary($this->transaction_data);
 
-		// Load data in the entity
 		$this->ppde_entity_transaction->set_entity_data($data);
 		$this->ppde_entity_transaction->set_id($this->ppde_entity_transaction->transaction_exists());
 
-		// Add or edit transaction data
 		$this->ppde_entity_transaction->add_edit_data();
 	}
 
@@ -462,14 +567,19 @@ class core
 	}
 
 	/**
-	 * Retrieve user_id from item_number args
+	 * Retrieve user_id from custom args
 	 *
 	 * @return void
 	 * @access private
 	 */
-	private function extract_item_number_data(): void
+	private function extract_user_id(): void
 	{
-		[$this->transaction_data['user_id']] = explode('_', substr($this->transaction_data['item_number'], 4), -1);
+		$custom = (string) ($this->transaction_data['custom'] ?? '');
+
+		// Strip the "uid_" prefix, drop the trailing "_<time>" segment.
+		$parts = explode('_', substr($custom, 4), -1);
+
+		$this->transaction_data['user_id'] = $parts[0] ?? (string) ANONYMOUS;
 	}
 
 	/**
@@ -494,6 +604,6 @@ class core
 	 */
 	public function is_in_admin(): bool
 	{
-		return (defined('IN_ADMIN') && isset($this->user->data['session_admin']) && $this->user->data['session_admin']) ? IN_ADMIN : false;
+		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && (bool) $this->user->data['session_admin'];
 	}
 }

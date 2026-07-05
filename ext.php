@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -23,11 +23,11 @@ namespace skouat\ppde;
 class ext extends \phpbb\extension\base
 {
 	/**
-	 * Check whether or not the extension can be enabled.
+	 * Check whether the extension can be enabled.
 	 * The current phpBB version should meet or exceed
 	 * the minimum version required by this extension:
 	 *
-	 * Requires phpBB 3.3.0 and PHP 7.1.3
+	 * Requires phpBB 3.3.11 and PHP 7.2.0
 	 *
 	 * @return bool
 	 * @access public
@@ -36,7 +36,7 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.0', '>=') && PHP_VERSION_ID >= 70103;
+		return phpbb_version_compare($config['version'], '3.3.11', '>=') && PHP_VERSION_ID >= 70200;
 	}
 
 	/**
@@ -50,53 +50,13 @@ class ext extends \phpbb\extension\base
 	public function enable_step($old_state)
 	{
 		// Empty means nothing has run yet
-		if ($old_state === '')
+		if ($old_state == '')
 		{
 			// Enable notifications
 			return $this->notification_handler('enable', $this->notification_types());
 		}
 		// Run parent enable step method
 		return parent::enable_step($old_state);
-	}
-
-	/**
-	 * Overwrite disable_step to disable extension notifications before the extension is disabled.
-	 *
-	 * @param mixed $old_state State returned by previous call of this method
-	 *
-	 * @return false|string Returns false after last step, otherwise temporary state
-	 * @access public
-	 */
-	public function disable_step($old_state)
-	{
-		// Empty means nothing has run yet
-		if ($old_state === '')
-		{
-			// Disable notifications
-			return $this->notification_handler('disable', $this->notification_types());
-		}
-		// Run parent disable step method
-		return parent::disable_step($old_state);
-	}
-
-	/**
-	 * Overwrite purge_step to purge extension notifications before any included and installed migrations are reverted.
-	 *
-	 * @param mixed $old_state State returned by previous call of this method
-	 *
-	 * @return bool|string Returns false after last step, otherwise temporary state
-	 * @access public
-	 */
-	public function purge_step($old_state)
-	{
-		// Empty means nothing has run yet
-		if ($old_state === '')
-		{
-			// Purge notifications
-			return $this->notification_handler('purge', $this->notification_types());
-		}
-		// Run parent purge step method
-		return parent::purge_step($old_state);
 	}
 
 	/**
@@ -133,9 +93,48 @@ class ext extends \phpbb\extension\base
 	protected function notification_types(): array
 	{
 		return [
-			'skouat.ppde.notification.type.admin_donation_errors',
 			'skouat.ppde.notification.type.admin_donation_received',
 			'skouat.ppde.notification.type.donor_donation_received',
 		];
+	}
+
+	/**
+	 * Overwrite disable_step to disable extension notifications before the extension is disabled.
+	 *
+	 * @param mixed $old_state State returned by previous call of this method
+	 *
+	 * @return false|string Returns false after last step, otherwise temporary state
+	 * @access public
+	 */
+	public function disable_step($old_state)
+	{
+		// Empty means nothing has run yet
+		if ($old_state == '')
+		{
+			// Disable notifications
+			return $this->notification_handler('disable', $this->notification_types());
+		}
+		// Run parent disable step method
+		return parent::disable_step($old_state);
+	}
+
+	/**
+	 * Overwrite purge_step to purge extension notifications before any included and installed migrations are reverted.
+	 *
+	 * @param mixed $old_state State returned by previous call of this method
+	 *
+	 * @return bool|string Returns false after last step, otherwise temporary state
+	 * @access public
+	 */
+	public function purge_step($old_state)
+	{
+		// Empty means nothing has run yet
+		if ($old_state == '')
+		{
+			// Purge notifications
+			return $this->notification_handler('purge', $this->notification_types());
+		}
+		// Run parent purge step method
+		return parent::purge_step($old_state);
 	}
 }

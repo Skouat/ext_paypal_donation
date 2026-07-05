@@ -11,37 +11,6 @@ services:
             - '%core.php_ext%'
             - '@cache'
 
-    skouat.ppde.ipn_listener:
-        class: skouat\ppde\controller\ipn_listener
-        arguments:
-            - '@config'
-            - '@language'
-            - '@skouat.ppde.core_actions'
-            - '@skouat.ppde.actions.post_data'
-            - '@skouat.ppde.controller'
-            - '@skouat.ppde.controller.admin.transactions'
-            - '@skouat.ppde.ipn_log'
-            - '@skouat.ppde.ipn_paypal'
-            - '@request'
-            - '@dispatcher'
-
-    skouat.ppde.ipn_log:
-        class: skouat\ppde\controller\ipn_log
-        arguments:
-            - '@config'
-            - '@filesystem'
-            - '@path_helper'
-            - '@skouat.ppde.controller'
-
-    skouat.ppde.ipn_paypal:
-        class: skouat\ppde\controller\ipn_paypal
-        arguments:
-            - '@config'
-            - '@language'
-            - '@skouat.ppde.extension_manager'
-            - '@skouat.ppde.ipn_log'
-            - '@request'
-
     skouat.ppde.controller:
         class: skouat\ppde\controller\main_controller
         arguments:
@@ -70,19 +39,20 @@ services:
         class: skouat\ppde\controller\main_donate
         parent: skouat.ppde.controller
         calls:
-            - [set_actions_vars, ['@skouat.ppde.actions.vars']]
-            - [set_display_stats, ['@skouat.ppde.controller.main.displaystats']]
-            - [set_entity_donation_pages, ['@skouat.ppde.entity.donation_pages']]
-            - [set_operator_donation_pages, ['@skouat.ppde.operator.donation_pages']]
+            - [ set_actions_vars, [ '@skouat.ppde.actions.vars' ] ]
+            - [ set_display_stats, [ '@skouat.ppde.controller.main.displaystats' ] ]
+            - [ set_entity_donation_pages, [ '@skouat.ppde.entity.donation_pages' ] ]
+            - [ set_operator_donation_pages, [ '@skouat.ppde.operator.donation_pages' ] ]
+            - [ set_client_factory, [ '@skouat.ppde.api.paypal.client_factory' ] ]
 
     skouat.ppde.controller.main.donorlist:
         class: skouat\ppde\controller\main_donor_list
         parent: skouat.ppde.controller
         calls:
-            - [set_entity_transactions, ['@skouat.ppde.entity.transactions']]
-            - [set_operator_transactions, ['@skouat.ppde.operator.transactions']]
-            - [set_pagination, ['@pagination']]
-            - [set_path_helper, ['@path_helper']]
+            - [ set_entity_transactions, [ '@skouat.ppde.entity.transactions' ] ]
+            - [ set_operator_transactions, [ '@skouat.ppde.operator.transactions' ] ]
+            - [ set_pagination, [ '@pagination' ] ]
+            - [ set_path_helper, [ '@path_helper' ] ]
 
     skouat.ppde.controller.admin.currency:
         class: skouat\ppde\controller\admin\currency_controller
@@ -125,7 +95,6 @@ services:
             - '@skouat.ppde.controller'
             - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'
-            - '@skouat.ppde.ipn_paypal'
             - '@request'
             - '@template'
             - '@user'
@@ -153,7 +122,8 @@ services:
             - '@language'
             - '@log'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.ipn_paypal'
+            - '@controller.helper'
+            - '@skouat.ppde.api.paypal.client_factory'
             - '@request'
             - '@template'
             - '@user'
@@ -179,3 +149,26 @@ services:
             - '%core.php_ext%'
             - '%core.table_prefix%'
             - '%skouat.ppde.tables.ppde_transactions%'
+
+    skouat.ppde.controller.order:
+        class: skouat\ppde\controller\order_controller
+        parent: skouat.ppde.controller
+        calls:
+            - [ set_client_factory, [ '@skouat.ppde.api.paypal.client_factory' ] ]
+            - [ set_log, [ '@log' ] ]
+            - [ set_donation_recorder, [ '@skouat.ppde.actions.donation_recorder' ] ]
+
+    skouat.ppde.webhook_listener:
+        class: skouat\ppde\controller\webhook_listener
+        arguments:
+            - '@config'
+            - '@language'
+            - '@log'
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.entity.transactions'
+            - '@skouat.ppde.operator.transactions'
+            - '@skouat.ppde.api.paypal.webhook_verify'
+            - '@skouat.ppde.api.paypal.client_factory'
+            - '@request'
+            - '@user'
+            - '@skouat.ppde.actions.donation_recorder'

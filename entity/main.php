@@ -82,60 +82,82 @@ abstract class main
 	 * @param string $run_before_insert Name of the function to call before SQL INSERT
 	 *
 	 * @return string
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function add_edit_data($run_before_insert = ''): string
 	{
 		if ($this->get_id())
 		{
-			// Save the edited item entity to the database
 			$this->save($this->check_required_field());
 			return 'UPDATED';
 		}
 
-		// Insert the data to the database
 		$this->insert($run_before_insert);
 
-		// Get the newly inserted identifier
-		$id = $this->get_id();
-
-		// Reload the data to return a fresh entity
-		$this->load($id);
+		// Reload to return a fresh entity.
+		$this->load($this->get_id());
 		return 'ADDED';
 	}
 
 	/**
-	 * Insert the item for the first time
-	 *
-	 * Will throw an exception if the item was already inserted (call save() instead)
+	 * Insert the item for the first time (throws if already inserted; use save() instead).
 	 *
 	 * @param string $run_before_insert
 	 *
 	 * @return main $this object for chaining calls; load()->set()->save()
+	 * @throws \skouat\ppde\exception\transaction_exception
 	 * @access public
 	 */
 	public function insert($run_before_insert = '')
 	{
 		if (!empty($this->data[$this->table_schema['item_id']['name']]))
 		{
-			// The item already exists
 			$this->display_warning_message($this->lang_key_prefix . '_EXIST');
 		}
 
-		// Run some stuff before insert data in database
 		$this->run_function_before_action($run_before_insert);
 
-		// Make extra sure there is no item_id set
+		// Make sure no item_id is set before insertion.
 		unset($this->data[$this->table_schema['item_id']['name']]);
 
-		// Insert the item data to the database
 		$sql = 'INSERT INTO ' . $this->table_name . ' ' . $this->db->sql_build_array('INSERT', $this->data);
-		$this->db->sql_query($sql);
+		$this->execute_insert($sql);
 
-		// Set the item_id using the id created by the SQL insert
-		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_nextid();
+		$this->data[$this->table_schema['item_id']['name']] = (int) $this->db->sql_last_inserted_id();
 
 		return $this;
+	}
+
+	/**
+	 * Execute the INSERT query.
+	 *
+	 * Isolated so subclasses (e.g. transactions) can make it resilient to a UNIQUE constraint violation.
+	 *
+	 * @param string $sql
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function execute_insert($sql): void
+	{
+		$this->db->sql_query($sql);
+	}
+
+	/**
+	 * Execute the UPDATE query.
+	 *
+	 * Isolated so subclasses (e.g. transactions) can make it resilient to a constraint violation instead of dying on a
+	 * fatal SQL error.
+	 *
+	 * @param string $sql
+	 *
+	 * @return void
+	 * @access protected
+	 */
+	protected function execute_update($sql): void
+	{
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -184,10 +206,7 @@ abstract class main
 	}
 
 	/**
-	 * Save the current settings to the database
-	 *
-	 * This must be called before closing or any changes will not be saved!
-	 * If adding a item (saving for the first time), you must call insert() or an exception will be thrown
+	 * Save the current data to the database (use insert() for the first save).
 	 *
 	 * @param bool $required_fields
 	 *
@@ -198,14 +217,13 @@ abstract class main
 	{
 		if ($required_fields)
 		{
-			// The item already exists
 			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
 		$sql = 'UPDATE ' . $this->table_name . '
 			SET ' . $this->db->sql_build_array('UPDATE', $this->data) . '
 			WHERE ' . $this->db->sql_escape($this->table_schema['item_id']['name']) . ' = ' . $this->get_id();
-		$this->db->sql_query($sql);
+		$this->execute_update($sql);
 
 		return $this;
 	}
@@ -231,8 +249,9 @@ abstract class main
 	 */
 	public function data_exists($sql): bool
 	{
-		$this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
 		$this->set_id($this->db->sql_fetchfield($this->table_schema['item_id']['name']));
+		$this->db->sql_freeresult($result);
 
 		return (bool) $this->data[$this->table_schema['item_id']['name']];
 	}
@@ -284,7 +303,6 @@ abstract class main
 
 		if ($this->data === false)
 		{
-			// An item does not exist
 			$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 		}
 
@@ -348,7 +366,7 @@ abstract class main
 	 * @param int    $id
 	 * @param string $action_before_delete Function to start before deleting data.
 	 * @param string $sql_where
-	 * @param bool   $all                  Set to true if you want delete all data from the table.
+	 * @param bool   $all                  Set to true if you want to delete all data from the table.
 	 *
 	 * @return bool
 	 * @access public
@@ -361,7 +379,7 @@ abstract class main
 		{
 			if (empty($sql_where) && $this->disallow_deletion($id))
 			{
-				// The item selected does not exists
+				// The item selected does not exist
 				$this->display_warning_message($this->lang_key_prefix . '_NO_' . $this->lang_key_suffix);
 			}
 
@@ -408,12 +426,10 @@ abstract class main
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Import each row into an entity
 			$entities[] = $this->import($row, $additional_table_schema, $override);
 		}
 		$this->db->sql_freeresult($result);
 
-		// Return all entities
 		return $entities;
 	}
 
@@ -433,11 +449,8 @@ abstract class main
 	}
 
 	/**
-	 * Import and validate data
-	 *
-	 * Used when the data is already loaded externally.
-	 * Any existing data on this item is over-written.
-	 * All data is validated and an exception is thrown if any data is invalid.
+	 * Import and validate externally loaded data, overwriting any existing data.
+	 * Throws if a declared field is missing.
 	 *
 	 * @param array $data Data array, typically from the database
 	 * @param array $additional_table_schema
@@ -448,25 +461,18 @@ abstract class main
 	 */
 	public function import($data, $additional_table_schema = [], $override = false): array
 	{
-		// Clear out any saved data
 		$this->data = [];
 
-		// Adds additional field to the table schema
-		$this->table_schema = !$override ? array_merge($this->table_schema, $additional_table_schema) : $additional_table_schema;
+		$schema = $override ? $additional_table_schema : array_merge($this->table_schema, $additional_table_schema);
 
-		// Go through the basic fields and set them to our data array
-		foreach ($this->table_schema as $generic_field => $field)
+		foreach ($schema as $field)
 		{
-			// If the data wasn't sent to us, throw an exception
 			if (!isset($data[$field['name']]))
 			{
 				$this->display_warning_message('EXCEPTION_INVALID_FIELD', $field['name']);
 			}
 
-			// settype passes values by reference
 			$value = $data[$field['name']];
-
-			// We're using settype to enforce data types
 			settype($value, $field['type']);
 
 			$this->data[$field['name']] = $value;

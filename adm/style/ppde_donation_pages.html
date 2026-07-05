@@ -6,16 +6,12 @@
 <p>{{ lang('PPDE_DP_CONFIG_EXPLAIN') }}</p>
 
 {% if S_ADD_EDIT %}
-<script type="text/javascript">
-	// <![CDATA[
-
+<script>
 	var form_name = 'add_edit_donation_pages';
 	var text_name = 'page_content';
 	var load_draft = false;
 	var upload = false;
 	var imageTag = false;
-
-	// ]]>
 </script>
 
 <a href="{{ U_BACK }}" style="float: {{ S_CONTENT_FLOW_END }};">&laquo; {{ lang('BACK') }}</a>
@@ -126,7 +122,7 @@
 				<td class="row3" colspan="3">{{ ppde_langs.LANG_LOCAL_NAME }}</td>
 			</tr>
 			{% for dp_list in ppde_langs.dp_list %}
-			{% if langs.dp_list.S_ROW_COUNT is even %}<tr class="row1">{% else %}<tr class="row2">{% endif %}
+			{% if dp_list.S_ROW_COUNT is even %}<tr class="row1">{% else %}<tr class="row2">{% endif %}
 				<td><a href="{{ dp_list.U_EDIT }}">{{ dp_list.DONATION_PAGE_TITLE }}</a></td>
 				<td>{{ dp_list.DONATION_PAGE_LANG }}</td>
 				<td>

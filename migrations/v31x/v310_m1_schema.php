@@ -18,8 +18,6 @@ class v310_m1_schema extends \phpbb\db\migration\migration
 	}
 
 	/**
-	 * Add the table schema to the database:
-	 *
 	 * @return array Array of table schema
 	 * @access public
 	 */
@@ -102,8 +100,6 @@ class v310_m1_schema extends \phpbb\db\migration\migration
 	}
 
 	/**
-	 * Drop the PayPal Donation tables schema from the database
-	 *
 	 * @return array Array of table schema
 	 * @access public
 	 */

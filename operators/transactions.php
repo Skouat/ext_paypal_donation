@@ -11,10 +11,12 @@
 namespace skouat\ppde\operators;
 
 use phpbb\db\driver\driver_interface;
+use skouat\ppde\entity\transaction_data_builder;
+use skouat\ppde\ppde_constants;
 
 class transactions
 {
-	protected $container;
+	use transaction_data_builder;
 	protected $db;
 	protected $ppde_transactions_log_table;
 
@@ -42,7 +44,6 @@ class transactions
 	 */
 	public function build_sql_data($transaction_id = 0): string
 	{
-		// Build main sql request
 		$sql_ary = [
 			'SELECT'    => 'txn.*, u.username, u.user_colour',
 			'FROM'      => [$this->ppde_transactions_log_table => 'txn'],
@@ -55,13 +56,11 @@ class transactions
 			'ORDER_BY'  => 'txn.transaction_id',
 		];
 
-		// Use WHERE clause when $currency_id is different from 0
 		if ((int) $transaction_id)
 		{
 			$sql_ary['WHERE'] = 'txn.transaction_id = ' . (int) $transaction_id;
 		}
 
-		// Return all transactions entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
@@ -80,9 +79,7 @@ class transactions
 		$sql_donorslist_ary = [
 			'SELECT'   => 'txn.user_id, txn.mc_currency',
 			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
-			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
-							AND txn.payment_status = 'Completed'
-							AND txn.test_ipn = 0",
+			'WHERE'    => $this->donorlist_where(),
 			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
 		];
 
@@ -93,7 +90,7 @@ class transactions
 
 		if ($detailed)
 		{
-			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, MAX(txn.transaction_id) AS max_txn_id, SUM(txn.mc_gross) AS amount, MAX(u.username)';
+			$sql_donorslist_ary['SELECT'] = 'txn.user_id, txn.mc_currency, SUM(txn.mc_gross) AS amount';
 			$sql_donorslist_ary['LEFT_JOIN'] = [
 				[
 					'FROM' => [USERS_TABLE => 'u'],
@@ -102,6 +99,35 @@ class transactions
 		}
 
 		return $sql_donorslist_ary;
+	}
+
+	/**
+	 * Count distinct donors, regardless of currency.
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_donors_count_ary(): array
+	{
+		return [
+			'SELECT'   => 'txn.user_id',
+			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
+			'WHERE'    => $this->donorlist_where(),
+			'GROUP_BY' => 'txn.user_id',
+		];
+	}
+
+	/**
+	 * Shared WHERE for the donors list: registered donors, completed live donations.
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function donorlist_where(): string
+	{
+		return 'txn.user_id <> ' . ANONYMOUS . "
+			AND txn.payment_status = '" . ppde_constants::STATUS_COMPLETED . "'
+			AND txn.test_ipn = 0";
 	}
 
 	/**
@@ -147,15 +173,23 @@ class transactions
 	 */
 	public function query_sql_count($count_sql_ary, $selected_field): int
 	{
-		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
-
 		if (array_key_exists('GROUP_BY', $count_sql_ary))
 		{
-			$count_sql_ary['SELECT'] = 'COUNT(DISTINCT ' . $count_sql_ary['GROUP_BY'] . ') AS total_entries';
-		}
-		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+			$count_sql_ary['SELECT'] = $count_sql_ary['GROUP_BY'];
+			unset($count_sql_ary['ORDER_BY']);
 
-		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+			$inner_sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+
+			$sql = 'SELECT COUNT(*) AS total_entries FROM (' . $inner_sql . ') ppde_donors';
+		}
+		else
+		{
+			$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
+			unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+
+			$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+		}
+
 		$result = $this->db->sql_query($sql);
 		$field = (int) $this->db->sql_fetchfield('total_entries');
 		$this->db->sql_freeresult($result);
@@ -178,7 +212,6 @@ class transactions
 		$sql_keywords = '';
 		if (!empty($keywords))
 		{
-			// Get the SQL condition for our keywords
 			$sql_keywords = $this->generate_sql_keyword($keywords);
 		}
 
@@ -202,7 +235,7 @@ class transactions
 	}
 
 	/**
-	 * Generates a sql condition for the specified keywords
+	 * Generates a SQL condition for the specified keywords.
 	 *
 	 * @param string $keywords           The keywords the user specified to search for
 	 * @param string $statement_operator The operator used to prefix the statement ('AND' by default)
@@ -212,16 +245,12 @@ class transactions
 	 */
 	private function generate_sql_keyword($keywords, $statement_operator = 'AND'): string
 	{
-		// Use no preg_quote for $keywords because this would lead to sole
-		// backslashes being added. We also use an OR connection here for
-		// spaces and the | string. Currently, regex is not supported for
-		// searching (but may come later).
+		// No preg_quote() on $keywords: it would only add stray backslashes.
 		$keywords = preg_split('#[\s|]+#u', utf8_strtolower($keywords), 0, PREG_SPLIT_NO_EMPTY);
 		$sql_keywords = '';
 
 		if (!empty($keywords))
 		{
-			// Build pattern and keywords...
 			foreach ($keywords as $index => $value)
 			{
 				$keywords[$index] = $this->db->sql_like_expression($this->db->get_any_char() . $value . $this->db->get_any_char());
@@ -325,7 +354,7 @@ class transactions
 	 * @param string $txn_id     The txn number id
 	 * @param string $custom_url optional parameter to specify a profile url. The transaction id get appended to this
 	 *                           url as &amp;id={id}
-	 * @param bool   $colour     If false the color #FF0000 will be applied on the URL.
+	 * @param bool   $colour     If false the colour #FF0000 will be applied on the URL.
 	 *
 	 * @return string A string consisting of what is wanted.
 	 * @access private
@@ -334,7 +363,6 @@ class transactions
 	{
 		static $_profile_cache;
 
-		// We cache some common variables we need within this function
 		if (empty($_profile_cache))
 		{
 			$_profile_cache['tpl_nourl'] = '{{ TRANSACTION }}';
@@ -342,14 +370,11 @@ class transactions
 			$_profile_cache['tpl_url_colour'] = '<a href="{{ TXN_URL }}" style="{{ TXN_COLOUR }}">{{ TRANSACTION }}</a>';
 		}
 
-		// Build correct transaction url
 		$txn_url = '';
 		if ($txn_id)
 		{
 			$txn_url = ($custom_url !== '') ? $custom_url . '&amp;action=view&amp;id=' . $id : $txn_id;
 		}
-
-		// Return
 
 		if (!$txn_url)
 		{
@@ -394,7 +419,7 @@ class transactions
 			case 'ppde_transactions_count':
 			case 'ppde_transactions_count_ipn':
 				$sql_ary = $this->sql_select_stats_main('txn_id');
-				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = 'Completed' AND txn.test_ipn = " . (int) $test_ipn;
+				$sql_ary['WHERE'] = "confirmed = 1 AND payment_status = '" . ppde_constants::STATUS_COMPLETED . "' AND txn.test_ipn = " . (int) $test_ipn;
 			break;
 			case 'ppde_known_donors_count':
 			case 'ppde_known_donors_count_ipn':
@@ -457,7 +482,7 @@ class transactions
 	}
 
 	/**
-	 * Prepare data array before send it to $entity
+	 * Prepare data array before sending it to $entity.
 	 *
 	 * @param array $data
 	 *
@@ -466,36 +491,129 @@ class transactions
 	 */
 	public function build_data_ary($data): array
 	{
+		$result = [];
+
+		foreach ($this->transaction_data_template() as $field => [$default, $type])
+		{
+			$value = array_key_exists($field, $data) ? $data[$field] : $default;
+			settype($value, $type);
+			$result[$field] = $value;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Returns the "custom" value of a transaction by its PayPal txn_id.
+	 * Avoids loading the whole row into the shared transaction entity.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return string The custom value, or an empty string if not found.
+	 * @access public
+	 */
+	public function get_custom_by_txn_id(string $txn_id): string
+	{
+		$sql = 'SELECT custom
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$custom = (string) $this->db->sql_fetchfield('custom');
+		$this->db->sql_freeresult($result);
+
+		return $custom;
+	}
+
+	/**
+	 * Returns the payment_status of a transaction by its PayPal txn_id.
+	 * Avoids loading the row into the shared entity.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return string The payment status, or an empty string if not found.
+	 * @access public
+	 */
+	public function get_payment_status_by_txn_id($txn_id): string
+	{
+		$sql = 'SELECT payment_status
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$status = (string) $this->db->sql_fetchfield('payment_status');
+		$this->db->sql_freeresult($result);
+
+		return $status;
+	}
+
+	/**
+	 * Whether a transaction is already fully processed (Completed).
+	 *
+	 * Centralises the "Completed" idempotency rule shared by the webhook
+	 * listener and the capture endpoint.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_txn_completed(string $txn_id): bool
+	{
+		return $this->get_payment_status_by_txn_id($txn_id) === ppde_constants::STATUS_COMPLETED;
+	}
+
+	/**
+	 * Most recent completed donation per (user, currency) for the given donors.
+	 *
+	 * @param int[] $user_ids The donor user ids on the current page
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_last_donations_ary(array $user_ids): array
+	{
+		$user_ids  = array_map('intval', $user_ids);
+		$completed = "'" . $this->db->sql_escape(ppde_constants::STATUS_COMPLETED) . "'";
+
 		return [
-			'business'          => $data['business'],
-			'confirmed'         => (bool) $data['confirmed'],
-			'exchange_rate'     => $data['exchange_rate'],
-			'first_name'        => $data['first_name'],
-			'item_name'         => $data['item_name'],
-			'item_number'       => $data['item_number'],
-			'last_name'         => $data['last_name'],
-			'mc_currency'       => $data['mc_currency'],
-			'mc_gross'          => (float) $data['mc_gross'],
-			'mc_fee'            => (float) $data['mc_fee'],
-			'net_amount'        => (float) $data['net_amount'],
-			'parent_txn_id'     => $data['parent_txn_id'],
-			'payer_email'       => $data['payer_email'],
-			'payer_id'          => $data['payer_id'],
-			'payer_status'      => $data['payer_status'],
-			'payment_date'      => $data['payment_date'],
-			'payment_status'    => $data['payment_status'],
-			'payment_type'      => $data['payment_type'],
-			'memo'              => $data['memo'],
-			'receiver_id'       => $data['receiver_id'],
-			'receiver_email'    => $data['receiver_email'],
-			'residence_country' => $data['residence_country'],
-			'settle_amount'     => (float) $data['settle_amount'],
-			'settle_currency'   => $data['settle_currency'],
-			'test_ipn'          => (bool) $data['test_ipn'],
-			'txn_errors'        => $data['txn_errors'],
-			'txn_id'            => $data['txn_id'],
-			'txn_type'          => $data['txn_type'],
-			'user_id'           => (int) $data['user_id'],
+			'SELECT'    => 'dl.transaction_id, dl.user_id, dl.mc_currency, dl.payment_date, dl.mc_gross',
+			'FROM'      => [$this->ppde_transactions_log_table => 'dl'],
+			'LEFT_JOIN' => [
+				[
+					'FROM' => [$this->ppde_transactions_log_table => 'dn'],
+					'ON'   => 'dl.user_id = dn.user_id
+					AND dl.mc_currency = dn.mc_currency
+					AND dn.payment_status = ' . $completed . '
+					AND dn.test_ipn = 0
+					AND (dn.payment_date > dl.payment_date
+						OR (dn.payment_date = dl.payment_date AND dn.transaction_id > dl.transaction_id))',
+				],
+			],
+			'WHERE'     => 'dn.transaction_id IS NULL
+			AND dl.payment_status = ' . $completed . '
+			AND dl.test_ipn = 0
+			AND dl.user_id <> ' . ANONYMOUS . '
+			AND ' . $this->db->sql_in_set('dl.user_id', $user_ids ?: [0]),
 		];
+	}
+
+	/**
+	 * Fetch the payer/payee already stored for a transaction, so a
+	 * PENDING→COMPLETED upgrade can reuse them without another PayPal API call.
+	 *
+	 * @param string $txn_id
+	 *
+	 * @return array Empty array if the transaction is not found.
+	 * @access public
+	 */
+	public function get_parties_by_txn_id(string $txn_id): array
+	{
+		$sql = 'SELECT first_name, last_name, payer_email, payer_id, residence_country, receiver_email, receiver_id
+		FROM ' . $this->ppde_transactions_log_table . "
+		WHERE txn_id = '" . $this->db->sql_escape($txn_id) . "'";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		return $row ?: [];
 	}
 }

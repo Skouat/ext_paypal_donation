@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -84,76 +84,46 @@ class main_controller
 
 	public function handle()
 	{
-		// We stop the execution of the code because nothing need to be returned to phpBB.
+		// We stop the execution of the code because nothing needs to be returned to phpBB.
 		garbage_collection();
 		exit_handler();
 	}
 
 	/**
+	 * Check if the donation feature is enabled.
+	 *
 	 * @return bool
-	 * @access private
+	 * @access public
+	 */
+	public function is_donation_active(): bool
+	{
+		return !empty($this->config['ppde_enable']);
+	}
+
+	/**
+	 * Check if the donors list is enabled.
+	 *
+	 * @return bool
+	 * @access public
 	 */
 	public function donorlist_is_enabled(): bool
 	{
-		return $this->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
+		return $this->is_donation_active() && !empty($this->config['ppde_ipn_donorlist_enable']);
 	}
 
 	/**
-	 * Check if IPN is enabled based on config value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function use_ipn(): bool
-	{
-		return !empty($this->config['ppde_enable']) && !empty($this->config['ppde_ipn_enable']) && $this->is_ipn_requirement_satisfied();
-	}
-
-	/**
-	 * Check if IPN requirements are satisfied based on config value
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_ipn_requirement_satisfied(): bool
-	{
-		return !empty($this->config['ppde_curl_detected']) && !empty($this->config['ppde_tls_detected']);
-	}
-
-	/**
-	 * Get PayPal URI
-	 * Used in form and in IPN process
-	 *
-	 * @param bool $is_test_ipn
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function get_paypal_uri($is_test_ipn = false): string
-	{
-		$remote_list = ipn_paypal::get_remote_uri();
-
-		if ($is_test_ipn || $this->use_sandbox())
-		{
-			return $remote_list[$this->config['ppde_sandbox_remote']]['uri'];
-		}
-
-		return $remote_list[$this->config['ppde_default_remote']]['uri'];
-	}
-
-	/**
-	 * Check if Sandbox is enabled based on config value
+	 * Check if the Sandbox environment must be used for the current user.
 	 *
 	 * @return bool
 	 * @access public
 	 */
 	public function use_sandbox(): bool
 	{
-		return $this->use_ipn() && !empty($this->config['ppde_sandbox_enable']) && $this->is_sandbox_founder_enable();
+		return $this->is_donation_active() && !empty($this->config['ppde_sandbox_enable']) && $this->is_sandbox_founder_enable();
 	}
 
 	/**
-	 * Check if Sandbox could be use by founders based on config value
+	 * Check if Sandbox can be used by the current user, based on the founder setting.
 	 *
 	 * @return bool
 	 * @access public

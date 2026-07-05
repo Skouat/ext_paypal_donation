@@ -63,6 +63,7 @@ $lang = array_merge($lang, [
 	'PPDE_DP_BOARD_SIG'        => 'Board’s signature',
 	'PPDE_DP_DONATION_GOAL'    => 'Donation goal',
 	'PPDE_DP_DONATION_RAISED'  => 'Donation raised',
+	'PPDE_DP_DONATION_USED'    => 'Donation used',
 	'PPDE_DP_PREDEFINED_VARS'  => 'Predefined variables',
 	'PPDE_DP_SITE_DESC'        => 'Site description',
 	'PPDE_DP_SITE_NAME'        => 'Sitename',

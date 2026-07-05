@@ -39,7 +39,7 @@ class donor_donation_received extends donation
 	 */
 	public function is_available()
 	{
-		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable'] && $this->config['ppde_ipn_enable'] && $this->config['ppde_ipn_notification_enable']);
+		return ($this->auth->acl_get('u_ppde_use') && $this->config['ppde_enable'] && $this->config['ppde_ipn_notification_enable']);
 	}
 
 	/**
@@ -51,8 +51,8 @@ class donor_donation_received extends donation
 			'ignore_users' => [],
 		], $options);
 
-		// Grab members that have permission to use extension.
-		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use', false);
+		// Members allowed to use the extension.
+		$donor_ary = $this->auth->acl_get_list($data['user_from'], 'u_ppde_use');
 		$users = (!empty($donor_ary[0]['u_ppde_use'])) ? $donor_ary[0]['u_ppde_use'] : [];
 
 		if (empty($users))

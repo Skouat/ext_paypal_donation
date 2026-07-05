@@ -20,22 +20,20 @@ use phpbb\user;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\locale_icu;
 use skouat\ppde\controller\extension_manager;
-use skouat\ppde\controller\ipn_paypal;
 use skouat\ppde\controller\main_controller;
 
 /**
- * @property config     config              Config object
- * @property string     id_prefix_name      Prefix name for identifier in the URL
- * @property string     lang_key_prefix     Prefix for the messages thrown by exceptions
- * @property language   language            Language user object
- * @property log        log                 The phpBB log system
- * @property string     module_name         Name of the module currently used
- * @property locale_icu ppde_actions_locale PPDE Locale actions object
- * @property ipn_paypal ppde_ipn_paypal     IPN PayPal object
- * @property request    request             Request object
- * @property template   template            Template object
- * @property string     u_action            Action URL
- * @property user       user                User object
+ * @property config       config              Config object
+ * @property string       id_prefix_name      Prefix name for identifier in the URL
+ * @property string       lang_key_prefix     Prefix for the messages thrown by exceptions
+ * @property language     language            Language user object
+ * @property log          log                 The phpBB log system
+ * @property string       module_name         Name of the module currently used
+ * @property locale_icu   ppde_actions_locale PPDE locale actions object
+ * @property request      request             Request object
+ * @property template     template            Template object
+ * @property string       u_action            Action URL
+ * @property user         user                User object
  */
 class overview_controller extends admin_main
 {
@@ -57,11 +55,10 @@ class overview_controller extends admin_main
 	 * @param language                $language                     Language user object
 	 * @param log                     $log                          The phpBB log system
 	 * @param core                    $ppde_actions                 PPDE core actions object
-	 * @param locale_icu              $ppde_actions_locale          PPDE Locale actions object
+	 * @param locale_icu              $ppde_actions_locale          PPDE locale actions object
 	 * @param main_controller         $ppde_controller_main         Main controller object
 	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
-	 * @param ipn_paypal              $ppde_ipn_paypal              IPN PayPal object
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
 	 * @param user                    $user                         User object
@@ -81,7 +78,6 @@ class overview_controller extends admin_main
 		main_controller $ppde_controller_main,
 		transactions_controller $ppde_controller_transactions,
 		extension_manager $ppde_ext_manager,
-		ipn_paypal $ppde_ipn_paypal,
 		request $request,
 		template $template,
 		user $user,
@@ -99,7 +95,6 @@ class overview_controller extends admin_main
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->ppde_ext_manager = $ppde_ext_manager;
-		$this->ppde_ipn_paypal = $ppde_ipn_paypal;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
@@ -129,24 +124,18 @@ class overview_controller extends admin_main
 
 		$this->do_action($action);
 
-		//Load metadata for this extension
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
-		// Set output block vars for display in the template
 		$this->template->assign_vars([
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
-			'PPDE_ESI_TLS'                   => $this->config['ppde_tls_detected'] ? $this->language->lang('PPDE_ESI_DETECTED') : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_OPENSSL'       => defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
-			'PPDE_ESI_VERSION_CURL'          => !empty($this->config['ppde_curl_version']) ? $this->config['ppde_curl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
-			'PPDE_ESI_VERSION_SSL'           => !empty($this->config['ppde_curl_ssl_version']) ? $this->config['ppde_curl_ssl_version'] : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
-			'S_CURL'                         => $this->config['ppde_curl_detected'],
 			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
-			'S_SSL'                          => $this->config['ppde_curl_detected'],
-			'S_TLS'                          => $this->config['ppde_tls_detected'],
+			'S_OPENSSL'                      => extension_loaded('openssl'),
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
 			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
 			'STATS_KNOWN_DONORS_COUNT'       => $this->config['ppde_known_donors_count'],
@@ -159,7 +148,6 @@ class overview_controller extends admin_main
 
 		if ($this->ppde_controller_main->use_sandbox())
 		{
-			// Set output block vars for display in the template
 			$this->template->assign_vars([
 				'S_IPN_TEST'                       => true,
 				'SANDBOX_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count_ipn'],
@@ -252,12 +240,12 @@ class overview_controller extends admin_main
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
 			break;
 			case 'sandbox':
-				$this->ppde_actions->set_ipn_test_properties(true);
+				$this->ppde_actions->set_sandbox_properties(true);
 				$this->ppde_actions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_SANDBOX_RESYNC');
 			break;
 			case 'stats':
-				$this->ppde_actions->set_ipn_test_properties(false);
+				$this->ppde_actions->set_sandbox_properties(false);
 				$this->ppde_actions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
 			break;

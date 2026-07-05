@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2020 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -38,15 +38,39 @@ if (empty($lang) || !is_array($lang))
  * mode: PayPal features
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES'                 => 'PayPal IPN Features',
-	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure all features that use the PayPal Instant Payment Notification (IPN).',
+	'PPDE_PAYPAL_FEATURES'                 => 'PayPal Features',
+	'PPDE_PAYPAL_FEATURES_EXPLAIN'         => 'Here you can configure the PayPal REST API credentials and all the features that rely on PayPal webhooks.',
+
+	// REST API settings
+	'PPDE_LEGEND_REST_API'                 => 'REST API settings',
+	'PPDE_REST_LIVE'                       => 'Live credentials',
+	'PPDE_REST_SANDBOX'                    => 'Sandbox credentials',
+	'PPDE_REST_CLIENT_ID'                  => 'Client ID',
+	'PPDE_REST_CLIENT_ID_EXPLAIN'          => 'The REST API app Client ID from your PayPal Developer Dashboard.',
+	'PPDE_REST_SECRET'                     => 'Secret',
+	'PPDE_REST_SECRET_EXPLAIN'             => 'The REST API app Secret. Leave blank to keep the current value.',
+	'PPDE_REST_SECRET_SET'                 => '•••••••• (a secret is already stored)',
+	'PPDE_REST_SECRET_EMPTY'               => 'No secret stored yet',
+	'PPDE_WEBHOOK_ID'                      => 'Webhook ID',
+	'PPDE_WEBHOOK_ID_EXPLAIN'              => 'The Webhook ID created in your PayPal Developer Dashboard. Used to verify incoming webhook notifications.',
+
+	// REST tools (webhook URL + connection test)
+	'PPDE_LEGEND_REST_TOOLS'               => 'REST API tools',
+	'PPDE_WEBHOOK_URL'                     => 'Webhook URL',
+	'PPDE_WEBHOOK_URL_EXPLAIN'             => 'Add this URL as a webhook in your PayPal Developer Dashboard (for both your Live and Sandbox apps), subscribe to the “Payment capture” events (completed, pending, denied, refunded, reversed), then paste the resulting Webhook ID above.',
+	'PPDE_REST_TEST_LIVE'                  => 'Test Live connection',
+	'PPDE_REST_TEST_SANDBOX'               => 'Test Sandbox connection',
+	'PPDE_REST_TEST_BUTTON'                => 'Test connection',
+	'PPDE_REST_TESTING'                    => 'Testing…',
+	'PPDE_REST_TEST_SUCCESS'               => 'Connection successful: credentials are valid.',
+	'PPDE_REST_TEST_INVALID'               => 'Connection failed: invalid Client ID or Secret.',
+	'PPDE_REST_TEST_CURL_ERROR'            => 'Connection error: %s',
+	'PPDE_REST_TEST_HTTP_ERROR'            => 'Connection failed (HTTP %s).',
 
 	// PayPal IPN settings
 	'PPDE_LEGEND_IPN_AUTOGROUP'            => 'Auto group',
-	'PPDE_LEGEND_IPN_DEBUG'                => 'Debug settings',
 	'PPDE_LEGEND_IPN_DONORLIST'            => 'Donors list',
 	'PPDE_LEGEND_IPN_NOTIFICATION'         => 'Notification system',
-	'PPDE_LEGEND_IPN_SETTINGS'             => 'General settings',
 	'PPDE_IPN_AG_ENABLE'                   => 'Enable auto group',
 	'PPDE_IPN_AG_ENABLE_EXPLAIN'           => 'Allows to add donors to a predefined group.',
 	'PPDE_IPN_AG_DONORS_GROUP'             => 'Donors group',
@@ -59,10 +83,6 @@ $lang = array_merge($lang, [
 	'PPDE_IPN_DL_ALLOW_GUEST_EXPLAIN'      => 'This will set the board permissions to allow guests to view the list of donors.',
 	'PPDE_IPN_DL_ENABLE'                   => 'Enable donors list',
 	'PPDE_IPN_DL_ENABLE_EXPLAIN'           => 'Allows to enable the list of donors.',
-	'PPDE_IPN_ENABLE'                      => 'Enable IPN',
-	'PPDE_IPN_ENABLE_EXPLAIN'              => 'Enable this option if you want to use PayPal’s Instant Payment Notification service.<br>If enabled, more features will be available below.',
-	'PPDE_IPN_LOGGING'                     => 'Enable errors logs',
-	'PPDE_IPN_LOGGING_EXPLAIN'             => 'Write errors and data from PayPal IPN to a file in <strong>/store/ext/ppde/</strong>.',
 	'PPDE_IPN_NOTIFICATION_ENABLE'         => 'Enable notification',
 	'PPDE_IPN_NOTIFICATION_ENABLE_EXPLAIN' => 'Allows to notify site admin and donors when a donation is received.',
 
@@ -71,24 +91,19 @@ $lang = array_merge($lang, [
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Use PayPal Sandbox instead of PayPal services.<br>Useful for developers and testers. All transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
-	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only by the board founders.',
-	'PPDE_SANDBOX_ADDRESS'                 => 'PayPal Sandbox account',
-	'PPDE_SANDBOX_ADDRESS_EXPLAIN'         => 'Enter the PayPal Sandbox email address or Merchant ID.',
-	'PPDE_SANDBOX_REMOTE'                  => 'PayPal sandbox URL',
-	'PPDE_SANDBOX_REMOTE_EXPLAIN'          => 'Do not change this setting, unless this extension encounters errors to contact the sandbox remote host.',
+	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only to the board founders.',
 ]);
 
 /**
  * Confirm box
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal IPN features saved.',
+	'PPDE_PAYPAL_FEATURES_SAVED' => 'PayPal features saved.',
 ]);
 
 /**
  * Errors
  */
 $lang = array_merge($lang, [
-	'PPDE_PAYPAL_FEATURES_MISSING'        => 'Please check “Sandbox address”.',
-	'PPDE_PAYPAL_FEATURES_NOT_ENABLEABLE' => 'IPN PayPal cannot be enabled. Check the system requirements from the “Overview” module.',
+	'PPDE_REST_CREDENTIALS_MISSING'       => 'PayPal REST API credentials (Client ID / Secret) are not configured. Please set them in the PayPal Features module.',
 ]);

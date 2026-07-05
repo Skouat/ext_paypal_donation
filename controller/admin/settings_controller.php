@@ -90,25 +90,20 @@ class settings_controller extends admin_main
 	 */
 	public function display_settings(): void
 	{
-		// Define the name of the form for use as a form key
 		add_form_key('ppde_settings');
 
-		// Create an array to collect errors that will be output to the user
 		$errors = [];
 
 		$this->submit_settings();
 
-		// Set output vars for display in the template
 		$this->s_error_assign_template_vars($errors);
 		$this->u_action_assign_template_vars();
 		$this->ppde_actions_currency->build_currency_select_menu((int) $this->config['ppde_default_currency']);
 		$this->ppde_actions_locale->build_locale_select_menu($this->config['ppde_default_locale']);
-		$this->build_remote_uri_select_menu((int) $this->config['ppde_default_remote'], 'live');
 		$this->build_stat_position_select_menu($this->config['ppde_stats_position']);
 
 		$this->template->assign_vars([
 			// Global Settings vars
-			'PPDE_ACCOUNT_ID'           => $this->check_config($this->config['ppde_account_id'], 'string'),
 			'PPDE_DEFAULT_VALUE'        => $this->check_config($this->config['ppde_default_value'], 'integer', 0),
 			'PPDE_DROPBOX_VALUE'        => $this->check_config($this->config['ppde_dropbox_value'], 'string', '1,2,3,4,5,10,20,25,50,100'),
 			'S_PPDE_DEFAULT_LOCALE'     => $this->ppde_actions_locale->icu_requirements(),
@@ -137,15 +132,12 @@ class settings_controller extends admin_main
 		// Set options for Global settings
 		$this->config->set('ppde_allow_guest', $this->request->variable('ppde_allow_guest', false));
 		$this->config->set('ppde_default_currency', $this->request->variable('ppde_default_currency', 0));
-		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', $this->ppde_actions_locale->locale_get_default()));
+		$this->config->set('ppde_default_locale', $this->request->variable('ppde_default_locale', ''));
 		$this->config->set('ppde_default_value', $this->request->variable('ppde_default_value', 0));
 		$this->config->set('ppde_dropbox_enable', $this->request->variable('ppde_dropbox_enable', false));
 		$this->config->set('ppde_dropbox_value', $this->rebuild_items_list($this->request->variable('ppde_dropbox_value', '1,2,3,4,5,10,20,25,50,100'), (int) $this->config['ppde_default_value']));
 		$this->config->set('ppde_enable', $this->request->variable('ppde_enable', false));
 		$this->config->set('ppde_header_link', $this->request->variable('ppde_header_link', false));
-
-		// Set options for Advanced settings
-		$this->config->set('ppde_default_remote', $this->request->variable('ppde_default_remote', 0));
 
 		// Set options for Statistics Settings
 		$this->config->set('ppde_stats_index_enable', $this->request->variable('ppde_stats_index_enable', false));
@@ -159,7 +151,6 @@ class settings_controller extends admin_main
 		$this->config->set('ppde_used', $this->request->variable('ppde_used', 0.0));
 
 		// Settings with dependencies are the last to be set.
-		$this->config->set('ppde_account_id', $this->required_settings($this->request->variable('ppde_account_id', ''), (bool) $this->config['ppde_enable']));
 		$this->ppde_actions_auth->set_guest_acl();
 	}
 
@@ -217,13 +208,10 @@ class settings_controller extends admin_main
 	 */
 	public function build_stat_position_select_menu($default): void
 	{
-		// List of positions allowed
 		$positions = ['top', 'bottom', 'both'];
 
-		// Process each menu item for pull-down
 		foreach ($positions as $position)
 		{
-			// Set output block vars for display in the template
 			$this->template->assign_block_vars('positions_options', [
 				'POSITION_NAME' => $position,
 				'S_DEFAULT'     => (string) $default === $position,

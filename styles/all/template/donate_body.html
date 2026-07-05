@@ -1,9 +1,9 @@
 {% INCLUDE 'overall_header.html' %}
 
 {% if S_RETURN_ARGS eq 'success' or S_RETURN_ARGS eq 'cancel' %}
-	<h2>{{ SITENAME }} :: {{ lang('PPDE_DONATION_TITLE') }}</h2>
+	<h2>{{ SITENAME }} :: {{ L_PPDE_DONATION_TITLE }}</h2>
 	{% if DONATION_BODY %}
-	<div class="panel">
+	<div class="content post bg3">
 		{{ DONATION_BODY }}
 	</div>
 	{% endif %}
@@ -15,39 +15,56 @@
 	{% endif %}
 
 	{% if DONATION_BODY %}
-	<div class="panel">
+	<div class="content post bg3">
 		{{ DONATION_BODY }}
 	</div>
 	{% endif %}
 
 	<div class="panel">
-		<form action="{{ S_PPDE_FORM_ACTION }}" method="post">
-			<div class="donate_value">
-				{% if PPDE_LIST_VALUE %}
-				<select name="amount" id="amount">{{ PPDE_LIST_VALUE }}</select>
-				{% else %}
-				<input type="text" name="amount" class="inputbox autowidth" value="{{ PPDE_DEFAULT_VALUE }}">
-				{% endif %}
-				<select name="currency_code" id="currency_code">
-					{% for options in loops.options %}
-					<option value="{{ options.CURRENCY_ISO_CODE }}"{% if options.S_CURRENCY_DEFAULT %} selected{% endif %}>{{ options.CURRENCY_SYMBOL }} {{ options.CURRENCY_ISO_CODE }}</option>
-					{% endfor %}
-				</select>
-			</div>
-			<fieldset class="submit-buttons">
-				{{ S_HIDDEN_FIELDS }}
-				<div id="paypalbutton">
-					<input class="paypalbutton" type="submit" onclick="JavaScript:document.getElementById('paypalbutton').style.display='none';document.getElementById('processingpaypal').style.display='block';" name="submit" value="{{ lang('PPDE_DONATION_BUTTON_TITLE') }}">
-				</div>
-				<div id="processingpaypal" class="spinner loading">{{ lang('PPDE_CONTACT_PAYPAL') }}</div>
-			</fieldset>
-		</form>
+		{% if S_PPDE_CONFIGURED %}
+		<div class="donate_value">
+			<label for="ppde-amount" class="sr-only">{{ lang('PPDE_DONATION_AMOUNT') }}</label>
+			{% if PPDE_LIST_VALUE %}
+			<select name="amount" id="ppde-amount">{{ PPDE_LIST_VALUE }}</select>
+			{% else %}
+			<input type="number" name="amount" id="ppde-amount" class="inputbox" min="{{ PPDE_AMOUNT_MIN }}" step="{{ PPDE_AMOUNT_STEP }}" value="{{ PPDE_DEFAULT_VALUE ?: '' }}">
+			{% endif %}
+			<strong>{{ PPDE_CURRENCY_CODE }}</strong>
+		</div>
+
+		<div id="ppde-error" class="errorbox" style="display: none;" role="alert">
+			<p></p>
+		</div>
+
+		<div id="ppde-donate"
+			 data-client-id="{{ PPDE_CLIENT_ID }}"
+			 data-currency-code="{{ PPDE_CURRENCY_CODE }}"
+			 data-currency-id="{{ PPDE_CURRENCY_ID }}"
+			 data-hash="{{ PPDE_CSRF_HASH }}"
+			 data-create-url="{{ U_PPDE_CREATE_ORDER }}"
+			 data-capture-url="{{ U_PPDE_CAPTURE_ORDER }}"
+			 data-success-url="{{ U_PPDE_SUCCESS }}"
+			 data-cancel-url="{{ U_PPDE_CANCEL }}"
+			 data-err-amount="{{ lang('PPDE_AMOUNT_INVALID')|escape('html_attr') }}"
+			 data-err-generic="{{ lang('PPDE_PAYMENT_ERROR')|escape('html_attr') }}">
+			<div id="ppde-paypal-button-container"></div>
+		</div>
+		{% else %}
+		<div class="errorbox">
+			<p>{{ lang('PPDE_DONATION_UNAVAILABLE') }}</p>
+		</div>
+		{% endif %}
 	</div>
+
 	{% if PPDE_GOAL_ENABLE or PPDE_RAISED_ENABLE or PPDE_USED_ENABLE %}
 	<div class="panel">
 		{% INCLUDE '@skouat_ppde/donate_stats.html' %}
 	</div>
 	{% endif %}
+{% endif %}
+
+{% if S_PPDE_CONFIGURED %}
+{% INCLUDEJS '@skouat_ppde/js/paypal_donate.js' %}
 {% endif %}
 
 {% INCLUDE 'overall_footer.html' %}

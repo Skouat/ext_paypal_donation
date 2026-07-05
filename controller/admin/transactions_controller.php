@@ -20,8 +20,10 @@ use phpbb\user;
 use phpbb\user_loader;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
+use skouat\ppde\entity\transaction_data_builder;
 use skouat\ppde\exception\transaction_exception;
 use skouat\ppde\operators\transactions;
+use skouat\ppde\ppde_constants;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -42,6 +44,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class transactions_controller extends admin_main
 {
+	use transaction_data_builder;
 	public $ppde_operator;
 	protected $adm_relative_path;
 	protected $auth;
@@ -136,7 +139,6 @@ class transactions_controller extends admin_main
 		/** @type \phpbb\pagination $pagination */
 		$pagination = $this->container->get('pagination');
 
-		// Sorting
 		$limit_days = [
 			0   => $this->language->lang('ALL_ENTRIES'),
 			1   => $this->language->lang('1_DAY'),
@@ -167,14 +169,12 @@ class transactions_controller extends admin_main
 		$s_limit_days = $s_sort_key = $s_sort_dir = $u_sort_param = '';
 		gen_sort_selects($limit_days, $sort_by_text, $this->args['hidden_fields']['st'], $this->args['hidden_fields']['sk'], $this->args['hidden_fields']['sd'], $s_limit_days, $s_sort_key, $s_sort_dir, $u_sort_param);
 
-		// Define where and sort sql for use in displaying transactions
 		$sql_where = ($this->args['hidden_fields']['st']) ? (time() - ($this->args['hidden_fields']['st'] * 86400)) : 0;
 		$sql_sort = $sort_by_sql[$this->args['hidden_fields']['sk']] . ' ' . (($this->args['hidden_fields']['sd'] === 'd') ? 'DESC' : 'ASC');
 
 		$keywords = $this->request->variable('keywords', '', true);
 		$keywords_param = !empty($keywords) ? '&amp;keywords=' . urlencode(htmlspecialchars_decode($keywords)) : '';
 
-		// Grab log data
 		$log_data = [];
 		$log_count = 0;
 
@@ -199,8 +199,8 @@ class transactions_controller extends admin_main
 	 * View log
 	 *
 	 * @param array  &$log         The result array with the logs
-	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the
-	 *                             database. Otherwise an integer with the number of total matching entries is returned.
+	 * @param mixed  &$log_count   If $log_count is set to false, we will skip counting all entries in the database.
+	 *                             Otherwise, an integer with the number of total matching entries is returned.
 	 * @param int     $limit       Limit the number of entries that are returned
 	 * @param int     $offset      Offset when fetching the log entries, f.e. when paginating
 	 * @param int     $limit_days
@@ -290,7 +290,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Gets vars from POST then build a array of them
+	 * Gets vars from POST then build an array of them
 	 *
 	 * @param string $id     Module id
 	 * @param string $mode   Module categorie
@@ -314,19 +314,9 @@ class transactions_controller extends admin_main
 			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
-		// Prepares args depending actions
 		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
 		{
 			$this->args['action'] = 'delete';
-		}
-		else if ($this->request->is_set('approve'))
-		{
-			$this->args['action'] = 'approve';
-			$this->args['hidden_fields'] = array_merge($this->args['hidden_fields'], [
-				'approve'             => true,
-				'id'                  => $this->request->variable('id', 0),
-				'txn_errors_approved' => $this->request->variable('txn_errors_approved', 0),
-			]);
 		}
 		else if ($this->request->is_set('add'))
 		{
@@ -350,6 +340,7 @@ class transactions_controller extends admin_main
 
 	/**
 	 * {@inheritdoc}
+	 * @throws transaction_exception
 	 */
 	public function change(): void
 	{
@@ -365,7 +356,6 @@ class transactions_controller extends admin_main
 			trigger_error(implode('<br>', $e->get_errors()) . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
-		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
 
 		$this->ppde_entity->load($transaction_id);
@@ -411,30 +401,6 @@ class transactions_controller extends admin_main
 		return $user_id;
 	}
 
-	public function approve(): void
-	{
-		$transaction_id = (int) $this->args['hidden_fields']['id'];
-		$txn_approved = empty($this->args['hidden_fields']['txn_errors_approved']);
-
-		// Update DB record
-		$this->ppde_entity->load($transaction_id);
-		$this->ppde_entity->set_txn_errors_approved($txn_approved);
-		$this->ppde_entity->save(false);
-
-		// Prepare transaction settings before doing actions
-		$transaction_data = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id));
-		$this->ppde_actions->set_transaction_data($transaction_data[0]);
-		$this->ppde_actions->set_ipn_test_properties($this->ppde_entity->get_test_ipn());
-		$this->ppde_actions->is_donor_is_member();
-
-		if ($txn_approved)
-		{
-			$this->do_transactions_actions(!$this->ppde_actions->get_ipn_test() && $this->ppde_actions->get_donor_is_member());
-		}
-
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED', time());
-	}
-
 	/**
 	 * Does actions for validated transaction
 	 *
@@ -471,7 +437,6 @@ class transactions_controller extends admin_main
 			{
 				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
 
-				// Prepare transaction settings before doing actions
 				$this->ppde_actions->set_transaction_data($transaction_data);
 				$this->ppde_actions->is_donor_is_member();
 
@@ -517,9 +482,9 @@ class transactions_controller extends admin_main
 			'MT_LAST_NAME'          => $this->request->variable('last_name', '', true),
 			'MT_PAYER_EMAIL'        => $this->request->variable('payer_email', '', true),
 			'MT_RESIDENCE_COUNTRY'  => $this->request->variable('residence_country', ''),
-			'MT_MC_GROSS'           => $this->request->variable('mc_gross', (float) 0),
+			'MT_MC_GROSS'           => $this->request->variable('mc_gross', 0.0),
 			'MT_MC_CURRENCY'        => $this->request->variable('mc_currency', ''),
-			'MT_MC_FEE'             => $this->request->variable('mc_fee', (float) 0),
+			'MT_MC_FEE'             => $this->request->variable('mc_fee', 0.0),
 			'MT_PAYMENT_DATE_YEAR'  => $this->request->variable('payment_date_year', (int) $this->user->format_date(time(), 'Y')),
 			'MT_PAYMENT_DATE_MONTH' => $this->request->variable('payment_date_month', (int) $this->user->format_date(time(), 'n')),
 			'MT_PAYMENT_DATE_DAY'   => $this->request->variable('payment_date_day', (int) $this->user->format_date(time(), 'j')),
@@ -560,7 +525,7 @@ class transactions_controller extends admin_main
 		$payment_time = $transaction_data['MT_PAYMENT_TIME'];
 		$payment_time_timestamp = strtotime($payment_time);
 
-		// Normalize payment time to start from today at midnight
+		// Normalise payment time from today's midnight.
 		$payment_time_timestamp_from_midnight = $payment_time_timestamp - strtotime('00:00:00');
 
 		$payment_date_time = $payment_date_timestamp_at_midnight + $payment_time_timestamp_from_midnight;
@@ -578,41 +543,31 @@ class transactions_controller extends admin_main
 			throw (new transaction_exception())->set_errors($errors);
 		}
 
-		return [
-			'business'          => $this->config['ppde_account_id'],
+		// Shared uid_<user_id>_<time> id, so custom and item_number stay consistent.
+		$custom_id = implode('_', ['uid', $user_id, time()]);
+
+		return $this->build_transaction_data([
 			'confirmed'         => true,
-			'exchange_rate'     => '',
+			'custom'            => $custom_id,
 			'first_name'        => $transaction_data['MT_FIRST_NAME'],
-			'item_name'         => '',
-			'item_number'       => implode('_', ['uid', $user_id, time()]),
+			'item_number'       => $custom_id,
 			'last_name'         => $transaction_data['MT_LAST_NAME'],
 			'mc_currency'       => $transaction_data['MT_MC_CURRENCY'],
 			'mc_gross'          => $transaction_data['MT_MC_GROSS'],
 			'mc_fee'            => $transaction_data['MT_MC_FEE'],
-			'net_amount'        => (float) 0, // This value is calculated in core_actions:log_to_db()
-			'parent_txn_id'     => '',
+			'net_amount'        => 0.0, // Computed later in core_actions::log_to_db()
 			'payer_email'       => $transaction_data['MT_PAYER_EMAIL'],
-			'payer_id'          => '',
-			'payer_status'      => '',
 			'payment_date'      => $payment_date_time,
-			'payment_status'    => 'Completed',
-			'payment_type'      => '',
-			'memo'              => $transaction_data['MT_MEMO'],
-			'receiver_id'       => '',
-			'receiver_email'    => '',
+			'payment_status'    => ppde_constants::STATUS_COMPLETED,
 			'residence_country' => strtoupper($transaction_data['MT_RESIDENCE_COUNTRY']),
-			'settle_amount'     => (float) 0,
-			'settle_currency'   => '',
-			'test_ipn'          => false,
-			'txn_errors'        => '',
 			'txn_id'            => 'PPDE' . gen_rand_string(13),
-			'txn_type'          => 'ppde_manual_donation',
+			'txn_type'          => ppde_constants::TXN_TYPE_MANUAL_DONATION,
 			'user_id'           => $user_id,
-		];
+		]);
 	}
 
 	/**
-	 * Tests if mc_gross is to low
+	 * Tests if mc_gross is too low
 	 *
 	 * @param array $data
 	 *
@@ -648,7 +603,7 @@ class transactions_controller extends admin_main
 	}
 
 	/**
-	 * Tests if mc_fee is to high
+	 * Tests if mc_fee is too high
 	 *
 	 * @param array $data
 	 *
@@ -747,16 +702,14 @@ class transactions_controller extends admin_main
 	 */
 	public function view(): void
 	{
-		// Request Identifier of the transaction
 		$transaction_id = $this->request->variable('id', 0);
 
-		// add additional fields to the table schema needed by entity->import()
+		// Extra columns needed by entity->import().
 		$additional_table_schema = [
 			'item_username'    => ['name' => 'username', 'type' => 'string'],
 			'item_user_colour' => ['name' => 'user_colour', 'type' => 'string'],
 		];
 
-		// Grab transaction data
 		$data_ary = $this->ppde_entity->get_data($this->ppde_operator->build_sql_data($transaction_id), $additional_table_schema);
 
 		array_map([$this, 'action_assign_template_vars'], $data_ary);
@@ -784,9 +737,9 @@ class transactions_controller extends admin_main
 		if ($where_sql || $this->args['hidden_fields']['delall'])
 		{
 			$this->ppde_entity->delete(0, '', $where_sql, $this->args['hidden_fields']['delall']);
-			$this->ppde_actions->set_ipn_test_properties(true);
+			$this->ppde_actions->set_sandbox_properties(true);
 			$this->ppde_actions->update_overview_stats();
-			$this->ppde_actions->set_ipn_test_properties(false);
+			$this->ppde_actions->set_sandbox_properties(false);
 			$this->ppde_actions->update_overview_stats();
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_PURGED', time());
 		}
@@ -827,13 +780,20 @@ class transactions_controller extends admin_main
 	protected function action_assign_template_vars($data)
 	{
 		$s_hidden_fields = build_hidden_fields([
-			'id'                  => $data['transaction_id'],
-			'donor_id'            => $data['user_id'],
-			'txn_errors_approved' => $data['txn_errors_approved'],
+			'id'       => $data['transaction_id'],
+			'donor_id' => $data['user_id'],
 		]);
 
+		$s_convert = !($data['settle_amount'] == 0 && empty($data['exchange_rate']));
+
 		$currency_mc_data = $this->ppde_actions_currency->get_currency_data($data['mc_currency']);
-		$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+
+		$settle_amount = '';
+		if ($s_convert)
+		{
+			$currency_settle_data = $this->ppde_actions_currency->get_currency_data($data['settle_currency']);
+			$settle_amount = $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']);
+		}
 
 		$this->template->assign_vars([
 			'BOARD_USERNAME' => get_username_string('full', $data['user_id'], $data['username'], $data['user_colour'], $this->language->lang('GUEST'), append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview')),
@@ -848,16 +808,20 @@ class transactions_controller extends admin_main
 			'PAYER_EMAIL'    => $data['payer_email'],
 			'PAYER_ID'       => $data['payer_id'],
 			'PAYER_STATUS'   => $data['payer_status'] ? $this->language->lang('PPDE_DT_VERIFIED') : $this->language->lang('PPDE_DT_UNVERIFIED'),
+			'S_PAYER_STATUS' => $data['payer_status'] !== '',
 			'PAYMENT_DATE'   => $this->user->format_date($data['payment_date']),
 			'PAYMENT_STATUS' => $this->language->lang(['PPDE_DT_PAYMENT_STATUS_VALUES', strtolower($data['payment_status'])]),
 			'RECEIVER_EMAIL' => $data['receiver_email'],
 			'RECEIVER_ID'    => $data['receiver_id'],
-			'SETTLE_AMOUNT'  => $this->ppde_actions_currency->format_currency((float) $data['settle_amount'], $currency_settle_data[0]['currency_iso_code'], $currency_settle_data[0]['currency_symbol'], (bool) $currency_settle_data[0]['currency_on_left']),
+			'SETTLE_AMOUNT'  => $settle_amount,
 			'TXN_ID'         => $data['txn_id'],
 
 			'L_PPDE_DT_SETTLE_AMOUNT'         => $this->language->lang('PPDE_DT_SETTLE_AMOUNT', $data['settle_currency']),
 			'L_PPDE_DT_EXCHANGE_RATE_EXPLAIN' => $this->language->lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN', $this->user->format_date($data['payment_date'])),
-			'S_CONVERT'                       => !($data['settle_amount'] == 0 && empty($data['exchange_rate'])),
+			'S_CONVERT'                       => $s_convert,
+
+			// Legacy / read-only: belongs to the obsolete IPN "errors to approve"
+			// workflow (removed in 4.0.0). Kept only to display historical transactions.
 			'S_ERROR'                         => !empty($data['txn_errors']),
 			'S_ERROR_APPROVED'                => !empty($data['txn_errors_approved']),
 			'S_HIDDEN_FIELDS'                 => $s_hidden_fields,

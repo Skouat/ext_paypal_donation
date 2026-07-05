@@ -28,19 +28,19 @@ services:
             - '@skouat.ppde.operator.currency'
             - '@template'
 
+    skouat.ppde.actions.donation_recorder:
+        class: skouat\ppde\actions\donation_recorder
+        arguments:
+            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.operator.transactions'
+            - '@dispatcher'
+
     skouat.ppde.actions.locale_icu:
         class: skouat\ppde\actions\locale_icu
         arguments:
             - '@config'
             - '@template'
             - '@user'
-
-    skouat.ppde.actions.post_data:
-        class: skouat\ppde\actions\post_data
-        arguments:
-            - '@language'
-            - '@skouat.ppde.operator.compare'
-            - '@request'
 
     skouat.ppde.actions.vars:
         class: skouat\ppde\actions\vars

@@ -43,12 +43,13 @@ $lang = array_merge($lang, [
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Donation statistics',
 
 	// Pages
-	'PPDE_DONATION_BUTTON_TITLE'       => 'Donate',
+	'PPDE_DONATION_AMOUNT'             => 'Donation amount',
 	'PPDE_DONATION_TITLE'              => 'Make a Donation',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to %s',
+	'PPDE_CANCEL_DEFAULT'              => 'Your donation has been canceled. No payment has been made.',
 	'PPDE_CANCEL_TITLE'                => 'Donation canceled',
+	'PPDE_SUCCESS_DEFAULT'             => 'Thank you for your donation. Your support is greatly appreciated.',
 	'PPDE_SUCCESS_TITLE'               => 'Donation successful',
-	'PPDE_CONTACT_PAYPAL'              => 'Connecting to PayPal. Please wait…',
 	'PPDE_SANDBOX_TITLE'               => 'Test PayPal Donation with PayPal Sandbox',
 
 	// Donors list
@@ -83,23 +84,18 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Error
-	'CURL_ERROR'                => 'cURL error: %s',
-	'INVALID_TXN'               => 'Invalid transaction:',
-	'INVALID_TXN_ACCOUNT_ID'    => 'Merchant ID does not match.',
-	'INVALID_TXN_ASCII'         => 'Non ASCII chars detected in “%s”.',
-	'INVALID_TXN_CONTENT'       => 'Unexpected content for “%s”.',
-	'INVALID_TXN_EMPTY'         => 'Empty value for “%s”.',
-	'INVALID_TXN_INVALID_CHECK' => 'Unknown Postdata.',
-	'INVALID_TXN_LENGTH'        => 'The expected number of chars for “%s” does not match.',
-	'INVALID_RESPONSE_STATUS'   => 'Invalid response status: ',
-	'NO_CONNECTION_DETECTED'    => 'cURL not detected. Please contact the administrator of your web server.',
-	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 or HTTP1/1 not detected. Please contact the administrator of your web server.',
-	'UNEXPECTED_RESPONSE'       => 'Unexpected response from PayPal.',
+	'PPDE_AMOUNT_INVALID'           => 'Please enter a valid donation amount.',
+	'PPDE_DONATION_UNAVAILABLE'     => 'Donations are temporarily unavailable. Please try again later.',
+	'PPDE_PAYMENT_ERROR'            => 'An error occurred while processing your donation. Please try again.',
+	'PPDE_REST_BAD_REQUEST'         => 'Invalid request.',
+	'PPDE_REST_CREDENTIALS_MISSING' => 'PayPal is not configured. Please contact the board administrator.',
+	'PPDE_REST_INVALID_CURRENCY'    => 'The selected currency is not available.',
+	'PPDE_REST_MISSING_ORDER_ID'    => 'Missing PayPal order identifier.',
+	'PPDE_REST_PAYPAL_ERROR'        => 'An error occurred while contacting PayPal. Please try again later.',
 ]);
 
 $lang = array_merge($lang, [
 	// Notification
-	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => '%1$s’s last donation requires your attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s has donated “%2$s”.',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Your donation of “%1$s” has been received.',
 ]);

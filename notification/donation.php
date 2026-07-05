@@ -99,7 +99,7 @@ abstract class donation extends \phpbb\notification\type\base
 			'ignore_users' => [],
 		], $options);
 
-		// Grab admins that have permission to administer extension.
+		// Admins allowed to manage the extension.
 		$admin_ary = $this->auth->acl_get_list(false, 'a_ppde_manage', false);
 		$users = (!empty($admin_ary[0]['a_ppde_manage'])) ? $admin_ary[0]['a_ppde_manage'] : [];
 

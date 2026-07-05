@@ -1,5 +1,6 @@
 imports:
     - { resource: actions.yml }
+    - { resource: api.yml }
     - { resource: controllers.yml }
     - { resource: entities.yml }
     - { resource: notifications.yml }

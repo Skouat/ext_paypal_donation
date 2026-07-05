@@ -12,6 +12,7 @@ namespace skouat\ppde\entity;
 
 use phpbb\db\driver\driver_interface;
 use phpbb\language\language;
+use skouat\ppde\exception\transaction_exception;
 
 /**
  * @property driver_interface db                 phpBB Database object
@@ -109,7 +110,7 @@ class transactions extends main
 				'item_settle_currency'     => ['name' => 'settle_currency', 'type' => 'string'],
 				'item_test_ipn'            => ['name' => 'test_ipn', 'type' => 'boolean'],
 				'item_txn_errors'          => ['name' => 'txn_errors', 'type' => 'string'],
-				'item_txn_errors_approved' => ['name' => 'txn_errors_approved', 'type' => 'string'],
+				'item_txn_errors_approved' => ['name' => 'txn_errors_approved', 'type' => 'boolean'],
 				'item_txn_id'              => ['name' => 'txn_id', 'type' => 'string'],
 				'item_txn_type'            => ['name' => 'txn_type', 'type' => 'string'],
 				'item_user_id'             => ['name' => 'user_id', 'type' => 'integer'],
@@ -133,6 +134,51 @@ class transactions extends main
 		$this->db->sql_freeresult($result);
 
 		return $field;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * A failed INSERT means the UNIQUE txn_id was concurrently recorded by the
+	 * other path; raise a transaction_exception so callers skip the post-actions.
+	 *
+	 * @throws transaction_exception
+	 */
+	protected function execute_insert($sql): void
+	{
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query($sql);
+		$this->db->sql_return_on_error();
+
+		if ($result === false)
+		{
+			throw (new transaction_exception())->set_errors([
+				$this->language->lang('PPDE_DT_DUPLICATE_TXN'),
+			]);
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * A failed UPDATE (e.g. an unexpected column overflow under strict mode) must not kill the webhook via the DBAL's
+	 * trigger_error(E_USER_ERROR).
+	 *
+	 * NB: a RuntimeException (not transaction_exception):
+	 * the latter is caught  as "already recorded" (HTTP 200) and PayPal never retries.
+	 * This bubbles up to handle_capture()'s catch (\Throwable) -> HTTP 500 -> PayPal retries.
+	 */
+	protected function execute_update($sql): void
+	{
+		$this->db->sql_return_on_error(true);
+		$result = $this->db->sql_query($sql);
+		$error  = $this->db->get_sql_error_returned();
+		$this->db->sql_return_on_error();
+
+		if ($result === false)
+		{
+			throw new \RuntimeException('PPDE UPDATE failed: ' . ($error['message'] ?? 'unknown'));
+		}
 	}
 
 	/**
@@ -224,7 +270,10 @@ class transactions extends main
 	}
 
 	/**
-	 * Get PayPal transaction errors approval status
+	 * Get PayPal transaction errors approval status.
+	 *
+	 * Legacy / read-only: belongs to the obsolete IPN "errors to approve"
+	 * workflow (removed in 4.0.0). Kept only to display historical transactions.
 	 *
 	 * @return bool
 	 * @access public
@@ -637,21 +686,6 @@ class transactions extends main
 	public function set_txn_errors($txn_errors)
 	{
 		$this->data['txn_errors'] = (string) $txn_errors;
-
-		return $this;
-	}
-
-	/**
-	 * Set PayPal transaction errors approval status
-	 *
-	 * @param bool $txn_errors_approved
-	 *
-	 * @return transactions $this object for chaining calls; load()->set()->save()
-	 * @access public
-	 */
-	public function set_txn_errors_approved($txn_errors_approved)
-	{
-		$this->data['txn_errors_approved'] = (bool) $txn_errors_approved;
 
 		return $this;
 	}

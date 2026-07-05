@@ -43,12 +43,13 @@ $lang = array_merge($lang, [
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Statistiques des dons',
 
 	// Pages
-	'PPDE_DONATION_BUTTON_TITLE'       => 'Faire un don',
+	'PPDE_DONATION_AMOUNT'             => 'Montant du don',
 	'PPDE_DONATION_TITLE'              => 'Faire un don',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
+	'PPDE_CANCEL_DEFAULT'              => 'Votre don a été annulé. Aucun paiement n’a été effectué.',
 	'PPDE_CANCEL_TITLE'                => 'Dons annulés',
+	'PPDE_SUCCESS_DEFAULT'             => 'Merci pour votre don. Votre soutien est grandement apprécié.',
 	'PPDE_SUCCESS_TITLE'               => 'Dons validés',
-	'PPDE_CONTACT_PAYPAL'              => 'Connexion à PayPal. Veuillez patienter…',
 	'PPDE_SANDBOX_TITLE'               => 'Tester PayPal Donation avec PayPal Sandbox',
 
 	// Donors list
@@ -83,23 +84,18 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Error
-	'CURL_ERROR'                => 'Erreur cURL : %s',
-	'INVALID_TXN'               => 'Transaction non valide :',
-	'INVALID_TXN_ACCOUNT_ID'    => 'Les ID marchand ne correspondent pas.',
-	'INVALID_TXN_ASCII'         => 'Caractères non ASCII détectés dans « %s ».',
-	'INVALID_TXN_CONTENT'       => 'Contenu inattendu dans « %s ».',
-	'INVALID_TXN_EMPTY'         => 'La variable « %s » est vide.',
-	'INVALID_TXN_INVALID_CHECK' => 'Variable POST inconnue.',
-	'INVALID_TXN_LENGTH'        => 'Le nombre de caractères attendu pour « %s » ne correspond pas.',
-	'INVALID_RESPONSE_STATUS'   => 'Statut de réponse non valide : ',
-	'NO_CONNECTION_DETECTED'    => 'cURL non détecté. Veuillez contacter l’administrateur du serveur.',
-	'REQUIREMENT_NOT_SATISFIED' => 'cURL, TLS 1.2 ou HTTP1/1 non détecté. Veuillez contacter l’administrateur du serveur.',
-	'UNEXPECTED_RESPONSE'       => 'Réponse inattendue de PayPal.',
+	'PPDE_AMOUNT_INVALID'           => 'Veuillez saisir un montant de don valide.',
+	'PPDE_DONATION_UNAVAILABLE'     => 'Les dons sont temporairement indisponibles. Veuillez réessayer plus tard.',
+	'PPDE_PAYMENT_ERROR'            => 'Une erreur est survenue lors du traitement de votre don. Veuillez réessayer.',
+	'PPDE_REST_BAD_REQUEST'         => 'Requête non valide.',
+	'PPDE_REST_CREDENTIALS_MISSING' => 'PayPal n’est pas configuré. Veuillez contacter l’administrateur du forum.',
+	'PPDE_REST_INVALID_CURRENCY'    => 'La devise sélectionnée n’est pas disponible.',
+	'PPDE_REST_MISSING_ORDER_ID'    => 'Identifiant de commande PayPal manquant.',
+	'PPDE_REST_PAYPAL_ERROR'        => 'Une erreur est survenue lors de la communication avec PayPal. Veuillez réessayer plus tard.',
 ]);
 
 $lang = array_merge($lang, [
 	// Notification
-	'NOTIFICATION_PPDE_ADMIN_DONATION_ERRORS'   => 'Le dernier don effectué par %1$s requiert votre attention.',
 	'NOTIFICATION_PPDE_ADMIN_DONATION_RECEIVED' => '%1$s a effectué un don d’un montant de « %2$s ».',
 	'NOTIFICATION_PPDE_DONOR_DONATION_RECEIVED' => 'Le don d’un montant de « %1$s » a bien été reçu.',
 ]);

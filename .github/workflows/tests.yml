@@ -1,0 +1,28 @@
+name: Tests
+
+on:
+    push:
+        branches:        # Run tests when commits are pushed to these branches in your repo
+            - '4.0.x'
+            - 'develop-4.0.x*'
+    pull_request:        # Run tests when pull requests are made on these branches in your repo
+        branches:
+            - '4.0.x'
+            - 'develop-4.0.x*'
+        paths-ignore:
+            - '*.md'
+
+jobs:
+    call-tests:
+        name: Extension tests
+        uses: phpbb-extensions/test-framework/.github/workflows/tests.yml@3.3.x
+        with:
+            EXTNAME: skouat/ppde
+            CODECOV: 1
+            RUN_WINDOWS_JOBS: 0
+            RUN_FUNCTIONAL_TESTS: 0
+            RUN_NPM_INSTALL: 0
+            RUN_COMPOSER_INSTALL: 1
+
+        secrets:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }} # Do not change this

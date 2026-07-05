@@ -10,8 +10,6 @@
 
 namespace skouat\ppde\controller\admin;
 
-use skouat\ppde\controller\ipn_paypal;
-
 abstract class admin_main
 {
 	/** @var array */
@@ -32,8 +30,6 @@ abstract class admin_main
 	protected $module_name;
 	/** @var \skouat\ppde\actions\locale_icu */
 	protected $ppde_actions_locale;
-	/** @var ipn_paypal */
-	protected $ppde_ipn_paypal;
 	/** @var bool */
 	protected $preview;
 	/** @var \phpbb\request\request */
@@ -78,7 +74,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Gets vars from POST then build a array of them
+	 * Gets vars from POST then build an array of them
 	 *
 	 * @param string $id     Module id
 	 * @param string $mode   Module categorie
@@ -139,10 +135,6 @@ abstract class admin_main
 	 * @access public
 	 */
 	public function add(): void
-	{
-	}
-
-	public function approve(): void
 	{
 	}
 
@@ -207,53 +199,6 @@ abstract class admin_main
 	}
 
 	/**
-	 * Build pull down menu options of available remote URI
-	 *
-	 * @param int    $default ID of the selected value.
-	 * @param string $type    Can be 'live' or 'sandbox'
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function build_remote_uri_select_menu($default, $type): void
-	{
-		$type = $this->force_type($type);
-
-		// Grab the list of remote uri for selected type
-		$remote_list = ipn_paypal::get_remote_uri();
-
-		// Process each menu item for pull-down
-		foreach ($remote_list as $id => $remote)
-		{
-			if ($remote['type'] !== $type)
-			{
-				continue;
-			}
-
-			// Set output block vars for display in the template
-			$this->template->assign_block_vars('remote_options', [
-				'REMOTE_ID'   => (int) $id,
-				'REMOTE_NAME' => $remote['hostname'],
-				'S_DEFAULT'   => (int) $default === (int) $id,
-			]);
-		}
-		unset ($remote_list, $id);
-	}
-
-	/**
-	 * Enforce the type of remote provided
-	 *
-	 * @param string $type
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function force_type($type): string
-	{
-		return $type === 'live' || $type === 'sandbox' ? (string) $type : 'live';
-	}
-
-	/**
 	 * The form submitting if 'submit' is true
 	 *
 	 * @return void
@@ -263,19 +208,14 @@ abstract class admin_main
 	{
 		$this->submit = $this->request->is_set_post('submit');
 
-		// Test if the submitted form is valid
 		$errors = $this->is_invalid_form('ppde_' . $this->module_name, $this->submit);
 
 		if ($this->can_submit_data($errors))
 		{
-			// Set the options the user configured
 			$this->set_settings();
 
-			// Add option settings change action to the admin log
 			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_' . $this->lang_key_prefix . '_UPDATED');
 
-			// Option settings have been updated and logged
-			// Confirm this to the user and provide link back to previous page
 			trigger_error($this->language->lang($this->lang_key_prefix . '_SAVED') . adm_back_link($this->u_action));
 		}
 	}
@@ -332,7 +272,6 @@ abstract class admin_main
 	{
 		if ($this->is_added_data_exists($entity))
 		{
-			// Show user warning for an already exist page and provide link back to the edit page
 			$message = $this->language->lang($this->lang_key_prefix . '_EXISTS');
 			$message .= '<br><br>';
 			$message .= $this->language->lang($this->lang_key_prefix . '_GO_TO_PAGE', '<a href="' . $this->u_action . '&amp;action=edit&amp;' . $this->id_prefix_name . '_id=' . $entity->get_id() . '">&raquo; ', '</a>');
@@ -472,7 +411,6 @@ abstract class admin_main
 	 */
 	protected function check_config($config, $type = 'boolean', $default = '')
 	{
-		// We're using settype to enforce data types
 		settype($config, $type);
 		settype($default, $type);
 
@@ -480,26 +418,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Check if settings is required
-	 *
-	 * @param $settings
-	 * @param $depend_on
-	 *
-	 * @return mixed
-	 * @access protected
-	 */
-	protected function required_settings($settings, $depend_on)
-	{
-		if (empty($settings) && (bool) $depend_on === true)
-		{
-			trigger_error($this->language->lang($this->lang_key_prefix . '_MISSING') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
-		return $settings;
-	}
-
-	/**
-	 * Run system checks if config 'ppde_first_start' is true
+	 * Run the intl detection once after install/enable (ppde_first_start = true).
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -509,9 +428,6 @@ abstract class admin_main
 	{
 		if ($this->config['ppde_first_start'])
 		{
-			$this->ppde_ipn_paypal->set_curl_info();
-			$this->ppde_ipn_paypal->set_remote_detected();
-			$this->ppde_ipn_paypal->check_tls();
 			$this->ppde_actions_locale->set_intl_info();
 			$this->ppde_actions_locale->set_intl_detected();
 			$this->config->set('ppde_first_start', '0');

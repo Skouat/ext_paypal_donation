@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <table name="phpbb_ppde_txn_log">
+        <column>transaction_id</column>
+        <column>txn_id</column>
+        <column>user_id</column>
+        <column>mc_currency</column>
+        <column>mc_gross</column>
+        <column>payment_status</column>
+        <column>test_ipn</column>
+        <column>txn_errors</column>
+        <!-- Donor A donates in two currencies -> two donor rows -->
+        <row>
+            <value>1</value>
+            <value>TXN_A_USD</value>
+            <value>2</value>
+            <value>USD</value>
+            <value>10</value>
+            <value>Completed</value>
+            <value>0</value>
+            <value></value>
+        </row>
+        <row>
+            <value>2</value>
+            <value>TXN_A_EUR</value>
+            <value>2</value>
+            <value>EUR</value>
+            <value>20</value>
+            <value>Completed</value>
+            <value>0</value>
+            <value></value>
+        </row>
+        <!-- Donor A again in USD: must be collapsed, NOT counted twice -->
+        <row>
+            <value>3</value>
+            <value>TXN_A_USD_2</value>
+            <value>2</value>
+            <value>USD</value>
+            <value>5</value>
+            <value>Completed</value>
+            <value>0</value>
+            <value></value>
+        </row>
+        <!-- Donor B donates once -->
+        <row>
+            <value>4</value>
+            <value>TXN_B_USD</value>
+            <value>3</value>
+            <value>USD</value>
+            <value>15</value>
+            <value>Completed</value>
+            <value>0</value>
+            <value></value>
+        </row>
+        <!-- Excluded: anonymous donor (user_id = ANONYMOUS) -->
+        <row>
+            <value>5</value>
+            <value>TXN_ANON</value>
+            <value>1</value>
+            <value>USD</value>
+            <value>99</value>
+            <value>Completed</value>
+            <value>0</value>
+            <value></value>
+        </row>
+        <!-- Excluded: sandbox transaction (test_ipn = 1) -->
+        <row>
+            <value>6</value>
+            <value>TXN_SANDBOX</value>
+            <value>4</value>
+            <value>USD</value>
+            <value>99</value>
+            <value>Completed</value>
+            <value>1</value>
+            <value></value>
+        </row>
+        <!-- Excluded: not completed -->
+        <row>
+            <value>7</value>
+            <value>TXN_PENDING</value>
+            <value>5</value>
+            <value>USD</value>
+            <value>99</value>
+            <value>Pending</value>
+            <value>0</value>
+            <value></value>
+        </row>
+    </table>
+</dataset>

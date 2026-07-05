@@ -1,6 +1,8 @@
 {% INCLUDE 'overall_header.html' %}
 
-<table cellspacing="1">
+<h1>{{ lang('PPDE_OVERVIEW') }}</h1>
+
+<table>
 	<caption>{{ lang('PPDE_STATS') }}</caption>
 	<colgroup>
 		<col class="col1"><col class="col2"><col class="col1"><col class="col2">
@@ -36,7 +38,7 @@
 </table>
 
 {% if S_IPN_TEST %}
-<table cellspacing="1">
+<table>
 	<caption>{{ lang('PPDE_STATS_SANDBOX') }}</caption>
 	<colgroup>
 		<col class="col1"><col class="col2"><col class="col1"><col class="col2">
@@ -93,7 +95,7 @@
 </fieldset>
 {% endif %}
 
-<table cellspacing="1">
+<table>
 	<caption>{{ lang('PPDE_ESI') }}</caption>
 	<colgroup>
 		<col class="col1"><col class="col2"><col class="col1"><col class="col2">
@@ -114,16 +116,10 @@
 		<td><strong>{{ PPDE_ESI_INSTALL_DATE }}</strong></td>
 	</tr>
 	<tr>
-		<td>{{ lang('PPDE_ESI_VERSION_CURL') ~ lang('COLON') }}</td>
-		<td><strong {% if S_CURL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_CURL }}</strong></td>
-		<td>{{ lang('PPDE_ESI_VERSION_SSL') ~ lang('COLON') }}</td>
-		<td><strong {% if S_SSL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_SSL }}</strong></td>
-	</tr>
-	<tr>
-		<td>{{ lang('PPDE_ESI_TLS') ~ lang('COLON') }}</td>
-		<td><strong {% if S_TLS %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_TLS }}</strong></td>
+		<td>{{ lang('PPDE_ESI_VERSION_OPENSSL') ~ lang('COLON') }}</td>
+		<td><strong {% if S_OPENSSL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_OPENSSL }}</strong></td>
 		<td>{{ lang('PPDE_ESI_VERSION_INTL') ~ lang('COLON') }}</td>
-		<td><strong {% if S_INTL %}style="color: #228822;"{% else %}style="color: #FF6600;"{% endif %}>{PPDE_ESI_VERSION_INTL}</strong></td>
+		<td><strong {% if S_INTL %}style="color: #228822;"{% else %}style="color: #FF6600;"{% endif %}>{{ PPDE_ESI_VERSION_INTL }}</strong></td>
 	</tr>
 	</tbody>
 </table>

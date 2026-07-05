@@ -73,7 +73,7 @@ class currency extends main
 	{
 		return 'SELECT currency_id
 			FROM ' . $this->currency_table . "
-			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ?: $this->data['currency_iso_code']) . "'";
+			WHERE currency_iso_code = '" . $this->db->sql_escape($iso_code ?: ($this->data['currency_iso_code'] ?? '')) . "'";
 	}
 
 	/**
@@ -130,7 +130,6 @@ class currency extends main
 	 */
 	public function set_currency_position($on_left): currency
 	{
-		// Set the item type on our data array
 		$this->data['currency_on_left'] = (bool) $on_left;
 
 		return $this;
@@ -146,7 +145,6 @@ class currency extends main
 	 */
 	public function set_currency_enable($enable): currency
 	{
-		// Set the item type on our data array
 		$this->data['currency_enable'] = (bool) $enable;
 
 		return $this;
@@ -162,7 +160,6 @@ class currency extends main
 	 */
 	public function set_iso_code($iso_code): currency
 	{
-		// Set the lang_id on our data array
 		$this->data['currency_iso_code'] = (string) $iso_code;
 
 		return $this;
@@ -178,7 +175,6 @@ class currency extends main
 	 */
 	public function set_symbol($symbol): currency
 	{
-		// Set the lang_id on our data array
 		$this->data['currency_symbol'] = htmlentities($symbol, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 
 		return $this;
@@ -202,11 +198,7 @@ class currency extends main
 	{
 		$order = (int) $this->get_max_order() + 1;
 
-		/*
-		* If the data is out of range we'll throw an exception. We use 16777215 as a
-		* maximum because it matches the MySQL unsigned mediumint maximum value which
-		* is the lowest amongst the DBMS supported by phpBB.
-		*/
+		// 16777215 = MySQL unsigned mediumint max, the lowest cap among phpBB's DBMS.
 		if ($order < 0 || $order > 16777215)
 		{
 			$this->display_warning_message('EXCEPTION_OUT_OF_BOUNDS', 'currency_order');
@@ -244,7 +236,6 @@ class currency extends main
 	{
 		if ($this->get_currency_enable())
 		{
-			// Return an error if the currency is enabled
 			$this->display_warning_message('PPDE_DISABLE_BEFORE_DELETION');
 		}
 	}

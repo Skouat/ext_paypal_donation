@@ -82,11 +82,13 @@ class locale_icu
 	/**
 	 * Build an array of all locales
 	 *
-	 * @return mixed
+	 * @return array
 	 * @access private
 	 */
 	private function get_locale_list()
 	{
+		$locale_ary = [];
+
 		$locale_items = \ResourceBundle::getLocales('');
 		foreach ($locale_items as $locale)
 		{
@@ -119,7 +121,7 @@ class locale_icu
 	 */
 	public function get_currency_symbol($currency_iso_code): string
 	{
-		$fmt = new \NumberFormatter($this->config['ppde_default_locale'] . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
+		$fmt = new \NumberFormatter($this->get_effective_locale() . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
 		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
 	}
 
@@ -131,7 +133,7 @@ class locale_icu
 	 */
 	public function is_locale_configured(): bool
 	{
-		return $this->icu_requirements() && !empty($this->config['ppde_default_locale']);
+		return $this->icu_requirements();
 	}
 
 	/**
@@ -142,7 +144,7 @@ class locale_icu
 	 */
 	public function numfmt_create()
 	{
-		return numfmt_create($this->config['ppde_default_locale'], \NumberFormatter::CURRENCY);
+		return numfmt_create($this->get_effective_locale(), \NumberFormatter::CURRENCY);
 	}
 
 	/**
@@ -161,72 +163,166 @@ class locale_icu
 	}
 
 	/**
-	 * Sets config value for PHP Intl extension version
+	 * Sets config value for PHP intl extension version
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @access public
 	 */
 	public function set_intl_info(): void
 	{
-		$this->config->set('ppde_intl_version', $this->get_php_extension_version('intl', $this->icu_available_features()));
+		$this->config->set('ppde_intl_version', $this->get_intl_version($this->is_intl_loaded()));
 		$this->config->set('ppde_intl_version_valid', (int) $this->icu_version_compare());
 	}
 
 	/**
-	 * Gets extension version
+	 * Gets intl extension version
 	 *
-	 * @param string $name
-	 * @param bool   $proceed
+	 * @param bool $is_loaded
 	 *
 	 * @return string
-	 * @throws \ReflectionException
 	 * @access private
 	 */
-	private function get_php_extension_version($name, $proceed): string
+	private function get_intl_version($is_loaded): string
 	{
 		$version = '';
-		if ($proceed)
+		if ($is_loaded)
 		{
-			$ext = new \ReflectionExtension($name);
-			$version = $ext->getVersion();
+			$version = defined('INTL_ICU_VERSION') ? INTL_ICU_VERSION : '';
 		}
 		return $version;
 	}
 
-	/**
-	 * Checks if the required function/class are available.
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function icu_available_features(): bool
+	public function is_intl_loaded(): bool
 	{
-		return class_exists(\ResourceBundle::class) && function_exists('\locale_get_default');
+		return extension_loaded('intl');
 	}
 
 	/**
 	 * Checks if ICU version matches with requirement
 	 *
 	 * @return bool
-	 * @throws \ReflectionException
 	 * @access private
 	 */
 	private function icu_version_compare(): bool
 	{
 		$icu_min_version = '1.1.0';
-		$icu_version = $this->get_php_extension_version('intl', $this->icu_available_features());
+		$icu_version = $this->get_intl_version($this->is_intl_loaded());
 		return version_compare($icu_version, $icu_min_version, '>=');
 	}
 
 	/**
-	 * Sets config value for cURL and fsockopen
+	 * Sets config value for PHP intl extension detection
 	 *
 	 * @return void
 	 * @access public
 	 */
 	public function set_intl_detected(): void
 	{
-		$this->config->set('ppde_intl_detected', $this->icu_available_features());
+		$this->config->set('ppde_intl_detected', $this->is_intl_loaded());
+	}
+
+	/**
+	 * Gets the number of fraction digits for a currency (ISO 4217).
+	 *
+	 * Decimals are intrinsic to the currency (USD = 2, JPY = 0, KWD = 3),
+	 * independent of the locale; used to format amounts for the PayPal REST API.
+	 *
+	 * @param string $currency_iso_code
+	 *
+	 * @return int
+	 * @access public
+	 */
+	public function get_currency_fraction_digits(string $currency_iso_code): int
+	{
+		$fmt = new \NumberFormatter(
+			'en_US@currency=' . $currency_iso_code,
+			\NumberFormatter::CURRENCY
+		);
+
+		$digits = $fmt->getAttribute(\NumberFormatter::FRACTION_DIGITS);
+
+		// getAttribute() returns false on ICU error → safe fallback to 2
+		return ($digits === false) ? 2 : (int) $digits;
+	}
+
+	/**
+	 * Resolve the effective ICU locale used to format currencies.
+	 *
+	 * Cascade: admin override (General Settings) → current user's forum language → board default language → English.
+	 * Each phpBB ISO code is canonicalised to a valid ICU locale; any unresolved level is skipped.
+	 *
+	 * @return string
+	 * @access public
+	 */
+	public function get_effective_locale(): string
+	{
+		// 1. Optional admin override (empty = auto).
+		$override = (string) ($this->config['ppde_default_locale'] ?? '');
+		if ($override !== '' && $this->is_valid_locale($override))
+		{
+			return $override;
+		}
+
+		// 2. Current user's forum language.
+		$user_locale = $this->iso_to_locale((string) ($this->user->data['user_lang'] ?? ''));
+		if ($user_locale !== '')
+		{
+			return $user_locale;
+		}
+
+		// 3. Board default language.
+		$board_locale = $this->iso_to_locale((string) ($this->config['default_lang'] ?? ''));
+		if ($board_locale !== '')
+		{
+			return $board_locale;
+		}
+
+		// 4. Final fallback.
+		return 'en_GB';
+	}
+
+	/**
+	 * Convert a phpBB language ISO code to a valid ICU locale.
+	 *
+	 * phpBB ISO codes use dashes (e.g. 'pt-br') whereas ICU expects
+	 * underscores and a normalised case (e.g. 'pt_BR').
+	 *
+	 * @param string $iso
+	 *
+	 * @return string Empty string if it cannot be resolved.
+	 * @access private
+	 */
+	private function iso_to_locale(string $iso): string
+	{
+		if ($iso === '')
+		{
+			return '';
+		}
+
+		// phpBB "en" is British English, whereas ICU "en" defaults to US conventions.
+		$overrides = ['en' => 'en_GB'];
+		$iso = $overrides[$iso] ?? $iso;
+
+		$locale = (string) \Locale::canonicalize(str_replace('-', '_', $iso));
+
+		return $this->is_valid_locale($locale) ? $locale : '';
+	}
+
+	/**
+	 * Check that a locale is actually known to ICU.
+	 *
+	 * @param string $locale
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_valid_locale(string $locale): bool
+	{
+		if ($locale === '')
+		{
+			return false;
+		}
+
+		return \Locale::lookup(\ResourceBundle::getLocales(''), $locale, false, '') !== '';
 	}
 }

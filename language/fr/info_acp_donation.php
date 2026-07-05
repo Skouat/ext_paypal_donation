@@ -40,7 +40,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	'PPDE_ACP_DONATION'        => 'PayPal Donation',
 	'PPDE_ACP_OVERVIEW'        => 'Vue d’ensemble',
-	'PPDE_ACP_PAYPAL_FEATURES' => 'Fonctionnalités PayPal IPN',
+	'PPDE_ACP_PAYPAL_FEATURES' => 'Fonctionnalités PayPal',
 	'PPDE_ACP_SETTINGS'        => 'Paramètres généraux',
 	'PPDE_ACP_DONATION_PAGES'  => 'Pages des dons',
 	'PPDE_ACP_CURRENCY'        => 'Gestion des devises',
@@ -51,6 +51,7 @@ $lang = array_merge($lang, [
  * logs
  */
 $lang = array_merge($lang, [
+	'LOG_PPDE_CAPTURE_DENIED'          => '<strong>PayPal Donation : Capture refusée</strong><br>» Transaction %1$s',
 	'LOG_PPDE_DC_ACTIVATED'            => '<strong>PayPal Donation : Devise activée</strong><br>» %s',
 	'LOG_PPDE_DC_ADDED'                => '<strong>PayPal Donation : Nouvelle devise ajoutée</strong><br>» %s',
 	'LOG_PPDE_DC_DEACTIVATED'          => '<strong>PayPal Donation : Devise désactivée</strong><br>» %s',
@@ -58,16 +59,20 @@ $lang = array_merge($lang, [
 	'LOG_PPDE_DC_MOVE_DOWN'            => '<strong>PayPal Donation : Déplacement vers le bas de la devise</strong> « %s »',
 	'LOG_PPDE_DC_MOVE_UP'              => '<strong>PayPal Donation : Déplacement vers le haut de la devise</strong> « %s »',
 	'LOG_PPDE_DC_UPDATED'              => '<strong>PayPal Donation : Devise mise à jour</strong><br>» %s',
-	'LOG_PPDE_DP_ADDED'                => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br>» « %1$s » pour la langue « %2$s »', // eg: » “Donation success” for the language “British English”',
+	'LOG_PPDE_DP_ADDED'                => '<strong>PayPal Donation : Nouvelle page de dons ajoutée</strong><br>» « %1$s » pour la langue « %2$s »', // eg: » “Donation success” for the language “British English”
 	'LOG_PPDE_DP_DELETED'              => '<strong>PayPal Donation : Page des dons supprimée</strong><br>» « %1$s » pour la langue « %2$s »',
 	'LOG_PPDE_DP_UPDATED'              => '<strong>PayPal Donation : Page de dons mise à jour</strong><br>» « %1$s » pour la langue « %2$s »',
 	'LOG_PPDE_DT_PURGED'               => '<strong>PayPal Donation : Purge du journal des transactions</strong>',
 	'LOG_PPDE_DT_UPDATED'              => '<strong>PayPal Donation : Transaction mise à jour</strong>',
-	'LOG_PPDE_MT_ADDED'                => '<strong>PayPal Donation : Transaction manuelle ajoutée</strong><br>» Donateur : %s',
+	'LOG_PPDE_MT_ADDED'                => '<strong>PayPal Donation : Transaction manuelle ajoutée</strong><br>» Donateur : %s',
+	'LOG_PPDE_PAYPAL_API_ERROR'        => '<strong>PayPal Donation : Erreur de l’API PayPal</strong><br>» %s',
 	'LOG_PPDE_PAYPAL_FEATURES_UPDATED' => '<strong>PayPal Donation : Configuration PayPal mise à jour</strong>',
+	'LOG_PPDE_REFUND_PROCESSED'        => '<strong>PayPal Donation : Remboursement traité</strong><br>» Remboursement %1$s (transaction %2$s)',
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation : Configuration mise à jour</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation : Date d’installation réinitialisée</strong>',
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation : Actualisation des statistiques</strong>',
 	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation : Vérification des prérequis</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation : Actualisation des statistiques PayPal Sandbox</strong>',
+	'LOG_PPDE_WEBHOOK_PROCESS_ERROR'   => '<strong>PayPal Donation : Erreur de traitement du webhook</strong><br>» Transaction %1$s : %2$s',
+	'LOG_PPDE_WEBHOOK_SIG_FAILED'      => '<strong>PayPal Donation : Échec de la vérification de la signature du webhook</strong><br>» Événement : %s',
 ]);

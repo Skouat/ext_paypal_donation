@@ -6,20 +6,19 @@
 	Only set this to "true" if you have dependencies in the composer.json,
 	otherwise use "false".
 	-->
-	<property name="has-dependencies" value="false" />
+	<property name="has-dependencies" value="1" />
 
 	<target name="clean-package">
 		<!--
 		Remove some unnecessary files/directories
 		${dir}/ is the folder of your extension, e.g. ext/nickvergessen/newspage/
 		-->
+		<delete dir="${dir}/.github" />
 		<delete dir="${dir}/tests" />
-		<delete dir="${dir}/travis" />
 
 		<delete file="${dir}/docs/crowdin.md" />
 		<delete file="${dir}/.gitattributes" />
 		<delete file="${dir}/.gitignore" />
-		<delete file="${dir}/.travis.yml" />
 		<delete file="${dir}/build.xml" />
 		<delete file="${dir}/CHANGELOG.md" />
 		<delete file="${dir}/composer.lock" />

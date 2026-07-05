@@ -42,16 +42,14 @@ $lang = array_merge($lang, [
 	'PPDE_SETTINGS_EXPLAIN'           => 'Depuis cette page vous pouvez configurer les paramètres généraux de PayPal Donation.',
 
 	// General settings
-	'PPDE_ACCOUNT_ID'                 => 'ID du compte PayPal',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Saisir l’ID de compte marchand ou l’adresse courriel.',
 	'PPDE_ALLOW_GUEST'                => 'Autoriser les invités à faire des dons',
 	'PPDE_ALLOW_GUEST_EXPLAIN'        => 'Cette option va définir les permissions du forum pour autoriser les invités à faire des dons',
 	'PPDE_DEFAULT_CURRENCY'           => 'Devise par défaut',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Défini quelle devise sera sélectionnée par défaut.',
-	'PPDE_DEFAULT_LOCALE'             => 'Paramètres régionnaux',
-	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Définit les paramètres régionaux utilisés pour le formatage des devises.',
+	'PPDE_DEFAULT_LOCALE'             => 'Paramètres régionaux',
+	'PPDE_DEFAULT_LOCALE_AUTO'        => 'Automatique (suit la langue de l’utilisateur)',
+	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Paramètres régionaux utilisés pour le formatage des devises.<br>« Automatique » suit la langue de chaque utilisateur (ou celle par défaut du forum, puis l’anglais) ; sélectionnez une valeur précise pour imposer le même format à tous.',
 	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'L’extension <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> est nécessaire et doit être en version 1.1.0 ou supérieure.',
-	'PPDE_DEFAULT_LOCALE_SELECT'      => 'Sélectionnez une localisation',
 	'PPDE_DEFAULT_VALUE'              => 'Valeur de don par défaut',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Défini quelle valeur de don sera proposée par défaut sur la page de dons.',
 	'PPDE_DROPBOX_ENABLE'             => 'Activer le menu déroulant',
@@ -62,11 +60,6 @@ $lang = array_merge($lang, [
 	'PPDE_ENABLE_EXPLAIN'             => 'Active ou désactive l’extension PayPal Donation.',
 	'PPDE_HEADER_LINK'                => 'Afficher le lien « Faire un don » dans l’entête du forum',
 	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'Paramètres généraux',
-
-	// Advanced settings
-	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Paramètres avancés',
-	'PPDE_DEFAULT_REMOTE'             => 'URL PayPal',
-	'PPDE_DEFAULT_REMOTE_EXPLAIN'     => 'Ne changez pas ce paramètre, sauf si cette extension a des difficultés pour contacter les serveurs de PayPal.',
 
 	// Stats Donation settings
 	'PPDE_AMOUNT'                     => 'Montant',
@@ -91,11 +84,4 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_SETTINGS_SAVED' => 'Les paramètres de PayPal Donation ont été sauvegardés.',
-]);
-
-/**
- * Errors
- */
-$lang = array_merge($lang, [
-	'PPDE_SETTINGS_MISSING' => 'Veuillez vérifier le paramètre « ID du compte PayPal ».',
 ]);

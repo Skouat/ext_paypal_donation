@@ -42,16 +42,14 @@ $lang = array_merge($lang, [
 	'PPDE_SETTINGS_EXPLAIN'           => 'Here you can configure the main settings for PayPal Donation.',
 
 	// General settings
-	'PPDE_ACCOUNT_ID'                 => 'PayPal account ID',
-	'PPDE_ACCOUNT_ID_EXPLAIN'         => 'Enter your merchant account ID or PayPal email address.',
 	'PPDE_ALLOW_GUEST'                => 'Allow guests to donate',
 	'PPDE_ALLOW_GUEST_EXPLAIN'        => 'This will set the board permissions to allow guests to donate',
 	'PPDE_DEFAULT_CURRENCY'           => 'Default currency',
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Define which currency will be selected by default.',
 	'PPDE_DEFAULT_LOCALE'             => 'Locale settings',
-	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Define the locale used to format currencies.',
+	'PPDE_DEFAULT_LOCALE_AUTO'        => 'Automatic (follow user language)',
+	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Locale used to format currencies.<br>“Automatic” follows each user’s language (or the board default, then English); select a specific value to apply the same format to everyone.',
 	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'The <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension is required and must be in version 1.1.0 or newer.',
-	'PPDE_DEFAULT_LOCALE_SELECT'      => 'Select a locale',
 	'PPDE_DEFAULT_VALUE'              => 'Default donation value',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Define which donation value will be suggested by default.',
 	'PPDE_DROPBOX_ENABLE'             => 'Enable drop-down list',
@@ -62,11 +60,6 @@ $lang = array_merge($lang, [
 	'PPDE_ENABLE_EXPLAIN'             => 'Enable or disable the PayPal Donation Extension.',
 	'PPDE_HEADER_LINK'                => 'Display the “Donations” link in the header',
 	'PPDE_LEGEND_GENERAL_SETTINGS'    => 'General Settings',
-
-	// Advanced settings
-	'PPDE_LEGEND_ADVANCED_SETTINGS'   => 'Advanced settings',
-	'PPDE_DEFAULT_REMOTE'             => 'PayPal URL',
-	'PPDE_DEFAULT_REMOTE_EXPLAIN'     => 'Do not change this setting, unless this extension encounters errors to contact the remote host.',
 
 	// Stats Donation settings
 	'PPDE_AMOUNT'                     => 'Amount',
@@ -91,11 +84,4 @@ $lang = array_merge($lang, [
  */
 $lang = array_merge($lang, [
 	'PPDE_SETTINGS_SAVED' => 'Donation settings saved.',
-]);
-
-/**
- * Errors
- */
-$lang = array_merge($lang, [
-	'PPDE_SETTINGS_MISSING' => 'Please check “Account ID”.',
 ]);

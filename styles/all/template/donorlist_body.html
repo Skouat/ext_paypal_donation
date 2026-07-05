@@ -14,7 +14,7 @@
 
 <div class="forumbg forumbg-table">
 	<div class="inner">
-		<table class="table1" cellspacing="1" id="donorlist">
+		<table class="table1" id="donorlist">
 			<thead>
 			<tr>
 				<th class="name"><a href="{{ U_SORT_USERNAME }}">{{ lang('USERNAME') }}</a></th>
@@ -33,7 +33,7 @@
 			</tr>
 			{% else %}
 			<tr class="bg1">
-				<td colspan="5">{{ lang('PPDE_NO_DONORS') }}</td>
+				<td colspan="4">{{ lang('PPDE_NO_DONORS') }}</td>
 			</tr>
 			{% endfor %}
 			</tbody>

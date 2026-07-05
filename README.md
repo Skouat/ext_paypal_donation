@@ -1,10 +1,10 @@
-# PayPal Donation for phpBB - 3.3.x Develop Branch
+# PayPal Donation for phpBB - 4.0.x Develop Branch
 This extension adds a PayPal Donation page on your site.
 
-[![Build Status](https://travis-ci.org/Skouat/ext_paypal_donation.svg?branch=develop-3.3.x)](https://travis-ci.org/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-3.3.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-3.3.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
+[![Build Status](https://github.com/Skouat/ext_paypal_donation/workflows/Tests/badge.svg)](https://github.com/Skouat/ext_paypal_donation/actions) [![codecov](https://codecov.io/gh/Skouat/ext_paypal_donation/branch/develop-4.0.x/graph/badge.svg?token=YEdsDRUQWg)](https://codecov.io/gh/Skouat/ext_paypal_donation) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/badges/quality-score.png?b=develop-4.0.x)](https://scrutinizer-ci.com/g/Skouat/ext_paypal_donation/?branch=develop-4.0.x) [![Crowdin](https://badges.crowdin.net/skouat-ppde/localized.svg)](https://crowdin.com/project/skouat-ppde)
 
 ## Features
-  * PayPal IPN (Instant Payment Notification)
+  * PayPal REST API integration
     * Auto group
     * Donors list
     * Notifications system
@@ -32,6 +32,33 @@ This extension adds a PayPal Donation page on your site.
   2. Navigate in the ACP to `Customise -> Manage extensions`.
   3. Look for `PayPal Donation` under the Disabled Extensions list, and click its `Enable` link.
   4. Set up and configure PayPal Donation by navigating in the ACP to `Extensions -> PayPal Donation`.
+  5. If your board enforces a Content Security Policy, see [docs/csp.md](docs/csp.md) to allow PayPal's domains.
+
+## Upgrading to 4.0.0 (PayPal IPN → REST API)
+
+Versions prior to 4.0.0 relied on PayPal IPN, which is now **deprecated by PayPal** and no longer usable for this
+donation flow. As a result, **donations no longer work on earlier versions**. Version 4.0.0 switches to the **PayPal
+REST API**, which restores donations and **removes the requirement to use a charity/non-profit PayPal account**.
+Upgrading is therefore required. After updating the files, follow these steps to get donations working again:
+
+  1. **Update requirements:** make sure your board runs **phpBB 3.3.11+**, **PHP 7.2+** and that the PHP **`openssl`** and **`curl`** extensions are enabled.
+  2. **Create a REST API app:**
+      - Go to the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications/live) → **Apps & Credentials**.
+      - Create an app (or open an existing one) for **Live**, and note its **Client ID** and **Secret**. Repeat under the **Sandbox** tab if you want to test.
+  3. **Create a webhook:**
+    - In the ACP, go to `Extensions -> PayPal Donation -> PayPal Features` and copy the **Webhook URL** displayed there.
+    - In the PayPal Developer Dashboard, open your app and add a webhook using that URL, subscribed to the following events:
+      - **“Payment capture completed”** (`PAYMENT.CAPTURE.COMPLETED`) — records donations
+      - **“Payment capture refunded”** (`PAYMENT.CAPTURE.REFUNDED`) — tracks refunds
+      - **“Payment capture reversed”** (`PAYMENT.CAPTURE.REVERSED`) — tracks chargebacks/reversals
+      - **“Payment capture pending”** (`PAYMENT.CAPTURE.PENDING`) — tracks payments awaiting settlement (e.g. card payments)
+      - **“Payment capture denied”** (`PAYMENT.CAPTURE.DENIED`) — tracks declined captures
+    - Copy the generated **Webhook ID**. Repeat for the Sandbox app if needed.
+  4. **Enter the credentials in the ACP:** in `PayPal Features`, fill in the **Client ID**, **Secret** and **Webhook ID** for Live (and Sandbox if used), then save.
+  5. **Test the connection:** use the **“Test connection”** button to confirm your credentials are valid.
+  6. **Content Security Policy:** if your board enforces a CSP, update it to allow PayPal's domains (see [docs/csp.md](docs/csp.md)).
+
+> **Note:** The legacy “PayPal account ID” (email/Merchant ID) under *General Settings* is no longer used to process payments; the REST API relies on the Client ID/Secret above.
 
 ## Uninstall
   1. Navigate in the ACP to `Customise -> Extension Management -> Extensions`.

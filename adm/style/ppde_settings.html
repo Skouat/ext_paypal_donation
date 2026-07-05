@@ -27,10 +27,6 @@
 				<label><input type="radio" class="radio" name="ppde_header_link" value="0"{% if not S_PPDE_HEADER_LINK %} checked{% endif %}> {{ lang('NO') }}</label></dd>
 		</dl>
 		<dl>
-			<dt><label for="ppde_account_id">{{ lang('PPDE_ACCOUNT_ID') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_ACCOUNT_ID_EXPLAIN') }}</span></dt>
-			<dd><input type="text" class="text" id="ppde_account_id" name="ppde_account_id" size="40" maxlength="127" value="{{ PPDE_ACCOUNT_ID }}"></dd>
-		</dl>
-		<dl>
 			<dt><label for="ppde_default_currency">{{ lang('PPDE_DEFAULT_CURRENCY') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_CURRENCY_EXPLAIN') }}</span></dt>
 			<dd><select name="ppde_default_currency" id="ppde_default_currency">
 				{% for options in loops.options %}
@@ -44,9 +40,9 @@
 			<dd>
 				{% if S_PPDE_DEFAULT_LOCALE %}
 				<select name="ppde_default_locale" id="ppde_default_locale">
-					<option value="">{{ lang('PPDE_DEFAULT_LOCALE_SELECT') }}</option>
+					<option value="">{{ lang('PPDE_DEFAULT_LOCALE_AUTO') }}</option>
 					{% for locale_options in loops.locale_options %}
-					<option value="{locale_options.LOCALE_ID}"{% if locale_options.S_LOCALE_DEFAULT %} selected{% endif %}>{{ locale_options.LOCALE_NAME }}</option>
+					<option value="{{ locale_options.LOCALE_ID }}"{% if locale_options.S_LOCALE_DEFAULT %} selected{% endif %}>{{ locale_options.LOCALE_NAME }}</option>
 					{% endfor %}
 				</select>
 				{% else %}
@@ -71,18 +67,6 @@
 			<dt><label for="ppde_allow_guest">{{ lang('PPDE_ALLOW_GUEST') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_ALLOW_GUEST_EXPLAIN') }}</span></dt>
 			<dd><label><input type="radio" class="radio" name="ppde_allow_guest" value="1"{% if S_PPDE_ALLOW_GUEST %} checked{% endif %}> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" id="ppde_allow_guest" name="ppde_allow_guest" value="0"{% if not S_PPDE_ALLOW_GUEST %} checked{% endif %}> {{ lang('NO') }}</label></dd>
-		</dl>
-	</fieldset>
-	<fieldset>
-		<legend>{{ lang('PPDE_LEGEND_ADVANCED_SETTINGS') }}</legend>
-		<dl>
-			<dt><label for="ppde_default_remote">{{ lang('PPDE_DEFAULT_REMOTE') ~ lang('COLON') }}</label><br><span>{{ lang('PPDE_DEFAULT_REMOTE_EXPLAIN') }}</span></dt>
-			<dd><select name="ppde_default_remote" id="ppde_default_remote">
-				{% for remote_options in loops.remote_options %}
-				<option value="{{ remote_options.REMOTE_ID }}"{% if remote_options.S_DEFAULT %} selected{% endif %}>{{ remote_options.REMOTE_NAME }}</option>
-				{% endfor %}
-			</select>
-			</dd>
 		</dl>
 	</fieldset>
 	<fieldset>

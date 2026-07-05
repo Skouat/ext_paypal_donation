@@ -47,26 +47,22 @@ class currency
 	 */
 	public function build_sql_data($currency_id = 0, $only_enabled = false): string
 	{
-		// Build main sql request
 		$sql_ary = [
 			'SELECT'   => '*',
 			'FROM'     => [$this->ppde_currency_table => 'c'],
 			'ORDER_BY' => 'c.currency_order',
 		];
 
-		// Use WHERE clause when $currency_id is different from 0
 		if ((int) $currency_id)
 		{
 			$sql_ary['WHERE'] = 'c.currency_id = ' . (int) $currency_id;
 		}
 
-		// Use WHERE clause when $only_enabled is true
 		if ($only_enabled)
 		{
 			$sql_ary['WHERE'] = !empty($sql_ary['WHERE']) ? $sql_ary['WHERE'] . ' AND c.currency_enable = 1' : 'c.currency_enable = 1';
 		}
 
-		// Return all page entities
 		return $this->db->sql_build_query('SELECT', $sql_ary);
 	}
 
@@ -104,7 +100,6 @@ class currency
 	 */
 	private function sql_currency_order(): string
 	{
-		// By default, check that image_order is valid and fix it if necessary
 		return 'SELECT currency_id, currency_order
 				FROM ' . $this->ppde_currency_table . '
 				ORDER BY currency_order';
@@ -122,7 +117,6 @@ class currency
 	 */
 	public function move($switch_order_id, $current_order, $id): bool
 	{
-		// Update the entry
 		$sql = 'UPDATE ' . $this->ppde_currency_table . '
 					SET currency_order = ' . (int) $current_order . '
 					WHERE currency_order = ' . (int) $switch_order_id . '
@@ -131,7 +125,7 @@ class currency
 
 		$move_executed = (bool) $this->db->sql_affectedrows();
 
-		// Only update the other entry too if the previous entry got updated
+		// Only swap the other entry if the first update succeeded.
 		if ($move_executed)
 		{
 			$sql = 'UPDATE ' . $this->ppde_currency_table . '

@@ -57,10 +57,12 @@
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_ID') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYER_ID }}</dd>
 		</dl>
+		{% if S_PAYER_STATUS %}
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_PAYER_STATUS') ~ lang('COLON') }}</span></dt>
 			<dd>{{ PAYER_STATUS }}</dd>
 		</dl>
+		{% endif %}
 		<hr>
 		<dl>
 			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_RECEIVER_EMAIL') ~ lang('COLON') }}</span></dt>
@@ -86,11 +88,11 @@
 		{% if S_CONVERT %}
 		<hr>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_SETTLE_AMOUNT') ~ lang('COLON') }}</span></dt>
+			<dt><span style="font-weight: bold">{{ L_PPDE_DT_SETTLE_AMOUNT ~ lang('COLON') }}</span></dt>
 			<dd>{{ SETTLE_AMOUNT }}</dd>
 		</dl>
 		<dl>
-			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') ~ lang('COLON') }}</span><br>{{ lang('PPDE_DT_EXCHANGE_RATE_EXPLAIN') }}</dt>
+			<dt><span style="font-weight: bold">{{ lang('PPDE_DT_EXCHANGE_RATE') ~ lang('COLON') }}</span><br>{{ L_PPDE_DT_EXCHANGE_RATE_EXPLAIN }}</dt>
 			<dd>{{ EXCHANGE_RATE }}</dd>
 		</dl>
 		{% endif %}
@@ -120,9 +122,6 @@
 	<fieldset>
 		<p class="submit-buttons">
 			{{ S_HIDDEN_FIELDS }}
-			{% if S_ERROR %}
-			<input class="button1" type="submit" name="approve" value="{% if S_ERROR_APPROVED %}{{ lang('PPDE_DT_DISAPPROVE') }}{% else %}{{ lang('PPDE_DT_APPROVE') }}{% endif %}">&nbsp;
-			{% endif %}
 			<input class="button1" type="submit" id="change" name="change" value="{{ lang('SUBMIT') }}">&nbsp;
 			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">&nbsp;
 			<input class="button2" type="submit" name="back" value="{{ lang('BACK') }}">
@@ -160,7 +159,7 @@
 		<tbody>
 		{% for log in loops.log %}
 		<tr>
-			<td>{{ log.TXN_ID }}{% if log.S_TXN_ERRORS %}&nbsp;<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: #FF0000;"></i>{% endif %}</td>
+			<td>{{ log.TXN_ID }}{% if log.S_TXN_ERRORS %}&nbsp;<i class="fa fa-exclamation-triangle" aria-hidden="true" style="color: #FF0000;" title="{{ lang('PPDE_DT_IPN_ERRORS') }}"></i>{% endif %}</td>
 			<td>{{ log.USERNAME }}</td>
 			<td{% if not log.S_CONFIRMED %} style="color: #FF0000;"{% endif %}>{{ log.CONFIRMED }}{% if log.S_TEST_IPN %}&nbsp;({{ lang('PPDE_DT_IPN_TEST') }}){% endif %}</td>
 			<td{% if not log.S_PAYMENT_STATUS %} style="color: #FF0000;"{% endif %}>{{ log.PAYMENT_STATUS }}</td>

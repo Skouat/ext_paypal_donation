@@ -50,7 +50,7 @@ class donation_pages
 	}
 
 	/**
-	 * Set sql AND clause for the field 'page_title'
+	 * Set SQL AND clause for the field 'page_title'
 	 *
 	 * @param string $mode
 	 *
@@ -59,7 +59,7 @@ class donation_pages
 	 */
 	private function build_sql_and_page_title($mode): string
 	{
-		// If $mode is set to 'body', 'cancel' or 'success' we set a sql AND clause, otherwise nothing is set.
+		// If $mode is set to 'body', 'cancel' or 'success' we set a SQL AND clause, otherwise nothing is set.
 		switch ($mode)
 		{
 			case 'body':
@@ -84,7 +84,7 @@ class donation_pages
 	 */
 	public function get_languages($lang_id = 0): array
 	{
-		// Request by id if provided, otherwise request all
+		// Request a single language if provided, otherwise all of them.
 		$sql_where = ($lang_id !== 0) ? 'WHERE lang_id = ' . (int) $lang_id : '';
 
 		$langs = [];
@@ -100,7 +100,6 @@ class donation_pages
 		}
 		$this->db->sql_freeresult($result);
 
-		// Return all available languages
 		return $langs;
 	}
 }

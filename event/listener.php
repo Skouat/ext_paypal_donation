@@ -96,7 +96,6 @@ class listener implements EventSubscriberInterface
 				'PPDE_STATS_POSITION'     => $this->config['ppde_stats_position'],
 			]);
 
-			//Assign statistics vars to the template
 			$this->ppde_controller_display_stats->display_stats();
 		}
 	}
@@ -136,7 +135,7 @@ class listener implements EventSubscriberInterface
 	 */
 	private function is_donors_list_link_allowed(): bool
 	{
-		return $this->ppde_controller_main->ppde_actions_auth->can_view_ppde_donorlist() && $this->ppde_controller_main->use_ipn() && $this->config['ppde_ipn_donorlist_enable'];
+		return $this->ppde_controller_main->ppde_actions_auth->can_view_ppde_donorlist() && $this->ppde_controller_main->donorlist_is_enabled();
 	}
 
 	/**
