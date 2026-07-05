@@ -146,15 +146,23 @@ class transactions
 	 */
 	public function query_sql_count($count_sql_ary, $selected_field): int
 	{
-		$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
-
 		if (array_key_exists('GROUP_BY', $count_sql_ary))
 		{
-			$count_sql_ary['SELECT'] = 'COUNT(DISTINCT ' . $count_sql_ary['GROUP_BY'] . ') AS total_entries';
-		}
-		unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+			$count_sql_ary['SELECT'] = $count_sql_ary['GROUP_BY'];
+			unset($count_sql_ary['ORDER_BY']);
 
-		$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+			$inner_sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+
+			$sql = 'SELECT COUNT(*) AS total_entries FROM (' . $inner_sql . ') ppde_donors';
+		}
+		else
+		{
+			$count_sql_ary['SELECT'] = 'COUNT(' . $selected_field . ') AS total_entries';
+			unset($count_sql_ary['ORDER_BY'], $count_sql_ary['GROUP_BY']);
+
+			$sql = $this->db->sql_build_query('SELECT', $count_sql_ary);
+		}
+
 		$result = $this->db->sql_query($sql);
 		$field = (int) $this->db->sql_fetchfield('total_entries');
 		$this->db->sql_freeresult($result);
