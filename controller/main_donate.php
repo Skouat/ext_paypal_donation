@@ -84,9 +84,13 @@ class main_donate extends main_controller
 		// Default currency used for both the JS SDK and the order.
 		$default_currency_data = $this->ppde_actions_currency->get_default_currency_data((int) $this->config['ppde_default_currency']);
 		$currency_code = !empty($default_currency_data) ? $default_currency_data[0]['currency_iso_code'] : 'USD';
+		$decimals = $this->ppde_actions_currency->get_currency_fraction_digits($currency_code);
+		$step = $decimals > 0 ? '0.' . str_repeat('0', $decimals - 1) . '1' : '1';
 
 		$this->template->assign_vars([
 			'DONATION_BODY'      => $this->donation_body,
+			'PPDE_AMOUNT_STEP'   => $step,
+			'PPDE_AMOUNT_MIN'    => $step,
 			'PPDE_DEFAULT_VALUE' => (int) ($this->config['ppde_default_value'] ?? 0),
 			'PPDE_LIST_VALUE'    => $this->build_currency_value_select_menu($this->config['ppde_default_value']),
 
