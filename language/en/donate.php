@@ -43,6 +43,7 @@ $lang = array_merge($lang, [
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Donation statistics',
 
 	// Pages
+	'PPDE_DONATION_AMOUNT'             => 'Donation amount',
 	'PPDE_DONATION_TITLE'              => 'Make a Donation',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Make a Donation to %s',
 	'PPDE_CANCEL_DEFAULT'              => 'Your donation has been canceled. No payment has been made.',
@@ -83,14 +84,14 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Error
-	'PPDE_AMOUNT_INVALID'            => 'Please enter a valid donation amount.',
-	'PPDE_DONATION_UNAVAILABLE'      => 'Donations are temporarily unavailable. Please try again later.',
-	'PPDE_PAYMENT_ERROR'             => 'An error occurred while processing your donation. Please try again.',
-	'PPDE_REST_BAD_REQUEST'          => 'Invalid request.',
-	'PPDE_REST_CREDENTIALS_MISSING'  => 'PayPal is not configured. Please contact the board administrator.',
-	'PPDE_REST_INVALID_CURRENCY'     => 'The selected currency is not available.',
-	'PPDE_REST_MISSING_ORDER_ID'     => 'Missing PayPal order identifier.',
-	'PPDE_REST_PAYPAL_ERROR'         => 'An error occurred while contacting PayPal. Please try again later.',
+	'PPDE_AMOUNT_INVALID'           => 'Please enter a valid donation amount.',
+	'PPDE_DONATION_UNAVAILABLE'     => 'Donations are temporarily unavailable. Please try again later.',
+	'PPDE_PAYMENT_ERROR'            => 'An error occurred while processing your donation. Please try again.',
+	'PPDE_REST_BAD_REQUEST'         => 'Invalid request.',
+	'PPDE_REST_CREDENTIALS_MISSING' => 'PayPal is not configured. Please contact the board administrator.',
+	'PPDE_REST_INVALID_CURRENCY'    => 'The selected currency is not available.',
+	'PPDE_REST_MISSING_ORDER_ID'    => 'Missing PayPal order identifier.',
+	'PPDE_REST_PAYPAL_ERROR'        => 'An error occurred while contacting PayPal. Please try again later.',
 ]);
 
 $lang = array_merge($lang, [

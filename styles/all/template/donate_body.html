@@ -23,6 +23,7 @@
 	<div class="panel">
 		{% if S_PPDE_CONFIGURED %}
 		<div class="donate_value">
+			<label for="ppde-amount" class="sr-only">{{ lang('PPDE_DONATION_AMOUNT') }}</label>
 			{% if PPDE_LIST_VALUE %}
 			<select name="amount" id="ppde-amount">{{ PPDE_LIST_VALUE }}</select>
 			{% else %}

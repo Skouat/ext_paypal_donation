@@ -43,6 +43,7 @@ $lang = array_merge($lang, [
 	'PPDE_INDEX_STATISTICS_TITLE'      => 'Statistiques des dons',
 
 	// Pages
+	'PPDE_DONATION_AMOUNT'             => 'Montant du don',
 	'PPDE_DONATION_TITLE'              => 'Faire un don',
 	'PPDE_DONATION_TITLE_HEAD'         => 'Faire un don pour %s',
 	'PPDE_CANCEL_DEFAULT'              => 'Votre don a été annulé. Aucun paiement n’a été effectué.',
@@ -83,14 +84,14 @@ $lang = array_merge($lang, [
 
 $lang = array_merge($lang, [
 	// Error
-	'PPDE_AMOUNT_INVALID'            => 'Veuillez saisir un montant de don valide.',
-	'PPDE_DONATION_UNAVAILABLE'      => 'Les dons sont temporairement indisponibles. Veuillez réessayer plus tard.',
-	'PPDE_PAYMENT_ERROR'             => 'Une erreur est survenue lors du traitement de votre don. Veuillez réessayer.',
-	'PPDE_REST_BAD_REQUEST'          => 'Requête non valide.',
-	'PPDE_REST_CREDENTIALS_MISSING'  => 'PayPal n’est pas configuré. Veuillez contacter l’administrateur du forum.',
-	'PPDE_REST_INVALID_CURRENCY'     => 'La devise sélectionnée n’est pas disponible.',
-	'PPDE_REST_MISSING_ORDER_ID'     => 'Identifiant de commande PayPal manquant.',
-	'PPDE_REST_PAYPAL_ERROR'         => 'Une erreur est survenue lors de la communication avec PayPal. Veuillez réessayer plus tard.',
+	'PPDE_AMOUNT_INVALID'           => 'Veuillez saisir un montant de don valide.',
+	'PPDE_DONATION_UNAVAILABLE'     => 'Les dons sont temporairement indisponibles. Veuillez réessayer plus tard.',
+	'PPDE_PAYMENT_ERROR'            => 'Une erreur est survenue lors du traitement de votre don. Veuillez réessayer.',
+	'PPDE_REST_BAD_REQUEST'         => 'Requête non valide.',
+	'PPDE_REST_CREDENTIALS_MISSING' => 'PayPal n’est pas configuré. Veuillez contacter l’administrateur du forum.',
+	'PPDE_REST_INVALID_CURRENCY'    => 'La devise sélectionnée n’est pas disponible.',
+	'PPDE_REST_MISSING_ORDER_ID'    => 'Identifiant de commande PayPal manquant.',
+	'PPDE_REST_PAYPAL_ERROR'        => 'Une erreur est survenue lors de la communication avec PayPal. Veuillez réessayer plus tard.',
 ]);
 
 $lang = array_merge($lang, [
