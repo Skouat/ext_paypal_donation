@@ -79,9 +79,7 @@ class transactions
 		$sql_donorslist_ary = [
 			'SELECT'   => 'txn.user_id, txn.mc_currency',
 			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
-			'WHERE'    => 'txn.user_id <> ' . ANONYMOUS . "
-							AND txn.payment_status = '" . ppde_constants::STATUS_COMPLETED . "'
-							AND txn.test_ipn = 0",
+			'WHERE'    => $this->donorlist_where(),
 			'GROUP_BY' => 'txn.user_id, txn.mc_currency',
 		];
 
@@ -101,6 +99,35 @@ class transactions
 		}
 
 		return $sql_donorslist_ary;
+	}
+
+	/**
+	 * Count distinct donors, regardless of currency.
+	 *
+	 * @return array
+	 * @access public
+	 */
+	public function sql_donors_count_ary(): array
+	{
+		return [
+			'SELECT'   => 'txn.user_id',
+			'FROM'     => [$this->ppde_transactions_log_table => 'txn'],
+			'WHERE'    => $this->donorlist_where(),
+			'GROUP_BY' => 'txn.user_id',
+		];
+	}
+
+	/**
+	 * Shared WHERE for the donors list: registered donors, completed live donations.
+	 *
+	 * @return string
+	 * @access private
+	 */
+	private function donorlist_where(): string
+	{
+		return 'txn.user_id <> ' . ANONYMOUS . "
+			AND txn.payment_status = '" . ppde_constants::STATUS_COMPLETED . "'
+			AND txn.test_ipn = 0";
 	}
 
 	/**

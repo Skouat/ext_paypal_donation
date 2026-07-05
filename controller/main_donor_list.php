@@ -80,11 +80,18 @@ class main_donor_list extends main_controller
 		$pagination_url = append_sid($this->u_action, implode('&amp;', $params), true, false, true);
 		$sort_url = $this->set_url_delim(append_sid($this->u_action, implode('&amp;', $sort_params), true, false, true), $sort_params);
 
-		$sql_count_donors = $this->ppde_operator_transactions->sql_donorlist_ary();
-		$total_donors = $this->ppde_operator_transactions->query_sql_count($sql_count_donors, 'txn.user_id');
-		$start = $this->pagination->validate_start($start, (int) $this->config['topics_per_page'], $total_donors);
+		// Rows displayed = (donor, currency) pairs -> drives pagination.
+		$total_rows = $this->ppde_operator_transactions->query_sql_count(
+			$this->ppde_operator_transactions->sql_donorlist_ary(), 'txn.user_id'
+		);
 
-		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_donors, (int) $this->config['topics_per_page'], $start);
+		// Distinct donors (people) -> drives the "X donors" heading.
+		$total_donors = $this->ppde_operator_transactions->query_sql_count(
+			$this->ppde_operator_transactions->sql_donors_count_ary(), 'txn.user_id'
+		);
+
+		$start = $this->pagination->validate_start($start, (int) $this->config['topics_per_page'], $total_rows);
+		$this->pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $total_rows, (int) $this->config['topics_per_page'], $start);
 
 		$this->template->assign_vars([
 			'L_PPDE_DONORLIST_TITLE' => $this->language->lang('PPDE_DONORLIST_TITLE'),

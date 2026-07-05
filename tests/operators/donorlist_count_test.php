@@ -69,4 +69,14 @@ class donorlist_count_test extends \phpbb_database_test_case
 
 		$this->assertSame(7, $this->operator->query_sql_count($sql_ary, 'txn.transaction_id'));
 	}
+
+	/**
+	 * Distinct donors are counted per person, not per (donor, currency) pair.
+	 */
+	public function test_count_distinct_donors_ignores_currency()
+	{
+		$sql_ary = $this->operator->sql_donors_count_ary();
+
+		$this->assertSame(2, $this->operator->query_sql_count($sql_ary, 'txn.user_id'));
+	}
 }
