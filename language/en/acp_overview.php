@@ -42,12 +42,12 @@ $lang = array_merge($lang, [
 
 	'PPDE_ESI'                   => 'Extension and System Information',
 	'PPDE_ESI_INSTALL_DATE'      => 'Install date of <strong>%s</strong>',
-	'PPDE_ESI_INTL_NOT_DETECTED' => 'Consider to install the <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension',
+	'PPDE_ESI_INTL_NOT_DETECTED' => 'Consider installing the <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension',
 	'PPDE_ESI_MORE_INFORMATION'  => 'More information…',
 	'PPDE_ESI_NOT_DETECTED'      => 'Not detected',
 	'PPDE_ESI_RESYNC_OPTIONS'    => 'Reset or recheck extension and system information',
 	'PPDE_ESI_VERSION'           => '<strong>%s</strong> version',
-	'PPDE_ESI_VERSION_INTL'      => 'PHP <code>Intl</code> version',
+	'PPDE_ESI_VERSION_INTL'      => 'PHP <code>intl</code> version',
 	'PPDE_ESI_VERSION_OPENSSL'   => 'OpenSSL version',
 
 	'PPDE_STATS'         => 'Donation Statistics',

@@ -154,7 +154,7 @@ $lang = array_merge($lang, [
 	'PPDE_DT_NO_TRANSACTION'       => 'Aucune transaction n’a été trouvée.',
 
 	'PPDE_MT_DONOR_NOT_FOUND'      => 'Le donateur demandé n’existe pas.',
-	'PPDE_MT_MC_GROSS_TOO_LOW'     => 'Le montant total doit être supérieure à zéro.',
+	'PPDE_MT_MC_GROSS_TOO_LOW'     => 'Le montant total doit être supérieur à zéro.',
 	'PPDE_MT_MC_FEE_NEGATIVE'      => 'Le montant de la commission ne peut être négatif.',
 	'PPDE_MT_MC_FEE_TOO_HIGH'      => 'Le montant de la commission doit être inférieur au montant total.',
 	'PPDE_MT_PAYMENT_DATE_ERROR'   => 'La date du don « %1$s » n’est pas valide.',

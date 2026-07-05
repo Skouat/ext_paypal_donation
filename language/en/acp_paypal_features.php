@@ -91,7 +91,7 @@ $lang = array_merge($lang, [
 	'PPDE_SANDBOX_ENABLE'                  => 'Sandbox testing',
 	'PPDE_SANDBOX_ENABLE_EXPLAIN'          => 'Use PayPal Sandbox instead of PayPal services.<br>Useful for developers and testers. All transactions are fictitious.',
 	'PPDE_SANDBOX_FOUNDER_ENABLE'          => 'Sandbox only for founder',
-	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only by the board founders.',
+	'PPDE_SANDBOX_FOUNDER_ENABLE_EXPLAIN'  => 'PayPal Sandbox will be displayed only to the board founders.',
 ]);
 
 /**

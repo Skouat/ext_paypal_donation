@@ -65,7 +65,7 @@ and the releases are listed in reverse chronological order.
 
 ## 3.0.0 - 2020-03-17
 
-- Add: Implement support money format, based on PHP Intl extension
+- Add: Implement support money format, based on PHP intl extension
 - Add: Donation stats bars can be disabled to show only text information
 - Add: New predefined variables are available for Donation pages
 - Change: Re-enable TLS check

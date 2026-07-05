@@ -48,7 +48,7 @@ $lang = array_merge($lang, [
 	'PPDE_DEFAULT_CURRENCY_EXPLAIN'   => 'Define which currency will be selected by default.',
 	'PPDE_DEFAULT_LOCALE'             => 'Locale settings',
 	'PPDE_DEFAULT_LOCALE_AUTO'        => 'Automatic (follow user language)',
-	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Locale used to format currencies. Leave on “Automatic” to follow each user’s board language (falling back to the board default language, then English). Select a specific locale to force the same formatting for everyone.',
+	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Locale used to format currencies.<br>“Automatic” follows each user’s language (or the board default, then English); select a specific value to apply the same format to everyone.',
 	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'The <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension is required and must be in version 1.1.0 or newer.',
 	'PPDE_DEFAULT_VALUE'              => 'Default donation value',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Define which donation value will be suggested by default.',

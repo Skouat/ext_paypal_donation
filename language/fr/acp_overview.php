@@ -45,7 +45,7 @@ $lang = array_merge($lang, [
 	'PPDE_ESI_INTL_NOT_DETECTED' => 'Songez à installer l’extension <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a>',
 	'PPDE_ESI_MORE_INFORMATION'  => 'Plus d’informations…',
 	'PPDE_ESI_NOT_DETECTED'      => 'Non détecté',
-	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser or revérifier les informations de l’extension et du système',
+	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser ou revérifier les informations de l’extension et du système',
 	'PPDE_ESI_VERSION'           => 'Version de <strong>%s</strong>',
 	'PPDE_ESI_VERSION_INTL'      => 'Version de PHP <code>intl</code>',
 	'PPDE_ESI_VERSION_OPENSSL'   => 'Version d’OpenSSL',

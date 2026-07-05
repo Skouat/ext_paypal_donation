@@ -163,7 +163,7 @@ class locale_icu
 	}
 
 	/**
-	 * Sets config value for PHP Intl extension version
+	 * Sets config value for PHP intl extension version
 	 *
 	 * @return void
 	 * @access public
@@ -211,7 +211,7 @@ class locale_icu
 	}
 
 	/**
-	 * Sets config value for PHP Intl extension detection
+	 * Sets config value for PHP intl extension detection
 	 *
 	 * @return void
 	 * @access public

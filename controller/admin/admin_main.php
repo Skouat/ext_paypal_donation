@@ -418,7 +418,7 @@ abstract class admin_main
 	}
 
 	/**
-	 * Run the Intl detection once after install/enable (ppde_first_start = true).
+	 * Run the intl detection once after install/enable (ppde_first_start = true).
 	 *
 	 * @return void
 	 * @throws \ReflectionException

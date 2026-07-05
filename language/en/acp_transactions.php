@@ -87,7 +87,7 @@ $lang = array_merge($lang, [
 	'PPDE_MT_USERNAME_EXPLAIN'          => 'Select the anonymous user if the donation was made by a guest.',
 	'PPDE_MT_FIRST_NAME'                => 'First name',
 	'PPDE_MT_LAST_NAME'                 => 'Last name',
-	'PPDE_MT_PAYER_EMAIL'               => 'Email',
+	'PPDE_MT_PAYER_EMAIL'               => 'E-mail',
 	'PPDE_MT_RESIDENCE_COUNTRY'         => 'Country',
 	'PPDE_MT_RESIDENCE_COUNTRY_EXPLAIN' => 'ISO 3166 alpha-2 code, 2 characters, see <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/2796" target="_blank" rel="noreferrer">FAQ</a>.',
 	'PPDE_MT_TOTAL_AMOUNT'              => 'Total amount',
