@@ -43,17 +43,17 @@ Upgrading is therefore required. After updating the files, follow these steps to
 
   1. **Update requirements:** make sure your board runs **phpBB 3.3.11+**, **PHP 7.2+** and that the PHP **`openssl`** and **`curl`** extensions are enabled.
   2. **Create a REST API app:**
-      - Go to the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications/live) → **Apps & Credentials**.
-      - Create an app (or open an existing one) for **Live**, and note its **Client ID** and **Secret**. Repeat under the **Sandbox** tab if you want to test.
+      * Go to the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications/live) → **Apps & Credentials**.
+      * Create an app (or open an existing one) for **Live**, and note its **Client ID** and **Secret**. Repeat under the **Sandbox** tab if you want to test.
   3. **Create a webhook:**
-    - In the ACP, go to `Extensions -> PayPal Donation -> PayPal Features` and copy the **Webhook URL** displayed there.
-    - In the PayPal Developer Dashboard, open your app and add a webhook using that URL, subscribed to the following events:
-      - **“Payment capture completed”** (`PAYMENT.CAPTURE.COMPLETED`) — records donations
-      - **“Payment capture refunded”** (`PAYMENT.CAPTURE.REFUNDED`) — tracks refunds
-      - **“Payment capture reversed”** (`PAYMENT.CAPTURE.REVERSED`) — tracks chargebacks/reversals
-      - **“Payment capture pending”** (`PAYMENT.CAPTURE.PENDING`) — tracks payments awaiting settlement (e.g. card payments)
-      - **“Payment capture denied”** (`PAYMENT.CAPTURE.DENIED`) — tracks declined captures
-    - Copy the generated **Webhook ID**. Repeat for the Sandbox app if needed.
+      * In the ACP, go to `Extensions -> PayPal Donation -> PayPal Features` and copy the **Webhook URL** displayed there.
+      * In the PayPal Developer Dashboard, open your app and add a webhook using that URL, subscribed to the following events:
+          * **“Payment capture completed”** (`PAYMENT.CAPTURE.COMPLETED`) — records donations
+          * **“Payment capture refunded”** (`PAYMENT.CAPTURE.REFUNDED`) — tracks refunds
+          * **“Payment capture reversed”** (`PAYMENT.CAPTURE.REVERSED`) — tracks chargebacks/reversals
+          * **“Payment capture pending”** (`PAYMENT.CAPTURE.PENDING`) — tracks payments awaiting settlement (e.g. card payments)
+          * **“Payment capture denied”** (`PAYMENT.CAPTURE.DENIED`) — tracks declined captures
+      * Copy the generated **Webhook ID**. Repeat for the Sandbox app if needed.
   4. **Enter the credentials in the ACP:** in `PayPal Features`, fill in the **Client ID**, **Secret** and **Webhook ID** for Live (and Sandbox if used), then save.
   5. **Test the connection:** use the **“Test connection”** button to confirm your credentials are valid.
   6. **Content Security Policy:** if your board enforces a CSP, update it to allow PayPal's domains (see [docs/csp.md](docs/csp.md)).
