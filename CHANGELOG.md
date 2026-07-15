@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
+## 4.0.1 - [Unreleased]
+
+- Change: Replace magic numbers with named constants in `order_controller`
+
 ## 4.0.0 - 2026-07-05
 
 - Add: Migration from PayPal IPN to the PayPal REST API (Orders API v2 + JS SDK)
