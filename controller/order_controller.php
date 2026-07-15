@@ -38,6 +38,15 @@ class order_controller extends main_controller
 	use order_party_extractor;
 	use transaction_data_builder;
 
+	/** PayPal truncates the description beyond this length. */
+	private const DESCRIPTION_MAX_LENGTH = 127;
+
+	/** Suffix appended when the description is truncated. */
+	private const DESCRIPTION_TRUNCATE_SUFFIX = '...';
+
+	/** PayPal soft descriptor length limit. */
+	private const SOFT_DESCRIPTOR_MAX_LENGTH = 22;
+
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
 	/** @var \phpbb\log\log */
@@ -172,7 +181,7 @@ class order_controller extends main_controller
 	}
 
 	/**
-	 * Truncate a string to the 127-character limit allowed by PayPal for the
+	 * Truncate a string to the length limit allowed by PayPal for the
 	 * purchase unit description.
 	 *
 	 * @param string $text
@@ -182,17 +191,21 @@ class order_controller extends main_controller
 	 */
 	private function truncate_description(string $text): string
 	{
-		return (utf8_strlen($text) > 127) ? utf8_substr($text, 0, 124) . '...' : $text;
+		if (utf8_strlen($text) <= self::DESCRIPTION_MAX_LENGTH)
+		{
+			return $text;
+		}
+
+		return utf8_substr($text, 0, self::DESCRIPTION_MAX_LENGTH - utf8_strlen(self::DESCRIPTION_TRUNCATE_SUFFIX)) . self::DESCRIPTION_TRUNCATE_SUFFIX;
 	}
 
 	/**
 	 * Build a PayPal-compliant soft descriptor (bank statement label) from a
 	 * free-form string such as the board name.
 	 *
-	 * PayPal only allows the characters [A-Za-z0-9 .*-] and displays at most
-	 * 22 characters (it also prepends its own "PAYPAL *" prefix). Accented and
-	 * other non-ASCII characters are transliterated to ASCII when possible, then
-	 * any remaining unsupported character is dropped.
+	 * PayPal only allows the characters [A-Za-z0-9 .*-] and truncates the
+	 * result (it also prepends its own "PAYPAL *" prefix). Accented characters
+	 * are transliterated to ASCII when possible; unsupported ones are dropped.
 	 *
 	 * @param string $text
 	 *
@@ -216,8 +229,7 @@ class order_controller extends main_controller
 		$text = preg_replace('/[^A-Za-z0-9 .*-]/', '', $text);
 		$text = trim(preg_replace('/\s+/', ' ', $text));
 
-		// PayPal truncates at 22 characters.
-		return substr($text, 0, 22);
+		return substr($text, 0, self::SOFT_DESCRIPTOR_MAX_LENGTH);
 	}
 
 	/**
