@@ -86,7 +86,7 @@ class order_controller extends main_controller
 
 		if ($amount <= 0)
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		// get_default_currency_data() only returns ENABLED currencies, so an
@@ -96,7 +96,7 @@ class order_controller extends main_controller
 
 		if (empty($currency_data))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_INVALID_CURRENCY')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_INVALID_CURRENCY')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		$currency_code = $currency_data[0]['currency_iso_code'];
@@ -165,7 +165,7 @@ class order_controller extends main_controller
 		catch (ApiException $e)
 		{
 			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], JsonResponse::HTTP_BAD_GATEWAY);
 		}
 
 		return new JsonResponse(['id' => $response->getResult()->getId()]);
@@ -230,22 +230,22 @@ class order_controller extends main_controller
 	{
 		if (!$this->request->is_ajax())
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_donate'))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		if (empty($this->config['ppde_enable']) || !$this->ppde_actions_auth->can_use_ppde())
 		{
-			return new JsonResponse(['error' => $this->language->lang('NOT_AUTHORISED')], 403);
+			return new JsonResponse(['error' => $this->language->lang('NOT_AUTHORISED')], JsonResponse::HTTP_FORBIDDEN);
 		}
 
 		if (!$this->client_factory->is_configured($this->use_sandbox()))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_CREDENTIALS_MISSING')], 503);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_CREDENTIALS_MISSING')], JsonResponse::HTTP_SERVICE_UNAVAILABLE);
 		}
 
 		return null;
@@ -283,7 +283,7 @@ class order_controller extends main_controller
 
 		if ($order_id === '')
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_MISSING_ORDER_ID')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_MISSING_ORDER_ID')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		try
@@ -297,7 +297,7 @@ class order_controller extends main_controller
 		catch (ApiException $e)
 		{
 			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], JsonResponse::HTTP_BAD_GATEWAY);
 		}
 
 		$result = $response->getResult();
