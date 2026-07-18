@@ -124,7 +124,7 @@ class webhook_listener
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
-			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time(), [$event_type]);
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time(), [substr($event_type, 0, 32)]);
 			return new Response('', 403);
 		}
 
