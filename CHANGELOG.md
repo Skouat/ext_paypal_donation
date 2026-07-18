@@ -9,6 +9,8 @@ and the releases are listed in reverse chronological order.
 ## 4.0.1 - [Unreleased]
 
 - Change: Replace magic numbers with named constants in `order_controller`
+- Change: Code clean-up in the webhook listener and donation recorder (clearer naming, docblocks)
+- Fix: Log webhook order lookup failures in the admin log for easier troubleshooting
 
 ## 4.0.0 - 2026-07-05
 
