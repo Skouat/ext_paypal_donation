@@ -217,7 +217,7 @@ class order_controller extends main_controller
 		// Transliterate accented/Unicode chars to ASCII ("Forêt" -> "Foret").
 		if (function_exists('iconv'))
 		{
-			$converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+			$converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
 
 			if ($converted !== false)
 			{
