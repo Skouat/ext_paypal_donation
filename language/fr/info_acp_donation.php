@@ -73,6 +73,7 @@ $lang = array_merge($lang, [
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation : Actualisation des statistiques</strong>',
 	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation : Vérification des prérequis</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation : Actualisation des statistiques PayPal Sandbox</strong>',
+	'LOG_PPDE_WEBHOOK_ORDER_ERROR'     => '<strong>PayPal Donation : Erreur de récupération de la commande via webhook</strong><br>» Commande %1$s : %2$s',
 	'LOG_PPDE_WEBHOOK_PROCESS_ERROR'   => '<strong>PayPal Donation : Erreur de traitement du webhook</strong><br>» Transaction %1$s : %2$s',
 	'LOG_PPDE_WEBHOOK_SIG_FAILED'      => '<strong>PayPal Donation : Échec de la vérification de la signature du webhook</strong><br>» Événement : %s',
 ]);

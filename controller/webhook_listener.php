@@ -419,6 +419,7 @@ class webhook_listener
 		}
 		catch (\Throwable $e)
 		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_ORDER_ERROR', time(), [$order_id, $e->getMessage()]);
 			return $empty;
 		}
 	}
