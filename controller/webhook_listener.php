@@ -241,7 +241,7 @@ class webhook_listener
 	{
 		$txn_id = $resource['id'] ?? '';
 
-		if ($txn_id === '' || $this->already_completed($txn_id))
+		if ($txn_id === '' || $this->is_capture_completed($txn_id))
 		{
 			return true;
 		}
@@ -280,7 +280,7 @@ class webhook_listener
 	 * @return bool
 	 * @access private
 	 */
-	private function already_processed(string $txn_id): bool
+	private function is_transaction_logged(string $txn_id): bool
 	{
 		$this->ppde_entity_transaction->set_txn_id($txn_id);
 
@@ -288,14 +288,14 @@ class webhook_listener
 	}
 
 	/**
-	 * Whether a capture is already Completed. Unlike already_processed(), this lets a pending row be upgraded later.
+	 * Whether a capture is already Completed. Unlike is_transaction_logged(), this lets a pending row be upgraded later.
 	 *
 	 * @param string $txn_id
 	 *
 	 * @return bool
 	 * @access private
 	 */
-	private function already_completed(string $txn_id): bool
+	private function is_capture_completed(string $txn_id): bool
 	{
 		return $this->ppde_operator_transaction->is_txn_completed($txn_id);
 	}
@@ -438,7 +438,7 @@ class webhook_listener
 	{
 		$refund_id = $resource['id'] ?? '';
 
-		if ($refund_id === '' || $this->already_processed($refund_id))
+		if ($refund_id === '' || $this->is_transaction_logged($refund_id))
 		{
 			return true;
 		}
