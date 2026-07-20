@@ -93,7 +93,6 @@ services:
             - '@skouat.ppde.core_actions'
             - '@skouat.ppde.actions.locale_icu'
             - '@skouat.ppde.controller'
-            - '@skouat.ppde.controller.admin.transactions'
             - '@skouat.ppde.extension_manager'
             - '@request'
             - '@template'
