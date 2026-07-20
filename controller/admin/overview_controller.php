@@ -169,6 +169,11 @@ class overview_controller extends admin_main
 	{
 		if ($action)
 		{
+			if (!$this->auth->acl_get('a_ppde_manage'))
+			{
+				trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
+			}
+
 			if (!confirm_box(true))
 			{
 				$this->display_confirm($action);
@@ -219,11 +224,6 @@ class overview_controller extends admin_main
 	 */
 	private function exec_action($action): void
 	{
-		if (!$this->auth->acl_get('a_ppde_manage'))
-		{
-			trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
 		switch ($action)
 		{
 			case 'date':
