@@ -11,6 +11,8 @@ and the releases are listed in reverse chronological order.
 - Change: Replace magic numbers with named constants in `order_controller`
 - Change: Code clean-up in the webhook listener and donation recorder (clearer naming, docblocks)
 - Fix: Log webhook order lookup failures in the admin log for easier troubleshooting
+- Fix: Enforce ACL check before displaying the confirm box in the Overview ACP module
+- Fix: Avoid a PHP notice when the board name contains emoji or CJK characters in the PayPal soft descriptor
 
 ## 4.0.0 - 2026-07-05
 
