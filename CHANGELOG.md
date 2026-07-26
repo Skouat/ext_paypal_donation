@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
+## 4.0.2 - [Unreleased]
+
 ## 4.0.1 - 2026-07-26
 
 - Change: Replace magic numbers with named constants in `order_controller`
