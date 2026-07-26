@@ -215,9 +215,9 @@ class order_controller extends main_controller
 	private function build_soft_descriptor(string $text): string
 	{
 		// Transliterate accented/Unicode chars to ASCII ("Forêt" -> "Foret").
-		if (function_exists('iconv'))
+		if (function_exists('transliterator_transliterate'))
 		{
-			$converted = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+			$converted = transliterator_transliterate('Any-Latin; Latin-ASCII', $text);
 
 			if ($converted !== false)
 			{

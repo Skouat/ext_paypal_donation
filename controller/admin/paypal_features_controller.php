@@ -195,7 +195,6 @@ class paypal_features_controller extends admin_main
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_test_connection'))
 		{
 			$this->send_test_result(false, $this->language->lang('FORM_INVALID'));
-			return;
 		}
 
 		$sandbox = $this->request->variable('env', '') === 'sandbox';
@@ -204,7 +203,6 @@ class paypal_features_controller extends admin_main
 		if ($result['success'])
 		{
 			$this->send_test_result(true, $this->language->lang('PPDE_REST_TEST_SUCCESS'));
-			return;
 		}
 
 		switch ($result['reason'])
