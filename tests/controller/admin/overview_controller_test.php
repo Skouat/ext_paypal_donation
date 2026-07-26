@@ -40,7 +40,6 @@ class overview_controller_test extends \phpbb_test_case
 		$core_action = $this->createMock(\skouat\ppde\actions\core::class);
 		$this->locale = $this->createMock(\skouat\ppde\actions\locale_icu::class);
 		$main_controller = $this->createMock(\skouat\ppde\controller\main_controller::class);
-		$transactions_controller = $this->createMock(\skouat\ppde\controller\admin\transactions_controller::class);
 		$ext_manager = $this->createMock(\skouat\ppde\controller\extension_manager::class);
 		$request = $this->createMock(\phpbb\request\request::class);
 		$template = $this->createMock(\phpbb\template\template::class);
@@ -54,7 +53,6 @@ class overview_controller_test extends \phpbb_test_case
 			$core_action,
 			$this->locale,
 			$main_controller,
-			$transactions_controller,
 			$ext_manager,
 			$request,
 			$template,

@@ -38,6 +38,15 @@ class order_controller extends main_controller
 	use order_party_extractor;
 	use transaction_data_builder;
 
+	/** PayPal truncates the description beyond this length. */
+	private const DESCRIPTION_MAX_LENGTH = 127;
+
+	/** Suffix appended when the description is truncated. */
+	private const DESCRIPTION_TRUNCATE_SUFFIX = '...';
+
+	/** PayPal soft descriptor length limit. */
+	private const SOFT_DESCRIPTOR_MAX_LENGTH = 22;
+
 	/** @var \skouat\ppde\api\paypal\client_factory */
 	protected $client_factory;
 	/** @var \phpbb\log\log */
@@ -86,7 +95,7 @@ class order_controller extends main_controller
 
 		if ($amount <= 0)
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_AMOUNT_INVALID')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		// get_default_currency_data() only returns ENABLED currencies, so an
@@ -96,7 +105,7 @@ class order_controller extends main_controller
 
 		if (empty($currency_data))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_INVALID_CURRENCY')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_INVALID_CURRENCY')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		$currency_code = $currency_data[0]['currency_iso_code'];
@@ -165,14 +174,14 @@ class order_controller extends main_controller
 		catch (ApiException $e)
 		{
 			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], JsonResponse::HTTP_BAD_GATEWAY);
 		}
 
 		return new JsonResponse(['id' => $response->getResult()->getId()]);
 	}
 
 	/**
-	 * Truncate a string to the 127-character limit allowed by PayPal for the
+	 * Truncate a string to the length limit allowed by PayPal for the
 	 * purchase unit description.
 	 *
 	 * @param string $text
@@ -182,17 +191,21 @@ class order_controller extends main_controller
 	 */
 	private function truncate_description(string $text): string
 	{
-		return (utf8_strlen($text) > 127) ? utf8_substr($text, 0, 124) . '...' : $text;
+		if (utf8_strlen($text) <= self::DESCRIPTION_MAX_LENGTH)
+		{
+			return $text;
+		}
+
+		return utf8_substr($text, 0, self::DESCRIPTION_MAX_LENGTH - utf8_strlen(self::DESCRIPTION_TRUNCATE_SUFFIX)) . self::DESCRIPTION_TRUNCATE_SUFFIX;
 	}
 
 	/**
 	 * Build a PayPal-compliant soft descriptor (bank statement label) from a
 	 * free-form string such as the board name.
 	 *
-	 * PayPal only allows the characters [A-Za-z0-9 .*-] and displays at most
-	 * 22 characters (it also prepends its own "PAYPAL *" prefix). Accented and
-	 * other non-ASCII characters are transliterated to ASCII when possible, then
-	 * any remaining unsupported character is dropped.
+	 * PayPal only allows the characters [A-Za-z0-9 .*-] and truncates the
+	 * result (it also prepends its own "PAYPAL *" prefix). Accented characters
+	 * are transliterated to ASCII when possible; unsupported ones are dropped.
 	 *
 	 * @param string $text
 	 *
@@ -202,9 +215,9 @@ class order_controller extends main_controller
 	private function build_soft_descriptor(string $text): string
 	{
 		// Transliterate accented/Unicode chars to ASCII ("Forêt" -> "Foret").
-		if (function_exists('iconv'))
+		if (function_exists('transliterator_transliterate'))
 		{
-			$converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $text);
+			$converted = transliterator_transliterate('Any-Latin; Latin-ASCII', $text);
 
 			if ($converted !== false)
 			{
@@ -216,8 +229,7 @@ class order_controller extends main_controller
 		$text = preg_replace('/[^A-Za-z0-9 .*-]/', '', $text);
 		$text = trim(preg_replace('/\s+/', ' ', $text));
 
-		// PayPal truncates at 22 characters.
-		return substr($text, 0, 22);
+		return substr($text, 0, self::SOFT_DESCRIPTOR_MAX_LENGTH);
 	}
 
 	/**
@@ -230,22 +242,22 @@ class order_controller extends main_controller
 	{
 		if (!$this->request->is_ajax())
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		if (!check_link_hash($this->request->variable('hash', ''), 'ppde_donate'))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		if (empty($this->config['ppde_enable']) || !$this->ppde_actions_auth->can_use_ppde())
 		{
-			return new JsonResponse(['error' => $this->language->lang('NOT_AUTHORISED')], 403);
+			return new JsonResponse(['error' => $this->language->lang('NOT_AUTHORISED')], JsonResponse::HTTP_FORBIDDEN);
 		}
 
 		if (!$this->client_factory->is_configured($this->use_sandbox()))
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_CREDENTIALS_MISSING')], 503);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_CREDENTIALS_MISSING')], JsonResponse::HTTP_SERVICE_UNAVAILABLE);
 		}
 
 		return null;
@@ -283,7 +295,7 @@ class order_controller extends main_controller
 
 		if ($order_id === '')
 		{
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_MISSING_ORDER_ID')], 400);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_MISSING_ORDER_ID')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
 		try
@@ -297,7 +309,7 @@ class order_controller extends main_controller
 		catch (ApiException $e)
 		{
 			$this->log->add('critical', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_PAYPAL_API_ERROR', time(), [$e->getMessage()]);
-			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], 502);
+			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_PAYPAL_ERROR')], JsonResponse::HTTP_BAD_GATEWAY);
 		}
 
 		$result = $response->getResult();

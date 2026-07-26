@@ -226,7 +226,7 @@ class transactions extends main
 	}
 
 	/**
-	 * Get PayPal business (same as receiver ID or receiver_email)
+	 * Get PayPal business: REST API Client ID (legacy IPN: merchant email/ID).
 	 *
 	 * @return string
 	 * @access public
@@ -601,7 +601,7 @@ class transactions extends main
 	}
 
 	/**
-	 * Set PayPal business (same as receiver ID or receiver_email)
+	 * Set PayPal business: REST API Client ID (legacy IPN: merchant email/ID).
 	 *
 	 * @param string $business
 	 *

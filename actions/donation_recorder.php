@@ -65,7 +65,7 @@ class donation_recorder
 		$txn_id = $data['txn_id'] ?? '';
 
 		// A transaction already marked Completed is never reprocessed.
-		if ($txn_id === '' || $this->already_completed($txn_id))
+		if ($txn_id === '' || $this->is_capture_completed($txn_id))
 		{
 			return false;
 		}
@@ -108,7 +108,7 @@ class donation_recorder
 	 * @return bool
 	 * @access private
 	 */
-	private function already_completed(string $txn_id): bool
+	private function is_capture_completed(string $txn_id): bool
 	{
 		return $this->ppde_operator_transaction->is_txn_completed($txn_id);
 	}

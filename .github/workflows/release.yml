@@ -1,0 +1,40 @@
+name: Release Package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-attach:
+    name: Build extension package and attach to release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (full history, with tags)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: curl, intl, json, openssl
+          tools: composer
+
+      - name: Install Phing
+        run: composer global require phing/phing:~2.4 --no-interaction
+
+      - name: Add Composer global bin to PATH
+        run: echo "$(composer global config bin-dir --absolute)" >> "$GITHUB_PATH"
+
+      - name: Build package (composer install --no-dev + zip)
+        run: phing -Dversion=${{ github.event.release.tag_name }}
+
+      - name: Attach package to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/upload/skouat_ppde-${{ github.event.release.tag_name }}.zip

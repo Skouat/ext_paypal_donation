@@ -41,7 +41,6 @@ class overview_controller extends admin_main
 	protected $auth;
 	protected $ppde_actions;
 	protected $ppde_controller_main;
-	protected $ppde_controller_transactions;
 	protected $ppde_ext_manager;
 	protected $php_ext;
 	protected $phpbb_admin_path;
@@ -57,7 +56,6 @@ class overview_controller extends admin_main
 	 * @param core                    $ppde_actions                 PPDE core actions object
 	 * @param locale_icu              $ppde_actions_locale          PPDE locale actions object
 	 * @param main_controller         $ppde_controller_main         Main controller object
-	 * @param transactions_controller $ppde_controller_transactions Admin transactions controller object
 	 * @param extension_manager       $ppde_ext_manager             Extension manager object
 	 * @param request                 $request                      Request object
 	 * @param template                $template                     Template object
@@ -76,7 +74,6 @@ class overview_controller extends admin_main
 		core $ppde_actions,
 		locale_icu $ppde_actions_locale,
 		main_controller $ppde_controller_main,
-		transactions_controller $ppde_controller_transactions,
 		extension_manager $ppde_ext_manager,
 		request $request,
 		template $template,
@@ -93,7 +90,6 @@ class overview_controller extends admin_main
 		$this->ppde_actions = $ppde_actions;
 		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->ppde_controller_main = $ppde_controller_main;
-		$this->ppde_controller_transactions = $ppde_controller_transactions;
 		$this->ppde_ext_manager = $ppde_ext_manager;
 		$this->request = $request;
 		$this->template = $template;
@@ -173,6 +169,11 @@ class overview_controller extends admin_main
 	{
 		if ($action)
 		{
+			if (!$this->auth->acl_get('a_ppde_manage'))
+			{
+				trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
+			}
+
 			if (!confirm_box(true))
 			{
 				$this->display_confirm($action);
@@ -223,11 +224,6 @@ class overview_controller extends admin_main
 	 */
 	private function exec_action($action): void
 	{
-		if (!$this->auth->acl_get('a_ppde_manage'))
-		{
-			trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
-		}
-
 		switch ($action)
 		{
 			case 'date':
