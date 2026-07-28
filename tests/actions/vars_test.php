@@ -38,8 +38,8 @@ class vars_test extends \phpbb_test_case
 		$user = $this->createMock(\phpbb\user::class);
 		$user->data = ['user_id' => 42, 'username' => 'TestDonor'];
 
-		$core_action = $this->createMock(\skouat\ppde\actions\core::class);
-		$core_action->method('is_in_admin')->willReturn(false);
+		$auth_action = $this->createMock(\skouat\ppde\actions\auth::class);
+		$auth_action->method('is_in_admin')->willReturn(false);
 
 		$this->currency_action = $this->createMock(\skouat\ppde\actions\currency::class);
 		$this->currency_action->method('get_default_currency_data')->willReturn([[
@@ -52,7 +52,7 @@ class vars_test extends \phpbb_test_case
 		});
 
 		$this->vars_service = new \skouat\ppde\actions\vars(
-			$core_action,
+			$auth_action,
 			$this->currency_action,
 			$config,
 			$language,

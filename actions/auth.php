@@ -16,12 +16,14 @@ class auth
 	protected $phpbb_root_path;
 	protected $php_ext;
 	protected $config;
+	protected $user;
 
 	/**
 	 * auth constructor.
 	 *
 	 * @param \phpbb\auth\auth     $auth            Auth object
 	 * @param \phpbb\config\config $config          Config object
+	 * @param \phpbb\user          $user            User object
 	 * @param string               $phpbb_root_path phpBB root path
 	 * @param string               $php_ext         phpEx
 	 *
@@ -31,12 +33,14 @@ class auth
 	public function __construct(
 		\phpbb\auth\auth $auth,
 		\phpbb\config\config $config,
+		\phpbb\user $user,
 		$phpbb_root_path,
 		$php_ext
 	)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
+		$this->user = $user;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -71,5 +75,25 @@ class auth
 	public function can_view_ppde_donorlist(): bool
 	{
 		return $this->auth->acl_get('u_ppde_view_donorlist');
+	}
+
+	/**
+	 * @return bool
+	 * @access public
+	 */
+	public function can_manage_ppde(): bool
+	{
+		return $this->auth->acl_get('a_ppde_manage');
+	}
+
+	/**
+	 * Check we are in the ACP
+	 *
+	 * @return bool
+	 * @access public
+	 */
+	public function is_in_admin(): bool
+	{
+		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && (bool) $this->user->data['session_admin'];
 	}
 }

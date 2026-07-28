@@ -130,12 +130,12 @@ services:
     skouat.ppde.controller.admin.transactions:
         class: skouat\ppde\controller\admin\transactions_controller
         arguments:
-            - '@auth'
             - '@config'
             - '@service_container'
             - '@language'
             - '@log'
             - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.auth'
             - '@skouat.ppde.actions.currency'
             - '@skouat.ppde.entity.transactions'
             - '@skouat.ppde.operator.transactions'
