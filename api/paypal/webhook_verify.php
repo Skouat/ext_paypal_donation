@@ -150,6 +150,8 @@ class webhook_verify
 	 */
 	private function fetch_cert(string $url)
 	{
+		// Non-cryptographic use: md5() only derives a deterministic, fixed-length
+		// cache key from the URL; it is not used for any security purpose.
 		$cache_key = '_ppde_paypal_cert_' . md5($url);
 
 		$cached = $this->cache->get($cache_key);
