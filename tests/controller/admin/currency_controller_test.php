@@ -79,7 +79,8 @@ class currency_controller_test extends \phpbb_test_case
 				return $vars['CURRENCY_NAME'] === 'Euro'
 					&& $vars['CURRENCY_ENABLED'] === true
 					&& $vars['L_ENABLE_DISABLE'] === 'DISABLE'
-					&& $vars['S_DEFAULT'] === false;
+					&& $vars['S_DEFAULT'] === false
+					&& strpos($vars['U_ENABLE_DISABLE'], '&amp;hash=') !== false;
 			}));
 
 		$method->invoke($this->controller, $data);
@@ -102,7 +103,8 @@ class currency_controller_test extends \phpbb_test_case
 				return $vars['CURRENCY_NAME'] === 'U.S. Dollar'
 					&& $vars['CURRENCY_ENABLED'] === false
 					&& $vars['L_ENABLE_DISABLE'] === 'ENABLE'
-					&& $vars['S_DEFAULT'] === true;
+					&& $vars['S_DEFAULT'] === true
+					&& strpos($vars['U_ENABLE_DISABLE'], '&amp;hash=') !== false;
 			}));
 
 		$method->invoke($this->controller, $data);
