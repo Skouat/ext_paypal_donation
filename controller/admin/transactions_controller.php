@@ -344,6 +344,11 @@ class transactions_controller extends admin_main
 	 */
 	public function change(): void
 	{
+		if (!check_form_key('ppde_transaction_change'))
+		{
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
 		$username = $this->request->variable('username', '', true);
 		$donor_id = $this->request->variable('donor_id', 0);
 
@@ -427,27 +432,36 @@ class transactions_controller extends admin_main
 	 */
 	public function add(): void
 	{
+		add_form_key('ppde_transaction_add');
+
 		$errors = [];
 
 		$transaction_data = $this->request_transaction_vars();
 
-		if ($this->request->is_set_post('submit'))
+		$this->submit = $this->request->is_set_post('submit');
+
+		if ($this->submit)
 		{
-			try
+			$errors = $this->is_invalid_form('ppde_transaction_add', $this->submit);
+
+			if (empty($errors))
 			{
-				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
+				try
+				{
+					$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
 
-				$this->ppde_actions->set_transaction_data($transaction_data);
-				$this->ppde_actions->is_donor_is_member();
+					$this->ppde_actions->set_transaction_data($transaction_data);
+					$this->ppde_actions->is_donor_is_member();
 
-				$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
+					$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
 
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
-				trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
-			}
-			catch (transaction_exception $e)
-			{
-				$errors = $e->get_errors();
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
+					trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+				}
+				catch (transaction_exception $e)
+				{
+					$errors = $e->get_errors();
+				}
 			}
 		}
 
@@ -702,6 +716,8 @@ class transactions_controller extends admin_main
 	 */
 	public function view(): void
 	{
+		add_form_key('ppde_transaction_change');
+
 		$transaction_id = $this->request->variable('id', 0);
 
 		// Extra columns needed by entity->import().

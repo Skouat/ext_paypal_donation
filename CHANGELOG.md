@@ -7,7 +7,10 @@ Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
 ## 4.0.2 - [Unreleased]
+
 - Change: Consolidate admin-context and permission checks into the auth actions class
+- Fix: Require a link hash to enable or disable a currency in the ACP
+- Fix: Require a form key on the manual transaction add and donor change forms in the ACP
 
 ## 4.0.1 - 2026-07-26
 
