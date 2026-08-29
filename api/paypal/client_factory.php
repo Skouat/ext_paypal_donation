@@ -162,7 +162,8 @@ class client_factory
 	 * Test the REST API credentials by requesting an OAuth2 access token.
 	 *
 	 * This performs a direct, side-effect-free call to PayPal's token endpoint
-	 * using the stored credentials for the given environment.
+	 * using the stored credentials for the given environment. Failures are
+	 * reported as a machine-readable reason, never as translatable text.
 	 *
 	 * @param bool $sandbox True to test the Sandbox credentials, false for Live.
 	 *
@@ -180,7 +181,7 @@ class client_factory
 
 		if (!function_exists('curl_init'))
 		{
-			return ['success' => false, 'reason' => 'curl', 'http_code' => 0, 'detail' => 'cURL not available'];
+			return ['success' => false, 'reason' => 'curl_missing', 'http_code' => 0, 'detail' => ''];
 		}
 
 		$base = $sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';

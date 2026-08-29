@@ -213,6 +213,9 @@ class paypal_features_controller extends admin_main
 			case 'auth':
 				$message = $this->language->lang('PPDE_REST_TEST_INVALID');
 			break;
+			case 'curl_missing':
+				$message = $this->language->lang('PPDE_REST_TEST_CURL_MISSING');
+			break;
 			case 'curl':
 				$message = $this->language->lang('PPDE_REST_TEST_CURL_ERROR', $result['detail']);
 			break;
