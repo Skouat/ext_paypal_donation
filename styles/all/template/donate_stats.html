@@ -4,7 +4,7 @@
 <h3>{{ lang('PPDE_INDEX_STATISTICS_TITLE') }}</h3>
 {% endif %}
 
-{% if S_GOAL_NUMBER && not S_PPDE_STATS_TEXT_ONLY %}
+{% if S_GOAL_NUMBER and not S_PPDE_STATS_TEXT_ONLY %}
 <div class="ppde-progress">
 	<div class="progress-value bg3">{{ PPDE_GOAL_NUMBER }} %</div>
 	<div class="progress-grey">
