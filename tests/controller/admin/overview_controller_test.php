@@ -34,10 +34,10 @@ class overview_controller_test extends \phpbb_test_case
 			'ppde_first_start'            => 1,
 		]);
 
-		$auth = $this->createMock(\phpbb\auth\auth::class);
 		$language = $this->createMock(\phpbb\language\language::class);
 		$log = $this->createMock(\phpbb\log\log::class);
-		$core_action = $this->createMock(\skouat\ppde\actions\core::class);
+		$ppde_actions = $this->createMock(\skouat\ppde\actions\core::class);
+		$ppde_actions_auth = $this->createMock(\skouat\ppde\actions\auth::class);
 		$this->locale = $this->createMock(\skouat\ppde\actions\locale_icu::class);
 		$main_controller = $this->createMock(\skouat\ppde\controller\main_controller::class);
 		$ext_manager = $this->createMock(\skouat\ppde\controller\extension_manager::class);
@@ -46,11 +46,11 @@ class overview_controller_test extends \phpbb_test_case
 		$user = $this->createMock(\phpbb\user::class);
 
 		$this->controller = new \skouat\ppde\controller\admin\overview_controller(
-			$auth,
 			$this->config,
 			$language,
 			$log,
-			$core_action,
+			$ppde_actions,
+			$ppde_actions_auth,
 			$this->locale,
 			$main_controller,
 			$ext_manager,
