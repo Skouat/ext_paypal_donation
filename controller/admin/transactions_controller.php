@@ -314,7 +314,7 @@ class transactions_controller extends admin_main
 			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
-		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
+		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->ppde_actions_auth->can_manage_ppde())
 		{
 			$this->args['action'] = 'delete';
 		}

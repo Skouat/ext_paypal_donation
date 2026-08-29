@@ -7,6 +7,7 @@ Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
 ## 4.0.2 - [Unreleased]
+- Change: Consolidate admin-context and permission checks into the auth actions class
 
 ## 4.0.1 - 2026-07-26
 

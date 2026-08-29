@@ -86,11 +86,11 @@ services:
     skouat.ppde.controller.admin.overview:
         class: skouat\ppde\controller\admin\overview_controller
         arguments:
-            - '@auth'
             - '@config'
             - '@language'
             - '@log'
             - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.auth'
             - '@skouat.ppde.actions.locale_icu'
             - '@skouat.ppde.controller'
             - '@skouat.ppde.extension_manager'
