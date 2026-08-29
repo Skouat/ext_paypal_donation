@@ -11,6 +11,7 @@ and the releases are listed in reverse chronological order.
 - Change: Consolidate admin-context and permission checks into the auth actions class
 - Fix: Require a link hash to enable or disable a currency in the ACP
 - Fix: Require a form key on the manual transaction add and donor change forms in the ACP
+- Fix: Move the hardcoded cURL availability message from `client_factory` to the language files
 
 ## 4.0.1 - 2026-07-26
 
