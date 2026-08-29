@@ -10,13 +10,13 @@
 
 namespace skouat\ppde\controller\admin;
 
-use phpbb\auth\auth;
 use phpbb\config\config;
 use phpbb\language\language;
 use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
+use skouat\ppde\actions\auth;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\locale_icu;
 use skouat\ppde\controller\extension_manager;
@@ -38,8 +38,8 @@ use skouat\ppde\controller\main_controller;
 class overview_controller extends admin_main
 {
 	protected $adm_relative_path;
-	protected $auth;
 	protected $ppde_actions;
+	protected $ppde_actions_auth;
 	protected $ppde_controller_main;
 	protected $ppde_ext_manager;
 	protected $php_ext;
@@ -49,29 +49,29 @@ class overview_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param auth                    $auth                         Authentication object
-	 * @param config                  $config                       Config object
-	 * @param language                $language                     Language user object
-	 * @param log                     $log                          The phpBB log system
-	 * @param core                    $ppde_actions                 PPDE core actions object
-	 * @param locale_icu              $ppde_actions_locale          PPDE locale actions object
-	 * @param main_controller         $ppde_controller_main         Main controller object
-	 * @param extension_manager       $ppde_ext_manager             Extension manager object
-	 * @param request                 $request                      Request object
-	 * @param template                $template                     Template object
-	 * @param user                    $user                         User object
-	 * @param string                  $adm_relative_path            phpBB admin relative path
-	 * @param string                  $phpbb_root_path              phpBB root path
-	 * @param string                  $php_ext                      phpEx
+	 * @param config            $config               Config object
+	 * @param language          $language             Language user object
+	 * @param log               $log                  The phpBB log system
+	 * @param core              $ppde_actions         PPDE core actions object
+	 * @param auth              $ppde_actions_auth    PPDE actions auth object
+	 * @param locale_icu        $ppde_actions_locale  PPDE locale actions object
+	 * @param main_controller   $ppde_controller_main Main controller object
+	 * @param extension_manager $ppde_ext_manager     Extension manager object
+	 * @param request           $request              Request object
+	 * @param template          $template             Template object
+	 * @param user              $user                 User object
+	 * @param string            $adm_relative_path    phpBB admin relative path
+	 * @param string            $phpbb_root_path      phpBB root path
+	 * @param string            $php_ext              phpEx
 	 *
 	 * @access public
 	 */
 	public function __construct(
-		auth $auth,
 		config $config,
 		language $language,
 		log $log,
 		core $ppde_actions,
+		auth $ppde_actions_auth,
 		locale_icu $ppde_actions_locale,
 		main_controller $ppde_controller_main,
 		extension_manager $ppde_ext_manager,
@@ -83,11 +83,11 @@ class overview_controller extends admin_main
 		$php_ext
 	)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
+		$this->ppde_actions_auth = $ppde_actions_auth;
 		$this->ppde_actions_locale = $ppde_actions_locale;
 		$this->ppde_controller_main = $ppde_controller_main;
 		$this->ppde_ext_manager = $ppde_ext_manager;
@@ -129,7 +129,7 @@ class overview_controller extends admin_main
 			'PPDE_ESI_VERSION_OPENSSL'       => defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
 			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
-			'S_ACTION_OPTIONS'               => $this->auth->acl_get('a_ppde_manage'),
+			'S_ACTION_OPTIONS'               => $this->ppde_actions_auth->can_manage_ppde(),
 			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
 			'S_OPENSSL'                      => extension_loaded('openssl'),
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],

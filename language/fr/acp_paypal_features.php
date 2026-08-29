@@ -64,6 +64,7 @@ $lang = array_merge($lang, [
 	'PPDE_REST_TESTING'                    => 'Test en cours…',
 	'PPDE_REST_TEST_SUCCESS'               => 'Connexion réussie : les identifiants sont valides.',
 	'PPDE_REST_TEST_INVALID'               => 'Échec de la connexion : Client ID ou Secret invalide.',
+	'PPDE_REST_TEST_CURL_MISSING'          => 'Erreur de connexion : cURL n’est pas disponible sur ce serveur.',
 	'PPDE_REST_TEST_CURL_ERROR'            => 'Erreur de connexion : %s',
 	'PPDE_REST_TEST_HTTP_ERROR'            => 'Échec de la connexion (HTTP %s).',
 

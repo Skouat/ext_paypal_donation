@@ -27,7 +27,7 @@
 {% if S_PPDE_DP_PREVIEW %}
 <fieldset>
 	<legend>{{ lang('PREVIEW') }}</legend>
-	<p>{{ PPDE_DP_PREVIEW }}</p>
+	<div class="ppde-preview">{{ PPDE_DP_PREVIEW }}</div>
 </fieldset>
 {% endif %}
 
@@ -152,5 +152,7 @@
 
 <div class="clearfix">&nbsp;</div><br style="clear: both;">
 {% endif %}
+
+{% INCLUDECSS '@skouat_ppde/css/donation_pages.css' %}
 
 {% INCLUDE 'overall_footer.html' %}

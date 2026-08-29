@@ -10,7 +10,6 @@
 
 namespace skouat\ppde\controller\admin;
 
-use phpbb\auth\auth;
 use phpbb\config\config;
 use phpbb\language\language;
 use phpbb\log\log;
@@ -18,6 +17,7 @@ use phpbb\request\request;
 use phpbb\template\template;
 use phpbb\user;
 use phpbb\user_loader;
+use skouat\ppde\actions\auth;
 use skouat\ppde\actions\core;
 use skouat\ppde\actions\currency;
 use skouat\ppde\entity\transaction_data_builder;
@@ -47,7 +47,6 @@ class transactions_controller extends admin_main
 	use transaction_data_builder;
 	public $ppde_operator;
 	protected $adm_relative_path;
-	protected $auth;
 	protected $user_loader;
 	protected $entry_count;
 	protected $last_page_offset;
@@ -55,6 +54,7 @@ class transactions_controller extends admin_main
 	protected $phpbb_admin_path;
 	protected $phpbb_root_path;
 	protected $ppde_actions;
+	protected $ppde_actions_auth;
 	protected $ppde_actions_currency;
 	protected $ppde_entity;
 	protected $table_prefix;
@@ -63,12 +63,12 @@ class transactions_controller extends admin_main
 	/**
 	 * Constructor
 	 *
-	 * @param auth                             $auth                       Authentication object
 	 * @param config                           $config                     Config object
 	 * @param ContainerInterface               $container                  Service container interface
 	 * @param language                         $language                   Language user object
 	 * @param log                              $log                        The phpBB log system
 	 * @param core                             $ppde_actions               PPDE actions object
+	 * @param auth                             $ppde_actions_auth          PPDE actions auth object
 	 * @param currency                         $ppde_actions_currency      PPDE currency actions object
 	 * @param \skouat\ppde\entity\transactions $ppde_entity_transactions   Entity object
 	 * @param transactions                     $ppde_operator_transactions Operator object
@@ -85,12 +85,12 @@ class transactions_controller extends admin_main
 	 * @access public
 	 */
 	public function __construct(
-		auth $auth,
 		config $config,
 		ContainerInterface $container,
 		language $language,
 		log $log,
 		core $ppde_actions,
+		auth $ppde_actions_auth,
 		currency $ppde_actions_currency,
 		\skouat\ppde\entity\transactions $ppde_entity_transactions,
 		transactions $ppde_operator_transactions,
@@ -105,12 +105,12 @@ class transactions_controller extends admin_main
 		string $table_ppde_transactions
 	)
 	{
-		$this->auth = $auth;
 		$this->config = $config;
 		$this->container = $container;
 		$this->language = $language;
 		$this->log = $log;
 		$this->ppde_actions = $ppde_actions;
+		$this->ppde_actions_auth = $ppde_actions_auth;
 		$this->ppde_actions_currency = $ppde_actions_currency;
 		$this->ppde_entity = $ppde_entity_transactions;
 		$this->ppde_operator = $ppde_operator_transactions;
@@ -184,7 +184,7 @@ class transactions_controller extends admin_main
 		$pagination->generate_template_pagination($base_url, 'pagination', 'start', $log_count, (int) $this->config['topics_per_page'], $this->args['hidden_fields']['start']);
 
 		$this->template->assign_vars([
-			'S_CLEARLOGS'  => $this->auth->acl_get('a_ppde_manage'),
+			'S_CLEARLOGS'  => $this->ppde_actions_auth->can_manage_ppde(),
 			'S_KEYWORDS'   => $keywords,
 			'S_LIMIT_DAYS' => $s_limit_days,
 			'S_SORT_KEY'   => $s_sort_key,
@@ -237,7 +237,7 @@ class transactions_controller extends admin_main
 		$this->last_page_offset = $offset;
 		$url_ary = [];
 
-		if ($this->phpbb_admin_path && $this->ppde_actions->is_in_admin())
+		if ($this->phpbb_admin_path && $this->ppde_actions_auth->is_in_admin())
 		{
 			$url_ary['profile_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=users&amp;mode=overview');
 			$url_ary['txn_url'] = append_sid($this->phpbb_admin_path . 'index.' . $this->php_ext, 'i=-skouat-ppde-acp-ppde_module&amp;mode=transactions');
@@ -314,7 +314,7 @@ class transactions_controller extends admin_main
 			'sd'        => $this->request->variable('sd', 'd'),
 		];
 
-		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->auth->acl_get('a_ppde_manage'))
+		if (($this->args['hidden_fields']['delmarked'] || $this->args['hidden_fields']['delall']) && $this->ppde_actions_auth->can_manage_ppde())
 		{
 			$this->args['action'] = 'delete';
 		}
@@ -344,6 +344,11 @@ class transactions_controller extends admin_main
 	 */
 	public function change(): void
 	{
+		if (!check_form_key('ppde_transaction_change'))
+		{
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
 		$username = $this->request->variable('username', '', true);
 		$donor_id = $this->request->variable('donor_id', 0);
 
@@ -427,27 +432,36 @@ class transactions_controller extends admin_main
 	 */
 	public function add(): void
 	{
+		add_form_key('ppde_transaction_add');
+
 		$errors = [];
 
 		$transaction_data = $this->request_transaction_vars();
 
-		if ($this->request->is_set_post('submit'))
+		$this->submit = $this->request->is_set_post('submit');
+
+		if ($this->submit)
 		{
-			try
+			$errors = $this->is_invalid_form('ppde_transaction_add', $this->submit);
+
+			if (empty($errors))
 			{
-				$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
+				try
+				{
+					$this->ppde_actions->log_to_db($this->build_data_ary($transaction_data));
 
-				$this->ppde_actions->set_transaction_data($transaction_data);
-				$this->ppde_actions->is_donor_is_member();
+					$this->ppde_actions->set_transaction_data($transaction_data);
+					$this->ppde_actions->is_donor_is_member();
 
-				$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
+					$this->do_transactions_actions($this->ppde_actions->get_donor_is_member() && !$transaction_data['MT_ANONYMOUS']);
 
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
-				trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
-			}
-			catch (transaction_exception $e)
-			{
-				$errors = $e->get_errors();
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_MT_ADDED', time(), [$transaction_data['MT_USERNAME']]);
+					trigger_error($this->language->lang('PPDE_MT_ADDED') . adm_back_link($this->u_action));
+				}
+				catch (transaction_exception $e)
+				{
+					$errors = $e->get_errors();
+				}
 			}
 		}
 
@@ -702,6 +716,8 @@ class transactions_controller extends admin_main
 	 */
 	public function view(): void
 	{
+		add_form_key('ppde_transaction_change');
+
 		$transaction_id = $this->request->variable('id', 0);
 
 		// Extra columns needed by entity->import().

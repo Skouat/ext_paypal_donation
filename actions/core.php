@@ -596,14 +596,4 @@ class core
 		}
 	}
 
-	/**
-	 * Check we are in the ACP
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_in_admin(): bool
-	{
-		return defined('IN_ADMIN') && isset($this->user->data['session_admin']) && (bool) $this->user->data['session_admin'];
-	}
 }

@@ -1,0 +1,74 @@
+/*
+ * Quote BBCode styles for the donation pages ACP preview.
+ *
+ * The ACP stylesheet carries no blockquote rule, so quoted text rendered in the
+ * preview would be indistinguishable from the surrounding content. Values are
+ * copied from prosilver (content.css, colours.css, icons.css, bidi.css) so that
+ * the preview matches the front-end rendering.
+ */
+.ppde-preview blockquote {
+	background-color: #ebeadd;
+	border: 1px solid #dbdbce;
+	font-size: 0.95em;
+	margin: 1em 1px 1em 25px;
+	overflow: hidden;
+	padding: 5px;
+}
+
+.ppde-preview blockquote blockquote {
+	/* Nested quotes */
+	background-color: #efeed9;
+	font-size: 1em;
+	margin: 1em 1px 1em 15px;
+}
+
+.ppde-preview blockquote blockquote blockquote {
+	background-color: #ebeadd;
+}
+
+.ppde-preview blockquote cite {
+	/* Username/source of quoter */
+	display: block;
+	font-size: 0.9em;
+	font-style: normal;
+	font-weight: bold;
+}
+
+.ppde-preview blockquote cite cite {
+	font-size: 1em;
+}
+
+.ppde-preview blockquote cite > span {
+	float: right;
+	font-weight: normal;
+}
+
+/* FontAwesome is loaded by the ACP header, but the ACP stylesheet only maps it
+   to .icon, hence the explicit font-family here. */
+.ppde-preview blockquote cite:before,
+.ppde-preview .uncited:before {
+	content: '\f10d';
+	display: inline-block;
+	font-family: FontAwesome;
+	font-style: normal;
+	padding-right: 5px;
+}
+
+.rtl .ppde-preview blockquote {
+	margin: 1em 25px 1em 1px;
+}
+
+.rtl .ppde-preview blockquote blockquote {
+	margin: 1em 15px 1em 1px;
+}
+
+.rtl .ppde-preview blockquote cite {
+	margin-left: 0;
+}
+
+.rtl .ppde-preview blockquote cite:before,
+.rtl .ppde-preview .uncited:before {
+	content: '\f10e';
+	padding-left: 5px;
+	padding-right: 0;
+}

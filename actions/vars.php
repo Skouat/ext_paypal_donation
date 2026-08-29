@@ -16,7 +16,7 @@ use phpbb\user;
 
 class vars
 {
-	protected $actions_core;
+	protected $actions_auth;
 	protected $actions_currency;
 	protected $config;
 	protected $dp_vars;
@@ -26,7 +26,7 @@ class vars
 	/**
 	 * vars constructor.
 	 *
-	 * @param \skouat\ppde\actions\core     $actions_core     PPDE actions core object
+	 * @param \skouat\ppde\actions\auth     $actions_auth     PPDE actions auth object
 	 * @param \skouat\ppde\actions\currency $actions_currency PPDE actions currency object
 	 * @param config                        $config           Config object
 	 * @param language                      $language         Language object
@@ -36,14 +36,14 @@ class vars
 	 */
 
 	public function __construct(
-		core $actions_core,
+		auth $actions_auth,
 		currency $actions_currency,
 		config $config,
 		language $language,
 		user $user
 	)
 	{
-		$this->actions_core = $actions_core;
+		$this->actions_auth = $actions_auth;
 		$this->actions_currency = $actions_currency;
 		$this->config = $config;
 		$this->language = $language;
@@ -74,7 +74,7 @@ class vars
 			['var' => '{DONATION_USED}', 'value' => $this->format((float) $this->config['ppde_used'], $currency)],
 		];
 
-		if ($this->actions_core->is_in_admin())
+		if ($this->actions_auth->is_in_admin())
 		{
 			$this->add_predefined_lang_vars();
 		}

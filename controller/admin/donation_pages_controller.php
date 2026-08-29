@@ -249,12 +249,17 @@ class donation_pages_controller extends admin_main
 			'L_DONATION_PAGES_TITLE_EXPLAIN' => $this->language->lang(strtoupper($entity->get_name()) . '_EXPLAIN'),
 
 			'BBCODE_STATUS'  => $this->language->lang('BBCODE_IS_ON', '<a href="' . append_sid("{$this->phpbb_root_path}faq.{$this->php_ext}", 'mode=bbcode') . '">', '</a>'),
-			'FLASH_STATUS'   => $this->language->lang('FLASH_IS_ON'),
+			'FLASH_STATUS'   => $this->language->lang('FLASH_IS_OFF'),
 			'IMG_STATUS'     => $this->language->lang('IMAGES_ARE_ON'),
 			'SMILIES_STATUS' => $this->language->lang('SMILIES_ARE_ON'),
 			'URL_STATUS'     => $this->language->lang('URL_IS_ON'),
 
 			'S_BBCODE_ALLOWED'  => true,
+			// Flash is intentionally left off: the BBCode is obsolete and no longer supported by browsers
+			'S_BBCODE_FLASH'    => false,
+			'S_BBCODE_IMG'      => true,
+			'S_BBCODE_QUOTE'    => true,
+			'S_LINKS_ALLOWED'   => true,
 			'S_SMILIES_ALLOWED' => true,
 			'S_HIDDEN_FIELDS'   => '<input type="hidden" name="page_title" value="' . $entity->get_name() . '">',
 		]);

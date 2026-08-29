@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
+## 4.0.2 - 2026-08-29
+
+- Change: Consolidate admin-context and permission checks into the auth actions class
+- Change: Show the quote BBCode button in the donation pages ACP editor
+- Fix: Require a link hash to enable or disable a currency in the ACP
+- Fix: Require a form key on the manual transaction add and donor change forms in the ACP
+- Fix: Move the hardcoded cURL availability message from `client_factory` to the language files
+- Fix: Show the image and URL BBCode buttons in the donation pages ACP editor
+
 ## 4.0.1 - 2026-07-26
 
 - Change: Replace magic numbers with named constants in `order_controller`

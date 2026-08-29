@@ -17,6 +17,7 @@ services:
         arguments:
             - '@auth'
             - '@config'
+            - '@user'
             - '%core.root_path%'
             - '%core.php_ext%'
 
@@ -45,7 +46,7 @@ services:
     skouat.ppde.actions.vars:
         class: skouat\ppde\actions\vars
         arguments:
-            - '@skouat.ppde.core_actions'
+            - '@skouat.ppde.actions.auth'
             - '@skouat.ppde.actions.currency'
             - '@config'
             - '@language'
