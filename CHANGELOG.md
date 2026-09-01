@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
+## 4.0.3 - 2026-09-01
+- Fix: Property `auth` not found in overview_controller
+
 ## 4.0.2 - 2026-08-29
 
 - Change: Consolidate admin-context and permission checks into the auth actions class

@@ -169,7 +169,7 @@ class overview_controller extends admin_main
 	{
 		if ($action)
 		{
-			if (!$this->auth->acl_get('a_ppde_manage'))
+			if (!$this->ppde_actions_auth->can_manage_ppde())
 			{
 				trigger_error($this->language->lang('NO_AUTH_OPERATION') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
