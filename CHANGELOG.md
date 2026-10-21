@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 Within each release, entries are grouped by type (Add, Change, Remove, Fix)
 and the releases are listed in reverse chronological order.
 
+## 4.0.4 - [Unreleased]
+
+- Fix: Use unicode column types for donation page content and donor names and memo in the transaction log
+
 ## 4.0.3 - 2026-09-01
 - Fix: Property `auth` not found in overview_controller
 
