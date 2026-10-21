@@ -538,7 +538,7 @@ class core
 		$this->validate_user_id();
 
 		$user_ary = $this->ppde_operator_transaction->query_donor_user_data('user', $this->transaction_data['user_id']);
-		$this->ppde_entity_transaction->set_username($user_ary['username']);
+		$this->ppde_entity_transaction->set_username(is_array($user_ary) ? $user_ary['username'] : '');
 
 		if (empty($this->transaction_data['net_amount']))
 		{
