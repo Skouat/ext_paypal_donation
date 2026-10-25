@@ -118,17 +118,15 @@ class webhook_listener
 		$raw_body = $this->get_raw_input();
 		$headers = $this->collect_headers();
 
-		$event = json_decode($raw_body, true);
-		$event_type = (is_array($event) && !empty($event['event_type'])) ? $event['event_type'] : '';
-
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
-			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time(), [substr($event_type, 0, 32)]);
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time());
 			return new Response('', 403);
 		}
 
-		if (!is_array($event) || $event_type === '' || empty($event['resource']))
+		$event = json_decode($raw_body, true);
+		if (!is_array($event) || empty($event['event_type']) || !is_string($event['event_type']) || empty($event['resource']))
 		{
 			return new Response('', 400);
 		}
