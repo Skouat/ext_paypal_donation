@@ -117,9 +117,9 @@
 	</tr>
 	<tr>
 		<td>{{ lang('PPDE_ESI_VERSION_OPENSSL') ~ lang('COLON') }}</td>
-		<td><strong {% if S_OPENSSL %}style="color: #228822;"{% else %}style="color: #BC2A4D;"{% endif %}>{{ PPDE_ESI_VERSION_OPENSSL }}</strong></td>
+		<td><strong {% if S_OPENSSL %}style="color: #228822;"{% else %}style="color: #bc2a4d;"{% endif %}>{{ PPDE_ESI_VERSION_OPENSSL }}</strong></td>
 		<td>{{ lang('PPDE_ESI_VERSION_INTL') ~ lang('COLON') }}</td>
-		<td><strong {% if S_INTL %}style="color: #228822;"{% else %}style="color: #FF6600;"{% endif %}>{{ PPDE_ESI_VERSION_INTL }}</strong></td>
+		<td><strong {% if S_INTL %}style="color: #228822;"{% else %}style="color: #bc2a4d;"{% endif %}>{{ PPDE_ESI_VERSION_INTL }}</strong></td>
 	</tr>
 	</tbody>
 </table>
@@ -131,12 +131,6 @@
 		<dl>
 			<dt><label for="action_date">{{ lang('STAT_RESET_DATE') }}</label><br><span>{{ lang('STAT_RESET_DATE_EXPLAIN') }}</span></dt>
 			<dd><input type="hidden" name="action" value="date"><input class="button2" type="submit" id="action_date" name="action_date" value="{{ lang('RUN') }}"></dd>
-		</dl>
-	</form>
-	<form id="action_esi_form" method="post" action="{{ U_ACTION }}">
-		<dl>
-			<dt><label for="action_esi">{{ lang('STAT_RETEST_ESI') }}</label><br><span>{{ lang('STAT_RETEST_ESI_EXPLAIN') }}</span></dt>
-			<dd><input type="hidden" name="action" value="esi"><input class="button2" type="submit" id="action_esi" name="action_esi" value="{{ lang('RUN') }}"></dd>
 		</dl>
 	</form>
 </fieldset>

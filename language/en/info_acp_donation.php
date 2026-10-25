@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -71,7 +71,6 @@ $lang = array_merge($lang, [
 	'LOG_PPDE_SETTINGS_UPDATED'        => '<strong>PayPal Donation: Settings updated</strong>',
 	'LOG_PPDE_STAT_RESET_DATE'         => '<strong>PayPal Donation: Installation date reset</strong>',
 	'LOG_PPDE_STAT_RESYNC'             => '<strong>PayPal Donation: Statistics resynchronised</strong>',
-	'LOG_PPDE_STAT_RETEST_ESI'         => '<strong>PayPal Donation: Extension prerequisites checked</strong>',
 	'LOG_PPDE_STAT_SANDBOX_RESYNC'     => '<strong>PayPal Donation: PayPal Sandbox Statistics resynchronised</strong>',
 	'LOG_PPDE_WEBHOOK_ORDER_ERROR'     => '<strong>PayPal Donation: Webhook order lookup error</strong><br>» Order %1$s: %2$s',
 	'LOG_PPDE_WEBHOOK_PROCESS_ERROR'   => '<strong>PayPal Donation: Webhook processing error</strong><br>» Transaction %1$s: %2$s',

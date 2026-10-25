@@ -10,6 +10,7 @@ and the releases are listed in reverse chronological order.
 
 - Change: Now requires phpBB 3.3.19+
 - Change: Prevent enabling the extension when the curl, intl or openssl PHP extension is missing
+- Remove: Drop intl availability detection and its overview action
 - Fix: Use unicode column types for donation page content and donor names and memo in the transaction log
 - Fix: Prevent a PHP warning when logging a transaction for a deleted donor account in `actions/core.php`
 - Fix: Prevent stored XSS in the admin log from untrusted webhook data

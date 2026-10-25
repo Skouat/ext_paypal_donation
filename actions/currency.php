@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -107,47 +107,19 @@ class currency
 	}
 
 	/**
-	 * Format currency value, based on the PHP intl extension.
-	 * If this PHP Extension is not available, we switch on a basic currency formatter.
+	 * Format currency value with the PHP intl extension.
 	 *
 	 * @param float  $value
 	 * @param string $currency_iso_code
-	 * @param string $currency_symbol
-	 * @param bool   $on_left
+	 * @param string $currency_symbol   Unused; kept for caller compatibility
+	 * @param bool   $on_left           Unused; kept for caller compatibility
 	 *
 	 * @return string
 	 * @access public
 	 */
 	public function format_currency($value, $currency_iso_code, $currency_symbol, $on_left = true): string
 	{
-		if ($this->locale->is_locale_configured())
-		{
-			return $this->locale->numfmt_format_currency($this->locale->numfmt_create(), $value, $currency_iso_code);
-		}
-
-		return $this->currency_on_left($value, $currency_symbol, $on_left);
-	}
-
-	/**
-	 * Put the currency on the left or on the right of the amount
-	 *
-	 * @param float  $value
-	 * @param string $currency_symbol
-	 * @param bool   $on_left
-	 * @param string $dec_point
-	 * @param string $thousands_sep
-	 *
-	 * @return string
-	 * @access public
-	 */
-	public function currency_on_left($value, $currency_symbol, $on_left = true, $dec_point = '.', $thousands_sep = ''): string
-	{
-		if ($on_left)
-		{
-			return $currency_symbol . number_format(round($value, 2), 2, $dec_point, $thousands_sep);
-		}
-
-		return number_format(round($value, 2), 2, $dec_point, $thousands_sep) . $currency_symbol;
+		return $this->locale->numfmt_format_currency($this->locale->numfmt_create(), $value, $currency_iso_code);
 	}
 
 	/**

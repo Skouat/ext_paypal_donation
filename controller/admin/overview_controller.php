@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -116,8 +116,6 @@ class overview_controller extends admin_main
 	 */
 	public function display_overview($action): void
 	{
-		$this->ppde_first_start();
-
 		$this->do_action($action);
 
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
@@ -128,9 +126,9 @@ class overview_controller extends admin_main
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
 			'PPDE_ESI_VERSION_OPENSSL'       => defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
-			'PPDE_ESI_VERSION_INTL'          => $this->config['ppde_intl_detected'] ? $this->config['ppde_intl_version'] : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
+			'PPDE_ESI_VERSION_INTL'          => defined('INTL_ICU_VERSION') ? INTL_ICU_VERSION : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
 			'S_ACTION_OPTIONS'               => $this->ppde_actions_auth->can_manage_ppde(),
-			'S_INTL'                         => $this->config['ppde_intl_detected'] && $this->config['ppde_intl_version_valid'],
+			'S_INTL'                         => extension_loaded('intl'),
 			'S_OPENSSL'                      => extension_loaded('openssl'),
 			'STATS_ANONYMOUS_DONORS_COUNT'   => $this->config['ppde_anonymous_donors_count'],
 			'STATS_ANONYMOUS_DONORS_PER_DAY' => $this->per_day_stats('ppde_anonymous_donors_count'),
@@ -199,9 +197,6 @@ class overview_controller extends admin_main
 			case 'date':
 				$confirm_lang = 'STAT_RESET_DATE_CONFIRM';
 			break;
-			case 'esi':
-				$confirm_lang = 'STAT_RETEST_ESI_CONFIRM';
-			break;
 			case 'sandbox':
 				$confirm_lang = 'STAT_RESYNC_SANDBOX_STATS_CONFIRM';
 			break;
@@ -219,7 +214,6 @@ class overview_controller extends admin_main
 	 * @param string $action Requested action
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @access private
 	 */
 	private function exec_action($action): void
@@ -230,11 +224,6 @@ class overview_controller extends admin_main
 				$this->config->set('ppde_install_date', time() - 1);
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESET_DATE');
 			break;
-			case 'esi':
-				$this->config->set('ppde_first_start', 1);
-				$this->ppde_first_start();
-				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RETEST_ESI');
-			break;
 			case 'sandbox':
 				$this->ppde_actions->set_sandbox_properties(true);
 				$this->ppde_actions->update_overview_stats();
@@ -244,6 +233,8 @@ class overview_controller extends admin_main
 				$this->ppde_actions->set_sandbox_properties(false);
 				$this->ppde_actions->update_overview_stats();
 				$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_PPDE_STAT_RESYNC');
+			break;
+			default:
 			break;
 		}
 	}

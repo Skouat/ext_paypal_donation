@@ -48,16 +48,7 @@ class order_controller_test extends \phpbb_test_case
 
 	public function test_soft_descriptor_handles_accents()
 	{
-		if (!function_exists('iconv'))
-		{
-			$this->markTestSkipped('iconv required for transliteration test.');
-		}
-
-		$result = $this->invoke('build_soft_descriptor', ['Forêt']);
-
-		// Locale-dependent: 'ê' becomes 'e' or is dropped; only allowed chars survive.
-		$this->assertSame($result, preg_replace('/[^A-Za-z0-9 .*-]/', '', $result));
-		$this->assertContains($result, ['Foret', 'Fort']);
+		$this->assertSame('Foret', $this->invoke('build_soft_descriptor', ['Forêt']));
 	}
 
 	public function test_soft_descriptor_empty_when_all_stripped()

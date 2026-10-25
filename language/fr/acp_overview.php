@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -42,10 +42,10 @@ $lang = array_merge($lang, [
 
 	'PPDE_ESI'                   => 'Information extension et système',
 	'PPDE_ESI_INSTALL_DATE'      => 'Date d’installation de <strong>%s</strong>',
-	'PPDE_ESI_INTL_NOT_DETECTED' => 'Songez à installer l’extension <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a>',
+	'PPDE_ESI_INTL_NOT_DETECTED' => 'Non détecté — requis par l’extension',
 	'PPDE_ESI_MORE_INFORMATION'  => 'Plus d’informations…',
 	'PPDE_ESI_NOT_DETECTED'      => 'Non détecté',
-	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser ou revérifier les informations de l’extension et du système',
+	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser les informations de l’extension',
 	'PPDE_ESI_VERSION'           => 'Version de <strong>%s</strong>',
 	'PPDE_ESI_VERSION_INTL'      => 'Version de PHP <code>intl</code>',
 	'PPDE_ESI_VERSION_OPENSSL'   => 'Version d’OpenSSL',
@@ -63,9 +63,6 @@ $lang = array_merge($lang, [
 	'STAT_RESYNC_STATS'                 => 'Actualiser les compteurs des donateurs et des transactions',
 	'STAT_RESYNC_STATS_CONFIRM'         => 'Êtes-vous sûr de vouloir actualiser les compteurs des donateurs et des transactions ?',
 	'STAT_RESYNC_STATS_EXPLAIN'         => 'Actualise tous les compteurs des donateurs et des transactions. Seuls donateurs actifs et anonymes seront pris en considération.',
-	'STAT_RETEST_ESI'                   => 'Vérifier les prérequis de l’extension',
-	'STAT_RETEST_ESI_CONFIRM'           => 'Êtes-vous sûr de vouloir vérifier les prérequis de l’extension ?',
-	'STAT_RETEST_ESI_EXPLAIN'           => 'Permet de vérifier les prérequis de l’extension, dans le cas où la configuration du serveur a été modifiée.',
 
 	'STATS_ANONYMOUS_DONORS_COUNT'   => 'Nombre de donateurs anonymes',
 	'STATS_ANONYMOUS_DONORS_PER_DAY' => 'Moyenne journalière des donateurs anonymes',

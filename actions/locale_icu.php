@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -47,11 +47,6 @@ class locale_icu
 	 */
 	public function build_locale_select_menu($config_value = ''): void
 	{
-		if (!$this->icu_requirements())
-		{
-			return;
-		}
-
 		// Grab the list of all available locales
 		$locale_list = $this->get_locale_list();
 
@@ -66,17 +61,6 @@ class locale_icu
 			]);
 		}
 		unset ($locale, $locale_list);
-	}
-
-	/**
-	 * Checks if the PHP PECL intl extension is fully available
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function icu_requirements(): bool
-	{
-		return $this->config['ppde_intl_version_valid'] && $this->config['ppde_intl_detected'];
 	}
 
 	/**
@@ -102,16 +86,6 @@ class locale_icu
 	}
 
 	/**
-	 * Gets the default Locale
-	 *
-	 * @return string A string with the current Locale.
-	 */
-	public function locale_get_default(): string
-	{
-		return $this->icu_requirements() ? \locale_get_default() : '';
-	}
-
-	/**
 	 * Gets the currency symbol based on ISO code
 	 *
 	 * @param $currency_iso_code
@@ -123,17 +97,6 @@ class locale_icu
 	{
 		$fmt = new \NumberFormatter($this->get_effective_locale() . '@currency=' . $currency_iso_code, \NumberFormatter::CURRENCY);
 		return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
-	}
-
-	/**
-	 * Checks if the PPDE locale feature is configured
-	 *
-	 * @return bool
-	 * @access public
-	 */
-	public function is_locale_configured(): bool
-	{
-		return $this->icu_requirements();
 	}
 
 	/**
@@ -160,65 +123,6 @@ class locale_icu
 	public function numfmt_format_currency($fmt, $value, $currency_iso_code): string
 	{
 		return numfmt_format_currency($fmt, (float) $value, (string) $currency_iso_code);
-	}
-
-	/**
-	 * Sets config value for PHP intl extension version
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_intl_info(): void
-	{
-		$this->config->set('ppde_intl_version', $this->get_intl_version($this->is_intl_loaded()));
-		$this->config->set('ppde_intl_version_valid', (int) $this->icu_version_compare());
-	}
-
-	/**
-	 * Gets intl extension version
-	 *
-	 * @param bool $is_loaded
-	 *
-	 * @return string
-	 * @access private
-	 */
-	private function get_intl_version($is_loaded): string
-	{
-		$version = '';
-		if ($is_loaded)
-		{
-			$version = defined('INTL_ICU_VERSION') ? INTL_ICU_VERSION : '';
-		}
-		return $version;
-	}
-
-	public function is_intl_loaded(): bool
-	{
-		return extension_loaded('intl');
-	}
-
-	/**
-	 * Checks if ICU version matches with requirement
-	 *
-	 * @return bool
-	 * @access private
-	 */
-	private function icu_version_compare(): bool
-	{
-		$icu_min_version = '1.1.0';
-		$icu_version = $this->get_intl_version($this->is_intl_loaded());
-		return version_compare($icu_version, $icu_min_version, '>=');
-	}
-
-	/**
-	 * Sets config value for PHP intl extension detection
-	 *
-	 * @return void
-	 * @access public
-	 */
-	public function set_intl_detected(): void
-	{
-		$this->config->set('ppde_intl_detected', $this->is_intl_loaded());
 	}
 
 	/**

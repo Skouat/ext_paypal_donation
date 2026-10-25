@@ -215,14 +215,11 @@ class order_controller extends main_controller
 	private function build_soft_descriptor(string $text): string
 	{
 		// Transliterate accented/Unicode chars to ASCII ("Forêt" -> "Foret").
-		if (function_exists('transliterator_transliterate'))
-		{
-			$converted = transliterator_transliterate('Any-Latin; Latin-ASCII', $text);
+		$converted = transliterator_transliterate('Any-Latin; Latin-ASCII', $text);
 
-			if ($converted !== false)
-			{
-				$text = $converted;
-			}
+		if ($converted !== false)
+		{
+			$text = $converted;
 		}
 
 		// Keep only the characters allowed by PayPal.

@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -42,10 +42,10 @@ $lang = array_merge($lang, [
 
 	'PPDE_ESI'                   => 'Extension and System Information',
 	'PPDE_ESI_INSTALL_DATE'      => 'Install date of <strong>%s</strong>',
-	'PPDE_ESI_INTL_NOT_DETECTED' => 'Consider installing the <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension',
+	'PPDE_ESI_INTL_NOT_DETECTED' => 'Not detected — required by the extension',
 	'PPDE_ESI_MORE_INFORMATION'  => 'More information…',
 	'PPDE_ESI_NOT_DETECTED'      => 'Not detected',
-	'PPDE_ESI_RESYNC_OPTIONS'    => 'Reset or recheck extension and system information',
+	'PPDE_ESI_RESYNC_OPTIONS'    => 'Reset extension information',
 	'PPDE_ESI_VERSION'           => '<strong>%s</strong> version',
 	'PPDE_ESI_VERSION_INTL'      => 'PHP <code>intl</code> version',
 	'PPDE_ESI_VERSION_OPENSSL'   => 'OpenSSL version',
@@ -63,9 +63,6 @@ $lang = array_merge($lang, [
 	'STAT_RESYNC_STATS'                 => 'Resynchronise donors and transactions counts',
 	'STAT_RESYNC_STATS_CONFIRM'         => 'Are you sure you wish to resynchronise donors and transactions counts?',
 	'STAT_RESYNC_STATS_EXPLAIN'         => 'Resynchronise all donors and transactions counts. Only anonymous donors and active members will be taken in consideration.',
-	'STAT_RETEST_ESI'                   => 'Check extension prerequisites',
-	'STAT_RETEST_ESI_CONFIRM'           => 'Are you sure you wish to check extension prerequisites?',
-	'STAT_RETEST_ESI_EXPLAIN'           => 'Allows to check the prerequisites of the extension, in case the web server configuration has been changed.',
 
 	'STATS_ANONYMOUS_DONORS_COUNT'   => 'Number of anonymous donors',
 	'STATS_ANONYMOUS_DONORS_PER_DAY' => 'Anonymous donors per day',
