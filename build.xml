@@ -10,6 +10,12 @@
 
 	<target name="clean-package">
 		<!--
+		composer/installers is only needed for Composer-based installs;
+		strip it from the shipped vendor/ so the autoload files stay consistent.
+		-->
+		<exec dir="${dir}" command="composer remove composer/installers --update-no-dev --optimize-autoloader --no-interaction"
+			  checkreturn="true" passthru="true" />
+		<!--
 		Remove some unnecessary files/directories
 		${dir}/ is the folder of your extension, e.g. ext/nickvergessen/newspage/
 		-->
