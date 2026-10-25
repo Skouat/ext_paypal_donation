@@ -23,6 +23,7 @@ use skouat\ppde\entity\transaction_data_builder;
 use skouat\ppde\api\paypal\webhook_verify;
 use skouat\ppde\entity\transactions as transactions_entity;
 use skouat\ppde\exception\transaction_exception;
+use skouat\ppde\ext;
 use skouat\ppde\operators\transactions as transactions_operator;
 use skouat\ppde\ppde_constants;
 use Symfony\Component\HttpFoundation\Response;
@@ -126,6 +127,12 @@ class webhook_listener
 		if (in_array('', $headers, true))
 		{
 			return new Response('', Response::HTTP_BAD_REQUEST);
+		}
+
+		// A non-2xx status makes PayPal redeliver the event, so it can be processed once the server is fixed.
+		if (!empty(ext::get_missing_php_extensions()))
+		{
+			return new Response('', Response::HTTP_SERVICE_UNAVAILABLE);
 		}
 
 		$environment = $this->resolve_environment($raw_body, $headers);

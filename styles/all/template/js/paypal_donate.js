@@ -52,6 +52,17 @@
 		});
 	}
 
+	/**
+	 * Extract the localised error sent by the server, if any.
+	 * Network failures carry no JSON body, hence the empty-string fallback.
+	 *
+	 * @param {Object} jqXHR jQuery XHR object of the failed request
+	 * @returns {string}
+	 */
+	function serverError(jqXHR) {
+		return (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.error) || '';
+	}
+
 	function renderButtons() {
 		if (typeof paypal === 'undefined') {
 			showError(cfg.errGeneric);
@@ -80,9 +91,9 @@
 						throw new Error(data.error || 'create_failed');
 					}
 					return data.id;
-				}, function() {
+				}, function(jqXHR) {
 					// AJAX/network failure on order creation.
-					showError(cfg.errGeneric);
+					showError(serverError(jqXHR) || cfg.errGeneric);
 					return $.Deferred().reject(new Error('create_failed')).promise();
 				});
 			},
@@ -91,9 +102,9 @@
 					order_id: data.orderID
 				}).then(function(data) {
 					window.location.href = (data.status === 'COMPLETED') ? cfg.successUrl : cfg.cancelUrl;
-				}, function() {
+				}, function(jqXHR) {
 					// Capture failed: show a message instead of a silent redirect.
-					showError(cfg.errGeneric);
+					showError(serverError(jqXHR) || cfg.errGeneric);
 					return $.Deferred().reject(new Error('capture_failed')).promise();
 				});
 			},
