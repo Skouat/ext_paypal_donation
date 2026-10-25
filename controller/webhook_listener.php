@@ -135,7 +135,7 @@ class webhook_listener
 		}
 
 		$event = json_decode($raw_body, true);
-		if (!is_array($event) || empty($event['event_type']) || !is_string($event['event_type']) || empty($event['resource']))
+		if (!is_array($event) || empty($event['event_type']) || !is_string($event['event_type']) || empty($event['resource']) || !is_array($event['resource']))
 		{
 			return new Response('', 400);
 		}
