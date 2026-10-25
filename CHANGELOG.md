@@ -8,6 +8,7 @@ and the releases are listed in reverse chronological order.
 
 ## 4.0.4 - [Unreleased]
 
+- Change: Now requires phpBB 3.3.19+
 - Fix: Use unicode column types for donation page content and donor names and memo in the transaction log
 - Fix: Prevent a PHP warning when logging a transaction for a deleted donor account in `actions/core.php`
 - Fix: Prevent stored XSS in the admin log from untrusted webhook data
