@@ -38,6 +38,9 @@ class webhook_listener
 	use order_party_extractor;
 	use transaction_data_builder;
 
+	/** Minimum delay between two signature-failure log entries, in seconds. */
+	private const SIG_FAILED_LOG_INTERVAL = 300;
+
 	/** @var config */
 	protected $config;
 	/** @var language */
@@ -118,10 +121,16 @@ class webhook_listener
 		$raw_body = $this->get_raw_input();
 		$headers = $this->collect_headers();
 
+		// Requests lacking any signature header are rejected unlogged, so anonymous callers cannot flood the admin log.
+		if (in_array('', $headers, true))
+		{
+			return new Response('', 400);
+		}
+
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
-			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time());
+			$this->log_sig_failure();
 			return new Response('', 403);
 		}
 
@@ -134,6 +143,30 @@ class webhook_listener
 		$processed = $this->process_event($event, $environment === 'sandbox');
 
 		return new Response('', $processed ? 200 : 500);
+	}
+
+	/**
+	 * Log a webhook signature failure, at most once per interval.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function log_sig_failure(): void
+	{
+		$now = time();
+		$last = (int) $this->config['ppde_webhook_sig_failed_last'];
+
+		// A global window, not per IP, bounds the log volume even against rotating source addresses.
+		if ($now - $last < self::SIG_FAILED_LOG_INTERVAL)
+		{
+			return;
+		}
+
+		// Only the request that wins the atomic update writes the entry, so concurrent failures log once.
+		if ($this->config->set_atomic('ppde_webhook_sig_failed_last', $last, $now, false))
+		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', $now);
+		}
 	}
 
 	/**
