@@ -24,13 +24,14 @@ class ext extends \phpbb\extension\base
 {
 	public const PHPBB_MIN_VERSION = '3.3.19';
 	public const PHP_MIN_VERSION_ID = 70200;
+	// json, dom and libxml are guaranteed by the phpBB installer; intl is only suggested, as runtime fallbacks exist.
+	public const REQUIRED_PHP_EXTENSIONS = ['curl', 'openssl'];
 
 	/**
 	 * Check whether the extension can be enabled.
-	 * The current phpBB version should meet or exceed
-	 * the minimum version required by this extension:
 	 *
-	 * Requires phpBB 3.3.19 and PHP 7.2.0
+	 * Requires phpBB 3.3.19, PHP 7.2.0 and every PHP extension
+	 * listed in REQUIRED_PHP_EXTENSIONS.
 	 *
 	 * @return bool
 	 * @access public
@@ -39,7 +40,31 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], self::PHPBB_MIN_VERSION, '>=') && PHP_VERSION_ID >= self::PHP_MIN_VERSION_ID;
+		return phpbb_version_compare($config['version'], self::PHPBB_MIN_VERSION, '>=')
+			&& PHP_VERSION_ID >= self::PHP_MIN_VERSION_ID
+			&& $this->php_extensions_loaded();
+	}
+
+	/**
+	 * Check that the required PHP extensions not guaranteed by the phpBB installer are loaded.
+	 *
+	 * phpBB does not run the Composer platform check before enabling,
+	 * so a missing extension would otherwise only surface as a fatal error at runtime.
+	 *
+	 * @return bool
+	 * @access private
+	 */
+	private function php_extensions_loaded(): bool
+	{
+		foreach (self::REQUIRED_PHP_EXTENSIONS as $extension)
+		{
+			if (!extension_loaded($extension))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
