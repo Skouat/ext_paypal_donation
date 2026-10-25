@@ -24,8 +24,8 @@ class ext extends \phpbb\extension\base
 {
 	public const PHPBB_MIN_VERSION = '3.3.19';
 	public const PHP_MIN_VERSION_ID = 70200;
-	// json, dom and libxml are guaranteed by the phpBB installer; intl is only suggested, as runtime fallbacks exist.
-	public const REQUIRED_PHP_EXTENSIONS = ['curl', 'openssl'];
+	// json, dom and libxml are guaranteed by the phpBB installer.
+	public const REQUIRED_PHP_EXTENSIONS = ['curl', 'intl', 'openssl'];
 
 	/**
 	 * Check whether the extension can be enabled.

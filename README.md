@@ -41,7 +41,7 @@ donation flow. As a result, **donations no longer work on earlier versions**. Ve
 REST API**, which restores donations and **removes the requirement to use a charity/non-profit PayPal account**.
 Upgrading is therefore required. After updating the files, follow these steps to get donations working again:
 
-  1. **Update requirements:** make sure your board runs **phpBB 3.3.11+**, **PHP 7.2+** and that the PHP **`openssl`** and **`curl`** extensions are enabled.
+  1. **Update requirements:** make sure your board runs **phpBB 3.3.19+**, **PHP 7.2+** and that the PHP **`openssl`**, **`curl`** and **`intl`** extensions are enabled.
   2. **Create a REST API app:**
       * Go to the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications/live) → **Apps & Credentials**.
       * Create an app (or open an existing one) for **Live**, and note its **Client ID** and **Secret**. Repeat under the **Sandbox** tab if you want to test.
