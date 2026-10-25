@@ -44,6 +44,9 @@
         "paypal/paypal-server-sdk": "2.3.0",
         "composer/installers": "~1.0"
     },
+    "replace": {
+        "symfony/http-foundation": "*"
+    },
     "extra": {
         "display-name": "PayPal Donation Extension",
         "soft-require": {
