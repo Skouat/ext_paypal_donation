@@ -247,7 +247,12 @@ class order_controller extends main_controller
 			return new JsonResponse(['error' => $this->language->lang('PPDE_REST_BAD_REQUEST')], JsonResponse::HTTP_BAD_REQUEST);
 		}
 
-		if (empty($this->config['ppde_enable']) || !$this->ppde_actions_auth->can_use_ppde())
+		if (empty($this->config['ppde_enable']))
+		{
+			return new JsonResponse(['error' => $this->language->lang('PPDE_DONATION_UNAVAILABLE')], JsonResponse::HTTP_SERVICE_UNAVAILABLE);
+		}
+
+		if (!$this->ppde_actions_auth->can_use_ppde())
 		{
 			return new JsonResponse(['error' => $this->language->lang('NOT_AUTHORISED')], JsonResponse::HTTP_FORBIDDEN);
 		}

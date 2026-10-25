@@ -54,6 +54,14 @@ class ppde_module
 
 		$this->module_info = $module_info;
 
+		// Overview stays reachable so the administrator can still see the diagnostic.
+		$missing = \skouat\ppde\ext::get_missing_php_extensions();
+		if ($mode !== 'overview' && !empty($missing))
+		{
+			$language->add_lang('acp_overview', 'skouat/ppde');
+			trigger_error($language->lang('PPDE_ESI_MISSING_EXTENSIONS_WARNING', count($missing), implode(', ', $missing)), E_USER_WARNING);
+		}
+
 		$language->add_lang('acp_' . $mode, 'skouat/ppde');
 
 		/** @type \skouat\ppde\controller\admin\admin_main $admin_controller */

@@ -17,6 +17,8 @@ and the releases are listed in reverse chronological order.
 - Fix: Prevent stored XSS in the admin log from untrusted webhook data
 - Fix: Prevent anonymous webhook requests from flooding the admin log
 - Fix: Stop bundling `symfony/http-foundation`, which overrode the phpBB core version
+- Fix: Report disabled donations as unavailable instead of not authorised
+- Fix: Show server error messages on failed donation requests
 
 ## 4.0.3 - 2026-09-01
 - Fix: Property `auth` not found in overview_controller

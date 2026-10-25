@@ -16,6 +16,7 @@ use phpbb\language\language;
 use phpbb\template\template;
 use skouat\ppde\controller\main_controller;
 use skouat\ppde\controller\main_display_stats;
+use skouat\ppde\ext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -76,7 +77,7 @@ class listener implements EventSubscriberInterface
 			'core.index_modify_page_title'       => 'load_index_data',
 			'core.page_header'                   => 'add_page_header_link',
 			'core.permissions'                   => 'add_permissions',
-			'core.user_setup'                    => 'load_language_on_setup',
+			'core.user_setup'                    => [['load_language_on_setup'], ['disable_on_missing_php_extensions']],
 			'core.viewonline_overwrite_location' => 'viewonline_page',
 		];
 	}
@@ -154,6 +155,23 @@ class listener implements EventSubscriberInterface
 			'lang_set' => ['donate', 'exceptions'],
 		];
 		$event['lang_set_ext'] = $lang_set_ext;
+	}
+
+	/**
+	 * Disable donations when a required PHP extension is missing
+	 *
+	 * Runs on every request so donations stop even if the ACP is never visited.
+	 * Re-enabling is deliberately left to the administrator once the server is fixed.
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function disable_on_missing_php_extensions(): void
+	{
+		if ($this->config['ppde_enable'] && !empty(ext::get_missing_php_extensions()))
+		{
+			$this->config->set('ppde_enable', 0);
+		}
 	}
 
 	/**

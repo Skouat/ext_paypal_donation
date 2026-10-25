@@ -35,6 +35,79 @@ class order_controller_test extends \phpbb_test_case
 		);
 	}
 
+	protected function tearDown(): void
+	{
+		unset($GLOBALS['user']);
+		parent::tearDown();
+	}
+
+	/**
+	 * Build a controller that passes the AJAX and link-hash checks of guard()
+	 *
+	 * @param bool $ppde_enable  Value of the ppde_enable config
+	 * @param bool $can_use_ppde Result of the donation permission check
+	 *
+	 * @return \skouat\ppde\controller\order_controller
+	 * @access protected
+	 */
+	protected function get_guarded_controller(bool $ppde_enable, bool $can_use_ppde): \skouat\ppde\controller\order_controller
+	{
+		$user = $this->createMock(\phpbb\user::class);
+		$user->data = [
+			'user_id'        => 2,
+			'session_id'     => 'mock_session_id_123',
+			'user_form_salt' => 'mock_form_salt_456',
+		];
+		$GLOBALS['user'] = $user;
+
+		// Computed by the core helper so the test does not depend on the hash formula.
+		$hash = generate_link_hash('ppde_donate');
+
+		$language = $this->createMock(\phpbb\language\language::class);
+		$language->method('lang')->willReturnArgument(0);
+
+		$auth = $this->createMock(\skouat\ppde\actions\auth::class);
+		$auth->method('can_use_ppde')->willReturn($can_use_ppde);
+
+		$request = $this->createMock(\phpbb\request\request::class);
+		$request->method('is_ajax')->willReturn(true);
+		$request->method('variable')->willReturnCallback(function ($var_name, $default) use ($hash)
+		{
+			return ($var_name === 'hash') ? $hash : $default;
+		});
+
+		return new \skouat\ppde\controller\order_controller(
+			new \phpbb\config\config(['ppde_enable' => (int) $ppde_enable]),
+			$this->createMock(\Symfony\Component\DependencyInjection\ContainerInterface::class),
+			$this->createMock(\phpbb\controller\helper::class),
+			$language,
+			$auth,
+			$this->createMock(\skouat\ppde\actions\currency::class),
+			$request,
+			$this->createMock(\phpbb\template\template::class),
+			$user,
+			$this->createMock(\phpbb\user_loader::class),
+			'./',
+			'php'
+		);
+	}
+
+	public function test_create_reports_unavailable_when_donations_disabled()
+	{
+		$response = $this->get_guarded_controller(false, true)->create();
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\JsonResponse::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
+		$this->assertSame(['error' => 'PPDE_DONATION_UNAVAILABLE'], json_decode($response->getContent(), true));
+	}
+
+	public function test_create_reports_forbidden_when_permission_missing()
+	{
+		$response = $this->get_guarded_controller(true, false)->create();
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\JsonResponse::HTTP_FORBIDDEN, $response->getStatusCode());
+		$this->assertSame(['error' => 'NOT_AUTHORISED'], json_decode($response->getContent(), true));
+	}
+
 	public function test_soft_descriptor_keeps_allowed_chars()
 	{
 		$this->assertSame('A B * C', $this->invoke('build_soft_descriptor', ['A & B * C']));
