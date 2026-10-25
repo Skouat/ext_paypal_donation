@@ -145,6 +145,164 @@ class webhook_listener_test extends \phpbb_test_case
 		$this->assertSame('uid_99_refund', $result);
 	}
 
+	/**
+	 * Build a listener with a controlled body, signature headers and verification outcome.
+	 *
+	 * @param string         $raw_body
+	 * @param array          $headers
+	 * @param bool           $signature_valid
+	 * @param \phpbb\log\log $log
+	 * @param array          $config_data
+	 *
+	 * @return \skouat\ppde\controller\webhook_listener
+	 * @access private
+	 */
+	private function make_handle_listener(string $raw_body, array $headers, bool $signature_valid, \phpbb\log\log $log, array $config_data = [])
+	{
+		$config = new \phpbb\config\config(array_merge([
+			'ppde_webhook_sig_failed_last' => 0,
+		], $config_data));
+
+		$webhook_verify = $this->createMock(\skouat\ppde\api\paypal\webhook_verify::class);
+		$webhook_verify->method('is_valid')->willReturn($signature_valid);
+
+		$request = $this->createMock(\phpbb\request\request::class);
+		$request->method('header')->willReturnCallback(static function ($name) use ($headers) {
+			return $headers[$name] ?? '';
+		});
+
+		$user = $this->createMock(\phpbb\user::class);
+		$user->ip = '127.0.0.1';
+
+		// An anonymous subclass replaces the body reader without relying on version-specific partial-mock APIs.
+		$listener = new class(
+			$config,
+			$this->createMock(\phpbb\language\language::class),
+			$log,
+			$this->createMock(\skouat\ppde\actions\core::class),
+			$this->createMock(\skouat\ppde\entity\transactions::class),
+			$this->createMock(\skouat\ppde\operators\transactions::class),
+			$webhook_verify,
+			$this->createMock(\skouat\ppde\api\paypal\client_factory::class),
+			$request,
+			$user,
+			$this->createMock(\skouat\ppde\actions\donation_recorder::class)
+		) extends \skouat\ppde\controller\webhook_listener
+		{
+			public $test_raw_body = '';
+
+			protected function get_raw_input(): string
+			{
+				return $this->test_raw_body;
+			}
+		};
+		$listener->test_raw_body = $raw_body;
+
+		return $listener;
+	}
+
+	/**
+	 * @return array
+	 * @access private
+	 */
+	private function valid_headers(): array
+	{
+		return [
+			'Paypal-Transmission-Id'   => 'tid-123',
+			'Paypal-Transmission-Time' => '2026-10-25T00:00:00Z',
+			'Paypal-Transmission-Sig'  => 'c2ln',
+			'Paypal-Cert-Url'          => 'https://api.paypal.com/cert.pem',
+			'Paypal-Auth-Algo'         => 'SHA256withRSA',
+		];
+	}
+
+	public function missing_header_data()
+	{
+		return [
+			['Paypal-Transmission-Id'],
+			['Paypal-Transmission-Time'],
+			['Paypal-Transmission-Sig'],
+			['Paypal-Cert-Url'],
+			['Paypal-Auth-Algo'],
+		];
+	}
+
+	/**
+	 * @dataProvider missing_header_data
+	 */
+	public function test_handle_rejects_missing_header_unlogged($missing_header)
+	{
+		$headers = $this->valid_headers();
+		unset($headers[$missing_header]);
+
+		$log = $this->createMock(\phpbb\log\log::class);
+		$log->expects($this->never())->method('add');
+
+		$listener = $this->make_handle_listener('{}', $headers, true, $log);
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST, $listener->handle()->getStatusCode());
+	}
+
+	public function test_handle_logs_signature_failure_without_payload_data()
+	{
+		$log = $this->createMock(\phpbb\log\log::class);
+		$log->expects($this->once())
+			->method('add')
+			->with('critical', ANONYMOUS, '127.0.0.1', 'LOG_PPDE_WEBHOOK_SIG_FAILED', $this->isType('int'), [])
+		;
+
+		$listener = $this->make_handle_listener('{"event_type":"<script>alert(1)</script>"}', $this->valid_headers(), false, $log);
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN, $listener->handle()->getStatusCode());
+	}
+
+	public function test_handle_throttles_repeated_signature_failures()
+	{
+		$log = $this->createMock(\phpbb\log\log::class);
+		$log->expects($this->once())->method('add');
+
+		$listener = $this->make_handle_listener('{}', $this->valid_headers(), false, $log);
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN, $listener->handle()->getStatusCode());
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN, $listener->handle()->getStatusCode());
+	}
+
+	public function test_handle_skips_log_within_interval()
+	{
+		$log = $this->createMock(\phpbb\log\log::class);
+		$log->expects($this->never())->method('add');
+
+		$listener = $this->make_handle_listener('{}', $this->valid_headers(), false, $log, [
+			'ppde_webhook_sig_failed_last' => time(),
+		]);
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN, $listener->handle()->getStatusCode());
+	}
+
+	public function invalid_event_data()
+	{
+		return [
+			'not json'               => ['not json'],
+			'missing event_type'     => ['{"resource":{"id":"1"}}'],
+			'non-string event_type'  => ['{"event_type":["x"],"resource":{"id":"1"}}'],
+			'missing resource'       => ['{"event_type":"PAYMENT.CAPTURE.COMPLETED"}'],
+			'non-array resource'     => ['{"event_type":"PAYMENT.CAPTURE.COMPLETED","resource":"x"}'],
+		];
+	}
+
+	/**
+	 * @dataProvider invalid_event_data
+	 */
+	public function test_handle_rejects_invalid_event($raw_body)
+	{
+		$log = $this->createMock(\phpbb\log\log::class);
+		$log->expects($this->never())->method('add');
+
+		$listener = $this->make_handle_listener($raw_body, $this->valid_headers(), true, $log);
+
+		$this->assertSame(\Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST, $listener->handle()->getStatusCode());
+	}
+
 	private function invoke(string $method, array $args)
 	{
 		$m = new \ReflectionMethod($this->listener, $method);
