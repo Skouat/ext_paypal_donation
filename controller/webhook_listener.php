@@ -38,6 +38,9 @@ class webhook_listener
 	use order_party_extractor;
 	use transaction_data_builder;
 
+	/** Minimum delay between two signature-failure log entries, in seconds. */
+	private const SIG_FAILED_LOG_INTERVAL = 300;
+
 	/** @var config */
 	protected $config;
 	/** @var language */
@@ -108,34 +111,70 @@ class webhook_listener
 	/**
 	 * Handle the incoming webhook.
 	 *
-	 * @return Response
+	 * Missing signature headers and malformed events yield 400, an invalid
+	 * signature 403; a verified event yields 200 once processed, 500 otherwise.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
 	 * @access public
 	 */
 	public function handle(): Response
 	{
-		$this->language->add_lang('donate', 'skouat/ppde');
-
 		$raw_body = $this->get_raw_input();
 		$headers = $this->collect_headers();
 
-		$event = json_decode($raw_body, true);
-		$event_type = (is_array($event) && !empty($event['event_type'])) ? $event['event_type'] : '';
+		// Requests lacking any signature header are rejected unlogged, so anonymous callers cannot flood the admin log.
+		if (in_array('', $headers, true))
+		{
+			return new Response('', Response::HTTP_BAD_REQUEST);
+		}
 
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
-			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', time(), [substr($event_type, 0, 32)]);
-			return new Response('', 403);
+			$this->log_sig_failure();
+			return new Response('', Response::HTTP_FORBIDDEN);
 		}
 
-		if (!is_array($event) || $event_type === '' || empty($event['resource']))
+		// Loaded only once the signature is verified: rejected requests never need these strings.
+		$this->language->add_lang('donate', 'skouat/ppde');
+
+		$event = json_decode($raw_body, true);
+		if (!is_array($event)
+			|| empty($event['event_type'])
+			|| !is_string($event['event_type'])
+			|| empty($event['resource'])
+			|| !is_array($event['resource']))
 		{
-			return new Response('', 400);
+			return new Response('', Response::HTTP_BAD_REQUEST);
 		}
 
 		$processed = $this->process_event($event, $environment === 'sandbox');
 
-		return new Response('', $processed ? 200 : 500);
+		return new Response('', $processed ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR);
+	}
+
+	/**
+	 * Log a webhook signature failure, at most once per interval.
+	 *
+	 * @return void
+	 * @access private
+	 */
+	private function log_sig_failure(): void
+	{
+		$now = time();
+		$last = (int) $this->config['ppde_webhook_sig_failed_last'];
+
+		// A global window, not per IP, bounds the log volume even against rotating source addresses.
+		if ($now - $last < self::SIG_FAILED_LOG_INTERVAL)
+		{
+			return;
+		}
+
+		// Only the request that wins the atomic update writes the entry, so concurrent failures log once.
+		if ($this->config->set_atomic('ppde_webhook_sig_failed_last', $last, $now, false))
+		{
+			$this->log->add('critical', ANONYMOUS, $this->user->ip, 'LOG_PPDE_WEBHOOK_SIG_FAILED', $now);
+		}
 	}
 
 	/**
