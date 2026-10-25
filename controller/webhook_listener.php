@@ -115,7 +115,7 @@ class webhook_listener
 	 * Missing signature headers and malformed events yield 400, an invalid
 	 * signature 403; a verified event yields 200 once processed, 500 otherwise.
 	 *
-	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @return Response
 	 * @access public
 	 */
 	public function handle(): Response
