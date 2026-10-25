@@ -111,38 +111,46 @@ class webhook_listener
 	/**
 	 * Handle the incoming webhook.
 	 *
-	 * @return Response
+	 * Missing signature headers and malformed events yield 400, an invalid
+	 * signature 403; a verified event yields 200 once processed, 500 otherwise.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
 	 * @access public
 	 */
 	public function handle(): Response
 	{
-		$this->language->add_lang('donate', 'skouat/ppde');
-
 		$raw_body = $this->get_raw_input();
 		$headers = $this->collect_headers();
 
 		// Requests lacking any signature header are rejected unlogged, so anonymous callers cannot flood the admin log.
 		if (in_array('', $headers, true))
 		{
-			return new Response('', 400);
+			return new Response('', Response::HTTP_BAD_REQUEST);
 		}
 
 		$environment = $this->resolve_environment($raw_body, $headers);
 		if ($environment === null)
 		{
 			$this->log_sig_failure();
-			return new Response('', 403);
+			return new Response('', Response::HTTP_FORBIDDEN);
 		}
 
+		// Loaded only once the signature is verified: rejected requests never need these strings.
+		$this->language->add_lang('donate', 'skouat/ppde');
+
 		$event = json_decode($raw_body, true);
-		if (!is_array($event) || empty($event['event_type']) || !is_string($event['event_type']) || empty($event['resource']) || !is_array($event['resource']))
+		if (!is_array($event)
+			|| empty($event['event_type'])
+			|| !is_string($event['event_type'])
+			|| empty($event['resource'])
+			|| !is_array($event['resource']))
 		{
-			return new Response('', 400);
+			return new Response('', Response::HTTP_BAD_REQUEST);
 		}
 
 		$processed = $this->process_event($event, $environment === 'sandbox');
 
-		return new Response('', $processed ? 200 : 500);
+		return new Response('', $processed ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR);
 	}
 
 	/**
