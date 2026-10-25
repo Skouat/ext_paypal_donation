@@ -31,7 +31,6 @@ class overview_controller_test extends \phpbb_test_case
 			'ppde_transactions_count'     => 50,
 			'ppde_known_donors_count'     => 30,
 			'ppde_anonymous_donors_count' => 10,
-			'ppde_first_start'            => 1,
 		]);
 
 		$language = $this->createMock(\phpbb\language\language::class);
@@ -87,30 +86,6 @@ class overview_controller_test extends \phpbb_test_case
 		$method->setAccessible(true);
 
 		$this->assertSame($expected_average, $method->invoke($this->controller, $config_key));
-	}
-
-	public function test_ppde_first_start_runs_diagnostics_on_enable()
-	{
-		$this->locale->expects($this->once())->method('set_intl_info');
-		$this->locale->expects($this->once())->method('set_intl_detected');
-
-		$method = new \ReflectionMethod($this->controller, 'ppde_first_start');
-		$method->setAccessible(true);
-		$method->invoke($this->controller);
-
-		$this->assertSame('0', $this->config['ppde_first_start']);
-	}
-
-	public function test_ppde_first_start_does_nothing_if_already_initialized()
-	{
-		$this->config->set('ppde_first_start', '0');
-
-		$this->locale->expects($this->never())->method('set_intl_info');
-		$this->locale->expects($this->never())->method('set_intl_detected');
-
-		$method = new \ReflectionMethod($this->controller, 'ppde_first_start');
-		$method->setAccessible(true);
-		$method->invoke($this->controller);
 	}
 
 	public function test_prerequisites_detection_in_environment()

@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -137,11 +137,8 @@ class currency_controller extends admin_main
 
 		$errors = [];
 
-		// Override the symbol with the ICU one when the locale feature is active.
-		if ($this->ppde_locale->is_locale_configured())
-		{
-			$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);
-		}
+		// The ICU symbol takes precedence over the submitted one.
+		$data['currency_symbol'] = $this->ppde_locale->get_currency_symbol($data['currency_iso_code']);
 
 		$item_fields = [
 			'name'              => $data['currency_name'],
@@ -170,9 +167,7 @@ class currency_controller extends admin_main
 			'CURRENCY_POSITION' => $entity->get_currency_position(),
 			'CURRENCY_ENABLE'   => $entity->get_currency_enable(),
 
-			'S_HIDDEN_FIELDS'          => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
-			'S_PPDE_LOCALE_AVAILABLE'  => $this->ppde_locale->icu_requirements(),
-			'S_PPDE_LOCALE_CONFIGURED' => $this->ppde_locale->is_locale_configured(),
+			'S_HIDDEN_FIELDS' => '<input type="hidden" name="' . $this->id_prefix_name . '_id" value="' . $entity->get_id() . '">',
 		]);
 	}
 

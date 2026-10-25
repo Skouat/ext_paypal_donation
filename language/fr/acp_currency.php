@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -46,9 +46,7 @@ $lang = array_merge($lang, [
 	'PPDE_DC_ENABLE_EXPLAIN'     => 'Si activée, la devise sera disponible dans la liste de sélection.',
 	'PPDE_DC_ISO_CODE'           => 'Code ISO 4217',
 	'PPDE_DC_ISO_CODE_EXPLAIN'   => 'Code alphabétique de la devise.<br>En savoir plus sur la norme ISO 4217… Consultez la <a href="https://www.phpbb.com/customise/db/extension/paypal_donation_extension/faq/1841" title="FAQ PayPal Donation">FAQ</a> de l’extension PayPal Donation (lien externe en anglais).',
-	'PPDE_DC_LOCALE_AVAILABLE'   => 'L’extension PHP <code>intl</code> a été détectée. Allez dans le module « Paramètres généraux » pour sélectionner vos paramètres régionaux.',
 	'PPDE_DC_LOCALE_DEPRECATED'  => 'Cette option est désactivée car votre serveur est compatible avec l’extension PHP <code>intl</code>.',
-	'PPDE_DC_LOCALE_UNAVAILABLE' => 'PPDE ne détecte pas l’extension PHP <code>intl</code>. Songez à installer cette extension PHP pour profiter d’une meilleure expérience.',
 	'PPDE_DC_NAME'               => 'Nom de la devise',
 	'PPDE_DC_NAME_EXPLAIN'       => 'Exemple : Euro.',
 	'PPDE_DC_POSITION'           => 'Position du symbole',

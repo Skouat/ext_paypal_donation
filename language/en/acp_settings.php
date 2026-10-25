@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -49,7 +49,6 @@ $lang = array_merge($lang, [
 	'PPDE_DEFAULT_LOCALE'             => 'Locale settings',
 	'PPDE_DEFAULT_LOCALE_AUTO'        => 'Automatic (follow user language)',
 	'PPDE_DEFAULT_LOCALE_EXPLAIN'     => 'Locale used to format currencies.<br>“Automatic” follows each user’s language (or the board default, then English); select a specific value to apply the same format to everyone.',
-	'PPDE_DEFAULT_LOCALE_REQUIRED'    => 'The <a href="https://www.php.net/manual/en/book.intl.php">PHP intl</a> extension is required and must be in version 1.1.0 or newer.',
 	'PPDE_DEFAULT_VALUE'              => 'Default donation value',
 	'PPDE_DEFAULT_VALUE_EXPLAIN'      => 'Define which donation value will be suggested by default.',
 	'PPDE_DROPBOX_ENABLE'             => 'Enable drop-down list',

@@ -3,7 +3,7 @@
  *
  * PayPal Donation extension for the phpBB Forum Software package.
  *
- * @copyright (c) 2015-2020 Skouat
+ * @copyright (c) 2015-2026 Skouat
  * @license GNU General Public License, version 2 (GPL-2.0)
  *
  */
@@ -415,22 +415,5 @@ abstract class admin_main
 		settype($default, $type);
 
 		return $config ?: $default;
-	}
-
-	/**
-	 * Run the intl detection once after install/enable (ppde_first_start = true).
-	 *
-	 * @return void
-	 * @throws \ReflectionException
-	 * @access protected
-	 */
-	protected function ppde_first_start(): void
-	{
-		if ($this->config['ppde_first_start'])
-		{
-			$this->ppde_actions_locale->set_intl_info();
-			$this->ppde_actions_locale->set_intl_detected();
-			$this->config->set('ppde_first_start', '0');
-		}
 	}
 }

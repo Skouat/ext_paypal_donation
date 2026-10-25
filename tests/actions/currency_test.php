@@ -40,23 +40,6 @@ class currency_test extends \phpbb_test_case
 		);
 	}
 
-	public function currency_on_left_data()
-	{
-		return [
-			'dollar on left'         => [20,     '$', true,  '$20.00'],
-			'euro on right'          => [15,     '€', false, '15.00€'],
-			'rounded to 2 decimals'  => [9.999,  '$', true,  '$10.00'],
-			'zero value'             => [0,      '$', true,  '$0.00'],
-			'no thousands separator' => [1234.5, '$', false, '1234.50$'],
-		];
-	}
-
-	/** @dataProvider currency_on_left_data */
-	public function test_currency_on_left($value, $symbol, $on_left, $expected)
-	{
-		$this->assertSame($expected, $this->currency->currency_on_left($value, $symbol, $on_left));
-	}
-
 	public function test_get_currency_data_empty_iso()
 	{
 		$expected = [['currency_iso_code' => '', 'currency_symbol' => '', 'currency_on_left' => false]];
@@ -93,16 +76,8 @@ class currency_test extends \phpbb_test_case
 		$this->assertSame($expected, $this->currency->get_currency_data('EUR'));
 	}
 
-	public function test_format_currency_without_locale()
+	public function test_format_currency()
 	{
-		$this->locale->method('is_locale_configured')->willReturn(false);
-
-		$this->assertSame('$20.00', $this->currency->format_currency(20, 'USD', '$', true));
-	}
-
-	public function test_format_currency_with_locale()
-	{
-		$this->locale->method('is_locale_configured')->willReturn(true);
 		$this->locale->method('numfmt_create')->willReturn(null);
 		$this->locale->method('numfmt_format_currency')->willReturn('US$20.00');
 

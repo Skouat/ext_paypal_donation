@@ -8,8 +8,10 @@ and the releases are listed in reverse chronological order.
 
 ## 4.0.4 - [Unreleased]
 
+- Add: Warn in the ACP overview when a required PHP extension is missing
 - Change: Now requires phpBB 3.3.19+
-- Change: Prevent enabling the extension when the curl or openssl PHP extension is missing, and make intl optional
+- Change: Prevent enabling the extension when the curl, intl or openssl PHP extension is missing
+- Remove: Drop intl availability detection and its overview action
 - Fix: Use unicode column types for donation page content and donor names and memo in the transaction log
 - Fix: Prevent a PHP warning when logging a transaction for a deleted donor account in `actions/core.php`
 - Fix: Prevent stored XSS in the admin log from untrusted webhook data
