@@ -38,14 +38,18 @@
     "require": {
         "php": ">=7.2",
         "ext-curl": "*",
-        "ext-intl": "*",
+        "ext-dom": "*",
         "ext-json": "*",
+        "ext-libxml": "*",
         "ext-openssl": "*",
         "paypal/paypal-server-sdk": "2.3.0",
         "composer/installers": "~1.0"
     },
     "replace": {
         "symfony/http-foundation": "*"
+    },
+    "suggest": {
+        "ext-intl": "Recommended: locale-aware formatting and ASCII transliteration of the PayPal soft descriptor"
     },
     "extra": {
         "display-name": "PayPal Donation Extension",
