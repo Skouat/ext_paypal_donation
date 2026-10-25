@@ -8,10 +8,12 @@ and the releases are listed in reverse chronological order.
 
 ## 4.0.4 - [Unreleased]
 
+- Change: Now requires phpBB 3.3.19+
 - Fix: Use unicode column types for donation page content and donor names and memo in the transaction log
 - Fix: Prevent a PHP warning when logging a transaction for a deleted donor account in `actions/core.php`
 - Fix: Prevent stored XSS in the admin log from untrusted webhook data
 - Fix: Prevent anonymous webhook requests from flooding the admin log
+- Fix: Stop bundling `symfony/http-foundation`, which overrode the phpBB core version
 
 ## 4.0.3 - 2026-09-01
 - Fix: Property `auth` not found in overview_controller

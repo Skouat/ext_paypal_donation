@@ -44,10 +44,13 @@
         "paypal/paypal-server-sdk": "2.3.0",
         "composer/installers": "~1.0"
     },
+    "replace": {
+        "symfony/http-foundation": "*"
+    },
     "extra": {
         "display-name": "PayPal Donation Extension",
         "soft-require": {
-            "phpbb/phpbb": ">=3.3.11@dev,<3.4.0@dev"
+            "phpbb/phpbb": ">=3.3.19@dev,<3.4.0@dev"
         },
         "version-check": {
             "host": "skouat.github.io",
@@ -58,6 +61,9 @@
     "config": {
         "allow-plugins": {
             "composer/installers": true
+        },
+        "platform": {
+            "php": "7.2.0"
         }
     }
 }

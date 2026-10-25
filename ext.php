@@ -22,12 +22,15 @@ namespace skouat\ppde;
  */
 class ext extends \phpbb\extension\base
 {
+	public const PHPBB_MIN_VERSION = '3.3.19';
+	public const PHP_MIN_VERSION_ID = 70200;
+
 	/**
 	 * Check whether the extension can be enabled.
 	 * The current phpBB version should meet or exceed
 	 * the minimum version required by this extension:
 	 *
-	 * Requires phpBB 3.3.11 and PHP 7.2.0
+	 * Requires phpBB 3.3.19 and PHP 7.2.0
 	 *
 	 * @return bool
 	 * @access public
@@ -36,7 +39,7 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.11', '>=') && PHP_VERSION_ID >= 70200;
+		return phpbb_version_compare($config['version'], self::PHPBB_MIN_VERSION, '>=') && PHP_VERSION_ID >= self::PHP_MIN_VERSION_ID;
 	}
 
 	/**
