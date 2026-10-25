@@ -4,7 +4,7 @@
  * PayPal Donation extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2015-2026 Skouat
- * @license GNU General Public License, version 2 (GPL-2.0)
+ * @license       GNU General Public License, version 2 (GPL-2.0)
  *
  */
 
@@ -40,15 +40,19 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	'PPDE_OVERVIEW' => 'Vue d’ensemble',
 
-	'PPDE_ESI'                   => 'Information extension et système',
-	'PPDE_ESI_INSTALL_DATE'      => 'Date d’installation de <strong>%s</strong>',
-	'PPDE_ESI_INTL_NOT_DETECTED' => 'Non détecté — requis par l’extension',
-	'PPDE_ESI_MORE_INFORMATION'  => 'Plus d’informations…',
-	'PPDE_ESI_NOT_DETECTED'      => 'Non détecté',
-	'PPDE_ESI_RESYNC_OPTIONS'    => 'Réinitialiser les informations de l’extension',
-	'PPDE_ESI_VERSION'           => 'Version de <strong>%s</strong>',
-	'PPDE_ESI_VERSION_INTL'      => 'Version de PHP <code>intl</code>',
-	'PPDE_ESI_VERSION_OPENSSL'   => 'Version d’OpenSSL',
+	'PPDE_ESI'                            => 'Information extension et système',
+	'PPDE_ESI_INSTALL_DATE'               => 'Date d’installation de <strong>%s</strong>',
+	'PPDE_ESI_INTL_NOT_DETECTED'          => 'Non détecté — requis par l’extension',
+	'PPDE_ESI_MISSING_EXTENSIONS_WARNING' => [
+		1 => 'Extension PHP requise non chargée : <strong>%2$s</strong>. L’extension ne peut pas fonctionner tant qu’elle n’est pas activée sur le serveur.',
+		2 => 'Extensions PHP requises non chargées : <strong>%2$s</strong>. L’extension ne peut pas fonctionner tant qu’elles ne sont pas activées sur le serveur.',
+	],
+	'PPDE_ESI_MORE_INFORMATION'           => 'Plus d’informations…',
+	'PPDE_ESI_NOT_DETECTED'               => 'Non détecté',
+	'PPDE_ESI_RESYNC_OPTIONS'             => 'Réinitialiser les informations de l’extension',
+	'PPDE_ESI_VERSION'                    => 'Version de <strong>%s</strong>',
+	'PPDE_ESI_VERSION_INTL'               => 'Version de PHP <code>intl</code>',
+	'PPDE_ESI_VERSION_OPENSSL'            => 'Version d’OpenSSL',
 
 	'PPDE_STATS'         => 'Statistiques des dons',
 	'PPDE_STATS_SANDBOX' => 'Statistiques Sandbox',

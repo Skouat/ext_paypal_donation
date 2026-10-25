@@ -56,15 +56,31 @@ class ext extends \phpbb\extension\base
 	 */
 	private function php_extensions_loaded(): bool
 	{
+		return !self::get_missing_php_extensions();
+	}
+
+	/**
+	 * Get the required PHP extensions that are not loaded.
+	 *
+	 * Also used by the ACP overview: is_enableable() is only evaluated on enable,
+	 * so an extension removed afterwards must be reported at runtime.
+	 *
+	 * @return string[]
+	 * @access public
+	 */
+	public static function get_missing_php_extensions(): array
+	{
+		$missing = [];
+
 		foreach (self::REQUIRED_PHP_EXTENSIONS as $extension)
 		{
 			if (!extension_loaded($extension))
 			{
-				return false;
+				$missing[] = $extension;
 			}
 		}
 
-		return true;
+		return $missing;
 	}
 
 	/**

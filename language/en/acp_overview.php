@@ -40,15 +40,19 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	'PPDE_OVERVIEW' => 'Overview',
 
-	'PPDE_ESI'                   => 'Extension and System Information',
-	'PPDE_ESI_INSTALL_DATE'      => 'Install date of <strong>%s</strong>',
-	'PPDE_ESI_INTL_NOT_DETECTED' => 'Not detected — required by the extension',
-	'PPDE_ESI_MORE_INFORMATION'  => 'More information…',
-	'PPDE_ESI_NOT_DETECTED'      => 'Not detected',
-	'PPDE_ESI_RESYNC_OPTIONS'    => 'Reset extension information',
-	'PPDE_ESI_VERSION'           => '<strong>%s</strong> version',
-	'PPDE_ESI_VERSION_INTL'      => 'PHP <code>intl</code> version',
-	'PPDE_ESI_VERSION_OPENSSL'   => 'OpenSSL version',
+	'PPDE_ESI'                            => 'Extension and System Information',
+	'PPDE_ESI_INSTALL_DATE'               => 'Install date of <strong>%s</strong>',
+	'PPDE_ESI_INTL_NOT_DETECTED'          => 'Not detected — required by the extension',
+	'PPDE_ESI_MISSING_EXTENSIONS_WARNING' => [
+		1 => 'Required PHP extension not loaded: <strong>%2$s</strong>. The extension cannot work until it is enabled on the server.',
+		2 => 'Required PHP extensions not loaded: <strong>%2$s</strong>. The extension cannot work until they are enabled on the server.',
+	],
+	'PPDE_ESI_MORE_INFORMATION'           => 'More information…',
+	'PPDE_ESI_NOT_DETECTED'               => 'Not detected',
+	'PPDE_ESI_RESYNC_OPTIONS'             => 'Reset extension information',
+	'PPDE_ESI_VERSION'                    => '<strong>%s</strong> version',
+	'PPDE_ESI_VERSION_INTL'               => 'PHP <code>intl</code> version',
+	'PPDE_ESI_VERSION_OPENSSL'            => 'OpenSSL version',
 
 	'PPDE_STATS'         => 'Donation Statistics',
 	'PPDE_STATS_SANDBOX' => 'Sandbox Statistics',

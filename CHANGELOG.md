@@ -8,6 +8,7 @@ and the releases are listed in reverse chronological order.
 
 ## 4.0.4 - [Unreleased]
 
+- Add: Warn in the ACP overview when a required PHP extension is missing
 - Change: Now requires phpBB 3.3.19+
 - Change: Prevent enabling the extension when the curl, intl or openssl PHP extension is missing
 - Remove: Drop intl availability detection and its overview action

@@ -95,6 +95,14 @@
 </fieldset>
 {% endif %}
 
+{% if PPDE_ESI_MISSING_EXTENSIONS %}
+<div class="errorbox">
+	<h3>{{ lang('WARNING') }}</h3>
+
+	<p>{{ PPDE_ESI_MISSING_EXTENSIONS }}</p>
+</div>
+{% endif %}
+
 <table>
 	<caption>{{ lang('PPDE_ESI') }}</caption>
 	<colgroup>

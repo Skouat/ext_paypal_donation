@@ -111,7 +111,6 @@ class overview_controller extends admin_main
 	 * @param string $action Action name
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @access public
 	 */
 	public function display_overview($action): void
@@ -120,10 +119,18 @@ class overview_controller extends admin_main
 
 		$ext_meta = $this->ppde_ext_manager->get_ext_meta();
 
+		$missing_extensions = \skouat\ppde\ext::get_missing_php_extensions();
+		$missing_extensions_msg = '';
+		if (!empty($missing_extensions))
+		{
+			$missing_extensions_msg = $this->language->lang('PPDE_ESI_MISSING_EXTENSIONS_WARNING', count($missing_extensions), implode(', ', $missing_extensions));
+		}
+
 		$this->template->assign_vars([
 			'L_PPDE_ESI_INSTALL_DATE'        => $this->language->lang('PPDE_ESI_INSTALL_DATE', $ext_meta['extra']['display-name']),
 			'L_PPDE_ESI_VERSION'             => $this->language->lang('PPDE_ESI_VERSION', $ext_meta['extra']['display-name']),
 			'PPDE_ESI_INSTALL_DATE'          => $this->user->format_date($this->config['ppde_install_date']),
+			'PPDE_ESI_MISSING_EXTENSIONS'    => $missing_extensions_msg,
 			'PPDE_ESI_VERSION_OPENSSL'       => defined('OPENSSL_VERSION_TEXT') ? OPENSSL_VERSION_TEXT : $this->language->lang('PPDE_ESI_NOT_DETECTED'),
 			'PPDE_ESI_VERSION'               => $ext_meta['version'],
 			'PPDE_ESI_VERSION_INTL'          => defined('INTL_ICU_VERSION') ? INTL_ICU_VERSION : $this->language->lang('PPDE_ESI_INTL_NOT_DETECTED'),
@@ -160,7 +167,6 @@ class overview_controller extends admin_main
 	 * @param string $action Requested action
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @access private
 	 */
 	private function do_action($action): void
